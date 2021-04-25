@@ -45,6 +45,16 @@ public class NGApplication {
 		}
 	}
 
+	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {
+		try {
+			return componentClass.getConstructor( NGContext.class ).newInstance( context );
+		}
+		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
+			// FIXME: Handle the error
+			throw new RuntimeException( e );
+		}
+	}
+
 	private NGAdaptor createAdaptor() {
 		try {
 			final Class<? extends NGAdaptor> adaptorClass = (Class<? extends NGAdaptor>)Class.forName( "ng.adaptor.jetty.NGAdaptorJetty" );
