@@ -17,7 +17,12 @@ public class NGComponent extends NGElement implements NGActionResults {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGComponent.class );
 
-	public NGComponent( NGContext context ) {
+	/**
+	 * Names of component templates end with this
+	 */
+	private static final String COMPONENT_TEMPLATE_SUFFIX = "ngml";
+
+	public NGComponent( final NGContext context ) {
 		
 	}
 
@@ -34,7 +39,7 @@ public class NGComponent extends NGElement implements NGActionResults {
 
 	@Override
 	public NGResponse generateResponse() {
-		final Optional<byte[]> templateBytes = NGUtils.readJavaResource( "/components/" + getClass().getSimpleName() + ".html" );
+		final Optional<byte[]> templateBytes = NGUtils.readJavaResource( "/components/" + getClass().getSimpleName() + "." + COMPONENT_TEMPLATE_SUFFIX );
 		
 		if( templateBytes.isEmpty() ) {
 			throw new RuntimeException( "Template not found" );
@@ -45,5 +50,5 @@ public class NGComponent extends NGElement implements NGActionResults {
 		final var response = new NGResponse( templateString, 200 );
 		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding
 		return response;
-	}	
+	}
 }

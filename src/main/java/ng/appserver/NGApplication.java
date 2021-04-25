@@ -110,4 +110,8 @@ public class NGApplication {
 
 		return requestHandler.handleRequest( request );
 	}
+
+	public NGContext createContextForRequest( NGRequest request ) {
+		return new NGContext( request );
+	}
 }

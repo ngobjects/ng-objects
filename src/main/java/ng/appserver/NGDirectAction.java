@@ -6,15 +6,15 @@ import java.util.Objects;
 
 public class NGDirectAction {
 
-	private NGRequest _request;
+	private NGContext _context;
 
 	public NGDirectAction( final NGRequest request ) {
 		Objects.requireNonNull( request );
-		_request = request;
+		_context = NGApplication.application().createContextForRequest( request );
 	}
 
 	public NGRequest request() {
-		return _request;
+		return _context.request();
 	}
 
 	/**
