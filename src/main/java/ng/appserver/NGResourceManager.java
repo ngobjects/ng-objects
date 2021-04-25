@@ -15,12 +15,9 @@ public class NGResourceManager {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGResourceManager.class );
 
-	/**
-	 * FIXME: Return an Optional, return null or throw an exception on no resource?
-	 */
-	public Optional<byte[]> bytesForResourceWithName( final String resourceName ) {
+	public Optional<byte[]> bytesForResourceNamed( final String resourceName ) {
 		final String actualResourcePath = "/app-resources/" + resourceName;
-		
+
 		logger.info( "Loading resource {} from {}", resourceName, actualResourcePath );
 
 		return NGUtils.readJavaResource( actualResourcePath );
