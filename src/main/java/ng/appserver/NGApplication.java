@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -44,9 +45,22 @@ public class NGApplication {
 		}
 	}
 
+	private NGAdaptor createAdaptor() {
+		try {
+			final Class<? extends NGAdaptor> adaptorClass = (Class<? extends NGAdaptor>)Class.forName( "ng.adaptor.jetty.NGAdaptorJetty" );
+			return adaptorClass.getConstructor().newInstance();
+		}
+		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e ) {
+			// FIXME: Handle the error
+			e.printStackTrace();
+			System.exit( -1 );
+			return null;  // wat?
+		}
+	}
+
 	private void run() {
 		try {
-			new NGAdaptorJetty().run();
+			createAdaptor().start();
 		}
 		catch( Exception e ) {
 			throw new RuntimeException( e );
