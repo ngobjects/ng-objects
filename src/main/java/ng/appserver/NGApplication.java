@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,8 +49,24 @@ public class NGApplication {
 	}
 
 	public NGResponse dispatchRequest( final NGRequest request ) {
-		final String[] pathElements = request.uri().split( "/" );
-		final NGRequestHandler requestHandler = _requestHandlers.get( pathElements[0] );
+		final var uriWithoutPrecedingSlash = request.uri().substring(1);
+
+		final String[] uriElements = uriWithoutPrecedingSlash.split( "/" );
+		System.out.println( Arrays.asList( uriElements ) );
+
+		// FIXME: Handle the case of no default request handler gracefully
+		if( uriElements.length == 0 ) {
+			return new NGResponse( "Haha" );
+		}
+
+		final var requestHandlerKey = uriElements[0];
+
+		final NGRequestHandler requestHandler = _requestHandlers.get( requestHandlerKey );
+		
+		if( requestHandler == null ) {
+			return new NGResponse( "No request handler found with key " + requestHandlerKey );
+		}
+		
 		return requestHandler.handleRequest( request );
 	}
 }
