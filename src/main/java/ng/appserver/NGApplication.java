@@ -16,6 +16,8 @@ public class NGApplication {
 
 	private static NGApplication _application;
 
+	private NGSessionStore _sessionStore;
+
 	private NGResourceManager _resourceManager;
 
 	/**
@@ -53,6 +55,14 @@ public class NGApplication {
 			// FIXME: Handle the error
 			throw new RuntimeException( e );
 		}
+	}
+
+	public NGSessionStore sessionStore() {
+		return _sessionStore;
+	}
+
+	public NGSession restoreSessionWithID( final String sessionID ) {
+		return sessionStore().checkoutSessionWithID( sessionID );
 	}
 
 	private NGAdaptor createAdaptor() {
