@@ -2,7 +2,6 @@ package ng.appserver;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +99,7 @@ public class NGJettyAdaptor {
 		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), headerMap( sr ), null );
 		return request;
 	}
-	
+
 	/**
 	 * FIXME: Implement
 	 */
