@@ -22,6 +22,10 @@ public class NGResponse extends NGMessage {
 		_contentString = string;
 	}
 	
+	public NGResponse( final String string, final int status ) {
+		_contentString = string;
+	}
+
 	public String contentString() {
 		return _contentString;
 	}

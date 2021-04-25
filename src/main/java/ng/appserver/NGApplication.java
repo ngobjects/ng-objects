@@ -1,10 +1,14 @@
 package ng.appserver;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class NGApplication {
+
+	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
 
 	private static NGApplication _application;
 
@@ -50,13 +54,14 @@ public class NGApplication {
 
 	public NGResponse dispatchRequest( final NGRequest request ) {
 		final var uriWithoutPrecedingSlash = request.uri().substring(1);
-
 		final String[] uriElements = uriWithoutPrecedingSlash.split( "/" );
-		System.out.println( Arrays.asList( uriElements ) );
+
+		logger.info( "uri: " + uriWithoutPrecedingSlash.length() );
+		logger.info( "uriElements: " + uriElements.length );
 
 		// FIXME: Handle the case of no default request handler gracefully
-		if( uriElements.length == 0 ) {
-			return new NGResponse( "Haha" );
+		if( uriElements.length == 1 && uriWithoutPrecedingSlash.isEmpty() ) {
+			return new NGResponse( "I have no idea to handle requests without an URL", 404 );
 		}
 
 		final var requestHandlerKey = uriElements[0];
