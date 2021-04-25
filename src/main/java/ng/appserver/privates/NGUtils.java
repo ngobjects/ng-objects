@@ -30,4 +30,8 @@ public class NGUtils {
 			throw new RuntimeException( e );
 		}
 	}
+	
+	public static String resourcePath( final String folderName, final String resourcePath ) {
+		return "/" + folderName + "/" + resourcePath;
+	}
 }

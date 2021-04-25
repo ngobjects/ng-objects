@@ -23,7 +23,7 @@ public class NGResourceManager {
 	private Map<String,Optional<byte[]>> _cache = new HashMap<>();
 
 	public Optional<byte[]> bytesForResourceNamed( final String resourceName ) {
-		final String actualResourcePath = "/app-resources/" + resourceName;
+		final String actualResourcePath = NGUtils.resourcePath( "app-resources", resourceName );
 
 		logger.info( "Loading resource {} from {}", resourceName, actualResourcePath );
 
@@ -42,6 +42,16 @@ public class NGResourceManager {
 		}
 	}
 	
+	/**
+	 * @return The URL for the named resource
+	 * 
+	 * FIXME: Whoa, that's incomplete
+	 * FIXME: Determine if the resource exists first
+	 */
+	public Optional<String> urlForResourceNamed( final String resourceName ) {
+		return Optional.of( "/wr/" + resourceName );
+	}
+
 	private boolean useCache() {
 		return false;
 	}
