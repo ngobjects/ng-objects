@@ -19,10 +19,10 @@ public class NGResourceManager {
 	 * FIXME: Return an Optional, return null or throw an exception on no resource?
 	 */
 	public Optional<byte[]> bytesForResourceWithName( final String resourceName ) {
-		final String resourcePath = "/app-resources/" + resourceName;
+		final String actualResourcePath = "/app-resources/" + resourceName;
 		
-		logger.info( "Loading resource {} at path {}", resourceName, resourcePath );
+		logger.info( "Loading resource {} from {}", resourceName, actualResourcePath );
 
-		return NGUtils.readJavaResource( resourceName );
+		return NGUtils.readJavaResource( actualResourcePath );
 	}
 }
