@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.privates.NGURIParser;
+import ng.appserver.privates.NGParsedURI;
 
 public class NGApplication {
 
@@ -70,9 +70,9 @@ public class NGApplication {
 		logger.info( "Handling URI: " + request.uri() );
 
 		// FIXME: Handle the case of no default request handler gracefully
-		final var uriParser = new NGURIParser( request.uri() );
+		final var parsedURI = NGParsedURI.of( request.uri() );
 
-		final Optional<String> requestHandlerKey = uriParser.elementAt( 0 );
+		final Optional<String> requestHandlerKey = parsedURI.elementAt( 0 );
 
 		if( requestHandlerKey.isEmpty() ) {
 			return new NGResponse( "I have no idea to handle requests without any path elements", 404 );

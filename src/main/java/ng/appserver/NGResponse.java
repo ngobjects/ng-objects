@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
  * Are responses even mutable?
  */
 
-public class NGResponse extends NGMessage {
+public class NGResponse extends NGMessage implements NGActionResults {
 
 	/**
 	 * FIXME: Decide if we want a default 
@@ -59,5 +59,10 @@ public class NGResponse extends NGMessage {
 	 */
 	public byte[] bytes() {
 		return _bytes;
+	}
+
+	@Override
+	public NGResponse generateResponse() {
+		return this;
 	}
 }

@@ -3,13 +3,17 @@ package ng.appserver.privates;
 import java.util.Objects;
 import java.util.Optional;
 
-public class NGURIParser {
+public class NGParsedURI {
 
 	final String _sourceUri;
 
-	public NGURIParser( final String sourceUri ) {
-		Objects.requireNonNull( sourceUri );
+	private NGParsedURI( final String sourceUri ) {
 		_sourceUri = sourceUri;
+	}
+
+	public static NGParsedURI of( final String sourceUri ) {
+		Objects.requireNonNull( sourceUri );
+		return new NGParsedURI( sourceUri );
 	}
 
 	public String[] elements() {

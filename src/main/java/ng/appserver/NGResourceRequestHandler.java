@@ -2,13 +2,13 @@ package ng.appserver;
 
 import java.util.Optional;
 
-import ng.appserver.privates.NGURIParser;
+import ng.appserver.privates.NGParsedURI;
 
 public class NGResourceRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {
-		final Optional<String> resourceName = new NGURIParser( request.uri() ).elementAt( 1 );
+		final Optional<String> resourceName = NGParsedURI.of( request.uri() ).elementAt( 1 );
 
 		if( resourceName.isEmpty() ) {
 			return new NGResponse( "No resource name specified", 400 );
