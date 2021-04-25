@@ -38,7 +38,7 @@ public class NGJettyAdaptor {
 		ServletHandler servletHandler = new ServletHandler();
 		server.setHandler( servletHandler );
 
-		servletHandler.addServletWithMapping( AsyncServlet.class, "/heavy/async" );
+		servletHandler.addServletWithMapping( AsyncServlet.class, "/" );
 
 		server.start();
 	}
