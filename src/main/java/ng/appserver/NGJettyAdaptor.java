@@ -3,6 +3,10 @@ package ng.appserver;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -58,7 +62,6 @@ public class NGJettyAdaptor {
 		}
 
 		private void doRequest( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse ) throws ServletException, IOException {
-			final String HEAVY_RESOURCE = "This is some heavy resource that will be served in an async way";
 
 			// This is where the application logic will perform it's actual work 
 			final NGRequest woRequest = servletRequestToNGRequest( servletRequest );
@@ -92,9 +95,29 @@ public class NGJettyAdaptor {
 		}
 	}
 
-	private static NGRequest servletRequestToNGRequest( final HttpServletRequest servletRequest ) {
-		NGRequest request = new NGRequest();
-		request.setURI( servletRequest.getRequestURI() );
+	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
+		// FIXME: We're not passing in the request parameters
+		// FIXME: WE need to read the request's content as well
+		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), headerMap( sr ), null );
 		return request;
+	}
+	
+	/**
+	 * FIXME: Implement
+	 */
+	private static Map<String,List<String>> headerMap( final HttpServletRequest sr ) {
+		final Map<String,List<String>> map = new HashMap<>();
+		/*
+		
+		while( sr.getHeaderNames().hasMoreElements() ) {
+			final String headerName = sr.getHeaderNames().nextElement();
+			sr.getHeaderNames();
+		}
+
+		while( enumeration.hasMoreElements() ) {
+			map.get( enumeration.nextElement() )
+		}
+		*/
+		return map;
 	}
 }
