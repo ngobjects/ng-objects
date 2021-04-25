@@ -16,6 +16,9 @@ public class NGParsedURI {
 		return new NGParsedURI( sourceUri );
 	}
 
+	/**
+	 * FIXME: Cache these elements
+	 */
 	public String[] elements() {
 		String uri = _sourceUri;
 
@@ -34,6 +37,10 @@ public class NGParsedURI {
 	 * FIXME: This should probably return an Optional at some point.
 	 */
 	public Optional<String> elementAt( final int i ) {
+		
+		if( elements().length == 0 ) {
+			return Optional.empty();
+		}
 
 		if( i > elements().length ) {
 			return Optional.empty();
