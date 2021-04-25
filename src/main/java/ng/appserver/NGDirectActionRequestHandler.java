@@ -15,13 +15,13 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
 		NGParsedURI parsedURI = NGParsedURI.of( request.uri() );
-		
+
 		final Optional<String> directActionClassName = parsedURI.elementAt( 1 );
-		
+
 		if( directActionClassName.isEmpty() ) {
 			return new NGResponse( "No direct action class name specified", 404 );
 		}
-		
+
 		final Optional<String> directActionMethodName = parsedURI.elementAt( 2 );
 
 		if( directActionMethodName.isEmpty() ) {
@@ -40,6 +40,5 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 			e.printStackTrace();
 			return new NGResponse( "Error, error!", 500 );
 		}
-		
 	}
 }
