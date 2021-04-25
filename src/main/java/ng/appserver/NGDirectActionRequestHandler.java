@@ -4,6 +4,6 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
-		return new NGResponse("Sweet!");
+		return new NGResponse( "Sweet success!", 200 );
 	}
 }

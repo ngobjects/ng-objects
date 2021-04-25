@@ -12,6 +12,8 @@ public class NGApplication {
 
 	private static NGApplication _application;
 
+	private NGResourceManager _resourceManager;
+
 	/**
 	 * FIXME: Needs to be thread safe?
 	 */
@@ -27,6 +29,7 @@ public class NGApplication {
 	public static void main( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		try {
 			_application = applicationClass.getDeclaredConstructor().newInstance();
+			_application._resourceManager = new NGResourceManager();
 			_application.registerRequestHandler( "wo", new NGComponentRequestHandler() );
 			_application.registerRequestHandler( "wr", new NGResourceRequestHandler() );
 			_application.registerRequestHandler( "wa", new NGDirectActionRequestHandler() );
@@ -51,12 +54,16 @@ public class NGApplication {
 		return _application;
 	}
 
+	public NGResourceManager resourceManager() {
+		return _resourceManager;
+	}
+
 	public void registerRequestHandler( final String key, final NGRequestHandler requestHandler ) {
 		_requestHandlers.put( key, requestHandler );
 	}
 
 	public NGResponse dispatchRequest( final NGRequest request ) {
-		final var uriWithoutPrecedingSlash = request.uri().substring(1);
+		final var uriWithoutPrecedingSlash = request.uri().substring( 1 );
 		final String[] uriElements = uriWithoutPrecedingSlash.split( "/" );
 
 		logger.info( "uri: " + uriWithoutPrecedingSlash.length() );
@@ -70,11 +77,11 @@ public class NGApplication {
 		final var requestHandlerKey = uriElements[0];
 
 		final NGRequestHandler requestHandler = _requestHandlers.get( requestHandlerKey );
-		
+
 		if( requestHandler == null ) {
-			return new NGResponse( "No request handler found with key " + requestHandlerKey );
+			return new NGResponse( "No request handler found with key " + requestHandlerKey, 404 );
 		}
-		
+
 		return requestHandler.handleRequest( request );
 	}
 }

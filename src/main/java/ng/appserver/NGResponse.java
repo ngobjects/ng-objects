@@ -14,26 +14,31 @@ public class NGResponse extends NGMessage {
 	/**
 	 * FIXME: Decide if we want a default 
 	 */
-	private int _status = 200;
+	private int _status;
 
-	private String _contentString;
-	
-	public NGResponse( final String string ) {
-		_contentString = string;
+	/**
+	 * FIXME: the response's content should probably be encapsulated by a stream.
+	 */
+	private byte[] _bytes;
+
+	public NGResponse( final String contentString, final int status ) {
+		setContentString( contentString );
+		setStatus( status );
 	}
-	
-	public NGResponse( final String string, final int status ) {
-		_contentString = string;
+
+	public NGResponse( final byte[] bytes, final int status ) {
+		setBytes( bytes );
+		_status = status;
 	}
 
 	public String contentString() {
-		return _contentString;
+		return new String( bytes(), StandardCharsets.UTF_8 );
 	}
-	
+
 	public void setContentString( final String contentString ) {
-		_contentString = contentString;
+		setBytes( contentString.getBytes( StandardCharsets.UTF_8 ) );
 	}
-	
+
 	public int status() {
 		return _status;
 	}
@@ -41,14 +46,18 @@ public class NGResponse extends NGMessage {
 	/**
 	 * FIXME: Decide if this should be settable 
 	 */
-	public void setStatus( final int status ) {
+	private void setStatus( final int status ) {
 		_status = status;
+	}
+
+	private void setBytes( final byte[] bytes ) {
+		_bytes = bytes;
 	}
 
 	/**
 	 * FIXME: This should handle more than just bytes 
 	 */
 	public byte[] bytes() {
-		return contentString().getBytes( StandardCharsets.UTF_8 );
+		return _bytes;
 	}
 }
