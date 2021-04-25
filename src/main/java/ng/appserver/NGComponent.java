@@ -22,17 +22,8 @@ public class NGComponent extends NGElement implements NGActionResults {
 	 */
 	private static final String COMPONENT_TEMPLATE_SUFFIX = "ngml";
 
-	public NGComponent( final NGContext context ) {}
-
-	/**
-	 * FIXME: Return an Optional, return null or throw an exception on no resource?
-	 */
-	public Optional<byte[]> bytesForResourceWithName( final String resourceName ) {
-		final String resourcePath = "/app-resources/" + resourceName;
+	public NGComponent( final NGContext context ) {
 		
-		logger.info( "Loading resource {} at path {}", resourceName, resourcePath );
-
-		return NGUtils.readJavaResource( resourceName );
 	}
 
 	@Override
