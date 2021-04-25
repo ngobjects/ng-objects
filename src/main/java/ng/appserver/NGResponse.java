@@ -32,14 +32,18 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 */
 	private Map<String,List<String>> _headers = new HashMap<>();
 
-	public NGResponse( final String contentString, final int status ) {
-		setContentString( contentString );
-		setStatus( status );
+	public NGResponse() {
+		setStatus( 200 );
 	}
 
 	public NGResponse( final byte[] bytes, final int status ) {
 		setBytes( bytes );
-		_status = status;
+		setStatus( status );
+	}
+
+	public NGResponse( final String contentString, final int status ) {
+		setContentString( contentString );
+		setStatus( status );
 	}
 
 	public String contentString() {
