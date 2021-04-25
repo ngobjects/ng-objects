@@ -1,8 +1,12 @@
 package ng.appserver;
 
+import java.util.Map;
+
 public class NGApplication {
 
 	private static NGApplication _application;
+
+	private Map<String,NGRequestHandler> _requestHandlers;
 
 	/**
 	 * FIXME: Not sure if this method should actually be provided 
@@ -35,6 +39,7 @@ public class NGApplication {
 	}
 
 	public NGResponse dispatchRequest( final NGRequest request ) {
+		System.out.println( request.uri() );
 		final var response = new NGResponse( "Halló mamma" );
 		return response;
 	}
