@@ -38,11 +38,7 @@ public class NGParsedURI {
 	 */
 	public Optional<String> elementAt( final int i ) {
 		
-		if( elements().length == 0 ) {
-			return Optional.empty();
-		}
-
-		if( i > elements().length ) {
+		if( i >= elements().length ) {
 			return Optional.empty();
 		}
 
