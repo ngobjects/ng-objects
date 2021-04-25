@@ -22,9 +22,7 @@ public class NGComponent extends NGElement implements NGActionResults {
 	 */
 	private static final String COMPONENT_TEMPLATE_SUFFIX = "ngml";
 
-	public NGComponent( final NGContext context ) {
-		
-	}
+	public NGComponent( final NGContext context ) {}
 
 	/**
 	 * FIXME: Return an Optional, return null or throw an exception on no resource?
@@ -39,7 +37,10 @@ public class NGComponent extends NGElement implements NGActionResults {
 
 	@Override
 	public NGResponse generateResponse() {
-		final Optional<byte[]> templateBytes = NGUtils.readJavaResource( "/components/" + getClass().getSimpleName() + "." + COMPONENT_TEMPLATE_SUFFIX );
+		final String htmlTemplateFilename = getClass().getSimpleName() + "." + COMPONENT_TEMPLATE_SUFFIX;
+		final String htmlTemplatePath = NGUtils.resourcePath( "components", htmlTemplateFilename );
+
+		final Optional<byte[]> templateBytes = NGUtils.readJavaResource( htmlTemplatePath );
 		
 		if( templateBytes.isEmpty() ) {
 			throw new RuntimeException( "Template not found" );
