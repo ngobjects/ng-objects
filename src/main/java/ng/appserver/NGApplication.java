@@ -46,7 +46,7 @@ public class NGApplication {
 
 	private void run() {
 		try {
-			new NGJettyAdaptor().run();
+			new NGAdaptorJetty().run();
 		}
 		catch( Exception e ) {
 			throw new RuntimeException( e );
