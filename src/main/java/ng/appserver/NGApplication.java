@@ -31,7 +31,8 @@ public class NGApplication {
 			_application.run();
 		}
 		catch( Exception e ) {
-			throw new RuntimeException( e );
+			e.printStackTrace();
+			System.exit( -1 );
 		}
 	}
 
