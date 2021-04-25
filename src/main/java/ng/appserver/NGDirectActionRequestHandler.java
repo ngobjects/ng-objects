@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
@@ -27,12 +28,15 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 			return new NGResponse( "No direct action class name specified", 404 );
 		}
 
-		// FIXME: Improve error handling
 		try {
 			Class<? extends NGDirectAction> directActionClass = (Class<? extends NGDirectAction>)Class.forName( directActionClassName.get() );
-			return directActionClass.getConstructor().newInstance().performActionNamed( directActionMethodName.get() ).generateResponse();
+			final Constructor<? extends NGDirectAction> constructor = directActionClass.getConstructor( NGRequest.class );
+			final NGDirectAction instance = constructor.newInstance( request );
+			final NGActionResults actionResults = instance.performActionNamed( directActionMethodName.get() );
+			return actionResults.generateResponse();
 		}
 		catch( ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
+			// FIXME: Improve error handling
 			e.printStackTrace();
 			return new NGResponse( "Error, error!", 500 );
 		}
