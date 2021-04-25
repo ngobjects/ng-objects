@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -63,10 +64,10 @@ public class NGJettyAdaptor {
 
 			// This is where the application logic will perform it's actual work 
 			final NGRequest woRequest = servletRequestToNGRequest( servletRequest );
-			final NGResponse woResponse = NGApplication.application().dispatchRequest( woRequest );
+			final NGResponse ngResponse = NGApplication.application().dispatchRequest( woRequest );
 
 			// FIXME Handles a String response only
-			final ByteBuffer content = ByteBuffer.wrap( woResponse.bytes() );
+			final ByteBuffer content = ByteBuffer.wrap( ngResponse.bytes() );
 
 			final AsyncContext async = servletRequest.startAsync();
 			final ServletOutputStream out = servletResponse.getOutputStream();
@@ -76,7 +77,14 @@ public class NGJettyAdaptor {
 				public void onWritePossible() throws IOException {
 					while( out.isReady() ) {
 						if( !content.hasRemaining() ) {
-							servletResponse.setStatus( woResponse.status() );
+							servletResponse.setStatus( ngResponse.status() );
+
+							for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
+								for( final String headerValue : entry.getValue() ) {
+									servletResponse.addHeader( entry.getKey(), headerValue );
+								}
+							}
+
 							async.complete();
 							return;
 						}
