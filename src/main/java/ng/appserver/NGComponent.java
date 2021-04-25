@@ -13,7 +13,7 @@ import ng.appserver.privates.NGUtils;
  * FIXME: Templating really belongs in a separate project, right?
  */
 
-public class NGComponent implements NGActionResults {
+public class NGComponent extends NGElement implements NGActionResults {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGComponent.class );
 
