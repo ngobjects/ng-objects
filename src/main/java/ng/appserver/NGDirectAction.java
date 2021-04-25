@@ -6,15 +6,27 @@ import java.util.Objects;
 
 public class NGDirectAction {
 
-	private NGContext _context;
+	private final NGContext _context;
 
 	public NGDirectAction( final NGRequest request ) {
 		Objects.requireNonNull( request );
 		_context = NGApplication.application().createContextForRequest( request );
 	}
 
+	public NGContext context() {
+		return _context;
+	}
+
 	public NGRequest request() {
-		return _context.request();
+		return context().request();
+	}
+
+	public NGResponse response() {
+		return context().response();
+	}
+
+	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass ) {
+		return NGApplication.application().pageWithName( null, context() );
 	}
 
 	/**
