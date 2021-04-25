@@ -1,5 +1,11 @@
 package ng.appserver;
 
-public class NGAssociation {
+public abstract class NGAssociation {
 
+	public Object valueInComponent( NGComponent aComponent ) {
+		return null;
+	}
+
+	public void setValue( Object aValue, NGComponent aComponent ) {
+	}
 }

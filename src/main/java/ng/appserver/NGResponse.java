@@ -21,9 +21,10 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	private int _status;
 
 	/**
-	 * FIXME: the response's content should probably be encapsulated by a stream.
+	 * FIXME: The response's content should probably be encapsulated by a stream.
+	 * FIXME: Do we actually want to initialize this to an empty byte array?
 	 */
-	private byte[] _bytes;
+	private byte[] _bytes = new byte[] {};
 
 	/**
 	 * FIXME: Probably don't want to populate this with an empty map at the start?
@@ -47,6 +48,13 @@ public class NGResponse extends NGMessage implements NGActionResults {
 
 	public void setContentString( final String contentString ) {
 		setBytes( contentString.getBytes( StandardCharsets.UTF_8 ) );
+	}
+
+	/**
+	 * FIXME: Extremely inefficient 
+	 */
+	public void appendContentString( final String stringToAppend ) {
+		setContentString( contentString().concat( stringToAppend ) );
 	}
 
 	public int status() {

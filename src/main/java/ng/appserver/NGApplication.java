@@ -71,7 +71,8 @@ public class NGApplication {
 
 	private NGAdaptor createAdaptor() {
 		try {
-			final Class<? extends NGAdaptor> adaptorClass = (Class<? extends NGAdaptor>)Class.forName( "ng.adaptor.jetty.NGAdaptorJetty" );
+			final String adaptorClassName = "ng.adaptor.jetty.NGAdaptorJetty";
+			final Class<? extends NGAdaptor> adaptorClass = (Class<? extends NGAdaptor>)Class.forName( adaptorClassName );
 			return adaptorClass.getConstructor().newInstance();
 		}
 		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e ) {

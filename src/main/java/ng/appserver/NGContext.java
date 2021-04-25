@@ -5,6 +5,7 @@ public class NGContext {
 	private final NGRequest _request;
 	private NGResponse _response;
 	private NGSession _session;
+	private NGComponent _currentComponent;
 
 	public NGContext( final NGRequest request ) {
 		_request = request;
@@ -20,5 +21,9 @@ public class NGContext {
 
 	public NGSession session() {
 		return _session;
+	}
+
+	public NGComponent component() {
+		return _currentComponent;
 	}
 }
