@@ -29,7 +29,7 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 		}
 
 		try {
-			Class<? extends NGDirectAction> directActionClass = (Class<? extends NGDirectAction>)Class.forName( directActionClassName.get() );
+			final Class<? extends NGDirectAction> directActionClass = (Class<? extends NGDirectAction>)Class.forName( directActionClassName.get() );
 			final Constructor<? extends NGDirectAction> constructor = directActionClass.getConstructor( NGRequest.class );
 			final NGDirectAction instance = constructor.newInstance( request );
 			final NGActionResults actionResults = instance.performActionNamed( directActionMethodName.get() );

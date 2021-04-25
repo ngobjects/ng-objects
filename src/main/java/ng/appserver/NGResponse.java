@@ -1,6 +1,10 @@
 package ng.appserver;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * FIXME:
@@ -20,6 +24,12 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 * FIXME: the response's content should probably be encapsulated by a stream.
 	 */
 	private byte[] _bytes;
+
+	/**
+	 * FIXME: Probably don't want to populate this with an empty map at the start?
+	 * FIXME: Thread safety!
+	 */
+	private Map<String,List<String>> _headers = new HashMap<>();
 
 	public NGResponse( final String contentString, final int status ) {
 		setContentString( contentString );
@@ -64,5 +74,21 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	@Override
 	public NGResponse generateResponse() {
 		return this;
+	}
+	
+	public Map<String,List<String>> headers() {
+		return _headers;
+	}
+	
+	public void setHeader( final String key, final String value ) {
+		List<String> list = _headers.get( key );
+		
+		// FIXME: This implicitly mutable thing is... not good
+		if( list == null ) {
+			list = new ArrayList<>();
+			_headers.put( key, list );
+		}
+		
+		list.add( value );
 	}
 }

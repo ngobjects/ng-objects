@@ -25,8 +25,11 @@ public class NGDirectAction {
 			final Method method = getClass().getMethod( directActionName + "Action", new Class[] {} );
 			return (NGActionResults)method.invoke( this, null );
 		}
-		catch( NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
-			// FIXME: Handle this gracefully with a returned page.
+		// FIXME: All this error handling needs to be properly inspected.
+		catch( NoSuchMethodException e ) {
+			return new NGResponse( "No direct action method called " + directActionName, 404 );
+		}
+		catch( SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
 			throw new RuntimeException( e );
 		}
 	}
