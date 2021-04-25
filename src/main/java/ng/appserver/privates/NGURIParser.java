@@ -5,12 +5,12 @@ import java.util.Objects;
 public class NGURIParser {
 
 	final String _sourceUri;
-	
+
 	public NGURIParser( final String sourceUri ) {
 		Objects.requireNonNull( sourceUri );
 		_sourceUri = sourceUri;
 	}
-	
+
 	public String[] elements() {
 		String uri = _sourceUri;
 
@@ -22,9 +22,9 @@ public class NGURIParser {
 			return new String[] {};
 		}
 
-		return uri.substring(0).split( "/" );
+		return uri.substring( 0 ).split( "/" );
 	}
-	
+
 	/**
 	 * FIXME: This should probably return an Optional at some point.
 	 */
@@ -33,7 +33,7 @@ public class NGURIParser {
 		if( i > elements().length ) {
 			return null;
 		}
-		
+
 		return elements()[i];
 	}
 }

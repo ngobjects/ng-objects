@@ -6,6 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.privates.NGURIParser;
+
 public class NGApplication {
 
 	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
@@ -63,18 +65,17 @@ public class NGApplication {
 	}
 
 	public NGResponse dispatchRequest( final NGRequest request ) {
-		final var uriWithoutPrecedingSlash = request.uri().substring( 1 );
-		final String[] uriElements = uriWithoutPrecedingSlash.split( "/" );
 
-		logger.info( "uri: " + uriWithoutPrecedingSlash.length() );
-		logger.info( "uriElements: " + uriElements.length );
+		logger.info( "Handling URI: " + request.uri() );
 
 		// FIXME: Handle the case of no default request handler gracefully
-		if( uriElements.length == 1 && uriWithoutPrecedingSlash.isEmpty() ) {
-			return new NGResponse( "I have no idea to handle requests without an URL", 404 );
+		final var uriParser = new NGURIParser( request.uri() );
+
+		if( uriParser.elements().length == 0 ) {
+			return new NGResponse( "I have no idea to handle requests without any path elements", 404 );
 		}
 
-		final var requestHandlerKey = uriElements[0];
+		final var requestHandlerKey = uriParser.elementAt( 0 );
 
 		final NGRequestHandler requestHandler = _requestHandlers.get( requestHandlerKey );
 
