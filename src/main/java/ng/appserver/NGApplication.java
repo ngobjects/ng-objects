@@ -2,6 +2,7 @@ package ng.appserver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,13 +72,13 @@ public class NGApplication {
 		// FIXME: Handle the case of no default request handler gracefully
 		final var uriParser = new NGURIParser( request.uri() );
 
-		if( uriParser.elements().length == 0 ) {
+		final Optional<String> requestHandlerKey = uriParser.elementAt( 0 );
+
+		if( requestHandlerKey.isEmpty() ) {
 			return new NGResponse( "I have no idea to handle requests without any path elements", 404 );
 		}
 
-		final var requestHandlerKey = uriParser.elementAt( 0 );
-
-		final NGRequestHandler requestHandler = _requestHandlers.get( requestHandlerKey );
+		final NGRequestHandler requestHandler = _requestHandlers.get( requestHandlerKey.get() );
 
 		if( requestHandler == null ) {
 			return new NGResponse( "No request handler found with key " + requestHandlerKey, 404 );

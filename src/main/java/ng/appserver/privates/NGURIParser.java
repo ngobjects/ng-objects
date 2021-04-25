@@ -1,6 +1,7 @@
 package ng.appserver.privates;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class NGURIParser {
 
@@ -28,12 +29,12 @@ public class NGURIParser {
 	/**
 	 * FIXME: This should probably return an Optional at some point.
 	 */
-	public String elementAt( final int i ) {
+	public Optional<String> elementAt( final int i ) {
 
 		if( i > elements().length ) {
-			return null;
+			return Optional.empty();
 		}
 
-		return elements()[i];
+		return Optional.of( elements()[i] );
 	}
 }

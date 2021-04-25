@@ -1,11 +1,26 @@
 package ng.appserver;
 
+import java.util.Optional;
+
+import ng.appserver.privates.NGURIParser;
+
 public class NGResourceRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {
-		byte[] bytes = NGApplication.application().resourceManager().bytesForResourceWithName( "test.jpg" );
+		final Optional<String> resourceName = new NGURIParser( request.uri() ).elementAt( 1 );
 
-		return new NGResponse( bytes, 200 );
+		if( resourceName.isEmpty() ) {
+			return new NGResponse( "No resource name specified", 400 );
+		}
+
+		final Optional<byte[]> bytes = NGApplication.application().resourceManager().bytesForResourceWithName( resourceName.get() );
+
+		// FIXME: How to handle this properly? User configurable? Just always a 404
+		if( bytes.isEmpty() ) {
+			return new NGResponse( "Resource '" + resourceName.get() + "' does not exist", 404 );
+		}
+
+		return new NGResponse( bytes.get(), 200 );
 	}
 }
