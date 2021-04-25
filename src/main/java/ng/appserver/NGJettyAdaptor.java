@@ -67,7 +67,7 @@ public class NGJettyAdaptor {
 			final NGResponse woResponse = NGApplication.application().dispatchRequest( woRequest );
 
 			// FIXME Handles a String response only
-			final ByteBuffer content = ByteBuffer.wrap( woResponse.contentString().getBytes( StandardCharsets.UTF_8 ) );
+			final ByteBuffer content = ByteBuffer.wrap( woResponse.bytes() );
 
 			final AsyncContext async = servletRequest.startAsync();
 			final ServletOutputStream out = servletResponse.getOutputStream();

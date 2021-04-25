@@ -1,5 +1,7 @@
 package ng.appserver;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * FIXME:
  * Need to decide what to do about responses of different types.
@@ -13,7 +15,6 @@ public class NGResponse extends NGMessage {
 	 * FIXME: Decide if we want a default 
 	 */
 	private int _status = 200;
-
 
 	private String _contentString;
 	
@@ -38,5 +39,12 @@ public class NGResponse extends NGMessage {
 	 */
 	public void setStatus( final int status ) {
 		_status = status;
+	}
+
+	/**
+	 * FIXME: This should handle more than just bytes 
+	 */
+	public byte[] bytes() {
+		return contentString().getBytes( StandardCharsets.UTF_8 );
 	}
 }
