@@ -8,7 +8,7 @@ import java.util.Map;
  * FIXME: Actually implement  
  */
 
-public class NGSessionStore {
+public abstract class NGSessionStore {
 
 	Map<String,NGSession> _sessions = new HashMap<>();
 	
