@@ -27,6 +27,8 @@ public class NGApplication {
 	public static void main( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		try {
 			_application = applicationClass.getDeclaredConstructor().newInstance();
+			_application.registerRequestHandler( "wo", new NGComponentRequestHandler() );
+			_application.registerRequestHandler( "wr", new NGResourceRequestHandler() );
 			_application.registerRequestHandler( "wa", new NGDirectActionRequestHandler() );
 			_application.run();
 		}
