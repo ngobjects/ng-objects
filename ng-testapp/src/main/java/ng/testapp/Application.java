@@ -1,10 +1,15 @@
 package ng.testapp;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 public class Application extends NGApplication {
+
+	private static Logger logger = LoggerFactory.getLogger( Application.class );
 
 	public static void main( String[] args ) {
 		NGApplication.main( args, Application.class );
@@ -17,7 +22,7 @@ public class Application extends NGApplication {
 
 	@Override
 	public NGResponse dispatchRequest( NGRequest request ) {
-		System.out.println( request.headers() );
+		logger.info( "Headers {} ", request.headers() );
 		final NGResponse response = super.dispatchRequest( request );
 		return response;
 	}

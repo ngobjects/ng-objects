@@ -12,6 +12,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.ServletException;
@@ -26,6 +28,8 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 public class NGAdaptorJetty extends NGAdaptor {
+
+	private static final Logger logger = LoggerFactory.getLogger( NGAdaptorJetty.class );
 
 	private Server server;
 
@@ -111,7 +115,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 				 */
 				@Override
 				public void onError( Throwable t ) {
-					System.out.println( "Error" );
+					logger.error( "Error" );
 					getServletContext().log( "Async Error", t );
 					async.complete();
 				}
