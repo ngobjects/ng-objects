@@ -33,6 +33,11 @@ import ng.appserver.NGResponse;
 
 public class NGAdaptorRaw extends NGAdaptor {
 
+	private static class Properties {
+		private static int port = 1200;
+		private static int workerThreadCount = 4;
+	}
+
 	private static final String CRLF = "\r\n";
 	private static Logger logger = LoggerFactory.getLogger( NGAdaptorRaw.class );
 
@@ -40,24 +45,24 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 	@Override
 	public void start() {
-		final ExecutorService es = Executors.newFixedThreadPool( 4 );
+		new Thread( () -> {
+			final ExecutorService es = Executors.newFixedThreadPool( Properties.workerThreadCount );
 
-		final int port = 1200;
-
-		try( final ServerSocket serverSocket = new ServerSocket( port ) ;) {
-			logger.info( "Started listening for connections on port {}", port );
-			while( true ) {
-				final Socket clientSocket = serverSocket.accept();
-				es.execute( new WorkerThread( clientSocket ) );
-				numberOfRequestsServed.increment();
-				logger.info( "Served requests: {}", numberOfRequestsServed );
+			try( final ServerSocket serverSocket = new ServerSocket( Properties.port ) ;) {
+				logger.info( "Started listening for connections on port {}", Properties.port );
+				while( true ) {
+					final Socket clientSocket = serverSocket.accept();
+					es.execute( new WorkerThread( clientSocket ) );
+					numberOfRequestsServed.increment();
+					logger.info( "Served requests: {}", numberOfRequestsServed );
+				}
 			}
-		}
-		catch( final Exception e ) {
-			// FIXME: Actually handle this exception
-			e.printStackTrace();
-			throw new RuntimeException( e );
-		}
+			catch( final Exception e ) {
+				// FIXME: Actually handle this exception
+				e.printStackTrace();
+				throw new RuntimeException( e );
+			}
+		}, "Listener" ).start();
 	}
 
 	public static class WorkerThread implements Runnable {
