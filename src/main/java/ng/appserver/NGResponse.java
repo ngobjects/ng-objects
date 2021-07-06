@@ -1,10 +1,6 @@
 package ng.appserver;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * FIXME:
@@ -16,7 +12,7 @@ import java.util.Map;
 public class NGResponse extends NGMessage implements NGActionResults {
 
 	/**
-	 * FIXME: Decide if we want a default 
+	 * FIXME: Decide if we want a default
 	 */
 	private int _status;
 
@@ -24,14 +20,14 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 * FIXME: The response's content should probably be encapsulated by a stream.
 	 * FIXME: Do we actually want to initialize this to an empty byte array?
 	 */
-	private byte[] _bytes = new byte[] {};
+	private byte[] _contentBytes = new byte[] {};
 
 	public NGResponse() {
 		setStatus( 200 );
 	}
 
 	public NGResponse( final byte[] bytes, final int status ) {
-		setBytes( bytes );
+		setContentBytes( bytes );
 		setStatus( status );
 	}
 
@@ -41,15 +37,15 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	}
 
 	public String contentString() {
-		return new String( bytes(), StandardCharsets.UTF_8 );
+		return new String( contentBytes(), StandardCharsets.UTF_8 );
 	}
 
 	public void setContentString( final String contentString ) {
-		setBytes( contentString.getBytes( StandardCharsets.UTF_8 ) );
+		setContentBytes( contentString.getBytes( StandardCharsets.UTF_8 ) );
 	}
 
 	/**
-	 * FIXME: Extremely inefficient 
+	 * FIXME: Extremely inefficient
 	 */
 	public void appendContentString( final String stringToAppend ) {
 		setContentString( contentString().concat( stringToAppend ) );
@@ -60,21 +56,21 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	}
 
 	/**
-	 * FIXME: Decide if this should be settable 
+	 * FIXME: Decide if this should be settable
 	 */
 	private void setStatus( final int status ) {
 		_status = status;
 	}
 
-	private void setBytes( final byte[] bytes ) {
-		_bytes = bytes;
+	private void setContentBytes( final byte[] contentBytes ) {
+		_contentBytes = contentBytes;
 	}
 
 	/**
-	 * FIXME: This should handle more than just bytes 
+	 * FIXME: This should handle more than just bytes
 	 */
-	public byte[] bytes() {
-		return _bytes;
+	public byte[] contentBytes() {
+		return _contentBytes;
 	}
 
 	@Override
