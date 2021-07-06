@@ -14,11 +14,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGAdaptor;
+import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
@@ -30,33 +34,57 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 	private static final String CRLF = "\r\n";
 	private static Logger logger = LoggerFactory.getLogger( NGAdaptorRaw.class );
+	private static LongAdder r = new LongAdder();
 
 	@Override
 	public void start() {
+		final ExecutorService es = Executors.newFixedThreadPool( 4 );
+
 		final int port = 1200;
 
 		try( final ServerSocket serverSocket = new ServerSocket( port ) ;) {
 			logger.info( "Started listening for connections on port {}", port );
 			while( true ) {
 				final Socket clientSocket = serverSocket.accept();
-
-				final InputStream inStream = clientSocket.getInputStream();
-				final OutputStream outStream = clientSocket.getOutputStream();
-
-				final NGRequest request = requestFromInputStream( inStream );
-				final NGResponse response = dispatchRequest( request );
-
-				writeResponseToStream( response, outStream );
-
-				inStream.close();
-				outStream.close();
-				clientSocket.close();
+				es.execute( new WorkerThread( clientSocket ) );
+				System.out.println( r );
+				r.increment();
 			}
 		}
 		catch( final Exception e ) {
 			// FIXME: Actually handle this exception
 			e.printStackTrace();
 			throw new RuntimeException( e );
+		}
+
+	}
+
+	public static class WorkerThread implements Runnable {
+
+		private final Socket _clientSocket;
+
+		public WorkerThread( final Socket clientSocket ) {
+			_clientSocket = clientSocket;
+		}
+
+		@Override
+		public void run() {
+			try {
+				final InputStream inStream = _clientSocket.getInputStream();
+				final OutputStream outStream = _clientSocket.getOutputStream();
+
+				final NGRequest request = requestFromInputStream( inStream );
+				final NGResponse response = NGApplication.application().dispatchRequest( request );
+
+				writeResponseToStream( response, outStream );
+
+				inStream.close();
+				outStream.close();
+				_clientSocket.close();
+			}
+			catch( final IOException e ) {
+				e.printStackTrace();
+			}
 		}
 	}
 
