@@ -45,13 +45,14 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 	@Override
 	public void start() {
+		final ExecutorService es = Executors.newFixedThreadPool( Properties.workerThreadCount );
 		new Thread( () -> {
-			final ExecutorService es = Executors.newFixedThreadPool( Properties.workerThreadCount );
 
 			try( final ServerSocket serverSocket = new ServerSocket( Properties.port ) ;) {
 				logger.info( "Started listening for connections on port {}", Properties.port );
 				while( true ) {
 					final Socket clientSocket = serverSocket.accept();
+					//					clientSocket.setTcpNoDelay( true ); // We're not totally sure if we want to disable Nagle's algorithm.
 					es.execute( new WorkerThread( clientSocket ) );
 					numberOfRequestsServed.increment();
 					logger.info( "Served requests: {}", numberOfRequestsServed );
