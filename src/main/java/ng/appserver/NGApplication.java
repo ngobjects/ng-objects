@@ -71,8 +71,7 @@ public class NGApplication {
 
 	private NGAdaptor createAdaptor() {
 		try {
-			final String adaptorClassName = "ng.adaptor.jetty.NGAdaptorJetty";
-			final Class<? extends NGAdaptor> adaptorClass = (Class<? extends NGAdaptor>)Class.forName( adaptorClassName );
+			final Class<? extends NGAdaptor> adaptorClass = (Class<? extends NGAdaptor>)Class.forName( adaptorClassName() );
 			return adaptorClass.getConstructor().newInstance();
 		}
 		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e ) {
@@ -81,6 +80,13 @@ public class NGApplication {
 			System.exit( -1 );
 			return null;  // wat?
 		}
+	}
+	
+	/**
+	 * FIXME: We don't really want to return anything if this hasn't been set. Only set now for testing 
+	 */
+	public String adaptorClassName() {
+		return "ng.adaptor.jetty.NGAdaptorJetty";
 	}
 
 	private void run() {
