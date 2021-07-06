@@ -25,7 +25,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 			return new NGResponse( "Resource '" + resourceName.get() + "' does not exist", 404 );
 		}
 
-		// FIXME: Detect and set the corrent response headers
+		// FIXME: Detect and set the correct response headers
 		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );
 		//		response.setHeader( "content-disposition", "inline;filename=\"photo.jpg\"" );
 		//		response.setHeader( "Content-Type", "image/jpeg" );
