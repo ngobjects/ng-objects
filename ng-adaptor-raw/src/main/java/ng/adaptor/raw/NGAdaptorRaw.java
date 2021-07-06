@@ -1,5 +1,6 @@
 package ng.adaptor.raw;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,11 +89,12 @@ public class NGAdaptorRaw extends NGAdaptor {
 	/**
 	 * FIXME: We're currently writing directly to the stream. Some sort of buffered writing would probably be more appropriate
 	 */
-	private static void writeResponseToStream( final NGResponse response, final OutputStream stream ) {
+	private static void writeResponseToStream( final NGResponse response, OutputStream stream ) {
 		Objects.requireNonNull( response );
 		Objects.requireNonNull( stream );
 
 		try {
+			stream = new BufferedOutputStream( stream, 32000 );
 			write( stream, response.httpVersion() + " " + response.status() + " OK" ); // FIXME: Don't just write OK here!
 			write( stream, CRLF ); // FIXME: Do we need CRLF?
 
@@ -106,6 +108,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 			write( stream, CRLF );
 			stream.write( response.contentBytes() );
+			stream.flush();
 		}
 		catch( final IOException e ) {
 			// FIXME: Actually handle this exception
