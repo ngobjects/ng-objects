@@ -70,16 +70,12 @@ public class NGAdaptorRaw extends NGAdaptor {
 		@Override
 		public void run() {
 			try {
-				final InputStream inStream = _clientSocket.getInputStream();
-				final OutputStream outStream = _clientSocket.getOutputStream();
-
-				final NGRequest request = requestFromInputStream( inStream );
+				final NGRequest request = requestFromInputStream( _clientSocket.getInputStream() );
 				final NGResponse response = NGApplication.application().dispatchRequest( request );
 
-				writeResponseToStream( response, outStream );
+				writeResponseToStream( response, _clientSocket.getOutputStream() );
 
-				inStream.close();
-				outStream.close();
+				// Closing the socket also closes it's inputstream and outputstream
 				_clientSocket.close();
 			}
 			catch( final IOException e ) {
