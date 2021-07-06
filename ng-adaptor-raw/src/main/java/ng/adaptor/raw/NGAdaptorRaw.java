@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 		catch( final Exception e ) {
 			// FIXME: Actually handle this exception
 			e.printStackTrace();
+			throw new RuntimeException( e );
 		}
 	}
 
@@ -62,6 +64,9 @@ public class NGAdaptorRaw extends NGAdaptor {
 	 * FIXME: We're currently writing directly to the stream. Some sort of buffered writing would probably be more appropriate
 	 */
 	private static void writeResponseToStream( final NGResponse response, final OutputStream stream ) {
+		Objects.requireNonNull( response );
+		Objects.requireNonNull( stream );
+
 		try {
 			write( stream, response.httpVersion() + " " + response.status() + " OK" ); // FIXME: Don't just write OK here!
 			write( stream, CRLF ); // FIXME: Do we need CRLF?
@@ -84,6 +89,9 @@ public class NGAdaptorRaw extends NGAdaptor {
 	}
 
 	private static void write( OutputStream stream, final String string ) {
+		Objects.requireNonNull( stream );
+		Objects.requireNonNull( string );
+
 		try {
 			stream.write( string.getBytes( StandardCharsets.UTF_8 ) );
 		}
@@ -97,6 +105,8 @@ public class NGAdaptorRaw extends NGAdaptor {
 	 * @returns An NGRequest parsed from the InputStream
 	 */
 	private static NGRequest requestFromInputStream( final InputStream stream ) {
+		Objects.requireNonNull( stream );
+
 		try {
 			final BufferedReader in = new BufferedReader( new InputStreamReader( stream ) );
 
@@ -125,7 +135,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 					// FIXME: Handle multiple header values
 					if( colonIndex > -1 ) {
 						final String headerName = line.substring( 0, colonIndex );
-						final String headerValueString = line.substring( colonIndex ).trim(); // FIXME: Not sure if trimming is the right thing to do here
+						final String headerValueString = line.substring( colonIndex + 1 ).trim(); // FIXME: Not sure if trimming is the right thing to do here
 
 						headers.put( headerName, Arrays.asList( headerValueString ) );
 					}
