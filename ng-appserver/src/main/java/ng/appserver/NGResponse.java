@@ -6,7 +6,8 @@ import java.nio.charset.StandardCharsets;
  * FIXME:
  * Need to decide what to do about responses of different types.
  * Is a string response the same type as a binary response or a streaming response, even?
- * Are responses even mutable?
+ *
+ * Are responses even mutable? I think not. It's mutable right now, but a mutable response should possibly be a different structure or a builder
  */
 
 public class NGResponse extends NGMessage implements NGActionResults {
