@@ -47,9 +47,10 @@ public class NGRequest extends NGMessage {
 		_method = method;
 	}
 
-	public NGRequest( final String method, final String uri, final Map<String,List<String>> headers, final byte[] content ) {
+	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String,List<String>> headers, final byte[] content ) {
 		setMethod( method );
 		setURI( uri );
+		setHttpVersion( httpVersion );
 		setHeaders( headers );
 		_content = content;
 	}
