@@ -26,11 +26,11 @@ public class NGUtils {
 
 			return Optional.of( resourceAsStream.readAllBytes() );
 		}
-		catch( IOException e ) {
+		catch( final IOException e ) {
 			throw new RuntimeException( e );
 		}
 	}
-	
+
 	public static String resourcePath( final String folderName, final String resourcePath ) {
 		return "/" + folderName + "/" + resourcePath;
 	}
