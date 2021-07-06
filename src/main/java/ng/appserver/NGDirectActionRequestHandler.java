@@ -7,14 +7,14 @@ import java.util.Optional;
 import ng.appserver.privates.NGParsedURI;
 
 /**
- * FIXME: Currently requires the full class name to be specified. 
+ * FIXME: Currently requires the full class name to be specified.
  */
 
 public class NGDirectActionRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
-		NGParsedURI parsedURI = NGParsedURI.of( request.uri() );
+		final NGParsedURI parsedURI = NGParsedURI.of( request.uri() );
 
 		final Optional<String> directActionClassName = parsedURI.elementAt( 1 );
 
@@ -25,7 +25,7 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 		final Optional<String> directActionMethodName = parsedURI.elementAt( 2 );
 
 		if( directActionMethodName.isEmpty() ) {
-			return new NGResponse( "No direct action class name specified", 404 );
+			return new NGResponse( "No direct action method name specified", 404 );
 		}
 
 		try {
