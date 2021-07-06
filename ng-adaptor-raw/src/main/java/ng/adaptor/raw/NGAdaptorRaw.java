@@ -34,7 +34,8 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 	private static final String CRLF = "\r\n";
 	private static Logger logger = LoggerFactory.getLogger( NGAdaptorRaw.class );
-	private static LongAdder r = new LongAdder();
+
+	private static LongAdder numberOfRequestsServed = new LongAdder();
 
 	@Override
 	public void start() {
@@ -47,8 +48,8 @@ public class NGAdaptorRaw extends NGAdaptor {
 			while( true ) {
 				final Socket clientSocket = serverSocket.accept();
 				es.execute( new WorkerThread( clientSocket ) );
-				System.out.println( r );
-				r.increment();
+				numberOfRequestsServed.increment();
+				logger.info( "Served requests: {}", numberOfRequestsServed );
 			}
 		}
 		catch( final Exception e ) {
@@ -56,7 +57,6 @@ public class NGAdaptorRaw extends NGAdaptor {
 			e.printStackTrace();
 			throw new RuntimeException( e );
 		}
-
 	}
 
 	public static class WorkerThread implements Runnable {
