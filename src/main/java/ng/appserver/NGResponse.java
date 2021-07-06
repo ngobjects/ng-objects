@@ -26,12 +26,6 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 */
 	private byte[] _bytes = new byte[] {};
 
-	/**
-	 * FIXME: Probably don't want to populate this with an empty map at the start?
-	 * FIXME: Thread safety!
-	 */
-	private Map<String,List<String>> _headers = new HashMap<>();
-
 	public NGResponse() {
 		setStatus( 200 );
 	}
@@ -86,21 +80,5 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	@Override
 	public NGResponse generateResponse() {
 		return this;
-	}
-	
-	public Map<String,List<String>> headers() {
-		return _headers;
-	}
-	
-	public void setHeader( final String key, final String value ) {
-		List<String> list = _headers.get( key );
-		
-		// FIXME: This implicitly mutable thing is... not good
-		if( list == null ) {
-			list = new ArrayList<>();
-			_headers.put( key, list );
-		}
-		
-		list.add( value );
 	}
 }

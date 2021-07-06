@@ -12,25 +12,22 @@ public class NGRequest extends NGMessage {
 	/**
 	 * FIXME: Shouldn't this really be an enum, or do we need to support arbitrary methods?
 	 */
-	public String _method;
+	private String _method;
 
 	/**
 	 * The URI being acessed
 	 */
-	public String _uri;
-	
-	/**
-	 * FIXME: Should the value actually be a list of Strings? 
-	 */
-	public Map<String,List<String>> _headers;
+	private String _uri;
 
 	/**
 	 * FIXME: Do we want to store this? Does parsing happen at the adaptor level or here?
 	 */
-	public Map<String,String> _formValues;
-	
+	private Map<String,String> _formValues;
+
 	/**
 	 * The requests's content 
+	 * 
+	 * FIXME: Should this be a byte array? I'm thinking no.
 	 */
 	public byte[] _content;
 
@@ -42,10 +39,18 @@ public class NGRequest extends NGMessage {
 		_uri = uri;
 	}
 
-	public NGRequest( final String method, final String uri, final Map<String,List<String>> headers, final byte[] content ) {
+	public String method() {
+		return _method;
+	}
+
+	public void setMethod( final String method ) {
 		_method = method;
-		_uri = uri;
-		_headers = headers;
+	}
+
+	public NGRequest( final String method, final String uri, final Map<String,List<String>> headers, final byte[] content ) {
+		setMethod( method );
+		setURI( uri );
+		setHeaders( headers );
 		_content = content;
 	}
 }
