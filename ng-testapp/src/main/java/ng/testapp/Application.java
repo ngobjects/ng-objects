@@ -22,11 +22,11 @@ public class Application extends NGApplication {
 
 	@Override
 	public NGResponse dispatchRequest( NGRequest request ) {
+		logger.info( "uri {} ", request.uri() );
 		logger.info( "method {} ", request.method() );
 		logger.info( "headers {} ", request.headers() );
 		logger.info( "formValues {} ", request.formValues() );
 		logger.info( "contentString {}", request.contentString() );
-		final NGResponse response = super.dispatchRequest( request );
-		return response;
+		return super.dispatchRequest( request );
 	}
 }

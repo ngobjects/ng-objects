@@ -142,18 +142,20 @@ public class NGAdaptorRaw extends NGAdaptor {
 		Objects.requireNonNull( stream );
 
 		try {
+			// FIXME: We should not be using a BufferedReader. Those *suck*
 			final BufferedReader in = new BufferedReader( new InputStreamReader( stream ) );
 
 			String method = null;
 			String uri = null;
 			String httpVersion = null;
 			final Map<String, List<String>> headers = new HashMap<>();
-			final byte[] content = null;
-			String line;
+			byte[] content = null;
 
 			int currentLineNumber = 0;
 
-			while( (line = in.readLine()) != null ) {
+			String line = in.readLine();
+
+			while( line.length() > 0 ) {
 				logger.info( "Parsing request line {} : {}", currentLineNumber, line );
 
 				if( currentLineNumber++ == 0 ) {
@@ -174,13 +176,31 @@ public class NGAdaptorRaw extends NGAdaptor {
 						headers.put( headerName, Arrays.asList( headerValueString ) );
 					}
 				}
+				line = in.readLine();
 
-				// FIXME: Handle the request content
-				// An empty line should denote the end of the header section and the beginning of the content section
-				if( line.isEmpty() ) {
-					break;
-				}
+				// An empty line denotes the end of the header section and the beginning of the content section
+				//				if( line.isEmpty() ) {
+				//					System.out.println( "Found the empty line!" );
+				//					break;
+				//				}
 			}
+
+			// FIXME: Non-string request content is not just for losers. But for testing purposes, we're just handling string requests.
+			//			String bodyLine = in.readLine();
+			final StringBuilder bodyBuilder = new StringBuilder();
+
+			//			while( bodyLine != null && bodyLine.length() > 0 ) {
+			//				System.out.println( "Wha?" );
+			//				System.out.println( bodyLine );
+			//				bodyBuilder.append( bodyLine );
+			//				bodyBuilder.append( "\n" );
+			//				bodyLine = in.readLine();
+			//				System.out.println( "content: " + line );
+			//				System.out.println( "smu: " + line.length() );
+			//			}
+
+			// Not encoding here. Should be based on a setting
+			content = bodyBuilder.toString().getBytes( StandardCharsets.UTF_8 );
 
 			return new NGRequest( method, uri, httpVersion, headers, content );
 		}
