@@ -6,7 +6,7 @@
 	<artifactId>ng-testapp</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>nb-testapp</name>
-
+	<packaging>ngapplication</packaging>
 	<build>
 		<plugins>
 			<plugin>
@@ -16,6 +16,12 @@
 					<source>11</source>
 					<target>11</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>is.rebbi</groupId>
+				<artifactId>ng-maven-plugin</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<extensions>true</extensions>
 			</plugin>
 		</plugins>
 	</build>
