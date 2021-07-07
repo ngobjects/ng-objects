@@ -23,6 +23,7 @@ public class Application extends NGApplication {
 	@Override
 	public NGResponse dispatchRequest( NGRequest request ) {
 		logger.info( "Headers {} ", request.headers() );
+		logger.info( "Content: " + request.contentString() );
 		final NGResponse response = super.dispatchRequest( request );
 		return response;
 	}
