@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class NGRequest extends NGMessage {
 	/**
 	 * FIXME: Do we want to store this? Does parsing happen at the adaptor level or here?
 	 */
-	private Map<String, List<String>> _formValues;
+	private final Map<String, List<String>> _formValues;
 
 	/**
 	 * The requests's content
@@ -57,5 +58,8 @@ public class NGRequest extends NGMessage {
 		setHttpVersion( httpVersion );
 		setHeaders( headers );
 		_content = content;
+
+		// FIXME: We're going to have to do some work here (or rather, not here, but lazily done in formValues()) to parse the form values based on the request's type/encoding etc.
+		_formValues = Collections.emptyMap();
 	}
 }
