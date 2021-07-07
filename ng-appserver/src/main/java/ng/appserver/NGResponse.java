@@ -1,7 +1,5 @@
 package ng.appserver;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * FIXME:
  * Need to decide what to do about responses of different types.
@@ -17,12 +15,6 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 */
 	private int _status;
 
-	/**
-	 * FIXME: The response's content should probably be encapsulated by a stream.
-	 * FIXME: Do we actually want to initialize this to an empty byte array?
-	 */
-	private byte[] _contentBytes = new byte[] {};
-
 	public NGResponse() {
 		setStatus( 200 );
 	}
@@ -37,21 +29,6 @@ public class NGResponse extends NGMessage implements NGActionResults {
 		setStatus( status );
 	}
 
-	public String contentString() {
-		return new String( contentBytes(), StandardCharsets.UTF_8 );
-	}
-
-	public void setContentString( final String contentString ) {
-		setContentBytes( contentString.getBytes( StandardCharsets.UTF_8 ) );
-	}
-
-	/**
-	 * FIXME: Extremely inefficient
-	 */
-	public void appendContentString( final String stringToAppend ) {
-		setContentString( contentString().concat( stringToAppend ) );
-	}
-
 	public int status() {
 		return _status;
 	}
@@ -61,17 +38,6 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 */
 	private void setStatus( final int status ) {
 		_status = status;
-	}
-
-	private void setContentBytes( final byte[] contentBytes ) {
-		_contentBytes = contentBytes;
-	}
-
-	/**
-	 * FIXME: This should handle more than just bytes
-	 */
-	public byte[] contentBytes() {
-		return _contentBytes;
 	}
 
 	@Override
