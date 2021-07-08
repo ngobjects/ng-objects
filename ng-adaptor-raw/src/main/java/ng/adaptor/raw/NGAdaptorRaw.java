@@ -193,13 +193,18 @@ public class NGAdaptorRaw extends NGAdaptor {
 			if( contentLengthHeaderValues != null ) {
 				final int contentLength = Integer.parseInt( contentLengthHeaderValues.get( 0 ) );
 
-				// FIXME: Non-string request content is not just for losers. But for testing purposes, we're just handling string requests.
-				//			String bodyLine = in.readLine();
-				final char[] contentBuffer = new char[contentLength];
-				in.read( contentBuffer, 0, contentLength );
+				if( contentLength > 0 ) {
+					// FIXME: Handle non-string request content
+					//			String bodyLine = in.readLine();
+					final char[] contentBuffer = new char[contentLength];
+					in.read( contentBuffer, 0, contentLength );
 
-				// Not encoding here. Should be based on a setting
-				content = String.valueOf( contentBuffer ).getBytes( StandardCharsets.UTF_8 );
+					// Not encoding here. Should be based on a setting
+					content = String.valueOf( contentBuffer ).getBytes( StandardCharsets.UTF_8 );
+				}
+				else {
+					content = new byte[0];
+				}
 			}
 			else {
 				// FIXME
