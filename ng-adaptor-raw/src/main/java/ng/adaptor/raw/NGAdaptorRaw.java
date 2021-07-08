@@ -143,7 +143,8 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 		try {
 			// FIXME: We should not be using a BufferedReader. Those *suck*
-			final BufferedReader in = new BufferedReader( new InputStreamReader( stream ) );
+			// FIXME: This hardcoded encoding is really hardcoded, isn't it?
+			final BufferedReader in = new BufferedReader( new InputStreamReader( stream, StandardCharsets.UTF_8 ) );
 
 			String method = null;
 			String uri = null;
@@ -170,37 +171,37 @@ public class NGAdaptorRaw extends NGAdaptor {
 					// FIXME: Handle multiple same-name headers
 					// FIXME: Handle multiple header values
 					if( colonIndex > -1 ) {
-						final String headerName = line.substring( 0, colonIndex );
+						String headerName = line.substring( 0, colonIndex );
+						headerName = headerName.toLowerCase(); // FIXME: We want headers to be case preserving. This is currently a hack.
+
 						final String headerValueString = line.substring( colonIndex + 1 ).trim(); // FIXME: Not sure if trimming is the right thing to do here
 
 						headers.put( headerName, Arrays.asList( headerValueString ) );
 					}
 				}
-				line = in.readLine();
 
-				// An empty line denotes the end of the header section and the beginning of the content section
-				//				if( line.isEmpty() ) {
-				//					System.out.println( "Found the empty line!" );
-				//					break;
-				//				}
+				line = in.readLine();
 			}
 
-			// FIXME: Non-string request content is not just for losers. But for testing purposes, we're just handling string requests.
-			//			String bodyLine = in.readLine();
-			final StringBuilder bodyBuilder = new StringBuilder();
+			// We have to know the value of the content-length header to parse the content
+			final List<String> contentLengthHeaderValues = headers.get( "content-length" );
 
-			//			while( bodyLine != null && bodyLine.length() > 0 ) {
-			//				System.out.println( "Wha?" );
-			//				System.out.println( bodyLine );
-			//				bodyBuilder.append( bodyLine );
-			//				bodyBuilder.append( "\n" );
-			//				bodyLine = in.readLine();
-			//				System.out.println( "content: " + line );
-			//				System.out.println( "smu: " + line.length() );
-			//			}
+			if( contentLengthHeaderValues != null ) {
+				final int contentLength = Integer.parseInt( contentLengthHeaderValues.get( 0 ) );
 
-			// Not encoding here. Should be based on a setting
-			content = bodyBuilder.toString().getBytes( StandardCharsets.UTF_8 );
+				// FIXME: Non-string request content is not just for losers. But for testing purposes, we're just handling string requests.
+				//			String bodyLine = in.readLine();
+				final char[] contentBuffer = new char[contentLength];
+				in.read( contentBuffer, 0, contentLength );
+
+				// Not encoding here. Should be based on a setting
+				content = String.valueOf( contentBuffer ).getBytes( StandardCharsets.UTF_8 );
+			}
+			else {
+				// FIXME
+				logger.warn( "I didn't find a content-length header, so I'm not parsing any content. Just so you know it" );
+				content = new byte[0];
+			}
 
 			return new NGRequest( method, uri, httpVersion, headers, content );
 		}
