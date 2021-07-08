@@ -25,13 +25,6 @@ public class NGRequest extends NGMessage {
 	 */
 	private final Map<String, List<String>> _formValues;
 
-	/**
-	 * The requests's content
-	 *
-	 * FIXME: Should this be a byte array? I'm thinking no.
-	 */
-	public byte[] _content;
-
 	public Map<String, List<String>> formValues() {
 		return _formValues;
 	}
@@ -52,12 +45,12 @@ public class NGRequest extends NGMessage {
 		_method = method;
 	}
 
-	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] content ) {
+	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] contentBytes ) {
 		setMethod( method );
 		setURI( uri );
 		setHttpVersion( httpVersion );
 		setHeaders( headers );
-		_content = content;
+		setContentBytes( contentBytes );
 
 		// FIXME: We're going to have to do some work here (or rather, not here, but lazily done in formValues()) to parse the form values based on the request's type/encoding etc.
 		_formValues = Collections.emptyMap();
