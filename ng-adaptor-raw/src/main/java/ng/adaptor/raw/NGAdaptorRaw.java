@@ -29,6 +29,10 @@ import ng.appserver.NGResponse;
 
 /**
  * Experimental raw socket adaptor
+ *
+ * This document will be our best friend throughout this journey:
+ *
+ * https://www.ietf.org/rfc/rfc2616.txt
  */
 
 public class NGAdaptorRaw extends NGAdaptor {
@@ -174,8 +178,8 @@ public class NGAdaptorRaw extends NGAdaptor {
 						String headerName = line.substring( 0, colonIndex );
 						headerName = headerName.toLowerCase(); // FIXME: We want headers to be case preserving. This is currently a hack.
 
-						final String headerValueString = line.substring( colonIndex + 1 ).trim(); // FIXME: Not sure if trimming is the right thing to do here
-
+						String headerValueString = line.substring( colonIndex + 1 ).trim();
+						headerValueString = headerValueString.trim(); // RFC 2616 tells us leading/trailing whitespace is insignificant.
 						headers.put( headerName, Arrays.asList( headerValueString ) );
 					}
 				}
