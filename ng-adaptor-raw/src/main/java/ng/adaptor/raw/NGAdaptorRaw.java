@@ -63,7 +63,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 				}
 			}
 			catch( final Exception e ) {
-				// FIXME: Actually handle this exception
+				// FIXME: Actually handle this exception. We're going to have to implement the equivalent of an NSForwardException to return an error page.
 				e.printStackTrace();
 				throw new RuntimeException( e );
 			}
