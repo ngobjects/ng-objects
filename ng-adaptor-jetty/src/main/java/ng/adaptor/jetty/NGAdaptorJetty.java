@@ -3,7 +3,7 @@ package ng.adaptor.jetty;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -19,10 +19,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.servlet.AsyncContext;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.WriteListener;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -88,35 +85,46 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final NGRequest woRequest = servletRequestToNGRequest( servletRequest );
 			final NGResponse ngResponse = NGApplication.application().dispatchRequest( woRequest );
 
-			// FIXME Handles a String response only
-			final ByteBuffer content = ByteBuffer.wrap( ngResponse.contentBytes() );
+			servletResponse.setStatus( ngResponse.status() );
 
+			for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
+				for( final String headerValue : entry.getValue() ) {
+					servletResponse.addHeader( entry.getKey(), headerValue );
+				}
+			}
+
+			try( final OutputStream out = servletResponse.getOutputStream()) {
+				out.write( ngResponse.contentBytes() );
+			}
+
+			// FIXME Handles a String response only
+			/*
+			final ByteBuffer content = ByteBuffer.wrap( ngResponse.contentBytes() );
+			
 			final AsyncContext async = servletRequest.startAsync();
 			final ServletOutputStream out = servletResponse.getOutputStream();
-
+			
 			out.setWriteListener( new WriteListener() {
 				@Override
 				public void onWritePossible() throws IOException {
 					while( out.isReady() ) {
 						if( !content.hasRemaining() ) {
 							servletResponse.setStatus( ngResponse.status() );
-
+			
 							for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
 								for( final String headerValue : entry.getValue() ) {
 									servletResponse.addHeader( entry.getKey(), headerValue );
 								}
 							}
-
+			
 							async.complete();
 							return;
 						}
 						out.write( content.get() );
 					}
 				}
-
-				/**
+			
 				 * FIXME: I'm going to assume we have to handle this better
-				 */
 				@Override
 				public void onError( Throwable t ) {
 					logger.error( "Error" );
@@ -124,6 +132,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 					async.complete();
 				}
 			} );
+			*/
 		}
 	}
 
