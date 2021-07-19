@@ -3,6 +3,7 @@ package ng.appserver;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents a request entering the system
@@ -46,6 +47,12 @@ public class NGRequest extends NGMessage {
 	}
 
 	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] contentBytes ) {
+		Objects.requireNonNull( method );
+		Objects.requireNonNull( uri );
+		Objects.requireNonNull( httpVersion );
+		Objects.requireNonNull( headers );
+		Objects.requireNonNull( contentBytes );
+
 		setMethod( method );
 		setURI( uri );
 		setHttpVersion( httpVersion );
