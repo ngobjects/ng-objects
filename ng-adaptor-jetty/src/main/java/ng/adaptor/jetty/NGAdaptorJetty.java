@@ -51,7 +51,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final ServletHandler servletHandler = new ServletHandler();
 		server.setHandler( servletHandler );
 
-		servletHandler.addServletWithMapping( AsyncServlet.class, "/" );
+		servletHandler.addServletWithMapping( NGServlet.class, "/" );
 
 		try {
 			server.start();
@@ -67,7 +67,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		server.stop();
 	}
 
-	public static class AsyncServlet extends HttpServlet {
+	public static class NGServlet extends HttpServlet {
 
 		@Override
 		protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
@@ -100,30 +100,30 @@ public class NGAdaptorJetty extends NGAdaptor {
 			// FIXME Handles a String response only
 			/*
 			final ByteBuffer content = ByteBuffer.wrap( ngResponse.contentBytes() );
-			
+
 			final AsyncContext async = servletRequest.startAsync();
 			final ServletOutputStream out = servletResponse.getOutputStream();
-			
+
 			out.setWriteListener( new WriteListener() {
 				@Override
 				public void onWritePossible() throws IOException {
 					while( out.isReady() ) {
 						if( !content.hasRemaining() ) {
 							servletResponse.setStatus( ngResponse.status() );
-			
+
 							for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
 								for( final String headerValue : entry.getValue() ) {
 									servletResponse.addHeader( entry.getKey(), headerValue );
 								}
 							}
-			
+
 							async.complete();
 							return;
 						}
 						out.write( content.get() );
 					}
 				}
-			
+
 				 * FIXME: I'm going to assume we have to handle this better
 				@Override
 				public void onError( Throwable t ) {
