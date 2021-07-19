@@ -130,7 +130,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 	 * FIXME: WE need to read the request's content as well
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest servletRequest ) {
-		final NGRequest request = new NGRequest( servletRequest.getMethod(), servletRequest.getRequestURI(), servletRequest.getProtocol(), headerMap( servletRequest ), null );
+		final NGRequest request = new NGRequest( servletRequest.getMethod(), servletRequest.getRequestURI(), servletRequest.getProtocol(), headerMap( servletRequest ), new byte[0] );
+		// FIXME: We should not be setting the requests's content to the empty array
 		return request;
 	}
 
