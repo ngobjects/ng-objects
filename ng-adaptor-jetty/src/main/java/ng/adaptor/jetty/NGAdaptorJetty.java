@@ -2,6 +2,8 @@ package ng.adaptor.jetty;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,6 +132,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 	 * FIXME: WE need to read the request's content as well
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest servletRequest ) {
+		System.out.println( servletRequest );
 		final NGRequest request = new NGRequest( servletRequest.getMethod(), servletRequest.getRequestURI(), servletRequest.getProtocol(), headerMap( servletRequest ), new byte[0] );
 		// FIXME: We should not be setting the requests's content to the empty array
 		return request;
@@ -140,17 +143,21 @@ public class NGAdaptorJetty extends NGAdaptor {
 	 */
 	private static Map<String, List<String>> headerMap( final HttpServletRequest sr ) {
 		final Map<String, List<String>> map = new HashMap<>();
-		/*
 
-		while( sr.getHeaderNames().hasMoreElements() ) {
-			final String headerName = sr.getHeaderNames().nextElement();
-			sr.getHeaderNames();
+		final Enumeration<String> headerNamesEnumeration = sr.getHeaderNames();
+
+		while( headerNamesEnumeration.hasMoreElements() ) {
+			final String headerName = headerNamesEnumeration.nextElement();
+			final List<String> values = new ArrayList<>();
+			map.put( headerName, values );
+
+			final Enumeration<String> headerValuesEnumeration = sr.getHeaders( headerName );
+
+			while( headerValuesEnumeration.hasMoreElements() ) {
+				values.add( headerValuesEnumeration.nextElement() );
+			}
 		}
 
-		while( enumeration.hasMoreElements() ) {
-			map.get( enumeration.nextElement() )
-		}
-		*/
 		return map;
 	}
 }
