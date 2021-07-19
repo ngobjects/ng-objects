@@ -94,19 +94,18 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final AsyncContext async = servletRequest.startAsync();
 			final ServletOutputStream out = servletResponse.getOutputStream();
 
-			servletResponse.setStatus( ngResponse.status() );
-
-			for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
-				for( final String headerValue : entry.getValue() ) {
-					servletResponse.addHeader( entry.getKey(), headerValue );
-				}
-			}
-
 			out.setWriteListener( new WriteListener() {
 				@Override
 				public void onWritePossible() throws IOException {
 					while( out.isReady() ) {
 						if( !content.hasRemaining() ) {
+							servletResponse.setStatus( ngResponse.status() );
+
+							for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
+								for( final String headerValue : entry.getValue() ) {
+									servletResponse.addHeader( entry.getKey(), headerValue );
+								}
+							}
 
 							async.complete();
 							return;
