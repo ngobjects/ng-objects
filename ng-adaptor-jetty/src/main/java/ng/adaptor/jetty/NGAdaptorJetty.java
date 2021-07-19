@@ -1,6 +1,8 @@
 package ng.adaptor.jetty;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -132,9 +134,16 @@ public class NGAdaptorJetty extends NGAdaptor {
 	 * FIXME: WE need to read the request's content as well
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest servletRequest ) {
-		System.out.println( servletRequest );
-		final NGRequest request = new NGRequest( servletRequest.getMethod(), servletRequest.getRequestURI(), servletRequest.getProtocol(), headerMap( servletRequest ), new byte[0] );
-		// FIXME: We should not be setting the requests's content to the empty array
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		try( final InputStream is = servletRequest.getInputStream()) {
+			is.transferTo( bos );
+		}
+		catch( final IOException e ) {
+			e.printStackTrace();
+		}
+
+		final NGRequest request = new NGRequest( servletRequest.getMethod(), servletRequest.getRequestURI(), servletRequest.getProtocol(), headerMap( servletRequest ), bos.toByteArray() );
 		return request;
 	}
 
