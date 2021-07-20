@@ -36,8 +36,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 	@Override
 	public void start() {
-		final int minThreads = 1;
-		final int maxThreads = 1;
+		final int minThreads = 8;
+		final int maxThreads = 32;
 		final int idleTimeout = 2000; // Specified in milliseconds
 		final int port = 1200;
 
