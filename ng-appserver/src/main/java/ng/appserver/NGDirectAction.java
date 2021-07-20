@@ -26,11 +26,11 @@ public class NGDirectAction {
 	}
 
 	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass ) {
-		return NGApplication.application().pageWithName( null, context() );
+		return NGApplication.application().pageWithName( componentClass, context() );
 	}
 
 	/**
-	 * Invokes the method with the given name + "Action" and returns the result. 
+	 * Invokes the method with the given name + "Action" and returns the result.
 	 */
 	public NGActionResults performActionNamed( final String directActionName ) {
 		try {
@@ -38,7 +38,7 @@ public class NGDirectAction {
 			return (NGActionResults)method.invoke( this, null );
 		}
 		// FIXME: All this error handling needs to be properly inspected.
-		catch( NoSuchMethodException e ) {
+		catch( final NoSuchMethodException e ) {
 			return new NGResponse( "No direct action method called " + directActionName, 404 );
 		}
 		catch( SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {

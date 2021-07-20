@@ -31,11 +31,15 @@ public class NGComponent extends NGElement implements NGActionResults {
 		_context = context;
 	}
 
+	public NGContext context() {
+		return _context;
+	}
+
 	@Override
 	public NGResponse generateResponse() {
 		final NGResponse response = new NGResponse();
 		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding
-		appendToResponse( response, null );
+		appendToResponse( response, context() );
 		return response;
 	}
 
