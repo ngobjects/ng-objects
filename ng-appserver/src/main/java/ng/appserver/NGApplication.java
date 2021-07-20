@@ -23,10 +23,10 @@ public class NGApplication {
 	/**
 	 * FIXME: Needs to be thread safe?
 	 */
-	private Map<String, NGRequestHandler> _requestHandlers = new HashMap<>();
+	private final Map<String, NGRequestHandler> _requestHandlers = new HashMap<>();
 
 	/**
-	 * FIXME: Not sure if this method should actually be provided 
+	 * FIXME: Not sure if this method should actually be provided
 	 */
 	public static void main( final String[] args ) {
 		main( args, NGApplication.class );
@@ -35,7 +35,7 @@ public class NGApplication {
 	public static void main( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		try {
 			_application = applicationClass.getDeclaredConstructor().newInstance();
-			
+
 			_application._resourceManager = new NGResourceManager();
 			_application._sessionStore = new NGServerSessionStore();
 
@@ -45,7 +45,7 @@ public class NGApplication {
 
 			_application.run();
 		}
-		catch( Exception e ) {
+		catch( final Exception e ) {
 			e.printStackTrace();
 			System.exit( -1 );
 		}
@@ -59,6 +59,15 @@ public class NGApplication {
 			// FIXME: Handle the error
 			throw new RuntimeException( e );
 		}
+	}
+
+	/**
+	 * @return true if the application is in development mode.
+	 *
+	 * FIXME: This is not *ahem* the final implementation
+	 */
+	public static boolean isDevelopmentMode() {
+		return "hugi".equals( System.getProperty( "user.name" ) );
 	}
 
 	public NGSessionStore sessionStore() {
@@ -78,12 +87,12 @@ public class NGApplication {
 			// FIXME: Handle the error
 			e.printStackTrace();
 			System.exit( -1 );
-			return null;  // wat?
+			return null; // wat?
 		}
 	}
-	
+
 	/**
-	 * FIXME: We don't really want to return anything if this hasn't been set. Only set now for testing 
+	 * FIXME: We don't really want to return anything if this hasn't been set. Only set now for testing
 	 */
 	public String adaptorClassName() {
 		return "ng.adaptor.jetty.NGAdaptorJetty";
@@ -93,7 +102,7 @@ public class NGApplication {
 		try {
 			createAdaptor().start();
 		}
-		catch( Exception e ) {
+		catch( final Exception e ) {
 			throw new RuntimeException( e );
 		}
 	}
