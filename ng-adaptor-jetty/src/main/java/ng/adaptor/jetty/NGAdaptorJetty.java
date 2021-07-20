@@ -87,6 +87,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			servletResponse.setStatus( ngResponse.status() );
 
+			// FIXME: This header should have been set in the NGResponse
+			servletResponse.setHeader( "content-length", String.valueOf( ngResponse.contentBytes().length ) );
+
 			for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
 				for( final String headerValue : entry.getValue() ) {
 					servletResponse.addHeader( entry.getKey(), headerValue );
