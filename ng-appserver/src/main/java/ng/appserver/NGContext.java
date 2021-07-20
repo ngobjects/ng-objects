@@ -5,6 +5,10 @@ public class NGContext {
 	private final NGRequest _request;
 	private NGResponse _response;
 	private NGSession _session;
+
+	/**
+	 * The component currently being processed by this context
+	 */
 	private NGComponent _currentComponent;
 
 	public NGContext( final NGRequest request ) {
@@ -25,5 +29,9 @@ public class NGContext {
 
 	public NGComponent component() {
 		return _currentComponent;
+	}
+
+	public void setCurrentComponent( NGComponent component ) {
+		_currentComponent = component;
 	}
 }
