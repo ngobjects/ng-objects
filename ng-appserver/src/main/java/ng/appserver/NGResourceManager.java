@@ -47,8 +47,6 @@ public class NGResourceManager {
 				resource = NGUtils.readJavaResource( actualResourcePath );
 				_resourceCache.put( resourceName, resource );
 			}
-
-			return resource;
 		}
 		else {
 			resource = NGUtils.readJavaResource( actualResourcePath );
