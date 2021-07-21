@@ -1,6 +1,7 @@
 package ng.appserver;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,6 +34,8 @@ public class NGResourceManager {
 	}
 
 	public Optional<byte[]> bytesForResourceNamed( final String resourceName ) {
+		Objects.requireNonNull( resourceName );
+
 		final String actualResourcePath = NGUtils.resourcePath( "app-resources", resourceName );
 
 		logger.info( "Loading resource {} from {}. Caching: {}", resourceName, actualResourcePath, useCache() );
@@ -63,6 +66,8 @@ public class NGResourceManager {
 	 * FIXME: I don't feel this belongs here. URL generation and resource management are separate things
 	 */
 	public Optional<String> urlForResourceNamed( final String resourceName ) {
+		Objects.requireNonNull( resourceName );
+
 		return Optional.of( "/wr/" + resourceName );
 	}
 }
