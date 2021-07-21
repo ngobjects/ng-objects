@@ -24,14 +24,18 @@ public class NGResourceManager {
 	 */
 	private final Map<String, Optional<byte[]>> _resourceCache = new ConcurrentHashMap<>();
 
+	/**
+	 * Specifies if we want to use the resources cache.
+	 * FIXME: Current implementation is for testing only
+	 */
 	private boolean useCache() {
-		return false;
+		return !NGApplication.isDevelopmentMode();
 	}
 
 	public Optional<byte[]> bytesForResourceNamed( final String resourceName ) {
 		final String actualResourcePath = NGUtils.resourcePath( "app-resources", resourceName );
 
-		logger.info( "Loading resource bytes {} from {}", resourceName, actualResourcePath );
+		logger.info( "Loading resource {} from {}. Caching: {}", resourceName, actualResourcePath, useCache() );
 
 		Optional<byte[]> resource;
 
