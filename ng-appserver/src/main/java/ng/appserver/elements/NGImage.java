@@ -2,7 +2,9 @@ package ng.appserver.elements;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
+import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
@@ -25,7 +27,13 @@ public class NGImage extends NGDynamicElement {
 		Objects.requireNonNull( context );
 		final NGComponent component = context.component();
 		final String filename = (String)_filenameAssociation.valueInComponent( component );
+		final Optional<String> relativeURL = NGApplication.application().resourceManager().urlForResourceNamed( filename );
 
-		response.appendContentString( String.format( "<img src=\"%s\" />", filename ) );
+		if( relativeURL.isPresent() ) {
+			response.appendContentString( String.format( "<img src=\"%s\" />", relativeURL.get() ) );
+		}
+		else {
+			response.appendContentString( String.format( "<img src=\"%s\" />", "ERROR_NOT_FOUND_" + filename ) );
+		}
 	}
 }
