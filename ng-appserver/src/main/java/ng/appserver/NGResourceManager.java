@@ -48,6 +48,7 @@ public class NGResourceManager {
 	 *
 	 * FIXME: Whoa, that's incomplete
 	 * FIXME: Determine if the resource exists first
+	 * FIXME: I don't feel this belongs here. URL generation and resource management are separate things
 	 */
 	public Optional<String> urlForResourceNamed( final String resourceName ) {
 		return Optional.of( "/wr/" + resourceName );
