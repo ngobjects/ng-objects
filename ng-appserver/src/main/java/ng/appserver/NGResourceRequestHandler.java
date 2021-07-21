@@ -25,10 +25,12 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 			return new NGResponse( "Resource '" + resourceName.get() + "' does not exist", 404 );
 		}
 
+		final String mimeType = "image/jpeg";
+
 		// FIXME: Detect and set the correct response headers
 		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );
-		//		response.setHeader( "content-disposition", "inline;filename=\"photo.jpg\"" );
-		//		response.setHeader( "Content-Type", "image/jpeg" );
+		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName.get() ) );
+		response.setHeader( "Content-Type", mimeType );
 		return response;
 	}
 }
