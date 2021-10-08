@@ -15,7 +15,7 @@ public interface NGKeyValueCoding {
 	public void takeValueForKey( Object value, String key );
 
 	public static class Utility {
-		public static Object valueForKeyPath( final Object object, final String keyPath ) {
+		public static Object valueForKey( final Object object, final String keyPath ) {
 			Objects.requireNonNull( keyPath );
 			try {
 				final Method method = object.getClass().getMethod( keyPath, new Class[] {} );
@@ -25,10 +25,5 @@ public interface NGKeyValueCoding {
 				throw new RuntimeException( e );
 			}
 		}
-	}
-
-	public static void main( String[] args ) {
-		final String s = "Hugi";
-		System.out.println( "Length: " + Utility.valueForKeyPath( s, "length" ) );
 	}
 }
