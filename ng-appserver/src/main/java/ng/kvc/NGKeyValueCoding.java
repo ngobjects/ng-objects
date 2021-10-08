@@ -5,10 +5,14 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
- * FIXME: This isn't even remoitely implemented
+ * FIXME: This isn't even remotely implemented
  */
 
-public class NGKeyValueCoding {
+public interface NGKeyValueCoding {
+
+	public Object valueForKey( String key );
+	
+	public void takeValueForKey( Object value, String key );
 
 	public static class Utility {
 		public static Object valueForKeyPath( final Object object, final String keyPath ) {
