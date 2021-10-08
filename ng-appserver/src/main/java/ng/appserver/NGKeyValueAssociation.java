@@ -12,6 +12,7 @@ public class NGKeyValueAssociation extends NGAssociation {
 
 	@Override
 	public Object valueInComponent( final NGComponent aComponent ) {
-		return NGKeyValueCoding.Utility.valueForKeyPath( aComponent, _keyPath );
+		// FIXME: We're probably going to want to use valueForKeyPath here // Hugi 2021-10-08 
+		return NGKeyValueCoding.Utility.valueForKey( aComponent, _keyPath );
 	}
 }
