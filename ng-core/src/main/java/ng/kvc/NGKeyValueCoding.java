@@ -4,10 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-/**
- * FIXME: This isn't even remotely implemented
- */
-
 public interface NGKeyValueCoding {
 
 	public Object valueForKey( String key );
