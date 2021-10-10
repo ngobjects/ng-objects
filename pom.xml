@@ -9,6 +9,7 @@
 	<packaging>pom</packaging>
 	<name>NGObjects reactor project</name>
 	<modules>
+		<module>ng-core</module>
 		<module>ng-adaptor-jetty</module>
 		<module>ng-adaptor-raw</module>
 		<module>ng-appserver</module>
