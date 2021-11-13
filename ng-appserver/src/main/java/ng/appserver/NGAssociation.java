@@ -20,10 +20,18 @@ public abstract class NGAssociation {
 	}
 
 	protected void _logPullValue( Object aValue, NGComponent aComponent ) {
-		logger.error( "Not implemented" );
+		logger.error( "Not implemented" ); // FIXME
 	}
 
 	protected void _logPushValue( Object aValue, NGComponent aComponent ) {
-		logger.error( "Not implemented" );
+		logger.error( "Not implemented" ); // FIXME
+	}
+
+	public void setDebugEnabledForBinding( String bindingName, String declarationName, String declarationType ) {
+		logger.error( "Not implemented" ); // FIXME
+	}
+
+	public void _setDebuggingEnabled( boolean b ) {
+		logger.error( "Not implemented" ); // FIXME
 	}
 }

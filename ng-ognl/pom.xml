@@ -6,6 +6,20 @@
 	<artifactId>ng-ognl</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>ng-ognl</name>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>17</source>
+					<target>17</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>is.rebbi</groupId>
