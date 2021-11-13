@@ -1,10 +1,10 @@
 package ng.appserver;
 
-public class NGConstantAssociation extends NGAssociation {
+public class NGConstantValueAssociation extends NGAssociation {
 
 	private final Object _value;
 
-	public NGConstantAssociation( final Object value ) {
+	public NGConstantValueAssociation( final Object value ) {
 		_value = value;
 	}
 
