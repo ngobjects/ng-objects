@@ -1,6 +1,11 @@
 package ng.appserver;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -20,6 +25,8 @@ public class NGApplication {
 
 	private NGResourceManager _resourceManager;
 
+	public static NGProperties _properties;
+
 	/**
 	 * FIXME: Needs to be thread safe?
 	 */
@@ -33,6 +40,16 @@ public class NGApplication {
 	}
 
 	public static void main( final String[] args, final Class<? extends NGApplication> applicationClass ) {
+		_properties = new NGProperties( args );
+
+		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
+		initLogging();
+
+		logger.info( "===== Parsed properties" );
+		logger.info( _properties._propertiesMapAsString() );
+
+		logger.info( "===== Starting application..." );
+
 		try {
 			_application = applicationClass.getDeclaredConstructor().newInstance();
 
@@ -143,5 +160,32 @@ public class NGApplication {
 
 	public NGContext createContextForRequest( NGRequest request ) {
 		return new NGContext( request );
+	}
+
+	private static void initLogging() {
+		final String outputPath = _properties.get( "WOOutputPath" );
+
+		if( outputPath != null ) {
+			// Archive the older logFile if it exists
+			final File outputFile = new File( outputPath );
+
+			if( outputFile.exists() ) {
+				final File oldOutputFile = new File( outputPath + "." + LocalDateTime.now() );
+				outputFile.renameTo( oldOutputFile );
+			}
+
+			try {
+				final PrintStream out = new PrintStream( new FileOutputStream( outputPath ) );
+				System.setOut( out );
+				System.setErr( out );
+				logger.info( "Redirected System.out and System.err to {}", outputPath );
+			}
+			catch( final FileNotFoundException e ) {
+				throw new RuntimeException( e );
+			}
+		}
+		else {
+			logger.info( "OutputPath not set. Using standard System.out and System.err" );
+		}
 	}
 }
