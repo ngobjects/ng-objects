@@ -7,9 +7,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Handles properties loading
+ */
+
 public class NGProperties {
 
-	private Map<String, String> _map;
+	/**
+	 * Keeps track of the final resolved properties.
+	 */
+	private Map<String, String> _resolvedPropertiesMap;
 
 	public NGProperties( final String[] args ) {
 		initWithArgs( args );
@@ -19,7 +26,7 @@ public class NGProperties {
 		Objects.requireNonNull( args );
 
 		System.out.println( "Initing properties with args: " + Arrays.asList( args ) );
-		_map = new HashMap<>();
+		_resolvedPropertiesMap = new HashMap<>();
 
 		for( int i = 0; i < args.length; i = i + 2 ) {
 			String key = args[i];
@@ -29,9 +36,9 @@ public class NGProperties {
 			}
 
 			final String value = args[i + 1];
-			_map.put( key, value );
+			_resolvedPropertiesMap.put( key, value );
 		}
-		System.out.println( "Parsed properties: " + _map );
+		System.out.println( "Parsed properties: " + _resolvedPropertiesMap );
 	}
 
 	/**
@@ -40,7 +47,7 @@ public class NGProperties {
 	 * FIXME: Currently returns null if the property does not exist. Might want to return an Optional.
 	 */
 	public String get( final String key ) {
-		return _map.get( key );
+		return _resolvedPropertiesMap.get( key );
 	}
 
 	/**
@@ -64,11 +71,11 @@ public class NGProperties {
 	public String _propertiesMapAsString() {
 		StringBuilder b = new StringBuilder();
 
-		ArrayList<String> keys = new ArrayList<>( _map.keySet() );
+		ArrayList<String> keys = new ArrayList<>( _resolvedPropertiesMap.keySet() );
 		Collections.sort( keys );
 
 		for( String key : keys ) {
-			String value = _map.get( key );
+			String value = _resolvedPropertiesMap.get( key );
 			b.append( String.format( "'%s':'%s'\n", key, value ) );
 		}
 
