@@ -68,6 +68,6 @@ public class NGResourceManager {
 	public Optional<String> urlForResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
 
-		return Optional.of( "/wr/" + resourceName );
+		return Optional.of( "/Apps/WebObjects/Rebelliant.woa/wr/" + resourceName );
 	}
 }
