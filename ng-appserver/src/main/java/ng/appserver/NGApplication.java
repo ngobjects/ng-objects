@@ -19,6 +19,9 @@ public class NGApplication {
 
 	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
 
+	/**
+	 * FIXME: We don't want this static.
+	 */
 	private static NGApplication _application;
 
 	private NGSessionStore _sessionStore;
