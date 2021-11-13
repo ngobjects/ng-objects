@@ -11,13 +11,6 @@ package ognl.webobjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.webobjects.appserver.WOAssociation;
-import com.webobjects.appserver.WOComponent;
-import com.webobjects.eocontrol.EOEventCenter;
-import com.webobjects.foundation.NSForwardException;
-import com.webobjects.foundation.NSProperties;
-import com.webobjects.foundation.NSPropertyListSerialization;
-
 import ng.appserver.NGComponent;
 import ng.appserver.NGForwardException;
 import ng.appserver.NGKeyValueAssociation;
@@ -58,20 +51,16 @@ public class WOOgnlAssociation extends NGKeyValueAssociation {
 	}
 
 	@Override
-	public void setValue( Object object, WOComponent component ) {
-		WOAssociation.Event event = _markStartOfEventIfNeeded( "takeValueForKeyPath", keyPath(), component );
+	public void setValue( Object object, NGComponent component ) {
 		try {
 			// not sure how to manage validation or whether the current implementation is enough...
 			WOOgnl.factory().setValue( keyPath(), component, object );
 		}
 		catch( Exception e ) {
 			if( shouldThrowException() ) {
-				throw new NSForwardException( e );
+				throw new NGForwardException( e );
 			}
 			log.error( "Exception invoking setValue on WOOgnlAssociation: '{}'.", keyPath(), e );
-		}
-		if( event != null ) {
-			EOEventCenter.markEndOfEvent( event );
 		}
 		if( _debugEnabled ) {
 			_logPushValue( object, component );
@@ -79,6 +68,7 @@ public class WOOgnlAssociation extends NGKeyValueAssociation {
 	}
 
 	private boolean shouldThrowException() {
-		return NSPropertyListSerialization.booleanForString( NSProperties.getProperty( "ognl.webobjects.WOAssociation.shouldThrowExceptions" ) );
+		return true; // FIXME Hugi 2021-11-13
+		//		return NSPropertyListSerialization.booleanForString( NSProperties.getProperty( "ognl.webobjects.WOAssociation.shouldThrowExceptions" ) );
 	}
 }

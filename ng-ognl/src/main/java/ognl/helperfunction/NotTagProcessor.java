@@ -1,22 +1,26 @@
 package ognl.helperfunction;
 
-import com.webobjects.appserver._private.WOConstantValueAssociation;
-import com.webobjects.appserver._private.WODeclaration;
-import com.webobjects.foundation.NSMutableDictionary;
+import java.util.Map;
+
+import ng.appserver.NGConstantValueAssociation;
+import ng.appserver.NGDeclaration;
 
 /**
  * "not" tag processor. This is a shortcut for a WOConditional with negate = 'true'. All you set is "condition".
- * 
+ *
  * @author mschrag
  */
 public class NotTagProcessor extends WOTagProcessor {
+
 	@Override
-	public WODeclaration createDeclaration(String elementName, String elementType, NSMutableDictionary associations) {
+	public NGDeclaration createDeclaration( String elementName, String elementType, Map associations ) {
 		String newElementType = "ERXWOConditional";
-		if (associations.objectForKey("negate") != null) {
-			throw new IllegalArgumentException("You already specified a binding for 'negate' of " + associations.objectForKey("negate") + " on a wo:not.");
+
+		if( associations.get( "negate" ) != null ) {
+			throw new IllegalArgumentException( "You already specified a binding for 'negate' of " + associations.get( "negate" ) + " on a wo:not." );
 		}
-		associations.setObjectForKey(new WOConstantValueAssociation(Boolean.TRUE), "negate");
-		return super.createDeclaration(elementName, newElementType, associations);
+
+		associations.put( "negate", new NGConstantValueAssociation( Boolean.TRUE ) );
+		return super.createDeclaration( elementName, newElementType, associations );
 	}
 }

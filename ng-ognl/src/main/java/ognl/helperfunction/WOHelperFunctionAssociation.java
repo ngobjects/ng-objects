@@ -1,7 +1,5 @@
 package ognl.helperfunction;
 
-import com.webobjects.appserver._private.WOReadOnlyKeyValueAssociation;
-
 import ng.appserver.NGAssociation;
 
 /**

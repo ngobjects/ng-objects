@@ -12,6 +12,7 @@ import ng.appserver.NGDeclaration;
  * @author mschrag
  */
 public abstract class WOTagProcessor {
+
 	public WOTagProcessor() {
 	}
 
