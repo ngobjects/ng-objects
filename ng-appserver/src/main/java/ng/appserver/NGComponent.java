@@ -21,11 +21,6 @@ public class NGComponent extends NGElement implements NGActionResults {
 
 	private final NGContext _context;
 
-	/**
-	 * Names of component templates end with this
-	 */
-	private static final String COMPONENT_TEMPLATE_SUFFIX = "ngml";
-
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
 		_context = context;
@@ -52,7 +47,11 @@ public class NGComponent extends NGElement implements NGActionResults {
 	}
 
 	public NGElement template() {
-		final String htmlTemplateFilename = getClass().getSimpleName() + "." + COMPONENT_TEMPLATE_SUFFIX;
+		return parseTemplate( getClass().getSimpleName() );
+	}
+
+	public static NGElement parseTemplate( final String templateName ) {
+		final String htmlTemplateFilename = templateName + "/" + templateName + ".html";
 		final String htmlTemplatePath = NGUtils.resourcePath( "components", htmlTemplateFilename );
 
 		final Optional<byte[]> templateBytes = NGUtils.readJavaResource( htmlTemplatePath );
