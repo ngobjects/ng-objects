@@ -51,8 +51,9 @@ public class NGComponent extends NGElement implements NGActionResults {
 	}
 
 	public static NGElement parseTemplate( final String templateName ) {
-		final String htmlTemplateFilename = templateName + "/" + templateName + ".html";
+		final String htmlTemplateFilename = templateName + ".wo/" + templateName + ".html";
 		final String htmlTemplatePath = NGUtils.resourcePath( "components", htmlTemplateFilename );
+		logger.debug( "Locating component at: " + htmlTemplatePath );
 
 		final Optional<byte[]> templateBytes = NGUtils.readJavaResource( htmlTemplatePath );
 
