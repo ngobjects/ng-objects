@@ -15,12 +15,12 @@ public class NGContext {
 		_request = request;
 	}
 
-	public NGResponse response() {
-		return _response;
-	}
-
 	public NGRequest request() {
 		return _request;
+	}
+
+	public NGResponse response() {
+		return _response;
 	}
 
 	public NGSession session() {
