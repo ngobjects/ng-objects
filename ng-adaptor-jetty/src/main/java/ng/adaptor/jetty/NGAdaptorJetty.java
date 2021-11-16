@@ -20,11 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
+import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
@@ -119,7 +121,23 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		final NGRequest request = new NGRequest( servletRequest.getMethod(), servletRequest.getRequestURI(), servletRequest.getProtocol(), headerMap( servletRequest ), bos.toByteArray() );
+
+		//		for( Cookie cookie : servletRequest.getCookies() ) {
+		//			request.addCookie( servletCookieToNGCookie( cookie ) );
+		//		}
+
 		return request;
+	}
+
+	private static NGCookie servletCookieToNGCookie( Cookie servletCookie ) {
+		final NGCookie cookie = new NGCookie();
+		servletCookie.getDomain();
+		servletCookie.getMaxAge();
+		servletCookie.getName();
+		servletCookie.getPath();
+		servletCookie.getSecure();
+		servletCookie.getValue();
+		return cookie;
 	}
 
 	/**
