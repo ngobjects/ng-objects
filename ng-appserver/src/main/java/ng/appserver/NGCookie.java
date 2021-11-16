@@ -4,10 +4,13 @@ package ng.appserver;
  * Wraps a cookie
  */
 
-public class NGCookie {
+//FIXME: We need to decide how to handle timeouts.
 
-	private String _name;
-	private String _value;
-	private String _domain;
-	private String _path;
+public record NGCookie(
+		String name,
+		String value,
+		String domain,
+		String path,
+		boolean isSecure,
+		int maxAge ) {
 }
