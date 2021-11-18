@@ -11,6 +11,8 @@ import java.util.Objects;
 
 public class NGRequest extends NGMessage {
 
+	private static final String SESSION_ID_COOKIE_NAME = "wosid";
+
 	/**
 	 * FIXME: Shouldn't this really be an enum, or do we need to support arbitrary methods?
 	 */
@@ -61,5 +63,26 @@ public class NGRequest extends NGMessage {
 
 		// FIXME: We're going to have to do some work here (or rather, not here, but lazily done in formValues()) to parse the form values based on the request's type/encoding etc.
 		_formValues = Collections.emptyMap();
+	}
+
+	/**
+	 *
+	 */
+	public String _extractSessionID() {
+		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
+	}
+
+	/**
+	 * FIXME: Inefficient looping
+	 */
+	private String cookieValueForKey( String string ) {
+
+		for( NGCookie cookie : cookies() ) {
+			if( cookie.name().equals( SESSION_ID_COOKIE_NAME ) ) {
+				return cookie.value();
+			}
+		}
+
+		return null;
 	}
 }

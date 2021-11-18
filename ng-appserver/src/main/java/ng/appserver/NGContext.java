@@ -4,6 +4,10 @@ public class NGContext {
 
 	private final NGRequest _request;
 	private NGResponse _response;
+
+	/**
+	 * Stores the context's session
+	 */
 	private NGSession _session;
 
 	/**
@@ -24,6 +28,10 @@ public class NGContext {
 	}
 
 	public NGSession session() {
+		if( _session == null && _request._extractSessionID() != null ) {
+			_session = NGApplication.application().sessionStore().checkoutSessionWithID( _request._extractSessionID() );
+		}
+
 		return _session;
 	}
 
