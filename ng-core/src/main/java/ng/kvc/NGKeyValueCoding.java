@@ -28,6 +28,31 @@ public interface NGKeyValueCoding {
 				return kvcObject.valueForKey( key );
 			}
 
+			return DefaultImplementation.valueForKey( object, key );
+		}
+	}
+
+	public static class DefaultImplementation {
+
+		/**
+		 * FIXME: Implement the correct method/field lookup ordering:
+		 *
+		 * 1. Method "getSmu"
+		 * 2. Method "smu"
+		 * 3. Method "isSmu"
+		 * 4. Method "_getSmu"
+		 * 5. Method "_smu"
+		 * 6. Method "_isSmu"
+		 * 7. Field "_smu"
+		 * 8. Field "_isSmu"
+		 * 9. Field "smu"
+		 * 10. Field "isSmu"
+		 *
+		 * FIXME: Error handling
+		 */
+		public static Object valueForKey( final Object object, final String key ) {
+			Objects.requireNonNull( object );
+			Objects.requireNonNull( key );
 			return bindingForKey( object.getClass(), key ).valueInObject( object );
 		}
 	}

@@ -13,6 +13,7 @@ public class KVCBenchmark {
 		long start = System.currentTimeMillis();
 		for( int i = 0; i < numberOfRuns; i++ ) {
 			Object valueForKey = NGKeyValueCoding.Utility.valueForKey( person, "name" );
+			int inti = ((String)valueForKey).length();
 		}
 
 		System.out.println( "Time: " + (System.currentTimeMillis() - start) );
