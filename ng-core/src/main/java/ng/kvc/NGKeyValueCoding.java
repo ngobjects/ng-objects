@@ -23,6 +23,11 @@ public interface NGKeyValueCoding {
 		public static Object valueForKey( final Object object, final String key ) {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( key );
+
+			if( object instanceof NGKeyValueCoding kvcObject ) {
+				return kvcObject.valueForKey( key );
+			}
+
 			return bindingForKey( object.getClass(), key ).valueInObject( object );
 		}
 	}
