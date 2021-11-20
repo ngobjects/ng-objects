@@ -4,8 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.BindException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -61,18 +61,17 @@ public class NGAdaptorJetty extends NGAdaptor {
 			server.start();
 		}
 		catch( final Exception e ) {
-			//			FIXME: Needs some extra minutes of work before going into production
-			//			if( e instanceof IOException && e.getCause() instanceof BindException ) {
-			//				if( NGApplication.isDevelopmentMode() ) {
-			//					logger.info( "Our port seems to be in use and we'rein development mode.Let's try murdering the bastard that's blocking us" );
-			//					stopPreviousDevInstance();
-			//					start();
-			//				}
-			//			}
-
-			// FIXME: Handle this a bit more gracefully perhaps?
-			e.printStackTrace();
-			System.exit( -1 );
+			// FIXME: Needs some extra minutes of work before going into production // Hugi 2021-11-20
+			if( NGApplication.isDevelopmentMode() && e instanceof IOException && e.getCause() instanceof BindException ) {
+				logger.info( "Our port seems to be in use and we'rein development mode.Let's try murdering the bastard that's blocking us" );
+				stopPreviousDevelopmentInstance();
+				start();
+			}
+			else {
+				// FIXME: Handle this a bit more gracefully perhaps? // Hugi 2021-11-20
+				e.printStackTrace();
+				System.exit( -1 );
+			}
 		}
 	}
 
@@ -171,18 +170,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 		return map;
 	}
 
-	private static boolean stopPreviousDevInstance() {
-
+	private static void stopPreviousDevelopmentInstance() {
 		try {
-			URLConnection c = new URL( "http://localhost:1200/ng.appserver.privates/NGAdminAction/terminate" ).openConnection();
-			c.getContent();
+			new URL( "http://localhost:1200/wa/ng.appserver.privates.NGAdminAction/terminate" ).openConnection().getContent();
 			Thread.sleep( 1000 );
-			return true;
 		}
 		catch( Throwable e ) {
-			e.printStackTrace();
+			logger.info( "Terminated existing development instance" );
 		}
-
-		return false;
 	}
 }
