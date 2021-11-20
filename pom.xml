@@ -11,7 +11,7 @@
 	<modules>
 		<module>ng-core</module>
 		<module>ng-adaptor-jetty</module>
-		<module>ng-adaptor-raw</module>
+		<module>ng-adaptor-netty</module>
 		<module>ng-appserver</module>
 	</modules>
 </project>
