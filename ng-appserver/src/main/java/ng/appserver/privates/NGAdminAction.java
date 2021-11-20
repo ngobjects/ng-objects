@@ -14,6 +14,7 @@ public class NGAdminAction extends NGDirectAction {
 
 	/**
 	 * FIXME: We probably want to return a structured response here, a la WOMPRequestHandler
+	 * FIXME: We probably want to control access to this. Having a public kill switch isn't perhaps… bright.
 	 */
 	public NGActionResults terminateAction() {
 		NGApplication.application().terminate();
