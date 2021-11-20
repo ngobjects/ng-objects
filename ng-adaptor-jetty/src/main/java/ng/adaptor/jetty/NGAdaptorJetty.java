@@ -110,17 +110,17 @@ public class NGAdaptorJetty extends NGAdaptor {
 	 * FIXME: We're not passing in the request parameters
 	 * FIXME: WE need to read the request's content as well
 	 */
-	private static NGRequest servletRequestToNGRequest( final HttpServletRequest servletRequest ) {
+	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-		try( final InputStream is = servletRequest.getInputStream()) {
+		try( final InputStream is = sr.getInputStream()) {
 			is.transferTo( bos );
 		}
 		catch( final IOException e ) {
-			e.printStackTrace();
+			throw new RuntimeException( e ); // FIXME: We're throwing RuntimeExceptions all over the place, we should probably be using NGForwardException, once that's structured
 		}
 
-		final NGRequest request = new NGRequest( servletRequest.getMethod(), servletRequest.getRequestURI(), servletRequest.getProtocol(), headerMap( servletRequest ), bos.toByteArray() );
+		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
 
 		//		FIXME: This is disabled since we're currently just not getting the cookie variable set in production. Hugi 2021-11-20
 		//		final Cookie[] cookies = servletRequest.getCookies();
