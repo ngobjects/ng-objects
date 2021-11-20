@@ -61,7 +61,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 			server.start();
 		}
 		catch( final Exception e ) {
-			// FIXME: Needs some extra minutes of work before going into production // Hugi 2021-11-20
 			if( NGApplication.isDevelopmentMode() && e instanceof IOException && e.getCause() instanceof BindException ) {
 				logger.info( "Our port seems to be in use and we'rein development mode.Let's try murdering the bastard that's blocking us" );
 				stopPreviousDevelopmentInstance();
@@ -170,6 +169,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 		return map;
 	}
 
+	/**
+	 * FIXME: This should really live in a more central location and not within just the adaptor // Hugi 2021-11-20
+	 */
 	private static void stopPreviousDevelopmentInstance() {
 		try {
 			new URL( "http://localhost:1200/wa/ng.appserver.privates.NGAdminAction/terminate" ).openConnection().getContent();
