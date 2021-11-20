@@ -53,7 +53,10 @@ public interface NGKeyValueCoding {
 		public static Object valueForKey( final Object object, final String key ) {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( key );
-			return bindingForKey( object.getClass(), key ).valueInObject( object );
+
+			KVCBinding bindingForKey = bindingForKey( object.getClass(), key );
+			// FIXME: Around here we should be handling the case of a missing key.
+			return bindingForKey.valueInObject( object );
 		}
 	}
 
