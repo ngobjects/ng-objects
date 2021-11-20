@@ -1,6 +1,7 @@
 package ng.kvc;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
@@ -55,9 +56,9 @@ public interface NGKeyValueCoding {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( key );
 
-			KVCBinding bindingForKey = bindingForKey( object.getClass(), key );
+			KVCBinding kvcBinding = bindingForKey( object.getClass(), key );
 			// FIXME: Around here we should be handling the case of a missing key.
-			return bindingForKey.valueInObject( object );
+			return kvcBinding.valueInObject( object );
 		}
 	}
 
@@ -65,10 +66,7 @@ public interface NGKeyValueCoding {
 	 * @return A KVC binding for the given class and key.
 	 */
 	public static KVCBinding bindingForKey( Class<?> targetClass, String key ) {
-		MethodBinding m = new MethodBinding();
-		m.targetClass = targetClass;
-		m.key = key;
-		return m;
+		return new MethodBinding( targetClass, key );
 	}
 
 	public static interface KVCBinding {
@@ -77,15 +75,24 @@ public interface NGKeyValueCoding {
 
 	public static class MethodBinding implements KVCBinding {
 
-		public String key;
-		public Class<?> targetClass;
+		public final Method _method;
+
+		public MethodBinding( Class<?> targetClass, String key ) {
+			try {
+				_method = targetClass.getMethod( key, new Class[] {} );
+			}
+			catch( NoSuchMethodException | SecurityException e ) {
+				// FIXME: Error handling is missing entirely
+				throw new RuntimeException( e );
+			}
+		}
 
 		@Override
 		public Object valueInObject( Object object ) {
 			try {
-				return targetClass.getMethod( key, new Class[] {} ).invoke( object, null );
+				return _method.invoke( object, null );
 			}
-			catch( NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
+			catch( SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
 				// FIXME: Error handling is missing entirely
 				throw new RuntimeException( e );
 			}
