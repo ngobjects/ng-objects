@@ -10,6 +10,7 @@ import java.util.Objects;
  * FIXME: Implement missing key handling
  * FIXME: Decide if we're going to go all the way and do validation as well
  * FIXME: We should be marking bindings for directionality (read only/set only etc)
+ * FIXME: We should be using cached MethodHandles for improved performance
  */
 
 public interface NGKeyValueCoding {
