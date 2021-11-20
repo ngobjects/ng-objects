@@ -10,13 +10,14 @@ public class TestNGKeyValueCoding {
 	public void testMethodAccess() {
 		Person person = new Person();
 		person._name = "Hugi";
-		
+
 		assertEquals( "Hugi", NGKeyValueCoding.Utility.valueForKey( person, "name" ) );
+		assertEquals( Person.class, NGKeyValueCoding.Utility.valueForKey( person, "getClass" ) );
 	}
-	
+
 	public static class Person {
 		public String _name;
-		
+
 		public String name() {
 			return _name;
 		}
