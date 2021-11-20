@@ -176,6 +176,10 @@ public class NGApplication {
 
 		logger.info( "Handling URI: " + request.uri() );
 
+		// FIXME: (see method comment)
+		cleanupWOURL( request );
+		logger.info( "Handling rewritten WO URI: " + request.uri() );
+
 		// FIXME: Handle the case of no default request handler gracefully
 		final var parsedURI = NGParsedURI.of( request.uri() );
 
@@ -192,6 +196,30 @@ public class NGApplication {
 		}
 
 		return requestHandler.handleRequest( request );
+	}
+
+	/**
+	 * FIXME: Well this is horrid // Hugi 2021-11-20
+	 *
+	 * What we're doing here is allowing for the WO URL structure, which is somewhat required to work with the WO Apache Adaptor.
+	 * Ideally, we don't want to prefix URLs at all, instead just handling requests at root level. But to begin with, perhaps we can
+	 * just allow for certain "prefix patterns" to mask out the WO part of the URL and hide it from the app. It might even be a useful
+	 * little feature on it's own.
+	 */
+	private static void cleanupWOURL( final NGRequest request ) {
+		String woStart = "/Apps/WebObjects/Rebelliant.woa/1";
+
+		if( request.uri().startsWith( woStart ) ) {
+			logger.info( "Cleaning up WO Apps URI" );
+			request.setURI( request.uri().substring( woStart.length() ) );
+		}
+
+		woStart = "/cgi-bin/WebObjects/Rebelliant.woa";
+
+		if( request.uri().startsWith( woStart ) ) {
+			logger.info( "Cleaning up WO Apps URI" );
+			request.setURI( request.uri().substring( woStart.length() ) );
+		}
 	}
 
 	public NGContext createContextForRequest( NGRequest request ) {
