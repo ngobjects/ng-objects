@@ -252,4 +252,11 @@ public class NGApplication {
 			logger.info( "OutputPath not set. Using standard System.out and System.err" );
 		}
 	}
+
+	/**
+	 * FIXME: This is a bit harsh. We probably want to start some sort of a graceful shutdown instead of saying "OK, BYE" // Hugi 2021-11-20
+	 */
+	public void terminate() {
+		System.exit( 0 );
+	}
 }
