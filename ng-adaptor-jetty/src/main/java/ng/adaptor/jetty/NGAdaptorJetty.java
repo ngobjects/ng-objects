@@ -63,7 +63,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		catch( final Exception e ) {
 			if( NGApplication.isDevelopmentMode() && e instanceof IOException && e.getCause() instanceof BindException ) {
 				logger.info( "Our port seems to be in use and we'rein development mode.Let's try murdering the bastard that's blocking us" );
-				stopPreviousDevelopmentInstance();
+				stopPreviousDevelopmentInstance( port );
 				start();
 			}
 			else {
@@ -172,9 +172,10 @@ public class NGAdaptorJetty extends NGAdaptor {
 	/**
 	 * FIXME: This should really live in a more central location and not within just the adaptor // Hugi 2021-11-20
 	 */
-	private static void stopPreviousDevelopmentInstance() {
+	private static void stopPreviousDevelopmentInstance( int portNumber ) {
 		try {
-			new URL( "http://localhost:1200/wa/ng.appserver.privates.NGAdminAction/terminate" ).openConnection().getContent();
+			final String urlString = String.format( "http://localhost:%s/wa/ng.appserver.privates.NGAdminAction/terminate", portNumber );
+			new URL( urlString ).openConnection().getContent();
 			Thread.sleep( 1000 );
 		}
 		catch( Throwable e ) {
