@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.privates.NGParsedURI;
+import ng.appserver.wointegration.NGLifebeatThread;
+import ng.appserver.wointegration.WOMPRequestHandler;
 
 public class NGApplication {
 
@@ -29,6 +34,11 @@ public class NGApplication {
 	private NGResourceManager _resourceManager;
 
 	public static NGProperties _properties;
+
+	/**
+	 * FIXME: This little guy should _not_ be static, and shouldn't really be here at all.
+	 */
+	public static NGLifebeatThread _lifebeatThread;
 
 	/**
 	 * FIXME: Needs to be thread safe?
@@ -62,6 +72,7 @@ public class NGApplication {
 			_application.registerRequestHandler( "wo", new NGComponentRequestHandler() );
 			_application.registerRequestHandler( "wr", new NGResourceRequestHandler() );
 			_application.registerRequestHandler( "wa", new NGDirectActionRequestHandler() );
+			_application.registerRequestHandler( "womp", new WOMPRequestHandler() );
 
 			_application.run();
 		}
@@ -69,6 +80,28 @@ public class NGApplication {
 			e.printStackTrace();
 			System.exit( -1 );
 		}
+
+		if( !isDevelopmentMode() ) {
+			startLifebeatThread();
+		}
+
+		logger.info( "===== Application started at " + LocalDate.now() );
+	}
+
+	private static void startLifebeatThread() {
+		InetAddress addr = null;
+		try {
+			addr = InetAddress.getByName( "linode-4.rebbi.is" );
+		}
+		catch( final UnknownHostException e ) {
+			e.printStackTrace();
+		}
+
+		String appName = "Rebelliant"; // FIXME: Where do we get the application name from?
+		Integer appPort = _properties.getInteger( "WOPort" );
+		_lifebeatThread = new NGLifebeatThread( appName, appPort, addr, 1085, 30000 );
+		_lifebeatThread.setDaemon( true );
+		_lifebeatThread.start();
 	}
 
 	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {
