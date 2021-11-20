@@ -122,13 +122,14 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		final NGRequest request = new NGRequest( servletRequest.getMethod(), servletRequest.getRequestURI(), servletRequest.getProtocol(), headerMap( servletRequest ), bos.toByteArray() );
 
-		final Cookie[] cookies = servletRequest.getCookies();
-
-		if( cookies != null ) {
-			for( Cookie cookie : cookies ) {
-				request.addCookie( servletCookieToNGCookie( cookie ) );
-			}
-		}
+		//		FIXME: This is disabled since we're currently just not getting the cookie variable set in production. Hugi 2021-11-20
+		//		final Cookie[] cookies = servletRequest.getCookies();
+		//
+		//		if( cookies != null ) {
+		//			for( Cookie cookie : cookies ) {
+		//				request.addCookie( servletCookieToNGCookie( cookie ) );
+		//			}
+		//		}
 
 		return request;
 	}
