@@ -122,8 +122,12 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		final NGRequest request = new NGRequest( servletRequest.getMethod(), servletRequest.getRequestURI(), servletRequest.getProtocol(), headerMap( servletRequest ), bos.toByteArray() );
 
-		for( Cookie cookie : servletRequest.getCookies() ) {
-			request.addCookie( servletCookieToNGCookie( cookie ) );
+		final Cookie[] cookies = servletRequest.getCookies();
+
+		if( cookies != null ) {
+			for( Cookie cookie : cookies ) {
+				request.addCookie( servletCookieToNGCookie( cookie ) );
+			}
 		}
 
 		return request;
