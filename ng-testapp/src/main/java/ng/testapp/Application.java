@@ -12,7 +12,7 @@ public class Application extends NGApplication {
 	private static Logger logger = LoggerFactory.getLogger( Application.class );
 
 	public static void main( String[] args ) {
-		NGApplication.main( args, Application.class );
+		new NGApplication().run( args, Application.class );
 	}
 
 	@Override

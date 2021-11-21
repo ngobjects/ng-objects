@@ -45,14 +45,7 @@ public class NGApplication {
 	 */
 	private final Map<String, NGRequestHandler> _requestHandlers = new HashMap<>();
 
-	/**
-	 * FIXME: Not sure if this method should actually be provided
-	 */
-	public static void main( final String[] args ) {
-		main( args, NGApplication.class );
-	}
-
-	public static void main( final String[] args, final Class<? extends NGApplication> applicationClass ) {
+	public void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		_properties = new NGProperties( args );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
