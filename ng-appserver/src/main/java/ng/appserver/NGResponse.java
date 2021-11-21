@@ -36,7 +36,7 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	/**
 	 * FIXME: Decide if this should be settable
 	 */
-	private void setStatus( final int status ) {
+	public void setStatus( final int status ) {
 		_status = status;
 	}
 
