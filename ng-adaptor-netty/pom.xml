@@ -30,5 +30,12 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>2.0.0-alpha5</version>
 		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>5.0.0.Alpha2</version>
+		</dependency>
+		<!-- <dependency> <groupId>io.netty</groupId> <artifactId>netty-codec-http</artifactId> 
+			<version>5.0.0.Alpha2</version> </dependency> -->
 	</dependencies>
 </project>
