@@ -7,7 +7,6 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +23,6 @@ public class NGApplication {
 
 	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
 
-	/**
-	 * FIXME: We don't want this static.
-	 */
 	private static NGApplication _application;
 
 	private NGSessionStore _sessionStore;
@@ -35,17 +31,13 @@ public class NGApplication {
 
 	public static NGProperties _properties;
 
-	/**
-	 * FIXME: This little guy should _not_ be static, and shouldn't really be here at all.
-	 */
 	public NGLifebeatThread _lifebeatThread;
 
-	/**
-	 * FIXME: Needs to be thread safe?
-	 */
 	private final Map<String, NGRequestHandler> _requestHandlers = new HashMap<>();
 
 	public void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
+		final long startTime = System.currentTimeMillis();
+
 		_properties = new NGProperties( args );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
@@ -78,7 +70,7 @@ public class NGApplication {
 			startLifebeatThread();
 		}
 
-		logger.info( "===== Application started at " + LocalDate.now() );
+		logger.info( "===== Application started in {}ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 	}
 
 	private static void startLifebeatThread() {
