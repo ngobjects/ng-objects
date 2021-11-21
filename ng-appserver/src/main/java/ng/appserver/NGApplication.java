@@ -38,7 +38,7 @@ public class NGApplication {
 	/**
 	 * FIXME: This little guy should _not_ be static, and shouldn't really be here at all.
 	 */
-	public static NGLifebeatThread _lifebeatThread;
+	public NGLifebeatThread _lifebeatThread;
 
 	/**
 	 * FIXME: Needs to be thread safe?
@@ -92,9 +92,9 @@ public class NGApplication {
 
 		String appName = "Rebelliant"; // FIXME: Where do we get the application name from?
 		Integer appPort = _properties.getInteger( "WOPort" );
-		_lifebeatThread = new NGLifebeatThread( appName, appPort, addr, 1085, 30000 );
-		_lifebeatThread.setDaemon( true );
-		_lifebeatThread.start();
+		_application._lifebeatThread = new NGLifebeatThread( appName, appPort, addr, 1085, 30000 );
+		_application._lifebeatThread.setDaemon( true );
+		_application._lifebeatThread.start();
 	}
 
 	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {

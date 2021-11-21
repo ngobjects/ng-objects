@@ -53,7 +53,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 	private static NGResponse terminate() {
 		logger.info( "Terminating application by request from wotaskd..." );
 		logger.info( "Sending willStop..." );
-		NGApplication._lifebeatThread.sendMessage( NGApplication._lifebeatThread._messageGenerator._willStop );
+		NGApplication.application()._lifebeatThread.sendMessage( NGApplication.application()._lifebeatThread._messageGenerator._willStop );
 		logger.info( "Sent willstop." );
 
 		new Thread( () -> {
