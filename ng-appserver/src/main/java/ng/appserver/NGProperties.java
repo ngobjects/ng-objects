@@ -9,6 +9,10 @@ import java.util.Objects;
 
 /**
  * Handles properties loading
+ *
+ * FIXME: A decision needs to be made on if properties should return an Optional // Hugi 2021-11-21
+ * FIXME: We need to cache properties // Hugi 2021-11-21
+ * FIXME: Mark the origin of properties // Hugi 2021-11-21
  */
 
 public class NGProperties {
@@ -43,8 +47,6 @@ public class NGProperties {
 
 	/**
 	 * @return The named property
-	 *
-	 * FIXME: Currently returns null if the property does not exist. Might want to return an Optional.
 	 */
 	public String get( final String key ) {
 		return _resolvedPropertiesMap.get( key );
@@ -52,8 +54,6 @@ public class NGProperties {
 
 	/**
 	 * @return The named integer property
-	 *
-	 * FIXME: Currently returns null if the property does not exist. Might want to return an Optional.
 	 */
 	public Integer getInteger( final String key ) {
 		final String value = get( key );
