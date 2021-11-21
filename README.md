@@ -1,10 +1,12 @@
-# wat?
+# ng-objects
 
-ng-objects wants to extract the best concepts of Apple's WebObjects framework (WO) and implement it in a new, modern framework.
+ng-objects is an open source exploration of Apple's WebObjects (WO) framework, with the goal of creating a new, lightweight web framework. It aims to:
 
-A secondary goal is to make these applications compatible with WO's deployment environment, so they can transparently integrate into a WO company's existing deployment infrastructure.
+1. Extract the best concepts of WO and use them in a new, modern library.
 
-While WO compatibility is a large part of this project, we don't want to mimic WO perfectly, but rather learn from and utilize what's happened in the almost two decades of software and web development that's occurred since WO's last official release.
+2. Be compatible with WO's deployment environment, so apps can transparently integrate into an existing WO based deployment infrastructure. This basically means that the apps know how to speak to JavaMonitor/wotaskd and handle requests from the WO Apache adaptor.
+
+3. Not be an absolute WO clone but _familiar_ to a WO programmer, and thus easy for a WO programmer to move existing code to. We want to learn from and utilize the two decades of improvements in software and web development since WO's last official release.
 
 ## parts (TODO)
 
