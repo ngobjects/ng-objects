@@ -17,7 +17,7 @@ public class Application extends NGApplication {
 
 	@Override
 	public String adaptorClassName() {
-		return "ng.adaptor.raw.NGAdaptorRaw";
+		return ng.adaptor.jetty.NGAdaptorJetty.class.getName();
 	}
 
 	@Override
