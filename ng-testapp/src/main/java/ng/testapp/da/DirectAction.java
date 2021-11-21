@@ -6,6 +6,7 @@ import ng.appserver.NGDirectAction;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.testapp.components.ExampleComponent;
+import ng.testapp.components.ProgrammaticDynamicComponent;
 
 public class DirectAction extends NGDirectAction {
 
@@ -18,7 +19,11 @@ public class DirectAction extends NGDirectAction {
 	}
 
 	public NGActionResults componentAction() {
-		return NGApplication.application().pageWithName( ExampleComponent.class, null /* FIXME */ );
+		return pageWithName( ExampleComponent.class );
+	}
+
+	public NGActionResults programmaticAction() {
+		return pageWithName( ProgrammaticDynamicComponent.class );
 	}
 
 	public NGActionResults htmlAction() {
