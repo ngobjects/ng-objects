@@ -29,7 +29,7 @@ public class NGApplication {
 
 	private NGResourceManager _resourceManager;
 
-	public static NGProperties _properties;
+	private static NGProperties _properties;
 
 	public NGLifebeatThread _lifebeatThread;
 
