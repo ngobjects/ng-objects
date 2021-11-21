@@ -1,7 +1,6 @@
 package ng.appserver;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +28,6 @@ public class NGProperties {
 	public void initWithArgs( final String[] args ) {
 		Objects.requireNonNull( args );
 
-		System.out.println( "Initing properties with args: " + Arrays.asList( args ) );
 		_resolvedPropertiesMap = new HashMap<>();
 
 		for( int i = 0; i < args.length; i = i + 2 ) {
@@ -42,7 +40,6 @@ public class NGProperties {
 			final String value = args[i + 1];
 			_resolvedPropertiesMap.put( key, value );
 		}
-		System.out.println( "Parsed properties: " + _resolvedPropertiesMap );
 	}
 
 	/**

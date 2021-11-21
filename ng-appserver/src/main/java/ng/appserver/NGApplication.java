@@ -46,8 +46,6 @@ public class NGApplication {
 		logger.info( "===== Parsed properties" );
 		logger.info( _properties._propertiesMapAsString() );
 
-		logger.info( "===== Starting application..." );
-
 		try {
 			_application = applicationClass.getDeclaredConstructor().newInstance();
 
