@@ -14,6 +14,11 @@ public class NGRequest extends NGMessage {
 	private static final String SESSION_ID_COOKIE_NAME = "wosid";
 
 	/**
+	 * FIXME: Make sure we're initializing this correctly during the request's lifecycle
+	 */
+	private NGContext _context;
+
+	/**
 	 * FIXME: Shouldn't this really be an enum, or do we need to support arbitrary methods?
 	 */
 	private String _method;
@@ -84,5 +89,9 @@ public class NGRequest extends NGMessage {
 		}
 
 		return null;
+	}
+
+	public NGContext context() {
+		return _context;
 	}
 }

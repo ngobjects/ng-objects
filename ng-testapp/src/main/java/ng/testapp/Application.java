@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.experimental.NGRouteTable;
 
 public class Application extends NGApplication {
 
@@ -13,6 +14,9 @@ public class Application extends NGApplication {
 
 	public static void main( String[] args ) {
 		new NGApplication().run( args, Application.class );
+		NGRouteTable.defaultRouteTable().map( "/hugi/", ( url, conext ) -> {
+			return new NGResponse( "Oh look, a response!", 200 );
+		} );
 	}
 
 	@Override

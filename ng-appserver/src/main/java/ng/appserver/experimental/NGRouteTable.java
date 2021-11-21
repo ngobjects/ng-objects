@@ -47,7 +47,7 @@ public class NGRouteTable {
 		return _routes;
 	}
 
-	private RouteHandler handlerForURL( final WrappedURL url ) {
+	public RouteHandler handlerForURL( final WrappedURL url ) {
 
 		for( final Route route : routes() ) {
 			if( matches( route.pattern, url.sourceURL() ) ) {
