@@ -167,7 +167,7 @@ public class NGApplication {
 		logger.info( "Handling rewritten WO URI: " + request.uri() );
 
 		// FIXME: Start experimental route handling logic
-		final WrappedURL wrappedURL = WrappedURL.create( request.uri() );
+		final WrappedURL wrappedURL = WrappedURL.of( request.uri() );
 		final NGRouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( wrappedURL );
 
 		if( handler != null ) {

@@ -28,7 +28,7 @@ public class WrappedURL {
 	 */
 	private WrappedURL() {}
 
-	public static WrappedURL create( final String sourceURL ) {
+	public static WrappedURL of( final String sourceURL ) {
 		String parsedURL = sourceURL;
 
 		if( parsedURL == null ) {
