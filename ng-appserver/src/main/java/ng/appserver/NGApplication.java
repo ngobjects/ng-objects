@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.experimental.NGRouteTable;
 import ng.appserver.experimental.NGRouteTable.NGRouteHandler;
-import ng.appserver.experimental.WrappedURL;
 import ng.appserver.privates.NGParsedURI;
 import ng.appserver.wointegration.NGLifebeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
@@ -167,7 +166,7 @@ public class NGApplication {
 		logger.info( "Handling rewritten WO URI: " + request.uri() );
 
 		// FIXME: Start experimental route handling logic
-		final WrappedURL wrappedURL = WrappedURL.of( request.uri() );
+		final NGParsedURI wrappedURL = NGParsedURI.of( request.uri() );
 		final NGRouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( wrappedURL );
 
 		if( handler != null ) {

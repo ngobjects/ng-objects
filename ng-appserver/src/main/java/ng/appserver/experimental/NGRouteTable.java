@@ -13,6 +13,7 @@ import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.privates.NGParsedURI;
 
 /**
  * Contains a list of handlers for URLs
@@ -47,7 +48,7 @@ public class NGRouteTable {
 		return _routes;
 	}
 
-	public NGRouteHandler handlerForURL( final WrappedURL url ) {
+	public NGRouteHandler handlerForURL( final NGParsedURI url ) {
 
 		for( final Route route : routes() ) {
 			if( matches( route.pattern, url.sourceURL() ) ) {
@@ -68,7 +69,7 @@ public class NGRouteTable {
 	/**
 	 * Handle the given URL
 	 */
-	public NGActionResults handle( final WrappedURL url, final NGContext context ) {
+	public NGActionResults handle( final NGParsedURI url, final NGContext context ) {
 		final NGRequest request = context.request();
 		logger.info( "Handling URL: {}", url );
 		NGRouteHandler routeHandler = handlerForURL( url );
@@ -88,7 +89,7 @@ public class NGRouteTable {
 		_routes.add( r );
 	}
 
-	public void map( final String pattern, final BiFunction<WrappedURL, NGContext, NGActionResults> biFunction ) {
+	public void map( final String pattern, final BiFunction<NGParsedURI, NGContext, NGActionResults> biFunction ) {
 		final BiFunctionRouteHandler routeHandler = new BiFunctionRouteHandler( biFunction );
 		map( pattern, routeHandler );
 	}
@@ -115,7 +116,7 @@ public class NGRouteTable {
 	}
 
 	public static abstract class NGRouteHandler {
-		public abstract NGActionResults handle( WrappedURL url, NGContext context );
+		public abstract NGActionResults handle( NGParsedURI url, NGContext context );
 	}
 
 	/**
@@ -123,7 +124,7 @@ public class NGRouteTable {
 	 */
 	public static class NotFoundRouteHandler extends NGRouteHandler {
 		@Override
-		public NGActionResults handle( final WrappedURL url, NGContext context ) {
+		public NGActionResults handle( final NGParsedURI url, NGContext context ) {
 			final NGResponse response = new NGResponse();
 			response.setStatus( 404 );
 			response.setContentString( "Not found: " + url );
@@ -132,14 +133,14 @@ public class NGRouteTable {
 	}
 
 	public static class BiFunctionRouteHandler extends NGRouteHandler {
-		private BiFunction<WrappedURL, NGContext, NGActionResults> _biFunction;
+		private BiFunction<NGParsedURI, NGContext, NGActionResults> _biFunction;
 
-		public BiFunctionRouteHandler( final BiFunction<WrappedURL, NGContext, NGActionResults> biFunction ) {
+		public BiFunctionRouteHandler( final BiFunction<NGParsedURI, NGContext, NGActionResults> biFunction ) {
 			_biFunction = biFunction;
 		}
 
 		@Override
-		public NGActionResults handle( WrappedURL url, NGContext context ) {
+		public NGActionResults handle( NGParsedURI url, NGContext context ) {
 			return _biFunction.apply( url, context );
 		}
 	}
@@ -152,7 +153,7 @@ public class NGRouteTable {
 		}
 
 		@Override
-		public NGActionResults handle( WrappedURL url, NGContext context ) {
+		public NGActionResults handle( NGParsedURI url, NGContext context ) {
 			return NGApplication.application().pageWithName( _componentClass, context );
 		}
 	}
