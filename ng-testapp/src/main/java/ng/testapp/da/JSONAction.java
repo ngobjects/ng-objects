@@ -26,14 +26,5 @@ public class JSONAction extends NGDirectAction {
 		return response;
 	}
 
-	private static class Person {
-		public Person( String name, String address ) {
-			super();
-			this.name = name;
-			this.address = address;
-		}
-
-		public String name;
-		public String address;
-	}
+	private record Person( String name, String address ) {}
 }
