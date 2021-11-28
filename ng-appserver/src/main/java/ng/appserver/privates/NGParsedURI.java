@@ -1,47 +1,133 @@
 package ng.appserver.privates;
 
-import java.util.Objects;
 import java.util.Optional;
+
+/**
+ * Wraps URL paths for easy access to its components.
+ *
+ * - only stores the path (no hostname, no protocol) - does not differentiate between relative and absolute urls
+ */
 
 public class NGParsedURI {
 
-	final String _sourceUri;
+	/**
+	 * The URL string this object was generated from.
+	 */
+	private String _sourceURL;
 
-	private NGParsedURI( final String sourceUri ) {
-		_sourceUri = sourceUri;
+	/**
+	 * The cleaned up URL
+	 */
+	private String _parsedURL;
+
+	/**
+	 * cached copy of the url's elements
+	 */
+	private String[] _pathElements;
+
+	/**
+	 * Instances are constructed using the of() method.
+	 */
+	private NGParsedURI( final String sourceURL ) {
+		String parsedURL = sourceURL;
+
+		if( parsedURL == null ) {
+			parsedURL = "";
+		}
+
+		if( parsedURL.startsWith( "/" ) ) {
+			parsedURL = parsedURL.substring( 1 );
+		}
+
+		if( parsedURL.endsWith( "/" ) ) {
+			parsedURL = parsedURL.substring( 0, parsedURL.length() - 1 );
+		}
+
+		_parsedURL = parsedURL;
+		_sourceURL = sourceURL;
 	}
 
-	public static NGParsedURI of( final String sourceUri ) {
-		Objects.requireNonNull( sourceUri );
-		return new NGParsedURI( sourceUri );
+	public static NGParsedURI of( final String sourceURL ) {
+		return new NGParsedURI( sourceURL );
+	}
+
+	public String sourceURL() {
+		return _sourceURL;
+	}
+
+	@Override
+	public String toString() {
+		return _parsedURL;
+	}
+
+	private String[] pathElements() {
+		if( _pathElements == null ) {
+			_pathElements = _parsedURL.split( "/" );
+		}
+
+		return _pathElements;
 	}
 
 	/**
-	 * FIXME: Cache these elements
+	 * @return The string value at [index] in the path. defaultValue if [index] does not exist.
 	 */
-	public String[] elements() {
-		String uri = _sourceUri;
+	public String getString( int index, String defaultValue ) {
 
-		if( uri.startsWith( "/" ) ) {
-			uri = uri.substring( 1 );
+		if( index > pathElements().length - 1 ) {
+			return defaultValue;
 		}
 
-		if( uri.length() == 0 ) {
-			return new String[] {};
-		}
-
-		return uri.substring( 0 ).split( "/" );
+		return pathElements()[index];
 	}
 
 	/**
-	 * FIXME: This should probably return an Optional at some point.
+	 * @return The string value at [index] in the path. null if [index] does not exist.
 	 */
+	public String getString( int index ) {
+		return getString( index, null );
+	}
+
+	/**
+	 * @return The integer value at [index] in the path. defaultValue if [index] does not exist.
+	 */
+	public Integer getInteger( int index, Integer defaultValue ) {
+		String value = getString( index );
+
+		if( value == null ) {
+			return defaultValue;
+		}
+
+		return Integer.valueOf( value );
+	}
+
+	/**
+	 * @return The integer value at [index] in the path. null if [index] does not exist.
+	 */
+	public Integer getInteger( int index ) {
+		return getInteger( index, null );
+	}
+
+	/**
+	 * @return The number of elements in the URL
+	 */
+	public int length() {
+		return pathElements().length;
+	}
+
+	/**
+	 * FIXME: Deprecated, delete
+	 */
+	@Deprecated
 	public Optional<String> elementAt( final int i ) {
-		
-		if( i >= elements().length ) {
+
+		if( i >= pathElements().length ) {
 			return Optional.empty();
 		}
 
-		return Optional.of( elements()[i] );
+		return Optional.of( pathElements()[i] );
+	}
+
+	public String getNamedParameter( final String parameterName ) {
+		throw new RuntimeException( "Implement" ); // FIXME: Implement
 	}
 }
