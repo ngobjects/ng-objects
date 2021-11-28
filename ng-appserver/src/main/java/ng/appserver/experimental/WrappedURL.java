@@ -26,8 +26,7 @@ public class WrappedURL {
 	/**
 	 * Instances are constructed using the create() method.
 	 */
-	private WrappedURL() {
-	}
+	private WrappedURL() {}
 
 	public static WrappedURL create( final String sourceURL ) {
 		String parsedURL = sourceURL;
