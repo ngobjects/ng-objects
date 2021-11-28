@@ -1,5 +1,7 @@
 package ng.appserver.experimental;
 
+import java.util.Optional;
+
 /**
  * Wraps URL paths for easy access to its components.
  *
@@ -110,6 +112,19 @@ public class WrappedURL {
 	 */
 	public int length() {
 		return pathElements().length;
+	}
+
+	/**
+	 * FIXME: Deprecated, delete
+	 */
+	@Deprecated
+	public Optional<String> elementAt( final int i ) {
+
+		if( i >= pathElements().length ) {
+			return Optional.empty();
+		}
+
+		return Optional.of( pathElements()[i] );
 	}
 
 	public String getNamedParameter( final String parameterName ) {
