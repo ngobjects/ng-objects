@@ -166,19 +166,17 @@ public class NGApplication {
 		logger.info( "Handling rewritten WO URI: " + request.uri() );
 
 		// FIXME: Start experimental route handling logic
-		final NGParsedURI wrappedURL = NGParsedURI.of( request.uri() );
-		final NGRouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( wrappedURL );
+		final NGParsedURI parsedURI = NGParsedURI.of( request.uri() );
+		final NGRouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( parsedURI );
 
 		if( handler != null ) {
-			return handler.handle( wrappedURL, request.context() ).generateResponse();
+			return handler.handle( parsedURI, request.context() ).generateResponse();
 		}
 		// FIXME: End experimental route handling logic
 
-		// FIXME: Handle the case of no default request handler gracefully
-		final var parsedURI = NGParsedURI.of( request.uri() );
-
 		final Optional<String> requestHandlerKey = parsedURI.elementAt( 0 );
 
+		// FIXME: Handle the case of no default request handler gracefully
 		if( requestHandlerKey.isEmpty() ) {
 			return new NGResponse( "I have no idea to handle requests without any path elements", 404 );
 		}
