@@ -1,5 +1,6 @@
 package ng.kvc;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -64,9 +65,21 @@ public interface NGKeyValueCoding {
 
 	/**
 	 * @return A KVC binding for the given class and key.
+	 *
+	 * FIXME: We're going to want to decide what to do if there's an available key, but not accessible. Do we skip to the next "type" of binding or do we throw. Essentially; is shading allowed.
 	 */
 	public static KVCBinding bindingForKey( Class<?> targetClass, String key ) {
-		return new MethodBinding( targetClass, key );
+		KVCBinding binding;
+
+		try {
+			binding = new MethodBinding( targetClass, key );
+		}
+		catch( Exception e ) {
+			// FIXME: Don't catch all exceptions
+			binding = new FieldBinding( targetClass, key );
+		}
+
+		return binding;
 	}
 
 	public static interface KVCBinding {
@@ -75,7 +88,7 @@ public interface NGKeyValueCoding {
 
 	public static class MethodBinding implements KVCBinding {
 
-		public final Method _method;
+		private final Method _method;
 
 		public MethodBinding( Class<?> targetClass, String key ) {
 			try {
@@ -90,7 +103,7 @@ public interface NGKeyValueCoding {
 		@Override
 		public Object valueInObject( Object object ) {
 			try {
-				return _method.invoke( object, null );
+				return _method.invoke( object );
 			}
 			catch( SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
 				// FIXME: Error handling is missing entirely
@@ -101,9 +114,27 @@ public interface NGKeyValueCoding {
 
 	public static class FieldBinding implements KVCBinding {
 
+		private final Field _field;
+
+		public FieldBinding( Class<?> targetClass, String key ) {
+			try {
+				_field = targetClass.getField( key );
+			}
+			catch( SecurityException | NoSuchFieldException e ) {
+				// FIXME: Error handling is missing entirely
+				throw new RuntimeException( e );
+			}
+		}
+
 		@Override
 		public Object valueInObject( Object object ) {
-			throw new RuntimeException( "Not Implemented" );
+			try {
+				return _field.get( object );
+			}
+			catch( SecurityException | IllegalAccessException | IllegalArgumentException e ) {
+				// FIXME: Error handling is missing entirely
+				throw new RuntimeException( e );
+			}
 		}
 	}
 }
