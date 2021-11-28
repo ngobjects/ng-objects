@@ -24,11 +24,9 @@ public class WrappedURL {
 	private String[] _pathElements;
 
 	/**
-	 * Instances are constructed using the create() method.
+	 * Instances are constructed using the of() method.
 	 */
-	private WrappedURL() {}
-
-	public static WrappedURL of( final String sourceURL ) {
+	private WrappedURL( final String sourceURL ) {
 		String parsedURL = sourceURL;
 
 		if( parsedURL == null ) {
@@ -43,10 +41,12 @@ public class WrappedURL {
 			parsedURL = parsedURL.substring( 0, parsedURL.length() - 1 );
 		}
 
-		WrappedURL object = new WrappedURL();
-		object._parsedURL = parsedURL;
-		object._sourceURL = sourceURL;
-		return object;
+		_parsedURL = parsedURL;
+		_sourceURL = sourceURL;
+	}
+
+	public static WrappedURL of( final String sourceURL ) {
+		return new WrappedURL( sourceURL );
 	}
 
 	public String sourceURL() {
