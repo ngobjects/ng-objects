@@ -156,6 +156,9 @@ public class NGApplication {
 		_requestHandlers.put( key, requestHandler );
 	}
 
+	/**
+	 * FIXME: We're currently looking for both RouteHandlers and Request handlers. These are the same thing. Consolidate // Hugi 2021-11-28
+	 */
 	public NGResponse dispatchRequest( final NGRequest request ) {
 
 		logger.info( "Handling URI: " + request.uri() );
