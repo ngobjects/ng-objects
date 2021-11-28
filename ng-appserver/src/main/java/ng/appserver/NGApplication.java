@@ -160,9 +160,7 @@ public class NGApplication {
 
 		logger.info( "Handling URI: " + request.uri() );
 
-		// FIXME: (see method comment)
 		cleanupWOURL( request );
-		logger.info( "Handling rewritten WO URI: " + request.uri() );
 
 		// FIXME: Start experimental route handling logic
 		final NGRouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( request.parsedURI() );
@@ -200,15 +198,15 @@ public class NGApplication {
 		String woStart = "/Apps/WebObjects/Rebelliant.woa/1";
 
 		if( request.uri().startsWith( woStart ) ) {
-			logger.info( "Cleaning up WO Apps URI" );
 			request.setURI( request.uri().substring( woStart.length() ) );
+			logger.info( "Rewrote WO URI to {}", request.uri() );
 		}
 
 		woStart = "/cgi-bin/WebObjects/Rebelliant.woa";
 
 		if( request.uri().startsWith( woStart ) ) {
-			logger.info( "Cleaning up WO Apps URI" );
 			request.setURI( request.uri().substring( woStart.length() ) );
+			logger.info( "Rewrote WO URI to {}", request.uri() );
 		}
 	}
 
