@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import ng.appserver.privates.NGParsedURI;
+
 /**
  * Represents a request entering the system
  */
@@ -27,6 +29,11 @@ public class NGRequest extends NGMessage {
 	 * The URI being acessed
 	 */
 	private String _uri;
+
+	/**
+	 * The URI being acessed, wrapped in a nice little API
+	 */
+	private NGParsedURI _parsedURI;
 
 	/**
 	 * FIXME: Do we want to store this? Does parsing happen at the adaptor level or here?
@@ -78,7 +85,7 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
-	 * FIXME: Inefficient looping
+	 * FIXME: Inefficient looping, this should be a map
 	 */
 	private String cookieValueForKey( String string ) {
 
@@ -100,5 +107,16 @@ public class NGRequest extends NGMessage {
 		}
 
 		return _context;
+	}
+
+	/**
+	 * FIXME: This method needs to be thread safe // Hugi 2021-11-28
+	 */
+	public NGParsedURI parsedURI() {
+		if( _parsedURI == null ) {
+			_parsedURI = NGParsedURI.of( _uri );
+		}
+
+		return _parsedURI;
 	}
 }
