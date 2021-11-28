@@ -8,18 +8,23 @@ public class TestNGKeyValueCoding {
 
 	@Test
 	public void testMethodAccess() {
-		Person person = new Person();
-		person._name = "Hugi";
+		Person person = new Person( "Hugi" );
 
-		assertEquals( "Hugi", NGKeyValueCoding.Utility.valueForKey( person, "name" ) );
-		assertEquals( Person.class, NGKeyValueCoding.Utility.valueForKey( person, "getClass" ) );
+		assertEquals( "interfaceValue", NGKeyValueCoding.Utility.valueForKey( person, "getClass" ) );
+		assertEquals( "Hugi", NGKeyValueCoding.DefaultImplementation.valueForKey( person, "name" ) );
+		assertEquals( Person.class, NGKeyValueCoding.DefaultImplementation.valueForKey( person, "getClass" ) );
 	}
 
-	public static class Person {
-		public String _name;
+	public record Person( String name ) implements NGKeyValueCoding {
 
-		public String name() {
-			return _name;
+		@Override
+		public Object valueForKey( String key ) {
+			return "interfaceValue";
+		}
+
+		@Override
+		public void takeValueForKey( Object value, String key ) {
+			// FIXME: Implement
 		}
 	}
 }
