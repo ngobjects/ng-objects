@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.experimental.NGRouteTable;
-import ng.appserver.experimental.NGRouteTable.RouteHandler;
+import ng.appserver.experimental.NGRouteTable.NGRouteHandler;
 import ng.appserver.experimental.WrappedURL;
 import ng.appserver.privates.NGParsedURI;
 import ng.appserver.wointegration.NGLifebeatThread;
@@ -168,7 +168,7 @@ public class NGApplication {
 
 		// FIXME: Start experimental route handling logic
 		final WrappedURL wrappedURL = WrappedURL.create( request.uri() );
-		final RouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( wrappedURL );
+		final NGRouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( wrappedURL );
 
 		if( handler != null ) {
 			return handler.handle( wrappedURL, request.context() ).generateResponse();

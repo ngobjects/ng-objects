@@ -47,7 +47,7 @@ public class NGRouteTable {
 		return _routes;
 	}
 
-	public RouteHandler handlerForURL( final WrappedURL url ) {
+	public NGRouteHandler handlerForURL( final WrappedURL url ) {
 
 		for( final Route route : routes() ) {
 			if( matches( route.pattern, url.sourceURL() ) ) {
@@ -71,7 +71,7 @@ public class NGRouteTable {
 	public NGActionResults handle( final WrappedURL url, final NGContext context ) {
 		final NGRequest request = context.request();
 		logger.info( "Handling URL: {}", url );
-		RouteHandler routeHandler = handlerForURL( url );
+		NGRouteHandler routeHandler = handlerForURL( url );
 
 		if( routeHandler == null ) {
 			logger.warn( "No RouteHandler found for URL: {}", url.toString() );
@@ -81,7 +81,7 @@ public class NGRouteTable {
 		return routeHandler.handle( url, context );
 	}
 
-	public void map( final String pattern, final RouteHandler routeHandler ) {
+	public void map( final String pattern, final NGRouteHandler routeHandler ) {
 		Route r = new Route();
 		r.pattern = pattern;
 		r.routeHandler = routeHandler;
@@ -111,17 +111,17 @@ public class NGRouteTable {
 		/**
 		 * The routeHandler that will handle requests passed to this route
 		 */
-		public RouteHandler routeHandler;
+		public NGRouteHandler routeHandler;
 	}
 
-	public static abstract class RouteHandler {
+	public static abstract class NGRouteHandler {
 		public abstract NGActionResults handle( WrappedURL url, NGContext context );
 	}
 
 	/**
 	 * For returning 404
 	 */
-	public static class NotFoundRouteHandler extends RouteHandler {
+	public static class NotFoundRouteHandler extends NGRouteHandler {
 		@Override
 		public NGActionResults handle( final WrappedURL url, NGContext context ) {
 			final NGResponse response = new NGResponse();
@@ -131,7 +131,7 @@ public class NGRouteTable {
 		}
 	}
 
-	public static class BiFunctionRouteHandler extends RouteHandler {
+	public static class BiFunctionRouteHandler extends NGRouteHandler {
 		private BiFunction<WrappedURL, NGContext, NGActionResults> _biFunction;
 
 		public BiFunctionRouteHandler( final BiFunction<WrappedURL, NGContext, NGActionResults> biFunction ) {
@@ -144,7 +144,7 @@ public class NGRouteTable {
 		}
 	}
 
-	public static class ComponentRouteHandler extends RouteHandler {
+	public static class ComponentRouteHandler extends NGRouteHandler {
 		private Class<? extends NGComponent> _componentClass;
 
 		public ComponentRouteHandler( final Class<? extends NGComponent> componentClass ) {
