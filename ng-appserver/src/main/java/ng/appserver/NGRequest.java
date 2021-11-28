@@ -91,7 +91,14 @@ public class NGRequest extends NGMessage {
 		return null;
 	}
 
+	/**
+	 * FIXME: This method needs to be thread safe // Hugi 2021-11-28
+	 */
 	public NGContext context() {
+		if( _context == null ) {
+			_context = NGApplication.application().createContextForRequest( this );
+		}
+
 		return _context;
 	}
 }
