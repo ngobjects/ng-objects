@@ -1,27 +1,27 @@
 package ng.adaptor.jetty.http2;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.URL;
-import java.util.EnumSet;
+import java.util.Enumeration;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlets.PushCacheFilter;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.PushBuilder;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
+
+/**
+ * Looks like a nice example here: https://gist.github.com/ataylor284/7270580d3d46d89585f363f61b773536
+ */
 
 public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 
@@ -47,7 +47,7 @@ public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 		server.setHandler( servletHandler );
 
 		servletHandler.addServletWithMapping( NGServlet.class, "/" );
-		servletHandler.addFilterWithMapping( PushCacheFilter.class, "/", EnumSet.of( DispatcherType.REQUEST ) );
+		//		servletHandler.addFilterWithMapping( PushCacheFilter.class, "/*", EnumSet.of( DispatcherType.REQUEST ) );
 
 		try {
 			server.start();
@@ -72,23 +72,31 @@ public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 	public static class NGServlet extends HttpServlet {
 		@Override
 		protected void doGet( HttpServletRequest req, HttpServletResponse resp ) {
+			Enumeration<String> enume = req.getHeaderNames();
 
-			PushBuilder pushBuilder = req.newPushBuilder();
-			//		PushBuilder pushBuilder = Request.getBaseRequest( req ).newPushBuilder();
-
-			pushBuilder
-					.path( "images/kodedu-logo.png" )
-					.addHeader( "content-type", "image/png" )
-					.push();
-
-			try( PrintWriter respWriter = resp.getWriter() ;) {
-				respWriter.write( "<html>" +
-						"<img src='images/kodedu-logo.png'>" +
-						"</html>" );
+			while( enume.hasMoreElements() ) {
+				String name = enume.nextElement();
+				String value = req.getHeader( name );
+				System.out.println( name + " : " + value );
 			}
-			catch( IOException e ) {
-				throw new RuntimeException( e );
-			}
+			System.out.println( req.getProtocol() );
+
+			//			PushBuilder pushBuilder = req.newPushBuilder();
+			//			PushBuilder pushBuilder = Request.getBaseRequest( req ).newPushBuilder();
+			//
+			//			pushBuilder
+			//					.path( "images/kodedu-logo.png" )
+			//					.addHeader( "content-type", "image/png" )
+			//					.push();
+			//
+			//			try( PrintWriter respWriter = resp.getWriter() ;) {
+			//				respWriter.write( "<html>" +
+			//						"<img src='images/kodedu-logo.png'>" +
+			//						"</html>" );
+			//			}
+			//			catch( IOException e ) {
+			//				throw new RuntimeException( e );
+			//			}
 		}
 	}
 
