@@ -59,7 +59,7 @@ public class ExperimentalServer {
 		http2Connector.setPort( 8443 );
 		server.addConnector( http2Connector );
 
-		//	ALPN.debug=false // Hmmm...
+		//	ALPN.debug=false // FIXME: Commented this out since there's no available ALPN class
 
 		try {
 			server.start();
