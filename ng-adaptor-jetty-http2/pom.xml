@@ -53,10 +53,18 @@
 			<artifactId>jetty-alpn-server</artifactId>
 			<version>11.0.7</version>
 		</dependency>
+		<!-- FIXME: Replacement for Conscrypt -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-alpn-java-server</artifactId>
+			<version>11.0.7</version>
+		</dependency>
+		<!-- FIXME: Not compatible with Apple Silicon yet
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-alpn-conscrypt-server</artifactId>
 			<version>11.0.7</version>
 		</dependency>
+		-->
 	</dependencies>
 </project>

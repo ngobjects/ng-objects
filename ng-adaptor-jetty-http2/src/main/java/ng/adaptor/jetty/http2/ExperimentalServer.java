@@ -18,8 +18,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * FIXME: Further work on this is on hold until there's aarch_64 support for Conscrypt: https://github.com/google/conscrypt/issues/1034 // Hugi 2021-12-05
- *
  * Ripped from https://gist.github.com/ataylor284/7270580d3d46d89585f363f61b773536
  *
  * Create keystore with `keytool -keystore http2_keystore.jks -storepass password -noprompt -genkey -keyalg RSA -keypass password -alias jetty \
@@ -45,7 +43,9 @@ public class ExperimentalServer {
 		sslContextFactory.setKeyStorePassword( "password" );
 		sslContextFactory.setKeyManagerPassword( "password" );
 		sslContextFactory.setCipherComparator( HTTP2Cipher.COMPARATOR );
-		sslContextFactory.setProvider( "Conscrypt" );
+
+		// FIXME: Enable this when there's aarch_64 support for Conscrypt: https://github.com/google/conscrypt/issues/1034 // Hugi 2021-12-05
+		// sslContextFactory.setProvider( "Conscrypt" );
 
 		HttpConfiguration httpsConfig = new HttpConfiguration( httpConfig );
 		httpsConfig.addCustomizer( new SecureRequestCustomizer() );
@@ -75,6 +75,7 @@ public class ExperimentalServer {
 	public static class Servlet extends HttpServlet {
 		@Override
 		public void doGet( HttpServletRequest req, HttpServletResponse resp ) {
+			System.out.println( req );
 			// resp.setcontentType = "text/plain";
 			// resp.writer.write( "Hello, World!" );
 		}
