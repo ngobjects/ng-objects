@@ -1,5 +1,8 @@
 package ng.adaptor.jetty.http2;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.HTTP2Cipher;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
@@ -75,9 +78,16 @@ public class ExperimentalServer {
 	public static class Servlet extends HttpServlet {
 		@Override
 		public void doGet( HttpServletRequest req, HttpServletResponse resp ) {
-			System.out.println( req );
-			// resp.setcontentType = "text/plain";
-			// resp.writer.write( "Hello, World!" );
+			try {
+				resp.setStatus( 200 );
+				resp.setContentType( "text/plain" );
+				PrintWriter writer = resp.getWriter();
+				writer.write( "Hello, World!" );
+				writer.close();
+			}
+			catch( IOException e ) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
