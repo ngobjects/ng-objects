@@ -17,6 +17,7 @@ import org.eclipse.jetty.http2.HTTP2Cipher;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -122,6 +123,23 @@ public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 			servletResponse.setStatus( ngResponse.status() );
 
 			servletResponse.setHeader( "content-length", String.valueOf( ngResponse.contentBytes().length ) );
+
+			// FIXME: Experimental push support, hardcoded to work only with certain resources.
+			if( servletRequest.getRequestURI().equals( "/wa/ng.testapp.da.DirectAction/component" ) ) {
+				if( ((Request)servletRequest).isPushSupported() ) {
+					logger.info( "Found push support. Pushing experimental images" );
+
+					servletRequest.newPushBuilder()
+							.path( "/wr/test-image-1.jpg" )
+							.addHeader( "content-type", "image/jpeg" )
+							.push();
+
+					servletRequest.newPushBuilder()
+							.path( "/wr/test-image-2.jpg" )
+							.addHeader( "content-type", "image/jpeg" )
+							.push();
+				}
+			}
 
 			for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
 				for( final String headerValue : entry.getValue() ) {
