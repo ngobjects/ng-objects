@@ -50,7 +50,7 @@ public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 
 	@Override
 	public void start() {
-		int port = 1200;
+		int port = 1201;
 
 		Server server = new Server();
 
