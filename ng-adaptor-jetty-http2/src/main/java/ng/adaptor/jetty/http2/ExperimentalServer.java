@@ -50,7 +50,7 @@ public class ExperimentalServer {
 
 		HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory( httpsConfig );
 
-		//NegotiatingServerConnectionFactory.checkProtocolNegotiationAvailable()
+		// NegotiatingServerConnectionFactory.checkProtocolNegotiationAvailable()
 		var alpn = new ALPNServerConnectionFactory();
 		alpn.setDefaultProtocol( "h2" );
 		SslConnectionFactory ssl = new SslConnectionFactory( sslContextFactory, alpn.getProtocol() );
@@ -59,7 +59,7 @@ public class ExperimentalServer {
 		http2Connector.setPort( 8443 );
 		server.addConnector( http2Connector );
 
-		//	ALPN.debug=false // FIXME: Commented this out since there's no available ALPN class
+		// ALPN.debug=false // FIXME: Commented this out since there's no available ALPN class
 
 		try {
 			server.start();
@@ -73,8 +73,8 @@ public class ExperimentalServer {
 	public static class Servlet extends HttpServlet {
 		@Override
 		public void doGet( HttpServletRequest req, HttpServletResponse resp ) {
-			//						resp.setcontentType = "text/plain";
-			//			resp.writer.write( "Hello, World!" );
+			// resp.setcontentType = "text/plain";
+			// resp.writer.write( "Hello, World!" );
 		}
 	}
 }
