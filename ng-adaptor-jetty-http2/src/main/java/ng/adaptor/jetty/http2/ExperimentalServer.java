@@ -17,6 +17,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Ripped from https://gist.github.com/ataylor284/7270580d3d46d89585f363f61b773536
+ *
+ * Create keystore with `keytool -keystore http2_keystore.jks -storepass password -noprompt -genkey -keyalg RSA -keypass password -alias jetty \
+ *                          -dname CN=localhost,OU=dev,O=sonatype,L=home,ST=cloud,C=US -ext SAN=DNS:localhost,IP:127.0.0.1 -ext BC=ca:true`
+ * Confirm http2 is being used with `curl -v --http2 --insecure https://localhost:8443`
+ */
+
 public class ExperimentalServer {
 
 	public static void main( String[] args ) {
