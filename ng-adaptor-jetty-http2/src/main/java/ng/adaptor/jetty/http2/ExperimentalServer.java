@@ -18,6 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
+ * FIXME: Further work on this is on hold until there's aarch_64 support for Conscrypt: https://github.com/google/conscrypt/issues/1034 // Hugi 2021-12-05
+ *
  * Ripped from https://gist.github.com/ataylor284/7270580d3d46d89585f363f61b773536
  *
  * Create keystore with `keytool -keystore http2_keystore.jks -storepass password -noprompt -genkey -keyalg RSA -keypass password -alias jetty \
@@ -59,7 +61,7 @@ public class ExperimentalServer {
 		http2Connector.setPort( 8443 );
 		server.addConnector( http2Connector );
 
-		// ALPN.debug=false // FIXME: Commented this out since there's no available ALPN class
+		// ALPN.debug=false // FIXME: Commented this out since there's no available ALPN class // Hugi 2021-12-05
 
 		try {
 			server.start();
