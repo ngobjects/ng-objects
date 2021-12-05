@@ -50,6 +50,8 @@ public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 
 	@Override
 	public void start() {
+		int port = 1200;
+
 		Server server = new Server();
 
 		ServletContextHandler context = new ServletContextHandler( server, "/", ServletContextHandler.SESSIONS );
@@ -58,7 +60,8 @@ public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 
 		HttpConfiguration httpConfig = new HttpConfiguration();
 		httpConfig.setSecureScheme( "https" );
-		httpConfig.setSecurePort( 8443 );
+
+		httpConfig.setSecurePort( port );
 
 		SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
 		sslContextFactory.setKeyStorePath( "/Users/hugi/xxxxx-temp/http2_keystore.jks" );
@@ -80,7 +83,7 @@ public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 		SslConnectionFactory ssl = new SslConnectionFactory( sslContextFactory, alpn.getProtocol() );
 
 		var http2Connector = new ServerConnector( server, ssl, alpn, h2, new HttpConnectionFactory( httpsConfig ) );
-		http2Connector.setPort( 8443 );
+		http2Connector.setPort( port );
 		server.addConnector( http2Connector );
 
 		// ALPN.debug=false // FIXME: Commented this out since there's no available ALPN class // Hugi 2021-12-05
