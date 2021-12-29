@@ -121,10 +121,6 @@ public class NGApplication {
 		return _properties;
 	}
 
-	public boolean isDevelopmentMode() {
-		return _properties.isDevelopmentMode();
-	}
-
 	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {
 		try {
 			return componentClass.getConstructor( NGContext.class ).newInstance( context );
