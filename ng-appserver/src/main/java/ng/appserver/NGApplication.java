@@ -40,15 +40,15 @@ public class NGApplication {
 	/**
 	 * FIXME: This method is a little weird, being a relic from how things were handled in WOApplication. Look a little better into the initialization code. // Hugi 2021-12-29
 	 */
-	public void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
+	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		final long startTime = System.currentTimeMillis();
 
-		_properties = new NGProperties( args );
+		NGProperties properties = new NGProperties( args );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
-		initLogging( _properties.propWOOutputPath() );
+		initLogging( properties.propWOOutputPath() );
 
-		if( _properties.isDevelopmentMode() ) {
+		if( properties.isDevelopmentMode() ) {
 			logger.info( "========================================" );
 			logger.info( "===== Running in development mode! =====" );
 			logger.info( "========================================" );
@@ -60,14 +60,15 @@ public class NGApplication {
 		}
 
 		logger.info( "===== Parsed properties" );
-		logger.info( _properties._propertiesMapAsString() );
+		logger.info( properties._propertiesMapAsString() );
 
 		try {
 			_application = applicationClass.getDeclaredConstructor().newInstance();
 
 			_application._resourceManager = new NGResourceManager();
 			_application._sessionStore = new NGServerSessionStore();
-			_application._properties = _properties;
+			_application._properties = properties;
+
 			_application.registerRequestHandler( "wo", new NGComponentRequestHandler() );
 			_application.registerRequestHandler( "wr", new NGResourceRequestHandler() );
 			_application.registerRequestHandler( "wa", new NGDirectActionRequestHandler() );
@@ -80,8 +81,8 @@ public class NGApplication {
 			System.exit( -1 );
 		}
 
-		if( _properties.propWOLifebeatEnabled() ) {
-			startLifebeatThread();
+		if( properties.propWOLifebeatEnabled() ) {
+			_application.startLifebeatThread();
 		}
 
 		logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );

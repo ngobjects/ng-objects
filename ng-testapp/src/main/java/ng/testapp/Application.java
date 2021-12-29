@@ -13,8 +13,11 @@ public class Application extends NGApplication {
 	private static Logger logger = LoggerFactory.getLogger( Application.class );
 
 	public static void main( String[] args ) {
-		new NGApplication().run( args, Application.class );
-		NGRouteTable.defaultRouteTable().map( "/hugi/", ( url, conext ) -> {
+		NGApplication.run( args, Application.class );
+	}
+
+	public Application() {
+		NGRouteTable.defaultRouteTable().map( "/some-route/", ( url, conext ) -> {
 			return new NGResponse( "Oh look, a response!", 200 );
 		} );
 	}
