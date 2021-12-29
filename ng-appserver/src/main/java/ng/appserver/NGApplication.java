@@ -210,7 +210,10 @@ public class NGApplication {
 	}
 
 	/**
-	 * Redirects logging to the designated [outputPath] if set
+	 * Redirects logging to the designated [outputPath] if set.
+	 *
+	 * If a file exists at the given path, it is renamed by adding the current date to it's name.
+	 * Pretty much the same way WOOutputPath is handled in WO.
 	 */
 	private static void initLogging( final String outputPath ) {
 		if( outputPath != null ) {
