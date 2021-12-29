@@ -36,7 +36,7 @@ public class NGApplication {
 	 * In the old WO world, this would have been called "requestHandlers".
 	 * Since we want to have more dynamic route resolution, it makes sense to move that to a separate object.
 	 */
-	private NGRouteTable _routeTable;
+	private NGRouteTable _routeTable = new NGRouteTable();
 
 	/**
 	 * FIXME: public for the benefit of WOMPRequestHandler, which uses it to generate messages to send to wotaskd. Let's look into that // Hugi 2021-12-29
@@ -75,7 +75,6 @@ public class NGApplication {
 			_application._sessionStore = new NGServerSessionStore();
 			_application._properties = properties;
 
-			_application._routeTable = new NGRouteTable();
 			_application._routeTable.map( "/wo/", new NGComponentRequestHandler() );
 			_application._routeTable.map( "/wr/", new NGResourceRequestHandler() );
 			_application._routeTable.map( "/wa/", new NGDirectActionRequestHandler() );
@@ -126,6 +125,10 @@ public class NGApplication {
 
 	public NGProperties properties() {
 		return _properties;
+	}
+
+	public NGRouteTable routeTable() {
+		return _routeTable;
 	}
 
 	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {

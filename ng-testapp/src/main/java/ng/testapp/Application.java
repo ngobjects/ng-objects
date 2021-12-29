@@ -15,11 +15,11 @@ public class Application extends NGApplication {
 		NGApplication.run( args, Application.class );
 	}
 
-	//	public Application() {
-	//		NGRouteTable.defaultRouteTable().map( "/some-route/", ( request ) -> {
-	//			return new NGResponse( "Oh look, a response!", 200 );
-	//		} );
-	//	}
+	public Application() {
+		routeTable().map( "/some-route/", ( request ) -> {
+			return new NGResponse( "Oh look, a response!", 200 );
+		} );
+	}
 
 	@Override
 	public NGResponse dispatchRequest( NGRequest request ) {
