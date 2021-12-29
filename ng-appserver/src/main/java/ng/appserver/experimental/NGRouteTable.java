@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGComponent;
 import ng.appserver.NGRequest;
-import ng.appserver.NGResponse;
 import ng.appserver.privates.NGParsedURI;
 
 /**
@@ -24,10 +20,6 @@ import ng.appserver.privates.NGParsedURI;
  */
 
 public class NGRouteTable {
-
-	private static final NotFoundRouteHandler NOT_FOUND_ROUTE_HANDLER = new NotFoundRouteHandler();
-
-	private static final Logger logger = LoggerFactory.getLogger( NGRouteTable.class );
 
 	/**
 	 * A list of all routes mapped by this table
@@ -65,21 +57,6 @@ public class NGRouteTable {
 		return url.startsWith( pattern );
 	}
 
-	/**
-	 * Handle the given URL
-	 */
-	public NGActionResults handle( final NGRequest request ) {
-		logger.info( "Handling URL: {}", request.uri() );
-		NGRouteHandler routeHandler = handlerForURL( request.parsedURI() );
-
-		if( routeHandler == null ) {
-			logger.warn( "No RouteHandler found for URL: {}", request.uri() );
-			routeHandler = NOT_FOUND_ROUTE_HANDLER;
-		}
-
-		return routeHandler.handleRequest( request );
-	}
-
 	public void map( final String pattern, final NGRouteHandler routeHandler ) {
 		Route r = new Route();
 		r.pattern = pattern;
@@ -115,19 +92,6 @@ public class NGRouteTable {
 
 	public static abstract class NGRouteHandler {
 		public abstract NGActionResults handleRequest( NGRequest request );
-	}
-
-	/**
-	 * For returning 404
-	 */
-	public static class NotFoundRouteHandler extends NGRouteHandler {
-		@Override
-		public NGActionResults handleRequest( final NGRequest request ) {
-			final NGResponse response = new NGResponse();
-			response.setStatus( 404 );
-			response.setContentString( "Not found: " + request.uri() );
-			return response;
-		}
 	}
 
 	public static class FunctionRouteHandler extends NGRouteHandler {
