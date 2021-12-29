@@ -23,11 +23,6 @@ public class Application extends NGApplication {
 	}
 
 	@Override
-	public String adaptorClassName() {
-		return ng.adaptor.jetty.NGAdaptorJetty.class.getName();
-	}
-
-	@Override
 	public NGResponse dispatchRequest( NGRequest request ) {
 		logger.info( "uri: {} ", request.uri() );
 		logger.info( "method: {} ", request.method() );
