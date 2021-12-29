@@ -43,7 +43,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final int minThreads = 8;
 		final int maxThreads = 32;
 		final int idleTimeout = 2000; // Specified in milliseconds
-		final int port = NGApplication.application().properties().propWOPort(); // FIXME: Ugly way to get the port number
+
+		Integer port = NGApplication.application().properties().propWOPort(); // FIXME: Ugly way to get the port number
+
+		if( port == null ) {
+			logger.warn( "port property is not set, defaulting to port 1200" );
+			port = 1200;
+		}
 
 		final QueuedThreadPool threadPool = new QueuedThreadPool( maxThreads, minThreads, idleTimeout );
 
