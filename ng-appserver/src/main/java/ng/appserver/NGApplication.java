@@ -177,7 +177,7 @@ public class NGApplication {
 		final NGRouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( request.parsedURI() );
 
 		if( handler != null ) {
-			return handler.handle( request ).generateResponse();
+			return handler.handleRequest( request ).generateResponse();
 		}
 
 		// Start regular good old style WO request handling logic (NGRequestHandler)

@@ -77,7 +77,7 @@ public class NGRouteTable {
 			routeHandler = NOT_FOUND_ROUTE_HANDLER;
 		}
 
-		return routeHandler.handle( request );
+		return routeHandler.handleRequest( request );
 	}
 
 	public void map( final String pattern, final NGRouteHandler routeHandler ) {
@@ -114,7 +114,7 @@ public class NGRouteTable {
 	}
 
 	public static abstract class NGRouteHandler {
-		public abstract NGActionResults handle( NGRequest request );
+		public abstract NGActionResults handleRequest( NGRequest request );
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class NGRouteTable {
 	 */
 	public static class NotFoundRouteHandler extends NGRouteHandler {
 		@Override
-		public NGActionResults handle( final NGRequest request ) {
+		public NGActionResults handleRequest( final NGRequest request ) {
 			final NGResponse response = new NGResponse();
 			response.setStatus( 404 );
 			response.setContentString( "Not found: " + request.uri() );
@@ -138,7 +138,7 @@ public class NGRouteTable {
 		}
 
 		@Override
-		public NGActionResults handle( NGRequest request ) {
+		public NGActionResults handleRequest( NGRequest request ) {
 			return _function.apply( request );
 		}
 	}
@@ -151,7 +151,7 @@ public class NGRouteTable {
 		}
 
 		@Override
-		public NGActionResults handle( NGRequest request ) {
+		public NGActionResults handleRequest( NGRequest request ) {
 			return NGApplication.application().pageWithName( _componentClass, request.context() );
 		}
 	}
