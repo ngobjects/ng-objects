@@ -171,7 +171,7 @@ public class NGApplication {
 			return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
 		}
 
-		return handler.handleRequest( request ).generateResponse();
+		return handler.handleRequest( request );
 	}
 
 	/**
