@@ -1,5 +1,6 @@
 package ng.appserver.privates;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -29,11 +30,9 @@ public class NGParsedURI {
 	 * Instances are constructed using the of() method.
 	 */
 	private NGParsedURI( final String sourceURL ) {
-		String parsedURL = sourceURL;
+		Objects.requireNonNull( sourceURL );
 
-		if( parsedURL == null ) {
-			parsedURL = "";
-		}
+		String parsedURL = sourceURL;
 
 		if( parsedURL.startsWith( "/" ) ) {
 			parsedURL = parsedURL.substring( 1 );
