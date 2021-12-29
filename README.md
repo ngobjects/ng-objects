@@ -35,4 +35,4 @@ ng-objects is an open source exploration of Apple's WebObjects (WO) framework. I
     3. `./target/ng-testapp-1.0.0-SNAPSHOT.woa/ng-testapp`
 4. Point your browser at `localhost:1200`.
 
-The _expected output_ is `No request handler found with key Optional[]`. Congratulations!
+The _expected output_ is `Welcome to NGObjects! Sorry, but I have no idea how to handle requests without path elements`. Congratulations!
