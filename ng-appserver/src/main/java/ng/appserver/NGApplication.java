@@ -33,14 +33,15 @@ public class NGApplication {
 	private NGResourceManager _resourceManager;
 
 	/**
-	 * FIXME: This lifebeatThread is public here for the benefit of WOMPRequestHandler, which uses it to generate massages to wotaskd. Look into that later // Hugi 2021-12-29
+	 * In the old WO world, this would have been called "requestHandlers".
+	 * Since we want to have more dynamic route resolution, it makes sense to move that to a separate object.
 	 */
-	public NGLifebeatThread _lifebeatThread;
+	private NGRouteTable _routeTable;
 
 	/**
-	 * This is the replacement for _requestHandlers
+	 * FIXME: public for the benefit of WOMPRequestHandler, which uses it to generate messages to send to wotaskd. Let's look into that // Hugi 2021-12-29
 	 */
-	private final NGRouteTable _routeTable = new NGRouteTable();
+	public NGLifebeatThread _lifebeatThread;
 
 	/**
 	 * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
@@ -74,6 +75,7 @@ public class NGApplication {
 			_application._sessionStore = new NGServerSessionStore();
 			_application._properties = properties;
 
+			_application._routeTable = new NGRouteTable();
 			_application._routeTable.map( "/wo/", new NGComponentRequestHandler() );
 			_application._routeTable.map( "/wr/", new NGResourceRequestHandler() );
 			_application._routeTable.map( "/wa/", new NGDirectActionRequestHandler() );
@@ -103,7 +105,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: We don't really want to return anything if this hasn't been set. Only set now for testing
+	 * FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
 	 */
 	public String adaptorClassName() {
 		return "ng.adaptor.jetty.NGAdaptorJetty";
