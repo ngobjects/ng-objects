@@ -77,7 +77,7 @@ public class NGApplication {
 			System.exit( -1 );
 		}
 
-		if( !_properties.isDevelopmentMode() ) {
+		if( !_properties.propWOLifebeatEnabled() ) {
 			startLifebeatThread();
 		}
 

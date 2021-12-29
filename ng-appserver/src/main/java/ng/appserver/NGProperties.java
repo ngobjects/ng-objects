@@ -108,6 +108,10 @@ public class NGProperties {
 		return getInteger( "WOLifebeatInterval" );
 	}
 
+	public boolean propWOLifebeatEnabled() {
+		return "YES".equals( get( "WOLifebeatEnabled" ) );
+	}
+
 	public boolean propWOMonitorEnabled() {
 		return "YES".equals( get( "WOMonitorEnabled" ) );
 	}
