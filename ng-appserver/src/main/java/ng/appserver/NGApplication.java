@@ -25,20 +25,29 @@ public class NGApplication {
 
 	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
 
+	/**
+	 * FIXME: We still have a global NGApplication here which we probably don't // Hugi 2021-12-29
+	 */
 	private static NGApplication _application;
+
+	private NGProperties _properties;
 
 	private NGSessionStore _sessionStore;
 
 	private NGResourceManager _resourceManager;
 
-	private NGProperties _properties;
-
+	/**
+	 * FIXME: This lifebeatThread is public here for the benefit of WOMPRequestHandler, which uses it to generate massages to wotaskd. Look into that later // Hugi 2021-12-29
+	 */
 	public NGLifebeatThread _lifebeatThread;
 
+	/**
+	 * FIXME: We're emulating the WO style of request handlers here, we'll be moving to a more advanced Routing mechanism in the near future (see NGRouteTable) // Hugi 2021-12-29
+	 */
 	private final Map<String, NGRequestHandler> _requestHandlers = new HashMap<>();
 
 	/**
-	 * FIXME: This method is a little weird, being a relic from how things were handled in WOApplication. Look a little better into the initialization code. // Hugi 2021-12-29
+	 * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		final long startTime = System.currentTimeMillis();
