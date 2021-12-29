@@ -123,15 +123,15 @@ public class NGParsedURI {
 	}
 
 	/**
-	 * FIXME: Deprecated, delete
+	 * FIXME: While I generally like the idea of Optionals, I'm not sure if I want to keep this. I'm considering it deprecated for a bit // Hugi 2021-12-29
 	 */
 	@Deprecated
-	public Optional<String> elementAt( final int i ) {
+	public Optional<String> elementAt( final int index ) {
 
-		if( i >= pathElements().length ) {
+		if( index >= pathElements().length ) {
 			return Optional.empty();
 		}
 
-		return Optional.of( pathElements()[i] );
+		return Optional.of( pathElements()[index] );
 	}
 }
