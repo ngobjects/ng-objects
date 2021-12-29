@@ -2,13 +2,15 @@ package ng.appserver.experimental;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGComponent;
 import ng.appserver.NGRequest;
-import ng.appserver.privates.NGParsedURI;
+import ng.appserver.NGRequestHandler;
+import ng.appserver.NGResponse;
 
 /**
  * Contains a list of handlers for URLs
@@ -26,23 +28,15 @@ public class NGRouteTable {
 	 */
 	private List<Route> _routes = new ArrayList<>();
 
-	/**
-	 * The default global route table used by RouteAction to access actions
-	 */
-	private static NGRouteTable _defaultRouteTable = new NGRouteTable();
-
-	public static NGRouteTable defaultRouteTable() {
-		return _defaultRouteTable;
-	}
-
 	private List<Route> routes() {
 		return _routes;
 	}
 
-	public NGRouteHandler handlerForURL( final NGParsedURI url ) {
+	public NGRequestHandler handlerForURL( final String uri ) {
+		Objects.requireNonNull( uri );
 
 		for( final Route route : routes() ) {
-			if( matches( route.pattern, url.sourceURL() ) ) {
+			if( matches( route.pattern, uri ) ) {
 				return route.routeHandler;
 			}
 		}
@@ -53,14 +47,14 @@ public class NGRouteTable {
 	/**
 	 * Check if the given handler matches the given URL
 	 */
-	private static boolean matches( final String pattern, final String url ) {
-		return url.startsWith( pattern );
+	private static boolean matches( final String pattern, final String uri ) {
+		return uri.startsWith( pattern );
 	}
 
-	public void map( final String pattern, final NGRouteHandler routeHandler ) {
+	public void map( final String pattern, final NGRequestHandler requestHandler ) {
 		Route r = new Route();
 		r.pattern = pattern;
-		r.routeHandler = routeHandler;
+		r.routeHandler = requestHandler;
 		_routes.add( r );
 	}
 
@@ -87,14 +81,10 @@ public class NGRouteTable {
 		/**
 		 * The routeHandler that will handle requests passed to this route
 		 */
-		public NGRouteHandler routeHandler;
+		public NGRequestHandler routeHandler;
 	}
 
-	public static abstract class NGRouteHandler {
-		public abstract NGActionResults handleRequest( NGRequest request );
-	}
-
-	public static class FunctionRouteHandler extends NGRouteHandler {
+	public static class FunctionRouteHandler extends NGRequestHandler {
 		private Function<NGRequest, NGActionResults> _function;
 
 		public FunctionRouteHandler( final Function<NGRequest, NGActionResults> biFunction ) {
@@ -102,12 +92,12 @@ public class NGRouteTable {
 		}
 
 		@Override
-		public NGActionResults handleRequest( NGRequest request ) {
-			return _function.apply( request );
+		public NGResponse handleRequest( NGRequest request ) {
+			return _function.apply( request ).generateResponse();
 		}
 	}
 
-	public static class ComponentRouteHandler extends NGRouteHandler {
+	public static class ComponentRouteHandler extends NGRequestHandler {
 		private Class<? extends NGComponent> _componentClass;
 
 		public ComponentRouteHandler( final Class<? extends NGComponent> componentClass ) {
@@ -115,8 +105,8 @@ public class NGRouteTable {
 		}
 
 		@Override
-		public NGActionResults handleRequest( NGRequest request ) {
-			return NGApplication.application().pageWithName( _componentClass, request.context() );
+		public NGResponse handleRequest( NGRequest request ) {
+			return NGApplication.application().pageWithName( _componentClass, request.context() ).generateResponse();
 		}
 	}
 }
