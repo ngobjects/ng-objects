@@ -20,3 +20,20 @@ ng-objects is an open source exploration of Apple's WebObjects (WO) framework. I
 * Components/Templating/Dynamic elements/Associations
 * KVC
 * Resource management
+
+## How do I launch `ng-testapp`?
+
+1. You'll need [vermilingua-maven-plugin](https://github.com/undur/vermilingua-maven-plugin).
+    1. Clone that repo.
+    2. Run `mvn install`.
+2. Install the `ng-objects` dependencies.
+    1. Clone this repo.
+    2. Change `NGApplication.isDevelopmentMode()` to return `true`. (See [#6](https://github.com/ngobjects/ng-objects/issues/6).)
+    3. Run `mvn install` at the top level.
+3. Build and launch `ng-testapp`:
+    1. `cd ng-testapp`
+    2. `mvn package`
+    3. `./target/ng-testapp-1.0.0-SNAPSHOT.woa/ng-testapp`
+4. Point your browser at `localhost:1200`.
+
+The _expected output_ is `No request handler found with key Optional[]`. Congratulations!
