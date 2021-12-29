@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Lives alongside the application and sends regular "lifebeats" (as in "Hello, I'm still here) to the wotaskd).
- * 
+ *
  * Also manages other communication with wotaskd
  * - hasStarted
  * - willStop
@@ -70,6 +70,8 @@ public class NGLifebeatThread extends Thread {
 	}
 
 	public NGLifebeatThread( final String appName, final int appPort, final InetAddress appHost, final int lifebeatDestinationPort, final long lifebeatIntervalMS ) {
+		logger.info( "Attempting to create LifebeatThread: {}, {}, {}, {}, {} ", appName, appPort, appHost, lifebeatDestinationPort, lifebeatIntervalMS );
+
 		Objects.requireNonNull( appName );
 
 		if( appPort < 1 ) {
@@ -85,8 +87,6 @@ public class NGLifebeatThread extends Thread {
 		if( lifebeatIntervalMS < 1 ) {
 			throw new IllegalArgumentException( "lifebeatIntervalMS must be a positive number" );
 		}
-
-		logger.info( "Creating LifebeatThread: {}, {}, {}, {}, {} ", appName, appPort, appHost, lifebeatDestinationPort, lifebeatIntervalMS );
 
 		_lifebeatDestinationPort = lifebeatDestinationPort;
 		_lifebeatIntervalMS = lifebeatIntervalMS;
