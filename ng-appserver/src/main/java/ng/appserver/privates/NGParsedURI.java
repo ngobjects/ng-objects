@@ -126,8 +126,4 @@ public class NGParsedURI {
 
 		return Optional.of( pathElements()[i] );
 	}
-
-	public String getNamedParameter( final String parameterName ) {
-		throw new RuntimeException( "Implement" ); // FIXME: Implement
-	}
 }
