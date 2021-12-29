@@ -64,7 +64,7 @@ public class NGApplication {
 
 			_application._resourceManager = new NGResourceManager();
 			_application._sessionStore = new NGServerSessionStore();
-
+			_application._properties = _properties;
 			_application.registerRequestHandler( "wo", new NGComponentRequestHandler() );
 			_application.registerRequestHandler( "wr", new NGResourceRequestHandler() );
 			_application.registerRequestHandler( "wa", new NGDirectActionRequestHandler() );
