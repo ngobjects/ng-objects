@@ -25,12 +25,26 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 			return new NGResponse( "Resource '" + resourceName.get() + "' does not exist", 404 );
 		}
 
-		final String mimeType = "image/jpeg";
+		final String mimeType = mimeTypeForResourceName( resourceName.get() );
 
 		// FIXME: Detect and set the correct response headers
 		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName.get() ) );
 		response.setHeader( "Content-Type", mimeType );
 		return response;
+	}
+
+	/**
+	 * Highly advanced mime type detection
+	 *
+	 * FIXME: Do diz // Hugi 2021-12-29
+	 */
+	private static final String mimeTypeForResourceName( final String resourceName ) {
+
+		if( resourceName.endsWith( ".jpg" ) ) {
+			return "image/jpeg";
+		}
+
+		throw new IllegalArgumentException( "For some reason, our advanced algorithm has not managed to identify your resource type. Is it possible it's not a JPEG?" );
 	}
 }
