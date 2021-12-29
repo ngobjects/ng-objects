@@ -113,6 +113,10 @@ public class NGApplication {
 		}
 	}
 
+	public NGProperties properties() {
+		return _properties;
+	}
+
 	public boolean isDevelopmentMode() {
 		return _properties.isDevelopmentMode();
 	}
