@@ -84,50 +84,20 @@ public class NGApplication {
 		logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 	}
 
-	public boolean isDevelopmentMode() {
-		return _properties.isDevelopmentMode();
-	}
-
-	/**
-	 * Starts a lifebeat thread for communicating with wotaskd.
-	 */
-	private void startLifebeatThread() {
-		String hostName = _properties.propWOHost();
-		String appName = _properties.propWOApplicationName();
-		Integer appPort = _properties.propWOPort();
-		Integer lifeBeatDestinationPort = _properties.propWOLifebeatDestinationPort();
-		Integer lifeBeatIntervalInSeconds = _properties.propWOLifebeatIntervalInSeconds();
-
-		InetAddress hostAddress = null;
-
+	private void run() {
 		try {
-			hostAddress = InetAddress.getByName( hostName );
+			createAdaptor().start();
 		}
-		catch( final UnknownHostException e ) {
-			throw new RuntimeException( "Failed to start LifebeatThread", e );
-		}
-
-		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, TimeUnit.SECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.MILLISECONDS ) );
-		_lifebeatThread.setDaemon( true );
-		_lifebeatThread.start();
-	}
-
-	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {
-		try {
-			return componentClass.getConstructor( NGContext.class ).newInstance( context );
-		}
-		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
-			// FIXME: Handle the error
+		catch( final Exception e ) {
 			throw new RuntimeException( e );
 		}
 	}
 
-	public NGSessionStore sessionStore() {
-		return _sessionStore;
-	}
-
-	public NGSession restoreSessionWithID( final String sessionID ) {
-		return sessionStore().checkoutSessionWithID( sessionID );
+	/**
+	 * FIXME: We don't really want to return anything if this hasn't been set. Only set now for testing
+	 */
+	public String adaptorClassName() {
+		return "ng.adaptor.jetty.NGAdaptorJetty";
 	}
 
 	private NGAdaptor createAdaptor() {
@@ -143,18 +113,16 @@ public class NGApplication {
 		}
 	}
 
-	/**
-	 * FIXME: We don't really want to return anything if this hasn't been set. Only set now for testing
-	 */
-	public String adaptorClassName() {
-		return "ng.adaptor.jetty.NGAdaptorJetty";
+	public boolean isDevelopmentMode() {
+		return _properties.isDevelopmentMode();
 	}
 
-	private void run() {
+	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {
 		try {
-			createAdaptor().start();
+			return componentClass.getConstructor( NGContext.class ).newInstance( context );
 		}
-		catch( final Exception e ) {
+		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
+			// FIXME: Handle the error
 			throw new RuntimeException( e );
 		}
 	}
@@ -165,6 +133,14 @@ public class NGApplication {
 
 	public NGResourceManager resourceManager() {
 		return _resourceManager;
+	}
+
+	public NGSessionStore sessionStore() {
+		return _sessionStore;
+	}
+
+	public NGSession restoreSessionWithID( final String sessionID ) {
+		return sessionStore().checkoutSessionWithID( sessionID );
 	}
 
 	public void registerRequestHandler( final String key, final NGRequestHandler requestHandler ) {
@@ -258,6 +234,30 @@ public class NGApplication {
 		else {
 			logger.info( "OutputPath not set. Using standard System.out and System.err" );
 		}
+	}
+
+	/**
+	 * Starts a lifebeat thread for communicating with wotaskd.
+	 */
+	private void startLifebeatThread() {
+		String hostName = _properties.propWOHost();
+		String appName = _properties.propWOApplicationName();
+		Integer appPort = _properties.propWOPort();
+		Integer lifeBeatDestinationPort = _properties.propWOLifebeatDestinationPort();
+		Integer lifeBeatIntervalInSeconds = _properties.propWOLifebeatIntervalInSeconds();
+
+		InetAddress hostAddress = null;
+
+		try {
+			hostAddress = InetAddress.getByName( hostName );
+		}
+		catch( final UnknownHostException e ) {
+			throw new RuntimeException( "Failed to start LifebeatThread", e );
+		}
+
+		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, TimeUnit.SECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.MILLISECONDS ) );
+		_lifebeatThread.setDaemon( true );
+		_lifebeatThread.start();
 	}
 
 	/**
