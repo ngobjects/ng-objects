@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class NGApplication {
 
 	private NGResourceManager _resourceManager;
 
-	private static NGProperties _properties;
+	private NGProperties _properties;
 
 	public NGLifebeatThread _lifebeatThread;
 
@@ -42,7 +43,7 @@ public class NGApplication {
 		_properties = new NGProperties( args );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
-		initLogging();
+		initLogging( properties().propWOOutputPath() );
 
 		logger.info( "===== Parsed properties" );
 		logger.info( _properties._propertiesMapAsString() );
@@ -69,23 +70,38 @@ public class NGApplication {
 			startLifebeatThread();
 		}
 
-		logger.info( "===== Application started in {}ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
+		logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 	}
 
-	private static void startLifebeatThread() {
-		InetAddress addr = null;
+	/**
+	 * Starts a lifebeat thread for communicating with wotaskd.
+	 */
+	private void startLifebeatThread() {
+		String hostName = properties().propWOHost();
+		String appName = properties().propWOApplicationName();
+		Integer appPort = properties().propWOPort();
+		Integer lifeBeatDestinationPort = properties().propWOLifebeatDestinationPort();
+		Integer lifeBeatIntervalInSeconds = properties().propWOLifebeatIntervalInSeconds();
+
+		InetAddress hostAddress = null;
+
 		try {
-			addr = InetAddress.getByName( "linode-4.rebbi.is" );
+			hostAddress = InetAddress.getByName( hostName );
 		}
 		catch( final UnknownHostException e ) {
-			e.printStackTrace();
+			throw new RuntimeException( "Failed to start LifebeatThread", e );
 		}
 
-		String appName = "Rebelliant"; // FIXME: Where do we get the application name from?
-		Integer appPort = _properties.getInteger( "WOPort" );
-		_application._lifebeatThread = new NGLifebeatThread( appName, appPort, addr, 1085, 30000 );
-		_application._lifebeatThread.setDaemon( true );
-		_application._lifebeatThread.start();
+		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, TimeUnit.SECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.MILLISECONDS ) );
+		_lifebeatThread.setDaemon( true );
+		_lifebeatThread.start();
+	}
+
+	/**
+	 * @return This application instance's properties object.
+	 */
+	private NGProperties properties() {
+		return _properties;
 	}
 
 	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {
@@ -217,9 +233,10 @@ public class NGApplication {
 		return new NGContext( request );
 	}
 
-	private static void initLogging() {
-		final String outputPath = _properties.get( "WOOutputPath" );
-
+	/**
+	 * Redirects logging to the designated [outputPath] if set
+	 */
+	private static void initLogging( final String outputPath ) {
 		if( outputPath != null ) {
 			// Archive the older logFile if it exists
 			final File outputFile = new File( outputPath );
@@ -245,7 +262,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This is a bit harsh. We probably want to start some sort of a graceful shutdown instead of saying "OK, BYE" // Hugi 2021-11-20
+	 * FIXME: This is a bit harsh. We probably want to start some sort of a graceful shutdown procedure instead of saying "'K, BYE" // Hugi 2021-11-20
 	 */
 	public void terminate() {
 		System.exit( 0 );

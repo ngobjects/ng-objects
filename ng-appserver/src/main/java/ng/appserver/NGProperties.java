@@ -83,7 +83,31 @@ public class NGProperties {
 	 * FIXME: We're creating cover methods for some of the more used properties for now. // Hugi 2021-12-29
 	 * This is not the way we it'll be going forward, but it will help with refactoring later (rather than using property name strings)
 	 */
-	public int propPort() {
+	public Integer propWOPort() {
 		return getInteger( "WOPort" );
+	}
+
+	public String propWOHost() {
+		return get( "WOHost" );
+	}
+
+	public Integer propWOLifebeatDestinationPort() {
+		return getInteger( "WOLifebeatDestinationPort" );
+	}
+
+	public Integer propWOLifebeatIntervalInSeconds() {
+		return getInteger( "WOLifebeatInterval" );
+	}
+
+	public boolean propWOMonitorEnabled() {
+		return "YES".equals( get( "WOMonitorEnabled" ) );
+	}
+
+	public String propWOApplicationName() {
+		return get( "WOApplicationName" );
+	}
+
+	public String propWOOutputPath() {
+		return get( "WOOutputPath" );
 	}
 }
