@@ -1,8 +1,15 @@
-package ng.appserver;
+package ng.appserver.directactions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
+
+import ng.appserver.NGActionResults;
+import ng.appserver.NGApplication;
+import ng.appserver.NGComponent;
+import ng.appserver.NGContext;
+import ng.appserver.NGRequest;
+import ng.appserver.NGResponse;
 
 public class NGDirectAction {
 

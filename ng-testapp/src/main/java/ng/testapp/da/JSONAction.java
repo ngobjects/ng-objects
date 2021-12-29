@@ -6,9 +6,9 @@ import java.util.List;
 import com.google.gson.GsonBuilder;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGDirectAction;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.directactions.NGDirectAction;
 
 public class JSONAction extends NGDirectAction {
 

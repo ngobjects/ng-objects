@@ -2,9 +2,9 @@ package ng.testapp.da;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
-import ng.appserver.NGDirectAction;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.directactions.NGDirectAction;
 import ng.testapp.components.ExampleComponent;
 import ng.testapp.components.ProgrammaticDynamicComponent;
 

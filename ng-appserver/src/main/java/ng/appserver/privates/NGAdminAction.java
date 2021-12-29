@@ -2,9 +2,9 @@ package ng.appserver.privates;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
-import ng.appserver.NGDirectAction;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.directactions.NGDirectAction;
 
 public class NGAdminAction extends NGDirectAction {
 
