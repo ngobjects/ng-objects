@@ -131,7 +131,12 @@ public class NGApplication {
 		return _routeTable;
 	}
 
-	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {
+	/**
+	 * @return A new instance of [componentClass] in the given [context]
+	 *
+	 * FIXME: Are components really a part of the basic framework? If so; does component construction really belong in NGApplication // Hugi 2021-12-29
+	 */
+	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, final NGContext context ) {
 		try {
 			return componentClass.getConstructor( NGContext.class ).newInstance( context );
 		}
