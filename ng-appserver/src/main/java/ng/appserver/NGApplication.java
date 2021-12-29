@@ -177,9 +177,8 @@ public class NGApplication {
 		final NGRouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( request.parsedURI() );
 
 		if( handler != null ) {
-			return handler.handle( request.parsedURI(), request.context() ).generateResponse();
+			return handler.handle( request ).generateResponse();
 		}
-		// FIXME: End experimental route handling
 
 		// Start regular good old style WO request handling logic (NGRequestHandler)
 		final Optional<String> requestHandlerKey = request.parsedURI().elementAt( 0 );
