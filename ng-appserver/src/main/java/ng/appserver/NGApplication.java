@@ -208,8 +208,8 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This method is inspired by WO. It's really a relic from the time when WOApplication served as The Central Things Of All That Is.
-	 * Good idea at the time, but now really just an older version of dependency injection or … a factory. I'm not sure we want to keep this. // Hugi 2021-12-29
+	 * FIXME: Like the other "create..." methods, this one is inspired by WO. It's really a relic from the time when WOApplication served as The Central Thing Of All Things That Are.
+	 * Good idea at the time, it made Wonder possible… But it's really just an older type of a factory or, well, dependency injection. Not sure we want to keep this way of constructing objects. // Hugi 2021-12-29
 	 */
 	public NGContext createContextForRequest( NGRequest request ) {
 		return new NGContext( request );
