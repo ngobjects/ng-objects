@@ -62,7 +62,13 @@ public class NGParsedURI {
 
 	private String[] pathElements() {
 		if( _pathElements == null ) {
-			_pathElements = _parsedURL.split( "/" );
+			// FIXME: This feels a bit hacky, look into it a little better later // Hugi 2021-12-29
+			if( "".equals( _parsedURL ) ) {
+				_pathElements = new String[0];
+			}
+			else {
+				_pathElements = _parsedURL.split( "/" );
+			}
 		}
 
 		return _pathElements;
