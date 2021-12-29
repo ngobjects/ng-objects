@@ -152,25 +152,17 @@ public class NGApplication {
 		return sessionStore().checkoutSessionWithID( sessionID );
 	}
 
-	/**
-	 * FIXME: We're currently looking for both RouteHandlers and Request handlers. These are the same thing. Consolidate // Hugi 2021-11-28
-	 */
 	public NGResponse dispatchRequest( final NGRequest request ) {
 
 		logger.info( "Handling URI: " + request.uri() );
 
 		cleanupWOURL( request );
 
-		// FIXME: Handle the case of no default request handler gracefully
+		// FIXME: Handle the case of no default request handler gracefully // Hugi 2021-12-29
 		if( request.parsedURI().length() == 0 ) {
 			return new NGResponse( "Welcome to NGObjects!\n\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
 		}
 
-		// FIXME: Start experimental route handling // Hugi 2021-12-29
-		// What we're aiming for here is to be able to have something more complex than NGRequestHandler.
-		// In essence: We want something a bit more than just "url prefix", we want to provide real routes like other web frameworks.
-		// This should be easy to accomplish since routes are really just good old RequestHandlers with pattern-matching instead of just prefix-matching
-		// So for now, we're starting out to see if the request matches a registered RouteHandler, if so, we use that. Otherwise, we move on to the old style NGRequestHandler.
 		final NGRequestHandler handler = _routeTable.handlerForURL( request.uri() );
 
 		if( handler == null ) {
