@@ -244,11 +244,12 @@ public class NGApplication {
 	 * Starts a lifebeat thread for communicating with wotaskd.
 	 */
 	private void startLifebeatThread() {
-		String hostName = _properties.propWOHost();
-		String appName = _properties.propWOApplicationName();
-		Integer appPort = _properties.propWOPort();
-		Integer lifeBeatDestinationPort = _properties.propWOLifebeatDestinationPort();
-		Integer lifeBeatIntervalInSeconds = _properties.propWOLifebeatIntervalInSeconds();
+		final String hostName = _properties.propWOHost();
+		final String appName = _properties.propWOApplicationName();
+		final Integer appPort = _properties.propWOPort();
+		final Integer lifeBeatDestinationPort = _properties.propWOLifebeatDestinationPort();
+		final Integer lifeBeatIntervalInSeconds = _properties.propWOLifebeatIntervalInSeconds();
+		final long lifeBeatIntervalInMilliseconds = TimeUnit.MILLISECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.SECONDS );
 
 		InetAddress hostAddress = null;
 
@@ -259,7 +260,7 @@ public class NGApplication {
 			throw new RuntimeException( "Failed to start LifebeatThread", e );
 		}
 
-		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, TimeUnit.MILLISECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.SECONDS ) );
+		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, lifeBeatIntervalInMilliseconds );
 		_lifebeatThread.setDaemon( true );
 		_lifebeatThread.start();
 	}
