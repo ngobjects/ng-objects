@@ -30,7 +30,7 @@ public class NGResourceManager {
 	 * FIXME: Current implementation is for testing only
 	 */
 	private boolean useCache() {
-		return !NGApplication.isDevelopmentMode();
+		return !NGApplication.application().isDevelopmentMode();
 	}
 
 	public Optional<byte[]> bytesForResourceNamed( final String resourceName ) {

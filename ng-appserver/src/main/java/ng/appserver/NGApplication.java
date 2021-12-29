@@ -43,7 +43,18 @@ public class NGApplication {
 		_properties = new NGProperties( args );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
-		initLogging( properties().propWOOutputPath() );
+		initLogging( _properties.propWOOutputPath() );
+
+		if( _properties.isDevelopmentMode() ) {
+			logger.info( "========================================" );
+			logger.info( "===== Running in development mode! =====" );
+			logger.info( "========================================" );
+		}
+		else {
+			logger.info( "=======================================" );
+			logger.info( "===== Running in production mode! =====" );
+			logger.info( "=======================================" );
+		}
 
 		logger.info( "===== Parsed properties" );
 		logger.info( _properties._propertiesMapAsString() );
@@ -66,22 +77,26 @@ public class NGApplication {
 			System.exit( -1 );
 		}
 
-		if( !isDevelopmentMode() ) {
+		if( !_properties.isDevelopmentMode() ) {
 			startLifebeatThread();
 		}
 
 		logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 	}
 
+	public boolean isDevelopmentMode() {
+		return _properties.isDevelopmentMode();
+	}
+
 	/**
 	 * Starts a lifebeat thread for communicating with wotaskd.
 	 */
 	private void startLifebeatThread() {
-		String hostName = properties().propWOHost();
-		String appName = properties().propWOApplicationName();
-		Integer appPort = properties().propWOPort();
-		Integer lifeBeatDestinationPort = properties().propWOLifebeatDestinationPort();
-		Integer lifeBeatIntervalInSeconds = properties().propWOLifebeatIntervalInSeconds();
+		String hostName = _properties.propWOHost();
+		String appName = _properties.propWOApplicationName();
+		Integer appPort = _properties.propWOPort();
+		Integer lifeBeatDestinationPort = _properties.propWOLifebeatDestinationPort();
+		Integer lifeBeatIntervalInSeconds = _properties.propWOLifebeatIntervalInSeconds();
 
 		InetAddress hostAddress = null;
 
@@ -97,13 +112,6 @@ public class NGApplication {
 		_lifebeatThread.start();
 	}
 
-	/**
-	 * @return This application instance's properties object.
-	 */
-	private NGProperties properties() {
-		return _properties;
-	}
-
 	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, NGContext context ) {
 		try {
 			return componentClass.getConstructor( NGContext.class ).newInstance( context );
@@ -112,15 +120,6 @@ public class NGApplication {
 			// FIXME: Handle the error
 			throw new RuntimeException( e );
 		}
-	}
-
-	/**
-	 * @return true if the application is in development mode.
-	 *
-	 * FIXME: This is not *ahem* the final implementation
-	 */
-	public static boolean isDevelopmentMode() {
-		return "hugi".equals( System.getProperty( "user.name" ) );
 	}
 
 	public NGSessionStore sessionStore() {
