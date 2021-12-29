@@ -80,6 +80,15 @@ public class NGProperties {
 	}
 
 	/**
+	 * @return true if the application is in development mode.
+	 *
+	 * FIXME: This needs a more robust and explicit implementation, see issue #6 // Hugi 2021-12-29
+	 */
+	public boolean isDevelopmentMode() {
+		return !propWOMonitorEnabled();
+	}
+
+	/**
 	 * FIXME: We're creating cover methods for some of the more used properties for now. // Hugi 2021-12-29
 	 * This is not the way we it'll be going forward, but it will help with refactoring later (rather than using property name strings)
 	 */
