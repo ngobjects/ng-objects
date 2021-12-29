@@ -26,7 +26,7 @@ public class NGApplication {
 	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
 
 	/**
-	 * FIXME: We still have a global NGApplication here which we probably don't // Hugi 2021-12-29
+	 * FIXME: This is a global NGApplication object. We don't want a global NGApplication object // Hugi 2021-12-29
 	 */
 	private static NGApplication _application;
 
