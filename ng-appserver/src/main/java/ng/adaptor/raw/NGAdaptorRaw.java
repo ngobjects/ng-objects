@@ -37,6 +37,9 @@ import ng.appserver.NGResponse;
 
 public class NGAdaptorRaw extends NGAdaptor {
 
+	/**
+	 * FIXME: This should be coming from NGPRoperties eventually, put here as a placeholder for now... // Hugi 2021-12-29
+	 */
 	private static class Properties {
 		private static int port = 1200;
 		private static int workerThreadCount = 4;
