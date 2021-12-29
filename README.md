@@ -28,8 +28,7 @@ ng-objects is an open source exploration of Apple's WebObjects (WO) framework. I
     2. Run `mvn install`.
 2. Install the `ng-objects` dependencies.
     1. Clone this repo.
-    2. Change `NGApplication.isDevelopmentMode()` to return `true`. (See [#6](https://github.com/ngobjects/ng-objects/issues/6).)
-    3. Run `mvn install` at the top level.
+    2. Run `mvn install` at the top level.
 3. Build and launch `ng-testapp`:
     1. `cd ng-testapp`
     2. `mvn package`
