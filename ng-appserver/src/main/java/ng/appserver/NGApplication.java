@@ -172,7 +172,7 @@ public class NGApplication {
 
 		// FIXME: Handle the case of no default request handler gracefully
 		if( requestHandlerKey.isEmpty() ) {
-			return new NGResponse( "I have no idea to handle requests without any path elements", 404 );
+			return new NGResponse( "Welcome to NGObjects!\n\nSorry, but I have no idea how to handle requests without path elements", 404 );
 		}
 
 		final NGRequestHandler requestHandler = _requestHandlers.get( requestHandlerKey.get() );
