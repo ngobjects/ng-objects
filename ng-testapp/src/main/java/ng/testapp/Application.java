@@ -17,7 +17,7 @@ public class Application extends NGApplication {
 	}
 
 	public Application() {
-		NGRouteTable.defaultRouteTable().map( "/some-route/", ( url, conext ) -> {
+		NGRouteTable.defaultRouteTable().map( "/some-route/", ( request ) -> {
 			return new NGResponse( "Oh look, a response!", 200 );
 		} );
 	}
