@@ -78,4 +78,12 @@ public class NGProperties {
 
 		return b.toString();
 	}
+
+	/**
+	 * FIXME: We're creating cover methods for some of the more used properties for now. // Hugi 2021-12-29
+	 * This is not the way we it'll be going forward, but it will help with refactoring later (rather than using property name strings)
+	 */
+	public int propPort() {
+		return getInteger( "WOPort" );
+	}
 }
