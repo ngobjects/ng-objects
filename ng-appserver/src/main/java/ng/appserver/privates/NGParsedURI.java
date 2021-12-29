@@ -27,7 +27,9 @@ public class NGParsedURI {
 	private String[] _pathElements;
 
 	/**
-	 * Instances are constructed using the of() method.
+	 * Instances are constructed using the of() method
+	 *
+	 * FIXME: We're currently stripping away starting and ending slashes. We'll want to look into if that's generally desired behaviour // Hugi 2021-12-28
 	 */
 	private NGParsedURI( final String sourceURL ) {
 		Objects.requireNonNull( sourceURL );
