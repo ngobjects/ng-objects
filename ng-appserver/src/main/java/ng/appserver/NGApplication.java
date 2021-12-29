@@ -169,14 +169,19 @@ public class NGApplication {
 
 		cleanupWOURL( request );
 
-		// FIXME: Start experimental route handling logic
+		// FIXME: Start experimental route handling // Hugi 2021-12-29
+		// What we're aiming for here is to be able to have something more complex than NGRequestHandler.
+		// In essence: We want something a bit more than just "url prefix", we want to provide real routes like other web frameworks.
+		// This should be easy to accomplish since routes are really just good old RequestHandlers with pattern-matching instead of just prefix-matching
+		// So for now, we're starting out to see if the request matches a registered RouteHandler, if so, we use that. Otherwise, we move on to the old style NGRequestHandler.
 		final NGRouteHandler handler = NGRouteTable.defaultRouteTable().handlerForURL( request.parsedURI() );
 
 		if( handler != null ) {
 			return handler.handle( request.parsedURI(), request.context() ).generateResponse();
 		}
-		// FIXME: End experimental route handling logic
+		// FIXME: End experimental route handling
 
+		// Start regular good old style WO request handling logic (NGRequestHandler)
 		final Optional<String> requestHandlerKey = request.parsedURI().elementAt( 0 );
 
 		// FIXME: Handle the case of no default request handler gracefully
