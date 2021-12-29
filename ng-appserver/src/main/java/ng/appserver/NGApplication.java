@@ -255,7 +255,7 @@ public class NGApplication {
 			throw new RuntimeException( "Failed to start LifebeatThread", e );
 		}
 
-		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, TimeUnit.SECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.MILLISECONDS ) );
+		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, TimeUnit.MILLISECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.SECONDS ) );
 		_lifebeatThread.setDaemon( true );
 		_lifebeatThread.start();
 	}
