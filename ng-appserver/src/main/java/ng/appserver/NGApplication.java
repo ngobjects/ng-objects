@@ -37,6 +37,9 @@ public class NGApplication {
 
 	private final Map<String, NGRequestHandler> _requestHandlers = new HashMap<>();
 
+	/**
+	 * FIXME: This method is a little weird, being a relic from how things were handled in WOApplication. Look a little better into the initialization code. // Hugi 2021-12-29
+	 */
 	public void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		final long startTime = System.currentTimeMillis();
 
