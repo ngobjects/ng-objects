@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import ng.appserver.privates.NGParsedURI;
@@ -40,6 +41,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	 * FIXME: Do diz // Hugi 2021-12-29
 	 */
 	private static final String mimeTypeForResourceName( final String resourceName ) {
+		Objects.requireNonNull( resourceName );
 
 		if( resourceName.endsWith( ".jpg" ) ) {
 			return "image/jpeg";
