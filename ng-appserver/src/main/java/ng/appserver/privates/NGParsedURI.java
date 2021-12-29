@@ -14,12 +14,12 @@ public class NGParsedURI {
 	/**
 	 * The URL string this object was generated from.
 	 */
-	private String _sourceURL;
+	private final String _sourceURL;
 
 	/**
 	 * The cleaned up URL
 	 */
-	private String _parsedURL;
+	private final String _parsedURL;
 
 	/**
 	 * cached copy of the url's elements
@@ -33,8 +33,10 @@ public class NGParsedURI {
 	 */
 	private NGParsedURI( final String sourceURL ) {
 		Objects.requireNonNull( sourceURL );
+		_sourceURL = sourceURL;
 
-		String parsedURL = sourceURL;
+		// Strip away starting and ending slashes if present
+		String parsedURL = _sourceURL;
 
 		if( parsedURL.startsWith( "/" ) ) {
 			parsedURL = parsedURL.substring( 1 );
@@ -45,7 +47,6 @@ public class NGParsedURI {
 		}
 
 		_parsedURL = parsedURL;
-		_sourceURL = sourceURL;
 	}
 
 	public static NGParsedURI of( final String sourceURL ) {
