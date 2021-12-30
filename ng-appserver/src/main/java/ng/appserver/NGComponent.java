@@ -2,17 +2,12 @@ package ng.appserver;
 
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * FIXME: Should we allow creation of components without a context?
  * FIXME: Templating really belongs in a separate project, right?
  */
 
 public class NGComponent extends NGElement implements NGActionResults {
-
-	private static final Logger logger = LoggerFactory.getLogger( NGComponent.class );
 
 	private final NGContext _context;
 
