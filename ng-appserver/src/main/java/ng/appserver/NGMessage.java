@@ -29,12 +29,6 @@ public abstract class NGMessage {
 	 */
 	private Map<String, List<String>> _headers = new HashMap<>();
 
-	/**
-	 * FIXME: Probably don't want to populate this with an empty map at the start?
-	 * FIXME: Thread safety!
-	 */
-	private List<NGCookie> _cookies = new ArrayList<>();
-
 	byte[] _contentBytes = new byte[] {};
 
 	public String httpVersion() {
@@ -51,14 +45,6 @@ public abstract class NGMessage {
 
 	public void setHeaders( Map<String, List<String>> headers ) {
 		_headers = headers;
-	}
-
-	public List<NGCookie> cookies() {
-		return _cookies;
-	}
-
-	public void addCookie( NGCookie cookie ) {
-		_cookies.add( cookie );
 	}
 
 	public void setHeader( final String key, final String value ) {

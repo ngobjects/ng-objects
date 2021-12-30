@@ -26,6 +26,7 @@ public class Application extends NGApplication {
 		logger.info( "uri: {} ", request.uri() );
 		logger.info( "method: {} ", request.method() );
 		logger.info( "headers: {} ", request.headers() );
+		logger.info( "cookieValues: {} ", request.cookieValues() );
 		logger.info( "formValues: {} ", request.formValues() );
 		logger.info( "contentString: {}", request.contentString() );
 		return super.dispatchRequest( request );

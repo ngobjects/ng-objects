@@ -1,5 +1,8 @@
 package ng.appserver;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * FIXME:
  * Need to decide what to do about responses of different types.
@@ -14,6 +17,8 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 * FIXME: Decide if we want a default
 	 */
 	private int _status;
+
+	private List<NGCookie> _cookies = new ArrayList<>();
 
 	public NGResponse() {
 		setStatus( 200 );
@@ -31,6 +36,14 @@ public class NGResponse extends NGMessage implements NGActionResults {
 
 	public int status() {
 		return _status;
+	}
+
+	public List<NGCookie> cookies() {
+		return _cookies;
+	}
+
+	public void addCookie( NGCookie cookie ) {
+		_cookies.add( cookie );
 	}
 
 	/**

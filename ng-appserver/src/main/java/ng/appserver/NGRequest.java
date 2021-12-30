@@ -40,6 +40,8 @@ public class NGRequest extends NGMessage {
 	 */
 	private final Map<String, List<String>> _formValues;
 
+	private Map<String, List<String>> _cookieValues;
+
 	public Map<String, List<String>> formValues() {
 		return _formValues;
 	}
@@ -77,25 +79,44 @@ public class NGRequest extends NGMessage {
 		_formValues = Collections.emptyMap();
 	}
 
-	/**
-	 *
-	 */
 	public String _extractSessionID() {
 		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
 	}
 
-	/**
-	 * FIXME: Inefficient looping, this should be a map
-	 */
-	private String cookieValueForKey( String string ) {
+	public Map<String, List<String>> cookieValues() {
+		return _cookieValues;
+	}
 
-		for( NGCookie cookie : cookies() ) {
-			if( cookie.name().equals( SESSION_ID_COOKIE_NAME ) ) {
-				return cookie.value();
-			}
+	/**
+	 * FIXME: I kind of don't like having this exposed. Wonder if we should make the framework handle the cookie header deserialization, instead of the adaptor // Hugi
+	 */
+	public void setCookieValues( Map<String, List<String>> cookieValues ) {
+		_cookieValues = cookieValues;
+	}
+
+	/**
+	 * @return The values of the named cookie.
+	 */
+	public List<String> cookieValuesForKey( final String key ) {
+		return cookieValues().get( key );
+	}
+
+	/**
+	 * @return The value of the named cookie if there's only one cookie with that name.
+	 * @throws IllegalArgumentException If there are many cookies with the given key, throws an
+	 */
+	public String cookieValueForKey( final String key ) {
+		List<String> values = cookieValuesForKey( key );
+
+		if( values.size() == 0 ) {
+			return null;
 		}
 
-		return null;
+		if( values.size() > 1 ) {
+			throw new IllegalArgumentException( "There are more than one cookie named " + key );
+		}
+
+		return values.get( 0 );
 	}
 
 	/**
