@@ -35,6 +35,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGAdaptorJetty.class );
 
+	/**
+	 * Port used if no port number is specified in properties
+	 *
+	 * FIXME: This should be a default for all adaptors // Hugi 2021-12-31
+	 */
+	private static final int DEFAULT_PORT_NUMBER = 1200;
+
 	private Server server;
 
 	@Override
@@ -46,8 +53,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 		Integer port = NGApplication.application().properties().propWOPort(); // FIXME: Ugly way to get the port number
 
 		if( port == null ) {
-			logger.warn( "port property is not set, defaulting to port 1200" );
-			port = 1200;
+			logger.warn( "port property is not set, defaulting to port {}", DEFAULT_PORT_NUMBER );
+			port = DEFAULT_PORT_NUMBER;
 		}
 
 		final QueuedThreadPool threadPool = new QueuedThreadPool( maxThreads, minThreads, idleTimeout );
