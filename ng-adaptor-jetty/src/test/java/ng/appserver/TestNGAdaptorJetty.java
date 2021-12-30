@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,7 @@ public class TestNGAdaptorJetty {
 		HttpResponse<String> response = client.send( request, HttpResponse.BodyHandlers.ofString() );
 		assertEquals( "Oh look, a 404 response!", response.body() );
 		assertEquals( 404, response.statusCode() );
+		assertEquals( List.of( "firstValue", "secondValue" ), response.headers().allValues( "someHeader" ) );
 	}
 
 	/**
@@ -34,7 +36,11 @@ public class TestNGAdaptorJetty {
 
 		public SmuApplication() {
 			routeTable().map( "/some-route/", ( request ) -> {
-				return new NGResponse( "Oh look, a 404 response!", 404 );
+				final NGResponse response = new NGResponse( "Oh look, a 404 response!", 404 );
+				response.setHeader( "someHeader", "firstValue" );
+				response.setHeader( "someHeader", "secondValue" );
+				// response.addCookie( ... ) // FIXME: Implement test once implemented
+				return response;
 			} );
 		}
 	}
