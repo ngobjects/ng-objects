@@ -35,7 +35,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
-import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
@@ -171,23 +170,35 @@ public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 
 		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
 
-		final Cookie[] cookies = sr.getCookies();
-
-		if( cookies != null ) {
-			for( Cookie cookie : cookies ) {
-				request.addCookie( servletCookieToNGCookie( cookie ) );
-			}
-		}
+		request.setCookieValues( cookieValues( sr.getCookies() ) );
 
 		return request;
 	}
 
-	private static NGCookie servletCookieToNGCookie( Cookie sc ) {
-		return new NGCookie( sc.getName(), sc.getValue(), sc.getDomain(), sc.getPath(), sc.getSecure(), sc.getMaxAge() );
+	/**
+	 * @return The listed cookies as a map
+	 */
+	private static Map<String, List<String>> cookieValues( final Cookie[] cookies ) {
+		final Map<String, List<String>> cookieValues = new HashMap<>();
+
+		if( cookies != null ) {
+			for( Cookie cookie : cookies ) {
+				List<String> list = cookieValues.get( cookie.getName() );
+
+				if( list == null ) {
+					list = new ArrayList<>();
+					cookieValues.put( cookie.getName(), list );
+				}
+
+				list.add( cookie.getValue() );
+			}
+		}
+
+		return cookieValues;
 	}
 
 	/**
-	 * FIXME: Implement
+	 * @return The headers from the ServletRequest as a Map
 	 */
 	private static Map<String, List<String>> headerMap( final HttpServletRequest sr ) {
 		final Map<String, List<String>> map = new HashMap<>();
