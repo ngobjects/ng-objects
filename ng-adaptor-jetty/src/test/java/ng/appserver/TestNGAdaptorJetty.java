@@ -22,7 +22,8 @@ public class TestNGAdaptorJetty {
 				.uri( URI.create( "http://localhost:1200/some-route/" ) )
 				.build();
 
-		HttpResponse<Void> response = client.send( request, HttpResponse.BodyHandlers.discarding() );
+		HttpResponse<String> response = client.send( request, HttpResponse.BodyHandlers.ofString() );
+		assertEquals( "Oh look, a 404 response!", response.body() );
 		assertEquals( 404, response.statusCode() );
 	}
 
