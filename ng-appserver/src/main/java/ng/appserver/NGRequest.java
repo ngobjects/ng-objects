@@ -88,14 +88,14 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
-	 * FIXME: I kind of don't like having this exposed. Wonder if we should make the framework handle the cookie header deserialization, instead of the adaptor // Hugi
+	 * FIXME: I kind of don't like having this exposed. Wonder if we should make the framework handle the cookie header deserialization, instead of the adaptor // Hugi 20201-12-30
 	 */
 	public void setCookieValues( Map<String, List<String>> cookieValues ) {
 		_cookieValues = cookieValues;
 	}
 
 	/**
-	 * @return The values of the named cookie.
+	 * @return The values of the named cookie
 	 */
 	public List<String> cookieValuesForKey( final String key ) {
 		return cookieValues().get( key );
@@ -103,7 +103,7 @@ public class NGRequest extends NGMessage {
 
 	/**
 	 * @return The value of the named cookie if there's only one cookie with that name.
-	 * @throws IllegalArgumentException If there are many cookies with the given key, throws an
+	 * @throws IllegalArgumentException If there are many cookies with the given key
 	 */
 	public String cookieValueForKey( final String key ) {
 		List<String> values = cookieValuesForKey( key );
