@@ -45,7 +45,9 @@ public class NGRouteTable {
 	}
 
 	/**
-	 * Check if the given handler matches the given URL
+	 * Check if the given handler matches the given URL.
+	 *
+	 * FIXME: We're currently only checking if the pattern starts with the given pattern. We want some real pattern matching here // Hugi 2021-12-30
 	 */
 	private static boolean matches( final String pattern, final String uri ) {
 		return uri.startsWith( pattern );
