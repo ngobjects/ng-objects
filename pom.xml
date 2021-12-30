@@ -10,8 +10,7 @@
 	<name>NGObjects reactor project</name>
 	<modules>
 		<module>ng-core</module>
-		<module>ng-adaptor-jetty</module>
-		<module>ng-adaptor-netty</module>
 		<module>ng-appserver</module>
+		<module>ng-adaptor-jetty</module>
 	</modules>
 </project>
