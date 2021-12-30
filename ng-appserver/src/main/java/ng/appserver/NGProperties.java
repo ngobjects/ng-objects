@@ -93,34 +93,63 @@ public class NGProperties {
 	 * This is not the way we it'll be going forward, but it will help with refactoring later (rather than using property name strings)
 	 */
 	public Integer propWOPort() {
-		return getInteger( "WOPort" );
+		return getInteger( WOProperties.WOPort.name() );
 	}
 
 	public String propWOHost() {
-		return get( "WOHost" );
+		return get( WOProperties.WOHost.name() );
 	}
 
 	public Integer propWOLifebeatDestinationPort() {
-		return getInteger( "WOLifebeatDestinationPort" );
+		return getInteger( WOProperties.WOLifebeatDestinationPort.name() );
 	}
 
 	public Integer propWOLifebeatIntervalInSeconds() {
-		return getInteger( "WOLifebeatInterval" );
+		return getInteger( WOProperties.WOLifebeatInterval.name() );
 	}
 
 	public boolean propWOLifebeatEnabled() {
-		return "YES".equals( get( "WOLifebeatEnabled" ) );
+		return "YES".equals( get( WOProperties.WOLifebeatEnabled.name() ) );
 	}
 
 	public boolean propWOMonitorEnabled() {
-		return "YES".equals( get( "WOMonitorEnabled" ) );
+		return "YES".equals( get( WOProperties.WOMonitorEnabled.name() ) );
 	}
 
 	public String propWOApplicationName() {
-		return get( "WOApplicationName" );
+		return get( WOProperties.WOApplicationName.name() );
 	}
 
 	public String propWOOutputPath() {
-		return get( "WOOutputPath" );
+		return get( WOProperties.WOOutputPath.name() );
+	}
+
+	/**
+	 * Container for all the old properties from WO
+	 */
+	public static enum WOProperties {
+		// Properties in use
+		WOOutputPath,
+		WOApplicationName,
+		WOMonitorEnabled,
+		WOLifebeatEnabled,
+		WOLifebeatInterval,
+		WOLifebeatDestinationPort,
+		WOHost,
+		WOPort,
+
+		// Properties currently NOT in use
+		NSProjectSearchPath,
+		WOAdaptor,
+		WOAutoOpenClientApplication,
+		WOAutoOpenInBrowser,
+		WOCachingEnabled,
+		WODebuggingEnabled,
+		WOListenQueueSize,
+		WONoPause,
+		WOSessionTimeOut,
+		WOWorkerThreadCount,
+		WOWorkerThreadCountMax,
+		WOWorkerThreadCountMin
 	}
 }
