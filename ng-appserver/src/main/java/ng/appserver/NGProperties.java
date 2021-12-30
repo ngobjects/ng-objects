@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Handles properties loading
@@ -26,8 +25,6 @@ public class NGProperties {
 	}
 
 	public void initWithArgs( final String[] args ) {
-		Objects.requireNonNull( args );
-
 		_resolvedPropertiesMap = new HashMap<>();
 
 		for( int i = 0; i < args.length; i = i + 2 ) {
