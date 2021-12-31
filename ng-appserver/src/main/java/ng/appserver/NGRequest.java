@@ -1,6 +1,5 @@
 package ng.appserver;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,12 +37,19 @@ public class NGRequest extends NGMessage {
 	/**
 	 * FIXME: Do we want to store this? Does parsing happen at the adaptor level or here?
 	 */
-	private final Map<String, List<String>> _formValues;
+	private Map<String, List<String>> _formValues;
 
 	private Map<String, List<String>> _cookieValues;
 
 	public Map<String, List<String>> formValues() {
 		return _formValues;
+	}
+
+	/**
+	 * FIXME: Same goes for this as the cookieValues. The Map should be populated by the request object, not the adaptor // Hugi 2021-12-31
+	 */
+	public void _setFormValues( Map<String, List<String>> formValues ) {
+		_formValues = formValues;
 	}
 
 	public String uri() {
@@ -74,9 +80,6 @@ public class NGRequest extends NGMessage {
 		setHttpVersion( httpVersion );
 		setHeaders( headers );
 		setContentBytes( contentBytes );
-
-		// FIXME: We're going to have to do some work here (or rather, not here, but lazily done in formValues()) to parse the form values based on the request's type/encoding etc.
-		_formValues = Collections.emptyMap();
 	}
 
 	public String _extractSessionID() {
@@ -88,9 +91,9 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
-	 * FIXME: I kind of don't like having this exposed. Wonder if we should make the framework handle the cookie header deserialization, instead of the adaptor // Hugi 20201-12-30
+	 * FIXME: Don't like having this exposed. Cookie header deserialization should happen in NGRequest instead of in the adaptor // Hugi 20201-12-30
 	 */
-	public void setCookieValues( Map<String, List<String>> cookieValues ) {
+	public void _setCookieValues( Map<String, List<String>> cookieValues ) {
 		_cookieValues = cookieValues;
 	}
 
