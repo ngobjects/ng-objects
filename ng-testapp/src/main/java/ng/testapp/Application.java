@@ -16,7 +16,7 @@ public class Application extends NGApplication {
 	}
 
 	public Application() {
-		routeTable().map( "/some-route/", ( request ) -> {
+		routeTable().map( "/some-route", ( request ) -> {
 			return new NGResponse( "Oh look, a response!", 200 );
 		} );
 	}
