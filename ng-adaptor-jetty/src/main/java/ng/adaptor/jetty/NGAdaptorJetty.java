@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.BindException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -142,10 +143,27 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
 
+		// FIXME: I think form value parsing should be a generic mechanism that happens within the request itself // Hugi 2021-12-31
+		request._setFormValues( formValues( sr.getParameterMap() ) );
+
 		// FIXME: We should be parsing the cookieValues in the request object, not the adaptor. Too lazy to change it right now // Hugi 2021-12-31
-		request.setCookieValues( cookieValues( sr.getCookies() ) );
+		request._setCookieValues( cookieValues( sr.getCookies() ) );
 
 		return request;
+	}
+
+	/**
+	 * @return The queryParameters as a formValue Map (our format)
+	 */
+	private static Map<String, List<String>> formValues( Map<String, String[]> queryParameters ) {
+
+		Map<String, List<String>> map = new HashMap<>();
+
+		for( Entry<String, String[]> entry : queryParameters.entrySet() ) {
+			map.put( entry.getKey(), Arrays.asList( entry.getValue() ) );
+		}
+
+		return map;
 	}
 
 	/**
