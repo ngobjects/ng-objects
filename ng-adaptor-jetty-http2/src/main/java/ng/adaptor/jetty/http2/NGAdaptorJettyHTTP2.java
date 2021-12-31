@@ -170,7 +170,7 @@ public class NGAdaptorJettyHTTP2 extends NGAdaptor {
 
 		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
 
-		request.setCookieValues( cookieValues( sr.getCookies() ) );
+		request._setCookieValues( cookieValues( sr.getCookies() ) );
 
 		return request;
 	}
