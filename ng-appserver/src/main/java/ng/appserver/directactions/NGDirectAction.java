@@ -46,7 +46,7 @@ public class NGDirectAction {
 	public NGActionResults performActionNamed( final String directActionName ) {
 		try {
 			final Method method = getClass().getMethod( directActionName + "Action", new Class[] {} );
-			return (NGActionResults)method.invoke( this, null );
+			return (NGActionResults)method.invoke( this );
 		}
 		catch( final NoSuchMethodException e ) {
 			return new NGResponse( "No direct action method called " + directActionName, 404 );
