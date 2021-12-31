@@ -18,7 +18,7 @@ public class NGDirectAction {
 	public NGDirectAction( final NGRequest request ) {
 		Objects.requireNonNull( request );
 
-		// FIXME: I'm not entirely sure we should be generating a new context here
+		// FIXME: I'm not entirely sure we should be generating a new context here // Hugi 2021-12-31
 		_context = NGApplication.application().createContextForRequest( request );
 	}
 
@@ -40,13 +40,14 @@ public class NGDirectAction {
 
 	/**
 	 * Invokes the method with the given name + "Action" and returns the result.
+	 *
+	 * FIXME: Error handling needs to be properly inspected here // Hugi 2021-12-31
 	 */
 	public NGActionResults performActionNamed( final String directActionName ) {
 		try {
 			final Method method = getClass().getMethod( directActionName + "Action", new Class[] {} );
 			return (NGActionResults)method.invoke( this, null );
 		}
-		// FIXME: All this error handling needs to be properly inspected.
 		catch( final NoSuchMethodException e ) {
 			return new NGResponse( "No direct action method called " + directActionName, 404 );
 		}
