@@ -143,10 +143,10 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
 
-		// FIXME: I think form value parsing should be a generic mechanism that happens within the request itself // Hugi 2021-12-31
+		// FIXME: Form value parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
 		request._setFormValues( formValues( sr.getParameterMap() ) );
 
-		// FIXME: We should be parsing the cookieValues in the request object, not the adaptor. Too lazy to change it right now // Hugi 2021-12-31
+		// FIXME: Cookie parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
 		request._setCookieValues( cookieValues( sr.getCookies() ) );
 
 		return request;
@@ -191,17 +191,17 @@ public class NGAdaptorJetty extends NGAdaptor {
 	/**
 	 * @return The headers from the ServletRequest as a Map
 	 */
-	private static Map<String, List<String>> headerMap( final HttpServletRequest sevletRequest ) {
+	private static Map<String, List<String>> headerMap( final HttpServletRequest servletRequest ) {
 		final Map<String, List<String>> map = new HashMap<>();
 
-		final Enumeration<String> headerNamesEnumeration = sevletRequest.getHeaderNames();
+		final Enumeration<String> headerNamesEnumeration = servletRequest.getHeaderNames();
 
 		while( headerNamesEnumeration.hasMoreElements() ) {
 			final String headerName = headerNamesEnumeration.nextElement();
 			final List<String> values = new ArrayList<>();
 			map.put( headerName, values );
 
-			final Enumeration<String> headerValuesEnumeration = sevletRequest.getHeaders( headerName );
+			final Enumeration<String> headerValuesEnumeration = servletRequest.getHeaders( headerName );
 
 			while( headerValuesEnumeration.hasMoreElements() ) {
 				values.add( headerValuesEnumeration.nextElement() );
