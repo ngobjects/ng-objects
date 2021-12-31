@@ -8,6 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -171,7 +173,7 @@ public class NGApplication {
 
 		// FIXME: Handle the case of no default request handler gracefully // Hugi 2021-12-29
 		if( request.parsedURI().length() == 0 ) {
-			return new NGResponse( "Welcome to NGObjects!\n\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
+			return defaultResponse( request );
 		}
 
 		final NGRequestHandler handler = _routeTable.handlerForURL( request.uri() );
@@ -181,6 +183,23 @@ public class NGApplication {
 		}
 
 		return handler.handleRequest( request );
+	}
+
+	/**
+	 * @return A default response for requests to the root.
+	 *
+	 *  FIXME: This is just here as a temporary placeholder until we decide on a nicer default request handling mechanism
+	 */
+	private static NGResponse defaultResponse( final NGRequest request ) {
+		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
+		response.appendContentString( "\n\nWould you like to see your request headers instead?\n\n" );
+
+		for( Entry<String, List<String>> header : request.headers().entrySet() ) {
+			response.appendContentString( header.getKey() + " : " + header.getValue() );
+			response.appendContentString( "\n" );
+		}
+
+		return response;
 	}
 
 	/**
