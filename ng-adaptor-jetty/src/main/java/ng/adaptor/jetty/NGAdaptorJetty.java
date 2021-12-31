@@ -142,6 +142,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
 
+		// FIXME: We should be parsing the cookieValues in the request object, not the adaptor. Too lazy to change it right now // Hugi 2021-12-31
 		request.setCookieValues( cookieValues( sr.getCookies() ) );
 
 		return request;
