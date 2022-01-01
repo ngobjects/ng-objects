@@ -2,10 +2,10 @@ package ng.appserver;
 
 /**
  * Wraps a cookie
+ *
+ * // FIXME: We need to decide how to handle timeouts // Hugi 2022-01-01
+ * // FIXME: Determine sensible defaults on cookie construction // Hugi 2022-01-01
  */
-
-// FIXME: We need to decide how to handle timeouts.
-// FIXME: We need to decide how to set-cookie. And even if that should be a separate class, since requests will only contain key-value pairs
 
 public class NGCookie {
 
@@ -19,8 +19,8 @@ public class NGCookie {
 	private boolean _isHttpOnly;
 
 	public NGCookie( final String name, final String value ) {
-		this.setName( name );
-		this.setValue( value );
+		setName( name );
+		setValue( value );
 	}
 
 	public boolean isHttpOnly() {
