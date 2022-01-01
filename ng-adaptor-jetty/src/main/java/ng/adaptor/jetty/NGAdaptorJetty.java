@@ -115,7 +115,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			servletResponse.setHeader( "content-length", String.valueOf( ngResponse.contentBytes().length ) );
 
 			for( final NGCookie ngCookie : ngResponse.cookies() ) {
-				servletResponse.addCookie( ngCookietoServletCookie( ngCookie ) );
+				servletResponse.addCookie( ngCookieToServletCookie( ngCookie ) );
 			}
 
 			for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
@@ -131,15 +131,36 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 	}
 
-	private static Cookie ngCookietoServletCookie( final NGCookie ngCookie ) {
+	private static Cookie ngCookieToServletCookie( final NGCookie ngCookie ) {
 		Cookie servletCookie = new Cookie( ngCookie.name(), ngCookie.value() );
-		servletCookie.setDomain( ngCookie.domain() );
-		servletCookie.setHttpOnly( ngCookie.isHttpOnly() );
-		servletCookie.setComment( ngCookie.comment() );
-		servletCookie.setMaxAge( ngCookie.maxAge() );
-		servletCookie.setPath( ngCookie.path() );
-		servletCookie.setSecure( ngCookie.isSecure() );
-		servletCookie.setVersion( 1 ); // FIXME: Check ithis out better, never used this attribute of cookies // Hugi 2022-01-01
+
+		servletCookie.setVersion( 1 ); // FIXME: Check this, need to read up on this attribute // Hugi 2022-01-01
+
+		if( ngCookie.domain() != null ) {
+			servletCookie.setDomain( ngCookie.domain() );
+		}
+
+		if( ngCookie.path() != null ) {
+			servletCookie.setPath( ngCookie.path() );
+		}
+
+		if( ngCookie.isHttpOnly() ) {
+			servletCookie.setHttpOnly( ngCookie.isHttpOnly() );
+		}
+
+		if( ngCookie.isSecure() ) {
+			servletCookie.setSecure( ngCookie.isSecure() );
+		}
+
+		if( ngCookie.comment() != null ) {
+			servletCookie.setComment( ngCookie.comment() );
+		}
+
+		// FIXME: We need to look into some date/time arithmetics for this
+		// if( ngCookie.maxAge() != null ) {
+		// 	 servletCookie.setMaxAge( ngCookie.maxAge() );
+		// }
+
 		return servletCookie;
 	}
 
