@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
+import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
@@ -113,6 +114,10 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			servletResponse.setHeader( "content-length", String.valueOf( ngResponse.contentBytes().length ) );
 
+			for( final NGCookie ngCookie : ngResponse.cookies() ) {
+				servletResponse.addCookie( ngCookietoServletCookie( ngCookie ) );
+			}
+
 			for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
 				for( final String headerValue : entry.getValue() ) {
 					servletResponse.addHeader( entry.getKey(), headerValue );
@@ -123,6 +128,19 @@ public class NGAdaptorJetty extends NGAdaptor {
 				out.write( ngResponse.contentBytes() );
 			}
 		}
+
+	}
+
+	private static Cookie ngCookietoServletCookie( final NGCookie ngCookie ) {
+		Cookie servletCookie = new Cookie( ngCookie.name(), ngCookie.value() );
+		servletCookie.setDomain( ngCookie.domain() );
+		servletCookie.setHttpOnly( ngCookie.isHttpOnly() );
+		servletCookie.setComment( ngCookie.comment() );
+		servletCookie.setMaxAge( ngCookie.maxAge() );
+		servletCookie.setPath( ngCookie.path() );
+		servletCookie.setSecure( ngCookie.isSecure() );
+		servletCookie.setVersion( 1 ); // FIXME: Check ithis out better, never used this attribute of cookies // Hugi 2022-01-01
+		return servletCookie;
 	}
 
 	/**
