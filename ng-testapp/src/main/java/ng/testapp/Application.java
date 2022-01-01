@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication;
+import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
@@ -17,7 +18,9 @@ public class Application extends NGApplication {
 
 	public Application() {
 		routeTable().map( "/some-route", ( request ) -> {
-			return new NGResponse( "Oh look, a response!", 200 );
+			NGResponse response = new NGResponse( "Oh look, a response!", 200 );
+			response.addCookie( new NGCookie( "nafn", "Hugi" ) );
+			return response;
 		} );
 	}
 
