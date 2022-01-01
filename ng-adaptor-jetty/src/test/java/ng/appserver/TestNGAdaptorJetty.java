@@ -17,7 +17,11 @@ public class TestNGAdaptorJetty {
 	public void testStatus() throws IOException, InterruptedException {
 		NGApplication.run( new String[0], SmuApplication.class );
 
-		final HttpClient client = HttpClient.newHttpClient();
+		final HttpClient client = HttpClient
+				.newBuilder()
+				//				.cookieHandler( CookieHandler.getDefault() )
+				.build();
+
 		final HttpRequest request = HttpRequest
 				.newBuilder()
 				.uri( URI.create( "http://localhost:1200/some-route/" ) )
@@ -27,6 +31,7 @@ public class TestNGAdaptorJetty {
 		assertEquals( "Oh look, a 404 response!", response.body() );
 		assertEquals( 404, response.statusCode() );
 		assertEquals( List.of( "firstValue", "secondValue" ), response.headers().allValues( "someHeader" ) );
+		assertEquals( List.of( "someCookieName=someCookieValue" ), response.headers().allValues( "set-cookie" ) );
 	}
 
 	/**
@@ -39,7 +44,7 @@ public class TestNGAdaptorJetty {
 				final NGResponse response = new NGResponse( "Oh look, a 404 response!", 404 );
 				response.setHeader( "someHeader", "firstValue" );
 				response.setHeader( "someHeader", "secondValue" );
-				// response.addCookie( ... ) // FIXME: Implement test once implemented
+				response.addCookie( new NGCookie( "someCookieName", "someCookieValue" ) );
 				return response;
 			} );
 		}
