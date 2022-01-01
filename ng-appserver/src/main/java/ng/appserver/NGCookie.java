@@ -11,8 +11,8 @@ public class NGCookie {
 
 	private String _name;
 	private String _value;
-	private String _domain;
 	private String _path;
+	private String _domain;
 	private String _comment;
 	private int _maxAge;
 	private boolean _isSecure;
@@ -23,36 +23,20 @@ public class NGCookie {
 		setValue( value );
 	}
 
-	public boolean isHttpOnly() {
-		return _isHttpOnly;
+	public String name() {
+		return _name;
 	}
 
-	public void setHttpOnly( boolean isHttpOnly ) {
-		_isHttpOnly = isHttpOnly;
+	public void setName( String name ) {
+		_name = name;
 	}
 
-	public boolean isSecure() {
-		return _isSecure;
+	public String value() {
+		return _value;
 	}
 
-	public void setSecure( boolean isSecure ) {
-		_isSecure = isSecure;
-	}
-
-	public int maxAge() {
-		return _maxAge;
-	}
-
-	public void setMaxAge( int maxAge ) {
-		_maxAge = maxAge;
-	}
-
-	public String comment() {
-		return _comment;
-	}
-
-	public void setComment( String comment ) {
-		_comment = comment;
+	public void setValue( String value ) {
+		_value = value;
 	}
 
 	public String path() {
@@ -71,19 +55,35 @@ public class NGCookie {
 		_domain = domain;
 	}
 
-	public String value() {
-		return _value;
+	public String comment() {
+		return _comment;
 	}
 
-	public void setValue( String value ) {
-		_value = value;
+	public void setComment( String comment ) {
+		_comment = comment;
 	}
 
-	public String name() {
-		return _name;
+	public boolean isSecure() {
+		return _isSecure;
 	}
 
-	public void setName( String name ) {
-		_name = name;
+	public void setSecure( boolean isSecure ) {
+		_isSecure = isSecure;
+	}
+
+	public boolean isHttpOnly() {
+		return _isHttpOnly;
+	}
+
+	public void setHttpOnly( boolean isHttpOnly ) {
+		_isHttpOnly = isHttpOnly;
+	}
+
+	public int maxAge() {
+		return _maxAge;
+	}
+
+	public void setMaxAge( int maxAge ) {
+		_maxAge = maxAge;
 	}
 }
