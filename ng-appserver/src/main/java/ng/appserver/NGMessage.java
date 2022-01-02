@@ -19,13 +19,14 @@ public abstract class NGMessage {
 	/**
 	 * Stores the HTTP version of this request/respons
 	 *
-	 * // FIXME: We shouldn't be hardcoding this value here?
+	 * // FIXME: We shouldn't be hardcoding this value here? // Hugi 2022-01-02
 	 */
 	private String _httpVersion = "HTTP/1.0";
 
 	/**
-	 * FIXME: Probably don't want to populate this with an empty map at the start?
-	 * FIXME: Thread safety!
+	 * FIXME: Probably don't want to populate this with an empty map at the start?  // Hugi 2022-01-02
+	 * FIXME: Thread safety!  // Hugi 2022-01-02
+	 * FIXME: According to the HTTP standard, headers are case insensitive. We should probably be allowing for that // Hugi 2022-01-02
 	 */
 	private Map<String, List<String>> _headers = new HashMap<>();
 
