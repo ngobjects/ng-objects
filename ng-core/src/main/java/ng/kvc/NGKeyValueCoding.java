@@ -51,7 +51,8 @@ public interface NGKeyValueCoding {
 		 * 9. Field "smu"
 		 * 10. Field "isSmu"
 		 *
-		 * FIXME: Error handling
+		 * FIXME: Error handling // Hugi 2022-01-02
+		 * FIXME: Why check for the underscore fields before the fully matching field names? // Hugi 2022-01-02
 		 */
 		public static Object valueForKey( final Object object, final String key ) {
 			Objects.requireNonNull( object );
