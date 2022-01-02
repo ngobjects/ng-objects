@@ -25,18 +25,23 @@ public class TestNGAdaptorJetty {
 		final HttpRequest request = HttpRequest
 				.newBuilder()
 				.uri( URI.create( "http://localhost:1200/first/second?formKey=formValue" ) )
+				.header( "someRequestHeader", "someRequestHeaderValue1" )
+				.header( "someRequestHeader", "someRequestHeaderValue2" )
 				.build();
 
 		HttpResponse<String> response = client.send( request, HttpResponse.BodyHandlers.ofString() );
+
+		// Check the response values as seen by the HTTP client
 		assertEquals( 404, response.statusCode() );
 		assertEquals( List.of( "firstValue", "secondValue" ), response.headers().allValues( "someHeader" ) );
 		assertEquals( List.of( "someCookieName=someCookieValue" ), response.headers().allValues( "set-cookie" ) );
 		assertEquals( "Oh look, a 404 response!", response.body() );
 
-		// Check some of the request values as they were seen by the application class
+		// Check the request values as seen by the application class
 		final NGRequest lsr = ((SmuApplication)NGApplication.application()).lastServedRequest;
-		assertEquals( Map.of( "formKey", List.of( "formValue" ) ), lsr.formValues() );
 		assertEquals( "/first/second", lsr.uri() );
+		assertEquals( Map.of( "formKey", List.of( "formValue" ) ), lsr.formValues() );
+		assertEquals( List.of( "someRequestHeaderValue1", "someRequestHeaderValue2" ), lsr.headers().get( "someRequestHeader" ) );
 	}
 
 	/**
