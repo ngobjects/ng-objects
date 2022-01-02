@@ -24,7 +24,7 @@ public class TestNGAdaptorJetty {
 
 		final HttpRequest request = HttpRequest
 				.newBuilder()
-				.uri( URI.create( "http://localhost:1200/first/second?formKey=formValue" ) )
+				.uri( URI.create( "http://localhost:1200/first/second?formKey1=formKey1Value1&formKey1=formKey1Value2&formKey2=formKey2Value" ) )
 				.header( "someRequestHeader", "someRequestHeaderValue1" )
 				.header( "someRequestHeader", "someRequestHeaderValue2" )
 				.build();
@@ -41,8 +41,13 @@ public class TestNGAdaptorJetty {
 		final NGRequest lsr = ((SmuApplication)NGApplication.application()).lastServedRequest;
 		assertEquals( "GET", lsr.method() );
 		assertEquals( "/first/second", lsr.uri() );
-		assertEquals( Map.of( "formKey", List.of( "formValue" ) ), lsr.formValues() );
 		assertEquals( List.of( "someRequestHeaderValue1", "someRequestHeaderValue2" ), lsr.headers().get( "someRequestHeader" ) );
+
+		Map<String, List<String>> expectedFormValues = Map.of(
+				"formKey1", List.of( "formKey1Value1", "formKey1Value2" ),
+				"formKey2", List.of( "formKey2Value" ) );
+
+		assertEquals( expectedFormValues, lsr.formValues() );
 	}
 
 	/**
