@@ -24,7 +24,7 @@ public class TestNGAdaptorJetty {
 
 		final HttpRequest request = HttpRequest
 				.newBuilder()
-				.uri( URI.create( "http://localhost:1200/some-route?formKey=formValue" ) )
+				.uri( URI.create( "http://localhost:1200/first/second?formKey=formValue" ) )
 				.build();
 
 		HttpResponse<String> response = client.send( request, HttpResponse.BodyHandlers.ofString() );
@@ -36,7 +36,7 @@ public class TestNGAdaptorJetty {
 		// Check some of the request values as they were seen by the application class
 		final NGRequest lsr = ((SmuApplication)NGApplication.application()).lastServedRequest;
 		assertEquals( Map.of( "formKey", List.of( "formValue" ) ), lsr.formValues() );
-		assertEquals( "/some-route", lsr.uri() );
+		assertEquals( "/first/second", lsr.uri() );
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class TestNGAdaptorJetty {
 		public NGRequest lastServedRequest;
 
 		public SmuApplication() {
-			routeTable().map( "/some-route", ( request ) -> {
+			routeTable().map( "/first/second", ( request ) -> {
 				lastServedRequest = request;
 
 				final NGResponse response = new NGResponse( "Oh look, a 404 response!", 404 );
