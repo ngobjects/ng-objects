@@ -29,7 +29,7 @@ public class TestNGAdaptorJetty {
 				.header( "someRequestHeader", "someRequestHeaderValue2" )
 				.build();
 
-		HttpResponse<String> response = client.send( request, HttpResponse.BodyHandlers.ofString() );
+		final HttpResponse<String> response = client.send( request, HttpResponse.BodyHandlers.ofString() );
 
 		// Check the response values as seen by the HTTP client
 		assertEquals( 404, response.statusCode() );
@@ -39,6 +39,7 @@ public class TestNGAdaptorJetty {
 
 		// Check the request values as seen by the application class
 		final NGRequest lsr = ((SmuApplication)NGApplication.application()).lastServedRequest;
+		assertEquals( "GET", lsr.method() );
 		assertEquals( "/first/second", lsr.uri() );
 		assertEquals( Map.of( "formKey", List.of( "formValue" ) ), lsr.formValues() );
 		assertEquals( List.of( "someRequestHeaderValue1", "someRequestHeaderValue2" ), lsr.headers().get( "someRequestHeader" ) );
