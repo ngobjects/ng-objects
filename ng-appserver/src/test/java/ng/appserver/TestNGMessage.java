@@ -1,4 +1,4 @@
-package ng.appserver.privates;
+package ng.appserver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
