@@ -14,15 +14,13 @@ import java.util.List;
 public class NGResponse extends NGMessage implements NGActionResults {
 
 	/**
-	 * FIXME: Decide if we want a default
+	 * The Response's status code. Default is always 200.
 	 */
-	private int _status;
+	private int _status = 200;
 
 	private List<NGCookie> _cookies = new ArrayList<>();
 
-	public NGResponse() {
-		setStatus( 200 );
-	}
+	public NGResponse() {}
 
 	public NGResponse( final byte[] bytes, final int status ) {
 		setContentBytes( bytes );
