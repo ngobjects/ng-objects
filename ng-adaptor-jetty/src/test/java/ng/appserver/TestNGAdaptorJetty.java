@@ -65,8 +65,8 @@ public class TestNGAdaptorJetty {
 				lastServedRequest = request;
 
 				final NGResponse response = new NGResponse( "Oh look, a 404 response!", 404 );
-				response.setHeader( "someHeader", "firstValue" );
-				response.setHeader( "someHeader", "secondValue" );
+				response.appendHeader( "someHeader", "firstValue" );
+				response.appendHeader( "someHeader", "secondValue" );
 				response.addCookie( new NGCookie( "someCookieName", "someCookieValue" ) );
 				return response;
 			} );
