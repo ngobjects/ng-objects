@@ -79,7 +79,6 @@ public abstract class NGMessage {
 
 		List<String> list = headers().get( headerName );
 
-		// FIXME: This implicitly mutable thing is... not good
 		if( list == null ) {
 			list = new ArrayList<>();
 			headers().put( headerName, list );
