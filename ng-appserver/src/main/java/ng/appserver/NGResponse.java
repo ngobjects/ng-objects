@@ -44,9 +44,6 @@ public class NGResponse extends NGMessage implements NGActionResults {
 		_cookies.add( cookie );
 	}
 
-	/**
-	 * FIXME: Decide if this should be settable
-	 */
 	public void setStatus( final int status ) {
 		_status = status;
 	}
