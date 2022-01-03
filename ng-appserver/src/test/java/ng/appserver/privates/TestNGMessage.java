@@ -2,6 +2,7 @@ package ng.appserver.privates;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -43,5 +44,28 @@ public class TestNGMessage {
 		r.appendHeader( "some-header", "some-value" );
 		r.appendHeader( "some-header", "some-other-value" );
 		assertEquals( List.of( "some-value", "some-other-value" ), r.headers().get( "some-header" ) );
+	}
+
+	@Test
+	public void appendContentString() {
+		NGResponse r = new NGResponse();
+		r.appendContentString( "SomeText" );
+		r.appendContentString( "MoreText" );
+		assertEquals( "SomeTextMoreText", r.contentString() );
+	}
+
+	@Test
+	public void contentStringSmokeTest() {
+		NGResponse r = new NGResponse();
+		r.setContentString( "Þjóðarþýðingin (icelandic stuff)" );
+		assertEquals( "Þjóðarþýðingin (icelandic stuff)", r.contentString() );
+	}
+
+	@Test
+	public void contentBytesSmokeTest() {
+		NGResponse r = new NGResponse();
+		byte[] initialBytes = "Hvað er að frétta".getBytes( StandardCharsets.UTF_8 );
+		r.setContentBytes( initialBytes );
+		assertEquals( initialBytes, r.contentBytes() );
 	}
 }
