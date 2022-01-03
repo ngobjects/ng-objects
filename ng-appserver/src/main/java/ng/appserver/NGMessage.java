@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -60,16 +61,28 @@ public abstract class NGMessage {
 
 	/**
 	 * Set the header with the given name to the given value.
-	 *
-	 * FIXME: If the header already exists, we're adding the new value to the current list of values. We probably want to add appendToHeader(), WOMessage style // Hugi 2022-01-03
+	 * Replaces any existing values of the given header.
 	 */
-	public void setHeader( final String name, final String value ) {
-		List<String> list = headers().get( name );
+	public void setHeader( final String headerName, final String value ) {
+		Objects.requireNonNull( headerName );
+		Objects.requireNonNull( value );
+		headers().put( headerName, List.of( value ) );
+	}
+
+	/**
+	 * Adds the given value to the named header.
+	 * Existing header values are maintained and the new value is added to the end of the value list.
+	 */
+	public void appendHeader( final String headerName, final String value ) {
+		Objects.requireNonNull( headerName );
+		Objects.requireNonNull( value );
+
+		List<String> list = headers().get( headerName );
 
 		// FIXME: This implicitly mutable thing is... not good
 		if( list == null ) {
 			list = new ArrayList<>();
-			headers().put( name, list );
+			headers().put( headerName, list );
 		}
 
 		list.add( value );
