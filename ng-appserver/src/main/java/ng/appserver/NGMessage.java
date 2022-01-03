@@ -2,9 +2,10 @@ package ng.appserver;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * Parent class of NGResponse/NGRequest
@@ -19,16 +20,16 @@ public abstract class NGMessage {
 	/**
 	 * Stores the HTTP version of this request/respons
 	 *
-	 * // FIXME: We shouldn't be hardcoding this value here? // Hugi 2022-01-02
+	 * // FIXME: Should we be hardcoding this value here? // Hugi 2022-01-02
 	 */
 	private String _httpVersion = "HTTP/1.0";
 
 	/**
-	 * FIXME: Probably don't want to populate this with an empty map at the start?  // Hugi 2022-01-02
-	 * FIXME: Thread safety!  // Hugi 2022-01-02
-	 * FIXME: According to the HTTP standard, headers are case insensitive. We should probably be allowing for that // Hugi 2022-01-02
+	 * Headers in the request/response.
+	 *
+	 * FIXME: Not sure we want to initialize this dictionary here // Hugi 2021-01-03
 	 */
-	private Map<String, List<String>> _headers = new HashMap<>();
+	private Map<String, List<String>> _headers = _createHeadersMap();
 
 	byte[] _contentBytes = new byte[] {};
 
@@ -44,17 +45,31 @@ public abstract class NGMessage {
 		return _headers;
 	}
 
-	public void setHeaders( Map<String, List<String>> headers ) {
-		_headers = headers;
+	/**
+	 * Sets the headers from the given map.
+	 *
+	 * FIXME: We're currently copying the map entries to a TreeMap to get case insensitivity. This is not the most efficient implementation // Hugi 2022-01-03
+	 */
+	public void setHeaders( final Map<String, List<String>> headers ) {
+		_headers = _createHeadersMap();
+
+		for( Entry<String, List<String>> header : _headers.entrySet() ) {
+			_headers.put( header.getKey(), header.getValue() );
+		}
 	}
 
-	public void setHeader( final String key, final String value ) {
-		List<String> list = headers().get( key );
+	/**
+	 * Set the header with the given name to the given value.
+	 *
+	 * FIXME: If the header already exists, we're adding the new value to the current list of values. We probably want to add appendToHeader(), WOMessage style // Hugi 2022-01-03
+	 */
+	public void setHeader( final String name, final String value ) {
+		List<String> list = headers().get( name );
 
 		// FIXME: This implicitly mutable thing is... not good
 		if( list == null ) {
 			list = new ArrayList<>();
-			headers().put( key, list );
+			headers().put( name, list );
 		}
 
 		list.add( value );
@@ -78,5 +93,13 @@ public abstract class NGMessage {
 
 	public byte[] contentBytes() {
 		return _contentBytes;
+	}
+
+	/**
+	 * Creates the initial headers map.
+	 * Kept a separate method since we might want to change this to a different map type later.
+	 */
+	private static Map<String, List<String>> _createHeadersMap() {
+		return new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 	}
 }
