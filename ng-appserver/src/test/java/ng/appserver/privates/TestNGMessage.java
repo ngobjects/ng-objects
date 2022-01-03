@@ -3,6 +3,7 @@ package ng.appserver.privates;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +13,20 @@ public class TestNGMessage {
 
 	@Test
 	public void headersDictionaryIsCaseInsensitive() {
-		NGResponse r = new NGResponse();
-		r.setHeader( "some-header", "some-value" );
-		assertEquals( List.of( "some-value" ), r.headers().get( "SoMe-HeADeR" ) );
+		// setHeader() method
+		NGResponse r1 = new NGResponse();
+		r1.setHeader( "some-header", "some-value" );
+		assertEquals( List.of( "some-value" ), r1.headers().get( "SoMe-HeADeR" ) );
+
+		// appendHeader() method
+		NGResponse r2 = new NGResponse();
+		r2.appendHeader( "some-header", "some-value" );
+		assertEquals( List.of( "some-value" ), r2.headers().get( "SoMe-HeADeR" ) );
+
+		// setHeaders() method
+		NGResponse r3 = new NGResponse();
+		r3.setHeaders( Map.of( "some-header", List.of( "some-value" ) ) );
+		assertEquals( List.of( "some-value" ), r3.headers().get( "SoMe-HeADeR" ) );
 	}
 
 	@Test
