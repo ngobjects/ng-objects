@@ -51,10 +51,10 @@ public abstract class NGMessage {
 	 *
 	 * FIXME: We're currently copying the map entries to a TreeMap to get case insensitivity. This is not the most efficient implementation // Hugi 2022-01-03
 	 */
-	public void setHeaders( final Map<String, List<String>> headers ) {
+	public void setHeaders( final Map<String, List<String>> newHeaders ) {
 		_headers = _createHeadersMap();
 
-		for( Entry<String, List<String>> header : _headers.entrySet() ) {
+		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
 			_headers.put( header.getKey(), header.getValue() );
 		}
 	}
