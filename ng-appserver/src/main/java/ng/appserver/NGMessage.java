@@ -19,29 +19,37 @@ import java.util.TreeMap;
 public abstract class NGMessage {
 
 	/**
-	 * Stores the HTTP version of this request/respons
-	 *
-	 * // FIXME: Should we be hardcoding this value here? // Hugi 2022-01-02
+	 * The HTTP version of this message
 	 */
 	private String _httpVersion = "HTTP/1.0";
 
 	/**
-	 * Headers in the request/response.
-	 *
-	 * FIXME: Not sure we want to initialize this dictionary here // Hugi 2021-01-03
+	 * The headers  of this message
 	 */
 	private Map<String, List<String>> _headers = _createHeadersMap();
 
+	/**
+	 * The content of this message
+	 */
 	byte[] _contentBytes = new byte[] {};
 
+	/**
+	 * @return The HTTP version of this message
+	 */
 	public String httpVersion() {
 		return _httpVersion;
 	}
 
+	/**
+	 * Set the HTTP version of this message
+	 */
 	public void setHttpVersion( final String value ) {
 		_httpVersion = value;
 	}
 
+	/**
+	 * @return The HTTP headers of this message
+	 */
 	public Map<String, List<String>> headers() {
 		return _headers;
 	}

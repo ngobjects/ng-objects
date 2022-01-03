@@ -8,8 +8,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.NGResponse;
-
 public class TestNGMessage {
 
 	@Test
