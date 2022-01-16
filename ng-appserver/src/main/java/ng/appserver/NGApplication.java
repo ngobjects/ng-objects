@@ -146,11 +146,18 @@ public class NGApplication {
 			throw new RuntimeException( "No such component definition: " + componentClass );
 		}
 
-		return definition.componentInstanceInstanceInContext( componentClass, context );
+		final NGComponent page = definition.componentInstanceInstanceInContext( componentClass, context );
+		page._componentDefinition = definition; // FIXME: Butt ugly to do this here // Hugi 2022-01-16
+		return page;
 	}
 
+	/**
+	 * @return The componentDefinition corresponding to the given WOComponent class.
+	 * 
+	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
+	 */
 	private NGComponentDefinition _componentDefinition( Class<? extends NGComponent> componentClass ) {
-		return null;
+		return new NGComponentDefinition( componentClass );
 	}
 
 	public static NGApplication application() {

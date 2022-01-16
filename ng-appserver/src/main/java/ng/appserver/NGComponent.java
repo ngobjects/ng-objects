@@ -12,9 +12,10 @@ public class NGComponent extends NGElement implements NGActionResults {
 	private final NGContext _context;
 	
 	/**
-	 * FIXME: SHouldn't this really be final and initialized during component construction? // Hugi 2022-01-16
+	 * FIXME: Shouldn't this really be final and initialized during component construction? // Hugi 2022-01-16
+	 * FIXME: This should definitely not be public
 	 */
-	private NGComponentDefinition _componentDefinition;
+	public NGComponentDefinition _componentDefinition;
 
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
