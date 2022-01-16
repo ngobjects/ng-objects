@@ -10,6 +10,11 @@ import java.util.Objects;
 public class NGComponent extends NGElement implements NGActionResults {
 
 	private final NGContext _context;
+	
+	/**
+	 * FIXME: SHouldn't this really be final and initialized during component construction? // Hugi 2022-01-16
+	 */
+	private NGComponentDefinition _componentDefinition;
 
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
@@ -37,6 +42,7 @@ public class NGComponent extends NGElement implements NGActionResults {
 	}
 
 	public NGElement template() {
-		return NGComponentDefinition.parseTemplate( getClass().getSimpleName() );
+		// FIXME: We probably want to cache the template, just a question of if we do it here or elsewhere
+		return _componentDefinition.template();
 	}
 }
