@@ -1,0 +1,77 @@
+ ======= START
+<instanceRequest type="NSDictionary">
+	<queryInstance type="NSString">STATISTICS</queryInstance>
+</instanceRequest>
+	
+<instanceResponse type="NSDictionary">
+	<queryInstanceResponse type="NSString">{
+	&quot;Memory&quot; = {
+		&quot;Total Memory&quot; = &quot;146800640&quot;;
+		&quot;Free Memory&quot; = &quot;44040192&quot;;
+	};
+	&quot;WebService&quot; = {};
+	&quot;Details&quot; = {};
+	&quot;StartedAt&quot; = &quot;2021:04:24:16:23:14 Etc/UTC&quot;;
+	&quot;Pages&quot; = {};
+	&quot;Sessions&quot; = {
+		&quot;Current Active Sessions&quot; = &quot;6&quot;;
+		&quot;Total Sessions Created&quot; = &quot;6&quot;;
+		&quot;Moving Avg. Session Life&quot; = &quot;0.0&quot;;
+		&quot;Peak Active Sessions&quot; = &quot;6&quot;;
+		&quot;Moving Avg. Transactions Per Session&quot; = &quot;0.0&quot;;
+		&quot;Peak Active Sessions Date&quot; = &quot;2021-04-24 16:29:29 Etc/GMT&quot;;
+		&quot;Avg. Memory Per Session&quot; = &quot;{Total Memory=-65011712, Free Memory=-59069781}&quot;;
+		&quot;Session Rate&quot; = &quot;0.015&quot;;
+		&quot;Avg. Transactions Per Session&quot; = &quot;11.166&quot;;
+		&quot;Sample Size For Moving Avg.&quot; = &quot;10&quot;;
+		&quot;Avg. Session Life&quot; = &quot;0.0&quot;;
+	};
+	&quot;DirectActions&quot; = {
+		&quot;default&quot; = {
+			&quot;Avg Resp. Time&quot; = &quot;0.168&quot;;
+			&quot;Max Resp. Time&quot; = &quot;0.783&quot;;
+			&quot;Served&quot; = &quot;7&quot;;
+			&quot;Min Resp. Time&quot; = &quot;0.024&quot;;
+		};
+		&quot;handler&quot; = {
+			&quot;Avg Resp. Time&quot; = &quot;0.112&quot;;
+			&quot;Max Resp. Time&quot; = &quot;0.129&quot;;
+			&quot;Served&quot; = &quot;3&quot;;
+			&quot;Min Resp. Time&quot; = &quot;0.095&quot;;
+		};
+	};
+	&quot;Transactions&quot; = {
+		&quot;Direct Action Avg. Transaction Time&quot; = &quot;0.168&quot;;
+		&quot;Moving Avg. Transaction Time&quot; = &quot;0.043&quot;;
+		&quot;Transaction Rate&quot; = &quot;0.2588507028792163&quot;;
+		&quot;Sample Size For Moving Avg.&quot; = &quot;100&quot;;
+		&quot;Moving Avg. Idle Time&quot; = &quot;7.168&quot;;
+		&quot;Direct Action Transactions&quot; = &quot;10&quot;;
+		&quot;Web Service Transactions&quot; = &quot;0&quot;;
+		&quot;Avg. Idle Time&quot; = &quot;7.168&quot;;
+		&quot;Avg. Transaction Time&quot; = &quot;0.043&quot;;
+		&quot;Transactions&quot; = &quot;67&quot;;
+		&quot;Component Action Transactions&quot; = &quot;57&quot;;
+		&quot;Component Action  Avg. Transaction Time&quot; = &quot;0.024&quot;;
+		&quot;Web Service Avg. Transaction Time&quot; = &quot;0.0&quot;;
+	};
+}</queryInstanceResponse>
+</instanceResponse>
+
+======= END
+
+
+======= START
+<instanceRequest type="NSDictionary">
+	<commandInstance type="NSDictionary">
+		<command type="NSString">TERMINATE</command>
+	</commandInstance>
+</instanceRequest>
+
+<instanceResponse type="NSDictionary">
+	<commandInstanceResponse type="NSDictionary">
+		<success type="NSString">YES</success>
+	</commandInstanceResponse>
+</instanceResponse>
+
+======= END
