@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +31,17 @@ public class NGProperties {
 	/**
 	 * Keeps track of the final resolved properties.
 	 */
-	private Map<String, String> _resolvedPropertiesMap;
+	private final Map<String, String> _allProperties;
 
 	public NGProperties( final String[] args ) {
-		initWithArgs( args );
-		loadDefaultProperties();
+		_allProperties = new ConcurrentHashMap<>();
+		_allProperties.putAll( fromArgString( args ) );
+		_allProperties.putAll( loadDefaultProperties() );
+
 	}
 
-	public void initWithArgs( final String[] args ) {
-		_resolvedPropertiesMap = new HashMap<>();
+	private Map<String, String> fromArgString( final String[] args ) {
+		Map<String, String> m = new HashMap<>();
 
 		for( int i = 0; i < args.length; i = i + 2 ) {
 			String key = args[i];
@@ -48,36 +51,38 @@ public class NGProperties {
 			}
 
 			final String value = args[i + 1];
-			_resolvedPropertiesMap.put( key, value );
+			m.put( key, value );
 		}
+
+		return m;
 	}
 
 	/**
 	 * Load the default properties (from the Properties file)
 	 */
-	private void loadDefaultProperties() {
+	private Map<String, String> loadDefaultProperties() {
 		Optional<byte[]> properties = NGUtils.readAppResource( "Properties" );
 
 		if( properties.isPresent() ) {
-			Properties p = new Properties();
 			try {
+				final Properties p = new Properties();
 				p.load( new ByteArrayInputStream( properties.get() ) );
-				_resolvedPropertiesMap.putAll( (Map)p ); // FIXME: butt-ugly property loading implementation
+				return (Map)p;
 			}
 			catch( IOException e ) {
 				throw new UncheckedIOException( e );
 			}
 		}
-		else {
-			logger.info( "No default properties file found" );
-		}
+
+		logger.info( "No default properties file found" );
+		return Collections.emptyMap();
 	}
 
 	/**
 	 * @return The named property
 	 */
 	public String get( final String key ) {
-		return _resolvedPropertiesMap.get( key );
+		return _allProperties.get( key );
 	}
 
 	/**
@@ -99,11 +104,11 @@ public class NGProperties {
 	public String _propertiesMapAsString() {
 		StringBuilder b = new StringBuilder();
 
-		ArrayList<String> keys = new ArrayList<>( _resolvedPropertiesMap.keySet() );
+		ArrayList<String> keys = new ArrayList<>( _allProperties.keySet() );
 		Collections.sort( keys );
 
 		for( String key : keys ) {
-			String value = _resolvedPropertiesMap.get( key );
+			String value = _allProperties.get( key );
 			b.append( String.format( "'%s':'%s'\n", key, value ) );
 		}
 
