@@ -68,12 +68,35 @@ public class NGResourceManager {
 
 		final StringBuilder b = new StringBuilder();
 
-		// FIXME: This is horriblem just added for testing // Hugi
+		// FIXME: This is horrible just added for testing // Hugi
 		if( !NGApplication.application().isDevelopmentMode() ) {
 			b.append( "/Apps/WebObjects/Rebelliant.woa" );
 		}
 
 		b.append( "/wr/" );
+		b.append( resourceName );
+
+		return Optional.of( b.toString() );
+	}
+
+	/**
+	 * @return The URL for the named resource
+	 *
+	 * FIXME: Whoa, that's incomplete
+	 * FIXME: Determine if the resource exists first
+	 * FIXME: I don't feel this belongs here. URL generation and resource management are separate things
+	 */
+	public Optional<String> urlForDynamicResourceNamed( final String resourceName ) {
+		Objects.requireNonNull( resourceName );
+
+		final StringBuilder b = new StringBuilder();
+
+		// FIXME: This is horriblem just added for testing // Hugi
+		if( !NGApplication.application().isDevelopmentMode() ) {
+			b.append( "/Apps/WebObjects/Rebelliant.woa" );
+		}
+
+		b.append( "/wd/" );
 		b.append( resourceName );
 
 		return Optional.of( b.toString() );

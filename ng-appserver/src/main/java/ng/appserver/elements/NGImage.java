@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
@@ -11,9 +12,15 @@ import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
+import ng.appserver.NGResourceRequestHandlerDynamic;
 import ng.appserver.NGResponse;
 
 public class NGImage extends NGDynamicElement {
+
+	/**
+	 * For keeping the filename of the image
+	 */
+	private final NGAssociation _dataAssociation;
 
 	/**
 	 * For keeping the filename of the image
@@ -28,14 +35,16 @@ public class NGImage extends NGDynamicElement {
 	public NGImage( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 		super( name, associations, template );
 		_filenameAssociation = associations.get( "filename" );
+		_dataAssociation = associations.get( "filename" );
 
-		if( _filenameAssociation == null ) {
-			throw new IllegalArgumentException( "The [filename] binding is required" );
+		if( _filenameAssociation == null && _dataAssociation == null ) {
+			throw new IllegalArgumentException( "You must set either [filename] or [data] bindings" );
 		}
 
 		// Not exactly pretty, but let's work with this a little
 		_additionalAssociations = new HashMap<>( associations );
 		_additionalAssociations.remove( "filename" );
+		_additionalAssociations.remove( "data" );
 	}
 
 	@Override
@@ -44,19 +53,29 @@ public class NGImage extends NGDynamicElement {
 		Objects.requireNonNull( context );
 
 		final NGComponent component = context.component();
-		final String filename = (String)_filenameAssociation.valueInComponent( component );
-		final Optional<String> relativeURL = NGApplication.application().resourceManager().urlForWebserverResourceNamed( filename );
-		String urlString;
+		String src = null;
 
-		if( relativeURL.isPresent() ) {
-			urlString = relativeURL.get();
+		if( _filenameAssociation != null ) {
+			final String filename = (String)_filenameAssociation.valueInComponent( component );
+			final Optional<String> relativeURL = NGApplication.application().resourceManager().urlForWebserverResourceNamed( filename );
+
+			if( relativeURL.isPresent() ) {
+				src = relativeURL.get();
+			}
+			else {
+				src = "ERROR_NOT_FOUND_" + filename;
+			}
 		}
-		else {
-			urlString = "ERROR_NOT_FOUND_" + filename;
+
+		if( _dataAssociation != null ) {
+			byte[] bytes = (byte[])_dataAssociation.valueInComponent( component );
+			final String id = UUID.randomUUID().toString();
+			NGResourceRequestHandlerDynamic.push( id, bytes );
+			src = NGApplication.application().resourceManager().urlForWebserverResourceNamed( id ).get();
 		}
 
 		final StringBuilder b = new StringBuilder();
-		b.append( String.format( "<img src=\"%s\"", urlString ) );
+		b.append( String.format( "<img src=\"%s\"", src ) );
 
 		_additionalAssociations.forEach( ( name, ass ) -> {
 			b.append( " " );
