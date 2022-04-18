@@ -26,6 +26,17 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 		return "test-image-2.jpg";
 	}
 
+	public FilenameHolder someMethodReturningFilenameHolder() {
+		return new FilenameHolder();
+	}
+
+	public static class FilenameHolder {
+
+		public String filename() {
+			return "test-image-3.jpg";
+		}
+	}
+
 	@Override
 	public NGElement template() {
 		final NGDynamicGroup g = new NGDynamicGroup( "wat?", Collections.emptyMap(), null );
@@ -43,13 +54,20 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 		g._children.add( new NGHTMLBareString( "<body>\n" ) );
 		g._children.add( new NGHTMLBareString( "<p>Hello</p>\n" ) );
 
-		final Map<String, NGAssociation> m = new HashMap<>();
-		m.put( "filename", new NGConstantValueAssociation( "test-image-1.jpg" ) );
-		g._children.add( new NGImage( "wat?", m, null ) );
+		final Map<String, NGAssociation> m1 = new HashMap<>();
+		m1.put( "filename", new NGConstantValueAssociation( "test-image-1.jpg" ) );
+		m1.put( "width", new NGConstantValueAssociation( 200 ) );
+		g._children.add( new NGImage( "wat?", m1, null ) );
 
 		final Map<String, NGAssociation> m2 = new HashMap<>();
 		m2.put( "filename", new NGKeyValueAssociation( "someMethodReturningImageFilename" ) );
+		m2.put( "width", new NGConstantValueAssociation( 200 ) );
 		g._children.add( new NGImage( "wat?", m2, null ) );
+
+		final Map<String, NGAssociation> m3 = new HashMap<>();
+		m3.put( "filename", new NGKeyValueAssociation( "someMethodReturningFilenameHolder.filename" ) );
+		m3.put( "width", new NGConstantValueAssociation( 200 ) );
+		g._children.add( new NGImage( "wat?", m3, null ) );
 
 		g._children.add( new NGHTMLBareString( "</body>\n" ) );
 		g._children.add( new NGHTMLBareString( "</html>\n" ) );
