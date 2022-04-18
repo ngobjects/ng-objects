@@ -36,9 +36,7 @@ public class NGResourceManager {
 	public Optional<byte[]> bytesForResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
 
-		final String actualResourcePath = NGUtils.resourcePath( "app-resources", resourceName );
-
-		logger.info( "Loading resource {} from {}. Caching: {}", resourceName, actualResourcePath, useCache() );
+		logger.info( "Loading resource named {}. Caching: {}", resourceName, useCache() );
 
 		Optional<byte[]> resource;
 
@@ -47,12 +45,12 @@ public class NGResourceManager {
 
 			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
 			if( resource == null ) {
-				resource = NGUtils.readJavaResource( actualResourcePath );
+				resource = NGUtils.readAppResource( resourceName );
 				_resourceCache.put( resourceName, resource );
 			}
 		}
 		else {
-			resource = NGUtils.readJavaResource( actualResourcePath );
+			resource = NGUtils.readAppResource( resourceName );
 		}
 
 		return resource;
