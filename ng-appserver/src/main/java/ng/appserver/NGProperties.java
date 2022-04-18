@@ -1,9 +1,19 @@
 package ng.appserver;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ng.appserver.privates.NGUtils;
 
 /**
  * Handles properties loading
@@ -15,6 +25,8 @@ import java.util.Map;
 
 public class NGProperties {
 
+	private static final Logger logger = LoggerFactory.getLogger( NGProperties.class );
+
 	/**
 	 * Keeps track of the final resolved properties.
 	 */
@@ -22,6 +34,7 @@ public class NGProperties {
 
 	public NGProperties( final String[] args ) {
 		initWithArgs( args );
+		loadDefaultProperties();
 	}
 
 	public void initWithArgs( final String[] args ) {
@@ -36,6 +49,27 @@ public class NGProperties {
 
 			final String value = args[i + 1];
 			_resolvedPropertiesMap.put( key, value );
+		}
+	}
+
+	/**
+	 * Load the default properties (from the Properties file)
+	 */
+	private void loadDefaultProperties() {
+		Optional<byte[]> properties = NGUtils.readAppResource( "Properties" );
+
+		if( properties.isPresent() ) {
+			Properties p = new Properties();
+			try {
+				p.load( new ByteArrayInputStream( properties.get() ) );
+				_resolvedPropertiesMap.putAll( (Map)p ); // FIXME: butt-ugly property loading implementation
+			}
+			catch( IOException e ) {
+				throw new UncheckedIOException( e );
+			}
+		}
+		else {
+			logger.info( "No default properties file found" );
 		}
 	}
 
