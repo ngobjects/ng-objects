@@ -35,13 +35,15 @@ public class NGProperties {
 
 	public NGProperties( final String[] args ) {
 		_allProperties = new ConcurrentHashMap<>();
-		_allProperties.putAll( fromArgString( args ) );
+		_allProperties.putAll( loadPropertiesFromArgString( args ) );
 		_allProperties.putAll( loadDefaultProperties() );
-
 	}
 
-	private Map<String, String> fromArgString( final String[] args ) {
-		Map<String, String> m = new HashMap<>();
+	/**
+	 * @return Properties passed to the main method as a Map
+	 */
+	private Map<String, String> loadPropertiesFromArgString( final String[] args ) {
+		final Map<String, String> m = new HashMap<>();
 
 		for( int i = 0; i < args.length; i = i + 2 ) {
 			String key = args[i];
@@ -58,24 +60,24 @@ public class NGProperties {
 	}
 
 	/**
-	 * Load the default properties (from the Properties file)
+	 * @return The default properties as a map (loaded from the default Properties file)
 	 */
 	private Map<String, String> loadDefaultProperties() {
-		Optional<byte[]> properties = NGUtils.readAppResource( "Properties" );
+		final Optional<byte[]> propertyBytes = NGUtils.readAppResource( "Properties" );
 
-		if( properties.isPresent() ) {
-			try {
-				final Properties p = new Properties();
-				p.load( new ByteArrayInputStream( properties.get() ) );
-				return (Map)p;
-			}
-			catch( IOException e ) {
-				throw new UncheckedIOException( e );
-			}
+		if( !propertyBytes.isPresent() ) {
+			logger.warn( "No default properties file found" );
+			return Collections.emptyMap();
 		}
 
-		logger.info( "No default properties file found" );
-		return Collections.emptyMap();
+		try {
+			final Properties p = new Properties();
+			p.load( new ByteArrayInputStream( propertyBytes.get() ) );
+			return (Map)p;
+		}
+		catch( IOException e ) {
+			throw new UncheckedIOException( e );
+		}
 	}
 
 	/**
