@@ -45,12 +45,12 @@ public class NGUtils {
 		return "/" + folderName + "/" + resourcePath;
 	}
 
-	public static Optional<byte[]> bytesForAppResource( final String resourcePath ) {
+	public static Optional<byte[]> readAppResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
 		return readJavaResource( resourcePath( APP_RESOURCES_FOLDER, resourcePath ) );
 	}
 
-	public static Optional<byte[]> bytesForComponentResource( final String resourcePath ) {
+	public static Optional<byte[]> readComponentResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
 		return readJavaResource( resourcePath( COMPONENTS_FOLDER, resourcePath ) );
 	}

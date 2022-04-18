@@ -16,7 +16,7 @@ public class NGComponentDefinition {
 	private static final Logger logger = LoggerFactory.getLogger( NGComponentDefinition.class );
 
 	/**
-	 * THe name of this component definition corresponds to the name of the component.
+	 * The name of this component definition corresponds to the name of the component.
 	 */
 	private String _name;
 
@@ -34,10 +34,8 @@ public class NGComponentDefinition {
 		Objects.requireNonNull( templateName );
 
 		final String htmlTemplateFilename = templateName + ".wo/" + templateName + ".html";
-		final String htmlTemplatePath = NGUtils.resourcePath( "components", htmlTemplateFilename );
-		logger.debug( "Locating component at: " + htmlTemplatePath );
 
-		final Optional<byte[]> templateBytes = NGUtils.readJavaResource( htmlTemplatePath );
+		final Optional<byte[]> templateBytes = NGUtils.readComponentResource( htmlTemplateFilename );
 
 		if( templateBytes.isEmpty() ) {
 			throw new RuntimeException( "Template not found" );
