@@ -24,6 +24,10 @@ public class NGDynamicGroup extends NGDynamicElement {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+		appendChildrenToResponse( response, context );
+	}
+
+	protected void appendChildrenToResponse( NGResponse response, NGContext context ) {
 		for( final NGElement child : _children ) {
 			child.appendToResponse( response, context );
 		}
