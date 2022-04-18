@@ -55,21 +55,21 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 
 		final Map<String, NGAssociation> image1 = new HashMap<>();
 		image1.put( "filename", new NGConstantValueAssociation( "test-image-1.jpg" ) );
-		image1.put( "width", new NGConstantValueAssociation( 200 ) );
+		image1.put( "width", new NGConstantValueAssociation( 300 ) );
 		g.children().add( new NGImage( "wat?", image1, null ) );
 
 		g.children().add( new NGHTMLBareString( "<br><br>" ) );
 
 		final Map<String, NGAssociation> image2 = new HashMap<>();
 		image2.put( "filename", new NGKeyValueAssociation( "someMethodReturningImageFilename" ) );
-		image2.put( "width", new NGConstantValueAssociation( 200 ) );
+		image2.put( "width", new NGConstantValueAssociation( 300 ) );
 		g.children().add( new NGImage( "wat?", image2, null ) );
 
 		g.children().add( new NGHTMLBareString( "<br><br>" ) );
 
 		final Map<String, NGAssociation> image3 = new HashMap<>();
 		image3.put( "filename", new NGKeyValueAssociation( "someMethodReturningFilenameHolder.filename" ) );
-		image3.put( "width", new NGConstantValueAssociation( 200 ) );
+		image3.put( "width", new NGConstantValueAssociation( 300 ) );
 		g.children().add( new NGImage( "wat?", image3, null ) );
 
 		g.children().add( new NGHTMLBareString( "</body>\n" ) );
