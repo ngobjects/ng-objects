@@ -1,6 +1,6 @@
 package ng.appserver;
 
-import ng.kvc.NGKeyValueCoding;
+import ng.kvc.NGKeyValueCodingAdditions;
 
 public class NGKeyValueAssociation extends NGAssociation {
 
@@ -10,12 +10,9 @@ public class NGKeyValueAssociation extends NGAssociation {
 		_keyPath = keyPath;
 	}
 
-	/**
-	 * FIXME: We're probably going to want to use valueForKeyPath here // Hugi 2021-10-08
-	 */
 	@Override
 	public Object valueInComponent( final NGComponent aComponent ) {
-		return NGKeyValueCoding.Utility.valueForKey( aComponent, keyPath() );
+		return NGKeyValueCodingAdditions.Utility.valueForKeyPath( aComponent, keyPath() );
 	}
 
 	public String keyPath() {
