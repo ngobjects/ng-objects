@@ -35,8 +35,8 @@ public class NGProperties {
 
 	public NGProperties( final String[] args ) {
 		_allProperties = new ConcurrentHashMap<>();
-		_allProperties.putAll( loadPropertiesFromArgString( args ) );
 		_allProperties.putAll( loadDefaultProperties() );
+		_allProperties.putAll( loadPropertiesFromArgString( args ) );
 	}
 
 	/**
