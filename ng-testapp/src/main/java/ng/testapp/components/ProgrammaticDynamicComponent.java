@@ -13,6 +13,7 @@ import ng.appserver.NGKeyValueAssociation;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGImage;
+import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
 import ng.appserver.privates.NGUtils;
 
@@ -20,6 +21,10 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 
 	public ProgrammaticDynamicComponent( NGContext context ) {
 		super( context );
+	}
+
+	public String header() {
+		return "<h2>This is a programmatically generated component template</h2>\n";
 	}
 
 	public String someMethodReturningImageFilename() {
@@ -52,7 +57,9 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 		g.children().add( new NGHTMLBareString( "</head>\n" ) );
 		g.children().add( new NGHTMLBareString( "<body>\n" ) );
 
-		g.children().add( new NGHTMLBareString( "<h2>This is a programmatically generated component template</h2>\n" ) );
+		final Map<String, NGAssociation> string = new HashMap<>();
+		string.put( "value", new NGKeyValueAssociation( "header" ) );
+		g.children().add( new NGString( "wat?", string, null ) );
 
 		final Map<String, NGAssociation> image1 = new HashMap<>();
 		image1.put( "filename", new NGConstantValueAssociation( "test-image-1.jpg" ) );
