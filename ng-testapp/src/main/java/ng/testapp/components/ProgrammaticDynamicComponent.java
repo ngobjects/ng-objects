@@ -51,35 +51,35 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 		g.children().add( new NGHTMLBareString( "<html>\n" ) );
 		g.children().add( new NGHTMLBareString( "<head>\n" ) );
 
-		final Map<String, NGAssociation> stylesheet = new HashMap<>();
-		stylesheet.put( "filename", new NGConstantValueAssociation( "main.css" ) );
-		g.children().add( new NGStylesheet( "wat?", stylesheet, null ) );
+		final Map<String, NGAssociation> stylesheetAss = new HashMap<>();
+		stylesheetAss.put( "filename", new NGConstantValueAssociation( "main.css" ) );
+		g.children().add( new NGStylesheet( "wat?", stylesheetAss, null ) );
 
 		g.children().add( new NGHTMLBareString( "</head>\n" ) );
 		g.children().add( new NGHTMLBareString( "<body>\n" ) );
 
-		final Map<String, NGAssociation> string = new HashMap<>();
-		string.put( "value", new NGKeyValueAssociation( "header" ) );
-		g.children().add( new NGString( "wat?", string, null ) );
+		final Map<String, NGAssociation> stringAss = new HashMap<>();
+		stringAss.put( "value", new NGKeyValueAssociation( "header" ) );
+		g.children().add( new NGString( "wat?", stringAss, null ) );
 
-		final Map<String, NGAssociation> image1 = new HashMap<>();
-		image1.put( "filename", new NGConstantValueAssociation( "test-image-1.jpg" ) );
-		image1.put( "width", new NGConstantValueAssociation( 300 ) );
-		g.children().add( new NGImage( "wat?", image1, null ) );
-
-		g.children().add( new NGHTMLBareString( "<br><br>" ) );
-
-		final Map<String, NGAssociation> image2 = new HashMap<>();
-		image2.put( "filename", new NGKeyValueAssociation( "someMethodReturningImageFilename" ) );
-		image2.put( "width", new NGConstantValueAssociation( 300 ) );
-		g.children().add( new NGImage( "wat?", image2, null ) );
+		final Map<String, NGAssociation> image1Ass = new HashMap<>();
+		image1Ass.put( "filename", new NGConstantValueAssociation( "test-image-1.jpg" ) );
+		image1Ass.put( "width", new NGConstantValueAssociation( 300 ) );
+		g.children().add( new NGImage( "wat?", image1Ass, null ) );
 
 		g.children().add( new NGHTMLBareString( "<br><br>" ) );
 
-		final Map<String, NGAssociation> image3 = new HashMap<>();
-		image3.put( "filename", new NGKeyValueAssociation( "someMethodReturningFilenameHolder.filename" ) );
-		image3.put( "width", new NGConstantValueAssociation( 300 ) );
-		g.children().add( new NGImage( "wat?", image3, null ) );
+		final Map<String, NGAssociation> image2Ass = new HashMap<>();
+		image2Ass.put( "filename", new NGKeyValueAssociation( "someMethodReturningImageFilename" ) );
+		image2Ass.put( "width", new NGConstantValueAssociation( 300 ) );
+		g.children().add( new NGImage( "wat?", image2Ass, null ) );
+
+		g.children().add( new NGHTMLBareString( "<br><br>" ) );
+
+		final Map<String, NGAssociation> image3Ass = new HashMap<>();
+		image3Ass.put( "filename", new NGKeyValueAssociation( "someMethodReturningFilenameHolder.filename" ) );
+		image3Ass.put( "width", new NGConstantValueAssociation( 300 ) );
+		g.children().add( new NGImage( "wat?", image3Ass, null ) );
 
 		g.children().add( new NGHTMLBareString( "<br><br>" ) );
 
@@ -89,10 +89,10 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 		final NGHyperlink hyperlink = new NGHyperlink( "wat?", linkAss, null );
 		g.children().add( hyperlink );
 
-		final Map<String, NGAssociation> image4 = new HashMap<>();
-		image4.put( "data", new NGConstantValueAssociation( NGUtils.readWebserverResource( "test-image-4.jpg" ).get() ) );
-		image4.put( "width", new NGConstantValueAssociation( 300 ) );
-		hyperlink.children().add( new NGImage( "wat?", image4, null ) );
+		final Map<String, NGAssociation> image4Ass = new HashMap<>();
+		image4Ass.put( "data", new NGConstantValueAssociation( NGUtils.readWebserverResource( "test-image-4.jpg" ).get() ) );
+		image4Ass.put( "width", new NGConstantValueAssociation( 300 ) );
+		hyperlink.children().add( new NGImage( "wat?", image4Ass, null ) );
 
 		g.children().add( new NGHTMLBareString( "</body>\n" ) );
 		g.children().add( new NGHTMLBareString( "</html>\n" ) );
