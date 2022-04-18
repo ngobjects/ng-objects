@@ -71,6 +71,7 @@ public class NGApplication {
 
 			_application._routeTable.map( "/wo/", new NGComponentRequestHandler() );
 			_application._routeTable.map( "/wr/", new NGResourceRequestHandler() );
+			_application._routeTable.map( "/wd/", new NGResourceRequestHandlerDynamic() );
 			_application._routeTable.map( "/wa/", new NGDirectActionRequestHandler() );
 			_application._routeTable.map( "/womp/", new WOMPRequestHandler() );
 
