@@ -60,8 +60,7 @@ public class NGApplication {
 			logger.info( "=======================================" );
 		}
 
-		logger.info( "===== Properties =====" );
-		logger.info( properties._propertiesMapAsString() );
+		logger.info( "===== Properties =====\n" + properties._propertiesMapAsString() );
 
 		try {
 			_application = applicationClass.getDeclaredConstructor().newInstance();
