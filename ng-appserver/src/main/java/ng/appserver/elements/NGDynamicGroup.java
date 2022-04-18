@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,12 +13,13 @@ import ng.appserver.NGResponse;
 public class NGDynamicGroup extends NGDynamicElement {
 
 	/**
-	 * FIXME: This should definitely not be public
+	 * The elements of this DynamicGroup
 	 */
-	public List<NGElement> _children;
+	private List<NGElement> _children;
 
 	public NGDynamicGroup( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( name, associations, template );
+		_children = new ArrayList<>();
 	}
 
 	@Override
@@ -25,5 +27,12 @@ public class NGDynamicGroup extends NGDynamicElement {
 		for( final NGElement child : _children ) {
 			child.appendToResponse( response, context );
 		}
+	}
+
+	/**
+	 * @return The child elements of this DynamicGroup
+	 */
+	public List<NGElement> children() {
+		return _children;
 	}
 }
