@@ -10,7 +10,7 @@ import java.util.Objects;
 public class NGComponent extends NGElement implements NGActionResults {
 
 	private final NGContext _context;
-	
+
 	/**
 	 * FIXME: Shouldn't this really be final and initialized during component construction? // Hugi 2022-01-16
 	 * FIXME: This should definitely not be public
@@ -42,8 +42,10 @@ public class NGComponent extends NGElement implements NGActionResults {
 		context.setCurrentComponent( previouslyCurrentComponent );
 	}
 
+	/**
+	 * FIXME: We probably want to cache the template, just a question of if we do it here or elsewhere // Hugi 2022-04-18
+	 */
 	public NGElement template() {
-		// FIXME: We probably want to cache the template, just a question of if we do it here or elsewhere
 		return _componentDefinition.template();
 	}
 }
