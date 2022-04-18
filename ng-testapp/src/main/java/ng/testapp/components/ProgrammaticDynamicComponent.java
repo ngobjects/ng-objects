@@ -14,6 +14,7 @@ import ng.appserver.NGKeyValueAssociation;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGImage;
+import ng.appserver.elements.NGStylesheet;
 
 public class ProgrammaticDynamicComponent extends NGComponent {
 
@@ -30,7 +31,17 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 		final NGDynamicGroup g = new NGDynamicGroup( "wat?", Collections.emptyMap(), null );
 		g._children = new ArrayList<>();
 
-		g._children.add( new NGHTMLBareString( "<p>Hello</p>" ) );
+		g._children.add( new NGHTMLBareString( "<!doctype html>\n" ) );
+		g._children.add( new NGHTMLBareString( "<html>\n" ) );
+		g._children.add( new NGHTMLBareString( "<head>\n" ) );
+
+		final Map<String, NGAssociation> style = new HashMap<>();
+		style.put( "filename", new NGConstantValueAssociation( "main.css" ) );
+		g._children.add( new NGStylesheet( "wat?", style, null ) );
+
+		g._children.add( new NGHTMLBareString( "</head>\n" ) );
+		g._children.add( new NGHTMLBareString( "<body>\n" ) );
+		g._children.add( new NGHTMLBareString( "<p>Hello</p>\n" ) );
 
 		final Map<String, NGAssociation> m = new HashMap<>();
 		m.put( "filename", new NGConstantValueAssociation( "test-image-1.jpg" ) );
@@ -40,7 +51,8 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 		m2.put( "filename", new NGKeyValueAssociation( "someMethodReturningImageFilename" ) );
 		g._children.add( new NGImage( "wat?", m2, null ) );
 
-		g._children.add( new NGHTMLBareString( "<p>Hohoho</p>" ) );
+		g._children.add( new NGHTMLBareString( "</body>\n" ) );
+		g._children.add( new NGHTMLBareString( "</html>\n" ) );
 
 		return g;
 	}
