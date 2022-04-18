@@ -23,7 +23,7 @@ public class NGResourceManager {
 	 * FIXME: Experimental cache
 	 * FIXME: Resource caches should be located centrally
 	 */
-	private final Map<String, Optional<byte[]>> _resourceCache = new ConcurrentHashMap<>();
+	private final Map<String, Optional<byte[]>> _webserverResourceCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Specifies if we want to use the resources cache.
@@ -33,7 +33,7 @@ public class NGResourceManager {
 		return !NGApplication.application().properties().isDevelopmentMode();
 	}
 
-	public Optional<byte[]> bytesForResourceNamed( final String resourceName ) {
+	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
 
 		logger.info( "Loading resource named {}. Caching: {}", resourceName, useCache() );
@@ -41,16 +41,16 @@ public class NGResourceManager {
 		Optional<byte[]> resource;
 
 		if( useCache() ) {
-			resource = _resourceCache.get( resourceName );
+			resource = _webserverResourceCache.get( resourceName );
 
 			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
 			if( resource == null ) {
-				resource = NGUtils.readAppResource( resourceName );
-				_resourceCache.put( resourceName, resource );
+				resource = NGUtils.readWebserverResource( resourceName );
+				_webserverResourceCache.put( resourceName, resource );
 			}
 		}
 		else {
-			resource = NGUtils.readAppResource( resourceName );
+			resource = NGUtils.readWebserverResource( resourceName );
 		}
 
 		return resource;
@@ -63,7 +63,7 @@ public class NGResourceManager {
 	 * FIXME: Determine if the resource exists first
 	 * FIXME: I don't feel this belongs here. URL generation and resource management are separate things
 	 */
-	public Optional<String> urlForResourceNamed( final String resourceName ) {
+	public Optional<String> urlForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
 
 		final StringBuilder b = new StringBuilder();

@@ -31,7 +31,7 @@ public class NGStylesheet extends NGDynamicElement {
 		Objects.requireNonNull( context );
 		final NGComponent component = context.component();
 		final String filename = (String)_filenameAssociation.valueInComponent( component );
-		final Optional<String> relativeURL = NGApplication.application().resourceManager().urlForResourceNamed( filename );
+		final Optional<String> relativeURL = NGApplication.application().resourceManager().urlForWebserverResourceNamed( filename );
 		String urlString;
 
 		if( relativeURL.isPresent() ) {

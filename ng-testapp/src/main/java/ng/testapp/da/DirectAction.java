@@ -36,7 +36,7 @@ public class DirectAction extends NGDirectAction {
 	}
 
 	public NGActionResults imageAction() {
-		final byte[] imageBytes = NGApplication.application().resourceManager().bytesForResourceNamed( "test-image-1.jpg" ).get();
+		final byte[] imageBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( "test-image-1.jpg" ).get();
 		final NGResponse response = new NGResponse( imageBytes, 200 );
 		response.setHeader( "content-type", "image/jpeg" );
 		return response;

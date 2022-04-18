@@ -8,8 +8,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.NGResourceManager;
-
 /**
  * Utilities for reading resources
  */
@@ -24,9 +22,23 @@ public class NGUtils {
 	private static final String APP_RESOURCES_FOLDER = "app-resources";
 
 	/**
+	 * Name of the folder that stores application resources
+	 */
+	private static final String WEBSERVER_RESOURCES_FOLDER = "webserver-resources";
+
+	/**
 	 * Name of the folder that stores component templates
 	 */
 	private static final String COMPONENTS_FOLDER = "components";
+
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
+	public static Optional<byte[]> readWebserverResource( final String resourcePath ) {
+		Objects.requireNonNull( resourcePath );
+
+		return readJavaResource( resourcePath( WEBSERVER_RESOURCES_FOLDER, resourcePath ) );
+	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
@@ -51,7 +63,7 @@ public class NGUtils {
 
 		logger.info( "Reading resource from path: " + resourcePath );
 
-		try( final InputStream resourceAsStream = NGResourceManager.class.getResourceAsStream( resourcePath )) {
+		try( final InputStream resourceAsStream = NGUtils.class.getResourceAsStream( resourcePath )) {
 
 			if( resourceAsStream == null ) {
 				return Optional.empty();

@@ -19,7 +19,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
-		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForResourceNamed( resourceName.get() );
+		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourceName.get() );
 
 		// FIXME: How to handle this properly? User configurable? Just always a 404
 		if( resourceBytes.isEmpty() ) {
