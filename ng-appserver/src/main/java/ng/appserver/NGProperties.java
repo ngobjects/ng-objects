@@ -36,13 +36,13 @@ public class NGProperties {
 	public NGProperties( final String[] args ) {
 		_allProperties = new ConcurrentHashMap<>();
 		_allProperties.putAll( loadDefaultProperties() );
-		_allProperties.putAll( loadPropertiesFromArgString( args ) );
+		_allProperties.putAll( loadPropertiesFromArgsString( args ) );
 	}
 
 	/**
 	 * @return Properties passed to the main method as a Map
 	 */
-	private Map<String, String> loadPropertiesFromArgString( final String[] args ) {
+	private static Map<String, String> loadPropertiesFromArgsString( final String[] args ) {
 		final Map<String, String> m = new HashMap<>();
 
 		for( int i = 0; i < args.length; i = i + 2 ) {
