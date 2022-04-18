@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,19 +191,19 @@ public class NGApplication {
 			return handler.handleRequest( request );
 		}
 		catch( Throwable throwable ) {
-			return handleException( throwable );
+			return exceptionResponse( throwable );
 		}
 	}
 
 	/**
 	 * @return The response generated when an exception occurs
 	 */
-	public NGResponse handleException( Throwable t ) {
+	public NGResponse exceptionResponse( final Throwable throwable ) {
 		final StringBuilder b = new StringBuilder();
 		b.append( "<h1>An exception occurred</h1>" );
-		b.append( String.format( "<h2>%s</h2>", t.getMessage() ) );
+		b.append( String.format( "<h2>%s</h2>", throwable.getMessage() ) );
 
-		for( StackTraceElement stackTraceElement : t.getStackTrace() ) {
+		for( StackTraceElement stackTraceElement : throwable.getStackTrace() ) {
 			b.append( stackTraceElement );
 			b.append( "<br>" );
 		}
