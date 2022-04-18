@@ -215,7 +215,7 @@ public class NGApplication {
 	 *
 	 *  FIXME: This is just here as a temporary placeholder until we decide on a nicer default request handling mechanism
 	 */
-	private static NGResponse defaultResponse( final NGRequest request ) {
+	public NGResponse defaultResponse( final NGRequest request ) {
 		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
 		response.appendContentString( "\n\nWould you like to see your request headers instead?\n\n" );
 
