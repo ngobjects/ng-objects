@@ -15,4 +15,9 @@ public class NGConstantValueAssociation extends NGAssociation {
 	public Object valueInComponent( NGComponent aComponent ) {
 		return _value;
 	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ":" + _value + "]";
+	}
 }

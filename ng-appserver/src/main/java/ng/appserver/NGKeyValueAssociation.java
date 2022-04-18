@@ -18,4 +18,9 @@ public class NGKeyValueAssociation extends NGAssociation {
 	public String keyPath() {
 		return _keyPath;
 	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ":" + _keyPath + "]";
+	}
 }
