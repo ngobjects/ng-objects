@@ -28,12 +28,15 @@ public class NGImage extends NGDynamicElement {
 		final NGComponent component = context.component();
 		final String filename = (String)_filenameAssociation.valueInComponent( component );
 		final Optional<String> relativeURL = NGApplication.application().resourceManager().urlForResourceNamed( filename );
+		String urlString;
 
 		if( relativeURL.isPresent() ) {
-			response.appendContentString( String.format( "<img src=\"%s\" />", relativeURL.get() ) );
+			urlString = relativeURL.get();
 		}
 		else {
-			response.appendContentString( String.format( "<img src=\"%s\" />", "ERROR_NOT_FOUND_" + filename ) );
+			urlString = "ERROR_NOT_FOUND_" + filename;
 		}
+
+		response.appendContentString( String.format( "<img src=\"%s\" />", urlString ) );
 	}
 }
