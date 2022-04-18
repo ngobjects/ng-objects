@@ -1,5 +1,7 @@
 package ng.appserver;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,7 +28,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 			return new NGResponse( "Resource '" + resourceName.get() + "' does not exist", 404 );
 		}
 
-		final String mimeType = mimeTypeForResourceName( resourceName.get() );
+		final String mimeType = NGMimeTypeDetector.mimeTypeForResourceName( resourceName.get() );
 
 		// FIXME: Detect and set the correct response headers
 		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );
@@ -40,17 +42,34 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	 *
 	 * FIXME: Do diz // Hugi 2021-12-29
 	 */
-	private static final String mimeTypeForResourceName( final String resourceName ) {
-		Objects.requireNonNull( resourceName );
+	public static class NGMimeTypeDetector {
 
-		if( resourceName.endsWith( ".jpg" ) ) {
-			return "image/jpeg";
+		public static final String mimeTypeForResourceName( final String resourceName ) {
+			Objects.requireNonNull( resourceName );
+
+			final String extension = resourceName.substring( resourceName.lastIndexOf( "." ) + 1 );
+			final String mimeType = mimeTypeForExtension( extension );
+
+			if( mimeType == null ) {
+				throw new IllegalArgumentException( "For some reason, our advanced algorithm has not managed to identify your resource type" );
+			}
+
+			return mimeType;
 		}
 
-		if( resourceName.endsWith( ".css" ) ) {
-			return "text/css";
+		public static final String mimeTypeForExtension( final String extension ) {
+			Objects.requireNonNull( extension );
+			return _mimeTypeMap.get( extension );
 		}
 
-		throw new IllegalArgumentException( "For some reason, our advanced algorithm has not managed to identify your resource type. Is it possible it's not a JPEG?" );
+		private static final Map<String, String> _mimeTypeMap = populateMimeTypeMap();
+
+		private static Map<String, String> populateMimeTypeMap() {
+			final Map<String, String> map = new HashMap<>();
+			map.put( "jpg", "image/jpeg" );
+			map.put( "jpeg", "image/jpeg" );
+			map.put( "css", "text/css" );
+			return map;
+		}
 	}
 }
