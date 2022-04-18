@@ -17,10 +17,22 @@ public class NGUtils {
 	private static final String APP_RESOURCES_FOLDER = "app-resources";
 	private static final String COMPONENTS_FOLDER = "components";
 
+	public static Optional<byte[]> readAppResource( final String resourcePath ) {
+		Objects.requireNonNull( resourcePath );
+
+		return readJavaResource( resourcePath( APP_RESOURCES_FOLDER, resourcePath ) );
+	}
+
+	public static Optional<byte[]> readComponentResource( final String resourcePath ) {
+		Objects.requireNonNull( resourcePath );
+
+		return readJavaResource( resourcePath( COMPONENTS_FOLDER, resourcePath ) );
+	}
+
 	/**
 	 * Reads the content of the given Java resource
 	 */
-	public static Optional<byte[]> readJavaResource( final String resourcePath ) {
+	private static Optional<byte[]> readJavaResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
 
 		logger.info( "Reading resource from path: " + resourcePath );
@@ -38,20 +50,10 @@ public class NGUtils {
 		}
 	}
 
-	public static String resourcePath( final String folderName, final String resourcePath ) {
+	private static String resourcePath( final String folderName, final String resourcePath ) {
 		Objects.requireNonNull( folderName );
 		Objects.requireNonNull( resourcePath );
 
 		return "/" + folderName + "/" + resourcePath;
-	}
-
-	public static Optional<byte[]> readAppResource( final String resourcePath ) {
-		Objects.requireNonNull( resourcePath );
-		return readJavaResource( resourcePath( APP_RESOURCES_FOLDER, resourcePath ) );
-	}
-
-	public static Optional<byte[]> readComponentResource( final String resourcePath ) {
-		Objects.requireNonNull( resourcePath );
-		return readJavaResource( resourcePath( COMPONENTS_FOLDER, resourcePath ) );
 	}
 }
