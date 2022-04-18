@@ -5,19 +5,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.appserver.experimental.NGRouteTable;
-import ng.appserver.wointegration.NGLifebeatThread;
+import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 
 public class NGApplication {
@@ -40,11 +37,6 @@ public class NGApplication {
 	 * Since we want to have more dynamic route resolution, it makes sense to move that to a separate object.
 	 */
 	private NGRouteTable _routeTable = new NGRouteTable();
-
-	/**
-	 * FIXME: public for the benefit of WOMPRequestHandler, which uses it to generate messages to send to wotaskd. Let's look into that // Hugi 2021-12-29
-	 */
-	public NGLifebeatThread _lifebeatThread;
 
 	/**
 	 * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
@@ -91,7 +83,7 @@ public class NGApplication {
 		}
 
 		if( properties.propWOLifebeatEnabled() ) {
-			_application.startLifebeatThread();
+			NGDefaultLifeBeatThread.start( _application._properties );
 		}
 
 		logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
@@ -153,7 +145,7 @@ public class NGApplication {
 
 	/**
 	 * @return The componentDefinition corresponding to the given WOComponent class.
-	 * 
+	 *
 	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
 	 */
 	private NGComponentDefinition _componentDefinition( Class<? extends NGComponent> componentClass ) {
@@ -296,31 +288,6 @@ public class NGApplication {
 		else {
 			logger.info( "OutputPath not set. Using standard System.out and System.err" );
 		}
-	}
-
-	/**
-	 * Starts a lifebeat thread for communicating with wotaskd.
-	 */
-	private void startLifebeatThread() {
-		final String hostName = _properties.propWOHost();
-		final String appName = _properties.propWOApplicationName();
-		final Integer appPort = _properties.propWOPort();
-		final Integer lifeBeatDestinationPort = _properties.propWOLifebeatDestinationPort();
-		final Integer lifeBeatIntervalInSeconds = _properties.propWOLifebeatIntervalInSeconds();
-		final long lifeBeatIntervalInMilliseconds = TimeUnit.MILLISECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.SECONDS );
-
-		InetAddress hostAddress = null;
-
-		try {
-			hostAddress = InetAddress.getByName( hostName );
-		}
-		catch( final UnknownHostException e ) {
-			throw new RuntimeException( "Failed to start LifebeatThread", e );
-		}
-
-		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, lifeBeatIntervalInMilliseconds );
-		_lifebeatThread.setDaemon( true );
-		_lifebeatThread.start();
 	}
 
 	/**
