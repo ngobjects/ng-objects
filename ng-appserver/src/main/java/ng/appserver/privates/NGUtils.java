@@ -10,13 +10,27 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGResourceManager;
 
+/**
+ * Utilities for reading resources
+ */
+
 public class NGUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGUtils.class );
 
+	/**
+	 * Name of the folder that stores application resources
+	 */
 	private static final String APP_RESOURCES_FOLDER = "app-resources";
+
+	/**
+	 * Name of the folder that stores component templates
+	 */
 	private static final String COMPONENTS_FOLDER = "components";
 
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
 	public static Optional<byte[]> readAppResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
 
@@ -50,6 +64,9 @@ public class NGUtils {
 		}
 	}
 
+	/**
+	 * @return The path to the named resource
+	 */
 	private static String resourcePath( final String folderName, final String resourcePath ) {
 		Objects.requireNonNull( folderName );
 		Objects.requireNonNull( resourcePath );
