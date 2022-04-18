@@ -60,7 +60,7 @@ public class NGApplication {
 			logger.info( "=======================================" );
 		}
 
-		logger.info( "===== Parsed properties" );
+		logger.info( "===== Properties =====" );
 		logger.info( properties._propertiesMapAsString() );
 
 		try {

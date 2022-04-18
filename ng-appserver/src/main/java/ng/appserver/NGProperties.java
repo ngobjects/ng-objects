@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -104,17 +105,17 @@ public class NGProperties {
 	 * FIXME: I probably don't want this here. I still feel it's better than exposing the properties map at this stage
 	 */
 	public String _propertiesMapAsString() {
-		StringBuilder b = new StringBuilder();
+		final List<String> stringKeyPairs = new ArrayList<>();
 
-		ArrayList<String> keys = new ArrayList<>( _allProperties.keySet() );
+		final ArrayList<String> keys = new ArrayList<>( _allProperties.keySet() );
 		Collections.sort( keys );
 
 		for( String key : keys ) {
-			String value = _allProperties.get( key );
-			b.append( String.format( "'%s':'%s'\n", key, value ) );
+			final String value = _allProperties.get( key );
+			stringKeyPairs.add( String.format( "'%s':'%s'", key, value ) );
 		}
 
-		return b.toString();
+		return String.join( "\n", stringKeyPairs );
 	}
 
 	/**
