@@ -47,6 +47,10 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 			return "image/jpeg";
 		}
 
+		if( resourceName.endsWith( ".css" ) ) {
+			return "text/css";
+		}
+
 		throw new IllegalArgumentException( "For some reason, our advanced algorithm has not managed to identify your resource type. Is it possible it's not a JPEG?" );
 	}
 }
