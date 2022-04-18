@@ -123,15 +123,9 @@ public class NGParsedURI {
 	}
 
 	/**
-	 * FIXME: While I generally like the idea of Optionals, I'm not sure if I want to keep this. I'm considering it deprecated for a bit // Hugi 2021-12-29
+	 * @return An optional version of the getString the named String
 	 */
-	@Deprecated
-	public Optional<String> elementAt( final int index ) {
-
-		if( index >= pathElements().length ) {
-			return Optional.empty();
-		}
-
-		return Optional.of( pathElements()[index] );
+	public Optional<String> getStringOptional( final int index ) {
+		return Optional.ofNullable( getString( index ) );
 	}
 }

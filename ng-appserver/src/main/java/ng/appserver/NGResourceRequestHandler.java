@@ -13,7 +13,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {
-		final Optional<String> resourceName = NGParsedURI.of( request.uri() ).elementAt( 1 );
+		final Optional<String> resourceName = NGParsedURI.of( request.uri() ).getStringOptional( 1 );
 
 		if( resourceName.isEmpty() ) {
 			return new NGResponse( "No resource name specified", 400 );

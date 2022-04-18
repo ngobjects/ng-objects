@@ -22,13 +22,13 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 	public NGResponse handleRequest( NGRequest request ) {
 		final NGParsedURI parsedURI = NGParsedURI.of( request.uri() );
 
-		final Optional<String> directActionClassName = parsedURI.elementAt( 1 );
+		final Optional<String> directActionClassName = parsedURI.getStringOptional( 1 );
 
 		if( directActionClassName.isEmpty() ) {
 			return new NGResponse( "No direct action class name specified", 404 );
 		}
 
-		final Optional<String> directActionMethodName = parsedURI.elementAt( 2 );
+		final Optional<String> directActionMethodName = parsedURI.getStringOptional( 2 );
 
 		if( directActionMethodName.isEmpty() ) {
 			return new NGResponse( "No direct action method name specified", 404 );
