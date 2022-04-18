@@ -193,7 +193,29 @@ public class NGApplication {
 			return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
 		}
 
-		return handler.handleRequest( request );
+		// FIXME: We might want to look into a little more exception handling // Hugi 2022-04-18
+		try {
+			return handler.handleRequest( request );
+		}
+		catch( Throwable throwable ) {
+			return handleException( throwable );
+		}
+	}
+
+	/**
+	 * @return The response generated when an exception occurs
+	 */
+	public NGResponse handleException( Throwable t ) {
+		final StringBuilder b = new StringBuilder();
+		b.append( "<h1>An exception occurred</h1>" );
+		b.append( String.format( "<h2>%s</h2>", t.getMessage() ) );
+
+		for( StackTraceElement stackTraceElement : t.getStackTrace() ) {
+			b.append( stackTraceElement );
+			b.append( "<br>" );
+		}
+
+		return new NGResponse( b.toString(), 500 );
 	}
 
 	/**
