@@ -66,6 +66,16 @@ public class NGResourceManager {
 	public Optional<String> urlForResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
 
-		return Optional.of( "/Apps/WebObjects/Rebelliant.woa/wr/" + resourceName );
+		final StringBuilder b = new StringBuilder();
+
+		// FIXME: This is horriblem just added for testing // Hugi
+		if( !NGApplication.application().isDevelopmentMode() ) {
+			b.append( "/Apps/WebObjects/Rebelliant.woa" );
+		}
+
+		b.append( "/wr/" );
+		b.append( resourceName );
+
+		return Optional.of( b.toString() );
 	}
 }
