@@ -23,9 +23,9 @@ public class NGImage extends NGDynamicElement {
 	/**
 	 * For storing associations that aren't part of the component's basic associations
 	 */
-	private Map<String, NGAssociation> _additionalAssociations;
+	private final Map<String, NGAssociation> _additionalAssociations;
 
-	public NGImage( String name, Map<String, NGAssociation> associations, NGElement template ) {
+	public NGImage( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 		super( name, associations, template );
 		_filenameAssociation = associations.get( "filename" );
 

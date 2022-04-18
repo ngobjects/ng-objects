@@ -41,6 +41,6 @@ public class NGStylesheet extends NGDynamicElement {
 			urlString = "ERROR_NOT_FOUND_" + filename;
 		}
 
-		response.appendContentString( String.format( "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"/>", urlString ) );
+		response.appendContentString( String.format( "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />", urlString ) );
 	}
 }
