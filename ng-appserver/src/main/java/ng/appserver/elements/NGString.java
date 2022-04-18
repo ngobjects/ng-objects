@@ -16,9 +16,10 @@ public class NGString extends NGDynamicElement {
 		super( name, associations, template );
 		_value = associations.get( "value" );
 	}
-	
+
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		_value.valueInComponent( context.component() );
+		Object value = _value.valueInComponent( context.component() );
+		response.appendContentString( value.toString() );
 	}
 }
