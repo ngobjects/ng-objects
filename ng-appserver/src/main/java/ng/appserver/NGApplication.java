@@ -127,6 +127,13 @@ public class NGApplication {
 	}
 
 	/**
+	 * FIXME: I'm not quite sure what to do about this variable. Belongs here or someplace else?
+	 */
+	public boolean isDevelopmentMode() {
+		return _properties.isDevelopmentMode();
+	}
+
+	/**
 	 * @return A new instance of [componentClass] in the given [context]
 	 *
 	 * FIXME: Are components really a part of the basic framework? If so; does component construction really belong in NGApplication // Hugi 2021-12-29
