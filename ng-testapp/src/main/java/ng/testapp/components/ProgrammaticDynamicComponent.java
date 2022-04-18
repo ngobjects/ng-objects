@@ -14,6 +14,7 @@ import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGStylesheet;
+import ng.appserver.privates.NGUtils;
 
 public class ProgrammaticDynamicComponent extends NGComponent {
 
@@ -71,6 +72,13 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 		image3.put( "filename", new NGKeyValueAssociation( "someMethodReturningFilenameHolder.filename" ) );
 		image3.put( "width", new NGConstantValueAssociation( 300 ) );
 		g.children().add( new NGImage( "wat?", image3, null ) );
+
+		g.children().add( new NGHTMLBareString( "<br><br>" ) );
+
+		final Map<String, NGAssociation> image4 = new HashMap<>();
+		image4.put( "data", new NGConstantValueAssociation( NGUtils.readWebserverResource( "test-image-4.jpg" ).get() ) );
+		image4.put( "width", new NGConstantValueAssociation( 300 ) );
+		g.children().add( new NGImage( "wat?", image4, null ) );
 
 		g.children().add( new NGHTMLBareString( "</body>\n" ) );
 		g.children().add( new NGHTMLBareString( "</html>\n" ) );

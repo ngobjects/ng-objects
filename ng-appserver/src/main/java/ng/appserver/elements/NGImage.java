@@ -35,7 +35,7 @@ public class NGImage extends NGDynamicElement {
 	public NGImage( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 		super( name, associations, template );
 		_filenameAssociation = associations.get( "filename" );
-		_dataAssociation = associations.get( "filename" );
+		_dataAssociation = associations.get( "data" );
 
 		if( _filenameAssociation == null && _dataAssociation == null ) {
 			throw new IllegalArgumentException( "You must set either [filename] or [data] bindings" );
@@ -67,11 +67,12 @@ public class NGImage extends NGDynamicElement {
 			}
 		}
 
+		// In case of a data binding, we always just store the data in the resource cache, under a new key each time. Kind of lame.
 		if( _dataAssociation != null ) {
 			byte[] bytes = (byte[])_dataAssociation.valueInComponent( component );
 			final String id = UUID.randomUUID().toString();
 			NGResourceRequestHandlerDynamic.push( id, bytes );
-			src = NGApplication.application().resourceManager().urlForWebserverResourceNamed( id ).get();
+			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( id ).get();
 		}
 
 		final StringBuilder b = new StringBuilder();
