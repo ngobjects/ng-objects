@@ -2,6 +2,7 @@ package ng.appserver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -20,6 +21,8 @@ public class NGComponentDefinition {
 	private String _name;
 
 	public NGComponentDefinition( final Class<? extends NGComponent> componentClass ) {
+		Objects.requireNonNull( componentClass );
+
 		_name = componentClass.getSimpleName();
 	}
 
@@ -28,6 +31,8 @@ public class NGComponentDefinition {
 	}
 
 	public static NGElement parseTemplate( final String templateName ) {
+		Objects.requireNonNull( templateName );
+
 		final String htmlTemplateFilename = templateName + ".wo/" + templateName + ".html";
 		final String htmlTemplatePath = NGUtils.resourcePath( "components", htmlTemplateFilename );
 		logger.debug( "Locating component at: " + htmlTemplatePath );
@@ -41,8 +46,14 @@ public class NGComponentDefinition {
 		final String templateString = new String( templateBytes.get(), StandardCharsets.UTF_8 );
 		return new NGHTMLBareString( templateString );
 	}
-	
+
+	/**
+	 * @return A new component of the given class in the given context
+	 */
 	public NGComponent componentInstanceInstanceInContext( final Class<? extends NGComponent> componentClass, NGContext context ) {
+		Objects.requireNonNull( componentClass );
+		Objects.requireNonNull( context );
+
 		try {
 			return componentClass.getConstructor( NGContext.class ).newInstance( context );
 		}
