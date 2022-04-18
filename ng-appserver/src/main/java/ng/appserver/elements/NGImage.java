@@ -29,6 +29,10 @@ public class NGImage extends NGDynamicElement {
 		super( name, associations, template );
 		_filenameAssociation = associations.get( "filename" );
 
+		if( _filenameAssociation == null ) {
+			throw new IllegalArgumentException( "The [filename] binding is required" );
+		}
+
 		// Not exactly pretty, but let's work with this a little
 		_additionalAssociations = new HashMap<>( associations );
 		_additionalAssociations.remove( "filename" );
@@ -55,6 +59,7 @@ public class NGImage extends NGDynamicElement {
 		b.append( String.format( "<img src=\"%s\"", urlString ) );
 
 		_additionalAssociations.forEach( ( name, ass ) -> {
+			b.append( " " );
 			b.append( name );
 			b.append( "=" );
 			b.append( "\"" + ass.valueInComponent( component ) + "\"" );
