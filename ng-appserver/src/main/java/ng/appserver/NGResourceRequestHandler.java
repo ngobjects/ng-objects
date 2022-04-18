@@ -38,16 +38,22 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	}
 
 	/**
-	 * Highly advanced mime type detection
+	 * Mime Type detection.
 	 *
-	 * FIXME: Do diz // Hugi 2021-12-29
+	 * FIXME: This map needs to be extensible // Hugi 2022-04-18
 	 */
 	public static class NGMimeTypeDetector {
 
 		public static final String mimeTypeForResourceName( final String resourceName ) {
 			Objects.requireNonNull( resourceName );
 
-			final String extension = resourceName.substring( resourceName.lastIndexOf( "." ) + 1 );
+			final int lastPeriodIndex = resourceName.lastIndexOf( "." );
+
+			if( lastPeriodIndex == -1 ) {
+				throw new IllegalArgumentException( "Could not deduce mimeType from resource name " + resourceName );
+			}
+
+			final String extension = resourceName.substring( lastPeriodIndex + 1 );
 			final String mimeType = mimeTypeForExtension( extension );
 
 			if( mimeType == null ) {
