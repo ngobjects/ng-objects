@@ -36,7 +36,7 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
-		final byte[] resourceBytes = _cacheMap.get( resourceID.get() );
+		final byte[] resourceBytes = pop( resourceID.get() );
 
 		// FIXME: How to handle this properly? User configurable? Just always a 404
 		if( resourceBytes == null ) {
