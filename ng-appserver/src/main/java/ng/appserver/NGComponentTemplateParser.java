@@ -10,9 +10,9 @@ import ng.appserver.privates.NGUtils;
 public class NGComponentTemplateParser {
 
 	/**
-	 * @return The parsed template for the named component
+	 * @return The string template for the named component
 	 */
-	public static NGElement parseTemplate( final String templateName ) {
+	public static String templateString( final String templateName ) {
 		Objects.requireNonNull( templateName );
 
 		final String htmlTemplateFilename = templateName + ".wo/" + templateName + ".html";
@@ -23,7 +23,13 @@ public class NGComponentTemplateParser {
 			throw new RuntimeException( "Template not found" );
 		}
 
-		final String templateString = new String( templateBytes.get(), StandardCharsets.UTF_8 );
-		return new NGHTMLBareString( templateString );
+		return new String( templateBytes.get(), StandardCharsets.UTF_8 );
+	}
+
+	/**
+	 * @return The parsed template for the named component
+	 */
+	public static NGElement parseTemplate( final String templateName ) {
+		return new NGHTMLBareString( templateString( templateName ) );
 	}
 }
