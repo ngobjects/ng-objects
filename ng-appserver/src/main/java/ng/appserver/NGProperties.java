@@ -62,6 +62,8 @@ public class NGProperties {
 
 	/**
 	 * @return The default properties as a map (loaded from the default Properties file)
+	 *
+	 * FIXME: We need to watch the properties file for changes
 	 */
 	private Map<String, String> loadDefaultProperties() {
 		final Optional<byte[]> propertyBytes = NGUtils.readAppResource( "Properties" );
