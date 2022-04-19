@@ -45,9 +45,9 @@ public class Application extends NGApplication {
 			StringBuilder b = new StringBuilder();
 
 			routeTable().routes().forEach( route -> {
-				b.append( route.pattern );
+				b.append( route.pattern() );
 				b.append( " -> " );
-				b.append( route.routeHandler.getClass().getName() );
+				b.append( route.routeHandler().getClass().getName() );
 				b.append( "\n" );
 			} );
 

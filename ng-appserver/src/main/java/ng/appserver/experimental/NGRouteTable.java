@@ -39,8 +39,8 @@ public class NGRouteTable {
 		Objects.requireNonNull( uri );
 
 		for( final Route route : routes() ) {
-			if( matches( route.pattern, uri ) ) {
-				return route.routeHandler;
+			if( matches( route.pattern(), uri ) ) {
+				return route.routeHandler();
 			}
 		}
 
@@ -58,8 +58,8 @@ public class NGRouteTable {
 
 	public void map( final String pattern, final NGRequestHandler requestHandler ) {
 		Route r = new Route();
-		r.pattern = pattern;
-		r.routeHandler = requestHandler;
+		r._pattern = pattern;
+		r._routeHandler = requestHandler;
 		_routes.add( r );
 	}
 
@@ -81,12 +81,20 @@ public class NGRouteTable {
 		/**
 		 * The pattern this route uses
 		 */
-		public String pattern;
+		private String _pattern;
 
 		/**
 		 * The routeHandler that will handle requests passed to this route
 		 */
-		public NGRequestHandler routeHandler;
+		private NGRequestHandler _routeHandler;
+
+		public String pattern() {
+			return _pattern;
+		}
+
+		public NGRequestHandler routeHandler() {
+			return _routeHandler;
+		}
 	}
 
 	public static class FunctionRouteHandler extends NGRequestHandler {
