@@ -28,7 +28,10 @@ public class NGRouteTable {
 	 */
 	private List<Route> _routes = new ArrayList<>();
 
-	private List<Route> routes() {
+	/**
+	 * @return All registered routes in the table
+	 */
+	public List<Route> routes() {
 		return _routes;
 	}
 
