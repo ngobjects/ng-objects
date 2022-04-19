@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.directactions.NGDirectActionRequestHandler;
-import ng.appserver.experimental.NGRouteTable;
+import ng.appserver.routing.NGRouteTable;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 
