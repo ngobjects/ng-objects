@@ -186,15 +186,21 @@ public class NGApplication {
 			return defaultResponse( request );
 		}
 
-		final NGRequestHandler handler = _routeTable.handlerForURL( request.uri() );
+		final NGRequestHandler requestHandler = _routeTable.handlerForURL( request.uri() );
 
-		if( handler == null ) {
+		if( requestHandler == null ) {
 			return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
 		}
 
 		// FIXME: We might want to look into a little more exception handling // Hugi 2022-04-18
 		try {
-			return handler.handleRequest( request );
+			final NGResponse response = requestHandler.handleRequest( request );
+
+			if( response == null ) {
+				throw new NullPointerException( String.format( "'%s' returned a null response. That's just rude.", requestHandler.getClass().getName() ) );
+			}
+
+			return response;
 		}
 		catch( Throwable throwable ) {
 			return exceptionResponse( throwable );
