@@ -12,7 +12,7 @@ public class NGComponentTemplateParser {
 	/**
 	 * @return The string template for the named component
 	 */
-	public static String templateString( final String templateName ) {
+	public static String loadTemplateString( final String templateName ) {
 		Objects.requireNonNull( templateName );
 
 		final String htmlTemplateFilename = templateName + ".wo/" + templateName + ".html";
@@ -30,6 +30,8 @@ public class NGComponentTemplateParser {
 	 * @return The parsed template for the named component
 	 */
 	public static NGElement parseTemplate( final String templateName ) {
-		return new NGHTMLBareString( templateString( templateName ) );
+		Objects.requireNonNull( templateName );
+
+		return new NGHTMLBareString( loadTemplateString( templateName ) );
 	}
 }
