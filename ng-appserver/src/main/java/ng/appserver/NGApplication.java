@@ -209,6 +209,8 @@ public class NGApplication {
 
 	/**
 	 * @return The response generated when an exception occurs
+	 *
+	 * FIXME: We need to allow for different response types for production/development environments // Hugi 2022-04-20
 	 */
 	public NGResponse exceptionResponse( final Throwable throwable ) {
 		final StringBuilder b = new StringBuilder();
