@@ -45,15 +45,16 @@ public class Application extends NGApplication {
 			StringBuilder b = new StringBuilder();
 
 			routeTable().routes().forEach( route -> {
-				b.append( String.format( "%-25s", route.pattern() ) );
+				b.append( "<style>body{ font-family: sans-serif}</style>" );
+				b.append( String.format( "<a style=\"display:inline-block; width:200px\" href=\"%s\">%s</a>", route.pattern(), route.pattern() ) );
 				b.append( " -> " );
 				b.append( route.routeHandler().getClass().getName() );
-				b.append( "\n" );
+				b.append( "<br>" );
 			} );
 
 			NGResponse response = new NGResponse();
 			response.setContentString( b.toString() );
-			response.setHeader( "content-type", "text/plain" );
+			response.setHeader( "content-type", "text/html" );
 			return response;
 		} );
 	}
