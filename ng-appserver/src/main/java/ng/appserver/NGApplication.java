@@ -215,8 +215,13 @@ public class NGApplication {
 		b.append( "<h1>An exception occurred</h1>" );
 		b.append( String.format( "<h2>%s</h2>", throwable.getMessage() ) );
 
-		for( StackTraceElement stackTraceElement : throwable.getStackTrace() ) {
-			b.append( stackTraceElement );
+		for( StackTraceElement ste : throwable.getStackTrace() ) {
+			final String packageNameOnly = ste.getClassName().substring( 0, ste.getClassName().lastIndexOf( "." ) );
+			final String simpleClassNameOnly = ste.getClassName().substring( ste.getClassName().lastIndexOf( "." ) + 1 );
+
+			b.append( String.format( "<span style=\"display: inline-block; min-width: 300px\">%s</span>", packageNameOnly ) );
+			b.append( String.format( "<span style=\"display: inline-block; min-width: 400px\">%s</span>", simpleClassNameOnly + "." + ste.getMethodName() + "()" ) );
+			b.append( ste.getFileName() + ":" + ste.getLineNumber() );
 			b.append( "<br>" );
 		}
 
