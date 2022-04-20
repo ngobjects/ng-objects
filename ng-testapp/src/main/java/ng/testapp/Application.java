@@ -26,19 +26,19 @@ public class Application extends NGApplication {
 			return response;
 		} );
 
+		routeTable().map( "/response-image", ( request ) -> {
+			NGResponse response = new NGResponse();
+			response.setContentBytes( NGUtils.readWebserverResource( "test-image-4.jpg" ).get() );
+			response.setHeader( "content-type", "image/jpeg" );
+			return response;
+		} );
+
 		routeTable().map( "/component-programmatic", ( request ) -> {
 			return pageWithName( ProgrammaticDynamicComponent.class, request.context() );
 		} );
 
 		routeTable().map( "/component-plain", ( request ) -> {
 			return pageWithName( ExampleComponent.class, request.context() );
-		} );
-
-		routeTable().map( "/image", ( request ) -> {
-			NGResponse response = new NGResponse();
-			response.setContentBytes( NGUtils.readWebserverResource( "test-image-4.jpg" ).get() );
-			response.setHeader( "content-type", "image/jpeg" );
-			return response;
 		} );
 
 		routeTable().map( "/print-routes", ( request ) -> {
