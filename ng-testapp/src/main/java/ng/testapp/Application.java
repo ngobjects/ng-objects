@@ -45,9 +45,9 @@ public class Application extends NGApplication {
 			StringBuilder b = new StringBuilder();
 
 			b.append( "<h2>These are the routes registered with the application</h2>" );
+			b.append( "<style>body{ font-family: sans-serif}</style>" );
 
 			routeTable().routes().forEach( route -> {
-				b.append( "<style>body{ font-family: sans-serif}</style>" );
 				b.append( String.format( "<a style=\"display:inline-block; width:200px\" href=\"%s\">%s</a>", route.pattern(), route.pattern() ) );
 				b.append( " -> " );
 				b.append( route.routeHandler().getClass().getName() );

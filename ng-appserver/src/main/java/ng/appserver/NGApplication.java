@@ -214,6 +214,7 @@ public class NGApplication {
 	 */
 	public NGResponse exceptionResponse( final Throwable throwable ) {
 		final StringBuilder b = new StringBuilder();
+		b.append( "<style>body{ font-family: sans-serif}</style>" );
 		b.append( String.format( "<h3>An exception occurred</h3>" ) );
 		b.append( String.format( "<h1>%s</h1>", throwable.getClass().getName() ) );
 		b.append( String.format( "<h2>%s</h2>", throwable.getMessage() ) );
