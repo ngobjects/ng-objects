@@ -44,6 +44,8 @@ public class Application extends NGApplication {
 		routeTable().map( "/print-routes", ( request ) -> {
 			StringBuilder b = new StringBuilder();
 
+			b.append( "<h2>These are the routes registered with the application</h2>" );
+
 			routeTable().routes().forEach( route -> {
 				b.append( "<style>body{ font-family: sans-serif}</style>" );
 				b.append( String.format( "<a style=\"display:inline-block; width:200px\" href=\"%s\">%s</a>", route.pattern(), route.pattern() ) );
