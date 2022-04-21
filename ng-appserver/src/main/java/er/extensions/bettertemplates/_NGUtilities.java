@@ -6,11 +6,12 @@ import java.util.List;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGString;
+import ng.appserver.elements.NGStylesheet;
 
 public class _NGUtilities {
 
 	private static List<Class> classes() {
-		return List.of( NGString.class, NGImage.class, NGHyperlink.class );
+		return List.of( NGString.class, NGImage.class, NGHyperlink.class, NGStylesheet.class );
 	}
 
 	public static Class classWithName( String className ) {

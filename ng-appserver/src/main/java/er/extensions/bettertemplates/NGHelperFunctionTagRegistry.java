@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGString;
+import ng.appserver.elements.NGStylesheet;
 
 public class NGHelperFunctionTagRegistry {
 
@@ -24,6 +25,7 @@ public class NGHelperFunctionTagRegistry {
 		m.put( "str", NGString.class.getSimpleName() );
 		m.put( "img", NGImage.class.getSimpleName() );
 		m.put( "link", NGHyperlink.class.getSimpleName() );
+		m.put( "stylesheet", NGStylesheet.class.getSimpleName() );
 		return m;
 	}
 
