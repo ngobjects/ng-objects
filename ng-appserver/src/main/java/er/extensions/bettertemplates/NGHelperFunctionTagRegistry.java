@@ -4,17 +4,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
 
 public class NGHelperFunctionTagRegistry {
-
-	public static Logger logger = LoggerFactory.getLogger( NGHelperFunctionTagRegistry.class );
 
 	public static boolean allowInlineBindings() {
 		return true;
