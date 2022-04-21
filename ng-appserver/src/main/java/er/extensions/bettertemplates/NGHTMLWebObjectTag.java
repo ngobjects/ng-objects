@@ -200,7 +200,8 @@ public class NGHTMLWebObjectTag {
 			throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLTemplateParser> no declaration for dynamic element (or component) named " + s );
 		}
 
-		NGGenerationSupport.insertInElementsTableWithName( woelement1, s, wodeclaration.associations() );
+		// FIXME: I'm not sure what this is supposed to do. Work that out!
+		// NGGenerationSupport.insertInElementsTableWithName( woelement1, s, wodeclaration.associations() );
 
 		return woelement1;
 	}
