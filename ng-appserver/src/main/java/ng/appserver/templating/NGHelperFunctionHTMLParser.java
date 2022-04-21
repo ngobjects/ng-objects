@@ -258,7 +258,7 @@ public class NGHelperFunctionHTMLParser {
 				log.debug( "Parsed Text (" + _contentText.length() + ") : " + _contentText );
 			}
 			if( _contentText.length() > 0 ) {
-				_parserDelegate.didParseText( _NGStringUtilities.stringFromBuffer( _contentText ), this );
+				_parserDelegate.didParseText( _contentText.toString(), this );
 				_contentText.setLength( 0 );
 			}
 		}
@@ -270,7 +270,7 @@ public class NGHelperFunctionHTMLParser {
 				log.debug( "Parsed Opening WebObject (" + _contentText.length() + ") : " + _contentText );
 			}
 			if( _contentText.length() > 0 ) {
-				_parserDelegate.didParseOpeningWebObjectTag( _NGStringUtilities.stringFromBuffer( _contentText ), this );
+				_parserDelegate.didParseOpeningWebObjectTag( _contentText.toString(), this );
 				_contentText.setLength( 0 );
 			}
 		}
@@ -282,7 +282,7 @@ public class NGHelperFunctionHTMLParser {
 				log.debug( "Parsed Closing WebObject (" + _contentText.length() + ") : " + _contentText );
 			}
 			if( _contentText.length() > 0 ) {
-				_parserDelegate.didParseClosingWebObjectTag( _NGStringUtilities.stringFromBuffer( _contentText ), this );
+				_parserDelegate.didParseClosingWebObjectTag( _contentText.toString(), this );
 				_contentText.setLength( 0 );
 			}
 		}
@@ -294,7 +294,7 @@ public class NGHelperFunctionHTMLParser {
 				log.debug( "Parsed Comment (" + _contentText.length() + ") : " + _contentText );
 			}
 			if( _contentText.length() > 0 ) {
-				_parserDelegate.didParseComment( _NGStringUtilities.stringFromBuffer( _contentText ), this );
+				_parserDelegate.didParseComment( _contentText.toString(), this );
 				_contentText.setLength( 0 );
 			}
 		}

@@ -2,11 +2,6 @@ package ng.appserver.templating;
 
 public class _NGStringUtilities {
 
-	public static String stringFromBuffer( StringBuffer buffer ) {
-		int len = buffer.length();
-		return len == 0 ? "" : buffer.toString();
-	}
-
 	public static String replaceAllInstancesOfString( String s1, String s2, String s3 ) {
 		return s1.replace( s2, s3 );
 	}
