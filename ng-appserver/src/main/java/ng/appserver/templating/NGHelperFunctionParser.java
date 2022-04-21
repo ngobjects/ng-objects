@@ -47,8 +47,12 @@ public class NGHelperFunctionParser {
 		return woelement;
 	}
 
+	public static boolean allowInlineBindings() {
+		return true;
+	}
+
 	public void didParseOpeningWebObjectTag( String s, NGHelperFunctionHTMLParser htmlParser ) throws NGHelperFunctionHTMLFormatException {
-		if( NGHelperFunctionTagRegistry.allowInlineBindings() ) {
+		if( allowInlineBindings() ) {
 			int spaceIndex = s.indexOf( ' ' );
 			int colonIndex;
 			if( spaceIndex != -1 ) {

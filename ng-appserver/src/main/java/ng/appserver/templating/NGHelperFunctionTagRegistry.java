@@ -11,10 +11,6 @@ import ng.appserver.elements.NGStylesheet;
 
 public class NGHelperFunctionTagRegistry {
 
-	public static boolean allowInlineBindings() {
-		return true;
-	}
-
 	public static Map<String, String> tagShortcutMap() {
 		Map<String, String> m = new HashMap<>();
 		m.put( "str", NGString.class.getSimpleName() );
