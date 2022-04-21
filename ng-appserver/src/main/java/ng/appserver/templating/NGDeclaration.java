@@ -1,10 +1,6 @@
 package ng.appserver.templating;
 
-import java.util.Enumeration;
-
-import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
-import ng.appserver.NGComponent;
 
 public class NGDeclaration {
 
@@ -16,7 +12,6 @@ public class NGDeclaration {
 		_name = aName;
 		_type = aType;
 		_associations = theAssocations.mutableClone();
-		_setDebuggingForAssociations();
 	}
 
 	public String name() {
@@ -38,29 +33,5 @@ public class NGDeclaration {
 
 	public String stringRepresentation() {
 		return _name + ":" + _type + " " + associations().toString() + "\n";
-	}
-
-	private void _setDebuggingForAssociations() {
-		NGAssociation aDebugAssoc = _associations.remove( "WODebug" );
-		if( aDebugAssoc != null ) {
-			String aBindingName = null;
-			Enumeration aKeyEnumerator = _associations.keyEnumerator();
-
-			while( true ) {
-				NGAssociation anAssociation;
-				do {
-					if( !aKeyEnumerator.hasMoreElements() ) {
-						return;
-					}
-
-					aBindingName = (String)aKeyEnumerator.nextElement();
-					anAssociation = (NGAssociation)_associations.objectForKey( aBindingName );
-					anAssociation.setDebugEnabledForBinding( aBindingName, _name, _type );
-				}
-				while( aDebugAssoc.isValueConstant() && aDebugAssoc.valueInComponent( (NGComponent)null ) != null && NGApplication.application().isDebuggingEnabled() );
-
-				anAssociation._setDebuggingEnabled( false );
-			}
-		}
 	}
 }
