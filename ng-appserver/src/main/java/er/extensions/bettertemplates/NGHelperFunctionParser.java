@@ -160,7 +160,7 @@ public class NGHelperFunctionParser {
 			}
 		}
 		String elementType = elementTypeBuffer.toString();
-		String shortcutType = (String)NGHelperFunctionTagRegistry.tagShortcutMap().objectForKey( elementType );
+		String shortcutType = NGHelperFunctionTagRegistry.tagShortcutMap().get( elementType );
 		if( shortcutType != null ) {
 			elementType = shortcutType;
 		}
@@ -177,7 +177,7 @@ public class NGHelperFunctionParser {
 			elementName = "_" + elementType + "_" + _inlineBindingCount;
 			_inlineBindingCount++;
 		}
-		NGTagProcessor tagProcessor = (NGTagProcessor)NGHelperFunctionTagRegistry.tagProcessorMap().objectForKey( elementType );
+		NGTagProcessor tagProcessor = (NGTagProcessor)NGHelperFunctionTagRegistry.tagProcessorMap().get( elementType );
 		NGDeclaration declaration;
 		if( tagProcessor == null ) {
 			declaration = NGHelperFunctionParser.createDeclaration( elementName, elementType, associations );
