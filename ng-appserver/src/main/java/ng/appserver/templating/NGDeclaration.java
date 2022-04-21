@@ -30,8 +30,4 @@ public class NGDeclaration {
 	public String toString() {
 		return "<" + getClass().getName() + " name = " + _name + " type = " + _type + " associations " + _associations.toString() + " >";
 	}
-
-	public String stringRepresentation() {
-		return _name + ":" + _type + " " + associations().toString() + "\n";
-	}
 }
