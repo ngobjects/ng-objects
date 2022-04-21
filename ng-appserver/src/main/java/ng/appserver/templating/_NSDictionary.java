@@ -24,8 +24,4 @@ public class _NSDictionary<K, V> extends HashMap<K, V> {
 	public void setObjectForKey( V object, K key ) {
 		put( key, object );
 	}
-
-	public _NSMutableDictionary<K, V> mutableClone() {
-		return (_NSMutableDictionary<K, V>)this.clone();
-	}
 }
