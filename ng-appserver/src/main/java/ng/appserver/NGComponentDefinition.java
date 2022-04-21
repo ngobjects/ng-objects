@@ -3,6 +3,10 @@ package ng.appserver;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
+import er.extensions.bettertemplates.NGHelperFunctionDeclarationFormatException;
+import er.extensions.bettertemplates.NGHelperFunctionHTMLFormatException;
+import er.extensions.bettertemplates.NGHelperFunctionParser;
+import er.extensions.bettertemplates.NSArray;
 import er.extensions.bettertemplates.NSDictionary;
 
 public class NGComponentDefinition {
@@ -37,7 +41,14 @@ public class NGComponentDefinition {
 	 * @return The parsed template for this component
 	 */
 	public NGElement template() {
-		return NGComponentTemplateParser.parseTemplate( _name );
+		//		return NGComponentTemplateParser.parseTemplate( _name );
+		try {
+			System.out.println( "Ha?" );
+			return new NGHelperFunctionParser( NGComponentTemplateParser.loadTemplateString( _name ), "", new NSArray() ).parse();
+		}
+		catch( ClassNotFoundException | NGHelperFunctionDeclarationFormatException | NGHelperFunctionHTMLFormatException e ) {
+			throw new RuntimeException( e );
+		}
 	}
 
 	public NGComponentReference componentReferenceWithAssociations( NSDictionary nsdictionary, NGElement woelement ) {
