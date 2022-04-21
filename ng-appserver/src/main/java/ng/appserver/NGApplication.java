@@ -205,8 +205,16 @@ public class NGApplication {
 			return response;
 		}
 		catch( Throwable throwable ) {
+			handleException( throwable );
 			return exceptionResponse( throwable );
 		}
+	}
+
+	/**
+	 * Handle a Request/Response loop occurring throwable before generating a response for it
+	 */
+	protected void handleException( Throwable throwable ) {
+		throwable.printStackTrace();
 	}
 
 	/**
