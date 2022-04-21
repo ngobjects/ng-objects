@@ -140,14 +140,14 @@ public class NGApplication {
 	 *
 	 * FIXME: Are components really a part of the basic framework? If so; does component construction really belong in NGApplication // Hugi 2021-12-29
 	 */
-	public NGComponent pageWithName( final Class<? extends NGComponent> componentClass, final NGContext context ) {
+	public <E extends NGComponent> E pageWithName( final Class<E> componentClass, final NGContext context ) {
 		final NGComponentDefinition definition = _componentDefinition( componentClass );
 
 		if( definition == null ) {
 			throw new RuntimeException( "No such component definition: " + componentClass );
 		}
 
-		final NGComponent page = definition.componentInstanceInstanceInContext( componentClass, context );
+		final E page = (E)definition.componentInstanceInstanceInContext( componentClass, context );
 		page._componentDefinition = definition; // FIXME: Butt ugly to do this here // Hugi 2022-01-16
 		return page;
 	}
