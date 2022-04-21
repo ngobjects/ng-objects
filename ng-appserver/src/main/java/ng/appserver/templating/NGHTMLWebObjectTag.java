@@ -136,16 +136,8 @@ public class NGHTMLWebObjectTag {
 		return wocomponentreference;
 	}
 
-	private static NGElement _elementWithClass( Class class1, NGDeclaration wodeclaration, NGElement woelement ) {
-		NGElement woelement1 = NGApplication.application().dynamicElementWithName( class1.getName(), wodeclaration.associations(), woelement, null );
-
-		if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-			_NSLog.debug.appendln( "<WOHTMLWebObjectTag> Created Dynamic Element with name :" + class1.getName() );
-			_NSLog.debug.appendln( "Declaration : " + wodeclaration );
-			_NSLog.debug.appendln( "Element : " + woelement1.toString() );
-		}
-
-		return woelement1;
+	private static NGElement _elementWithClass( Class c, NGDeclaration declaration, NGElement element ) {
+		return NGApplication.application().dynamicElementWithName( c.getName(), declaration.associations(), element, null );
 	}
 
 	private static NGElement _elementWithDeclaration( NGDeclaration wodeclaration, String s, NGElement woelement, List nsarray ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
