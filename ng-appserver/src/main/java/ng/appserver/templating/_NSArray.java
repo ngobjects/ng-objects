@@ -8,10 +8,6 @@ import java.util.Enumeration;
 
 public class _NSArray<E> extends ArrayList<E> {
 
-	public _NSArray( int size ) {
-		super( size );
-	}
-
 	public _NSArray( Collection<E> collection ) {
 		super( collection );
 	}
