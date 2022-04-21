@@ -33,10 +33,6 @@ public class _NGUtilities {
 		}
 	}
 
-	public static String replaceAllInstancesOfString( String s1, String s2, String s3 ) {
-		return s1.replace( s2, s3 );
-	}
-
 	public static boolean isNumber( String string ) {
 		int length = string.length();
 		if( length == 0 ) {

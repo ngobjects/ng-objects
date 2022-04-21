@@ -90,7 +90,7 @@ public class NGHelperFunctionDeclarationParser {
 	}
 
 	private String _removeNewStyleCommentsAndQuotedStringsFromString( String declarationsStr ) {
-		String escapedQuoteStr = _NGUtilities.replaceAllInstancesOfString( declarationsStr, "\\\"", NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING );
+		String escapedQuoteStr = declarationsStr.replace( "\\\"", NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING );
 		StringBuilder declarationWithoutCommentsBuffer = new StringBuilder( 100 );
 		StringTokenizer tokenizer = new StringTokenizer( escapedQuoteStr, "/\"", true );
 		try {
@@ -99,7 +99,7 @@ public class NGHelperFunctionDeclarationParser {
 				if( token.equals( "/" ) ) {
 					token = tokenizer.nextToken( "\n" );
 					if( token.startsWith( "/" ) ) {
-						token = _NGUtilities.replaceAllInstancesOfString( token, NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
+						token = token.replace( NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
 						declarationWithoutCommentsBuffer.append( '\n' );
 						tokenizer.nextToken();
 					}
@@ -117,7 +117,7 @@ public class NGHelperFunctionDeclarationParser {
 						tokenizer.nextToken();
 					}
 					String quotedStringKey = NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.count();
-					token = _NGUtilities.replaceAllInstancesOfString( token, NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
+					token = token.replace( NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
 					_quotedStrings.setObjectForKey( token, quotedStringKey );
 					declarationWithoutCommentsBuffer.append( quotedStringKey );
 				}
