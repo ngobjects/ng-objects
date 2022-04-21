@@ -12,11 +12,11 @@ public class _NSDictionary<K, V> extends HashMap<K, V> {
 		put( key, value );
 	}
 
-	public Enumeration objectEnumerator() {
+	public Enumeration<V> objectEnumerator() {
 		return Collections.enumeration( this.values() );
 	}
 
-	public Enumeration keyEnumerator() {
+	public Enumeration<K> keyEnumerator() {
 		return Collections.enumeration( this.keySet() );
 	}
 }
