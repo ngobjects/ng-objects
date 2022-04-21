@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import er.extensions.bettertemplates._NGUtilities;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
@@ -327,8 +328,31 @@ public class NGApplication {
 		return false;
 	}
 
-	public NGElement dynamicElementWithName( String name, Map<String, NGAssociation> associations, NGElement woelement, Object object ) {
-		throw new RuntimeException( "Not implemented" );
+	public NGElement dynamicElementWithName( String aName, Map<String, NGAssociation> someAssociations, NGElement anElement, List aLanguageArray ) {
+		NGElement elementInstance = null;
+		if( aName == null ) {
+			throw new IllegalArgumentException( "<" + "bla" + ">: No name provided for dynamic element creation." );
+		}
+		else {
+			Class elementClass = _NGUtilities.classWithName( aName );
+			if( elementClass != null && NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
+				Class[] params = new Class[] { String.class, Map.class, NGElement.class };
+				Object[] arguments = new Object[] { aName, someAssociations, anElement };
+				elementInstance = (NGElement)_NGUtilities.instantiateObject( elementClass, params, arguments, true, this.isDebuggingEnabled() );
+			}
+
+			if( elementInstance == null ) {
+				throw new RuntimeException( "Not implemented" );
+				/*
+				NGComponentDefinition componentDefinition = this._componentDefinition( aName, aLanguageArray );
+				if( componentDefinition != null ) {
+					elementInstance = componentDefinition.componentReferenceWithAssociations( someAssociations, anElement );
+				}
+				*/
+			}
+
+			return elementInstance;
+		}
 	}
 
 	/**
