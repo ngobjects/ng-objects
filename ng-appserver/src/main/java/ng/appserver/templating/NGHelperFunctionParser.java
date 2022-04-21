@@ -77,7 +77,7 @@ public class NGHelperFunctionParser {
 			_currentWebObjectTag.addChildElement( element );
 		}
 		catch( RuntimeException e ) {
-			throw new RuntimeException( "Unable to load the component named '" + componentName( _currentWebObjectTag ) + "' with the declaration " + prettyDeclaration( (NGDeclaration)_declarations.objectForKey( _currentWebObjectTag.name() ) ) + ". Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.", e );
+			throw new RuntimeException( "Unable to load the component named '" + componentName( _currentWebObjectTag ) + "' with the declaration " + prettyDeclaration( (NGDeclaration)_declarations.get( _currentWebObjectTag.name() ) ) + ". Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.", e );
 		}
 	}
 
@@ -308,7 +308,7 @@ public class NGHelperFunctionParser {
 			Enumeration keyEnum = declaration.associations().keyEnumerator();
 			while( keyEnum.hasMoreElements() ) {
 				String key = (String)keyEnum.nextElement();
-				Object assoc = declaration.associations().objectForKey( key );
+				Object assoc = declaration.associations().get( key );
 				if( assoc instanceof NGKeyValueAssociation ) {
 					declarationStr.append( key + "=" + ((NGKeyValueAssociation)assoc).keyPath() );
 				}
@@ -391,7 +391,7 @@ public class NGHelperFunctionParser {
 			Enumeration associationsEnum = associations.keyEnumerator();
 			while( associationsEnum.hasMoreElements() ) {
 				String bindingName = (String)associationsEnum.nextElement();
-				NGAssociation association = (NGAssociation)associations.objectForKey( bindingName );
+				NGAssociation association = (NGAssociation)associations.get( bindingName );
 				association.setDebugEnabledForBinding( bindingName, declarationName, declarationType );
 				association._setDebuggingEnabled( false );
 			}

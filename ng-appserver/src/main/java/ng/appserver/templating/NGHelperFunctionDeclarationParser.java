@@ -140,7 +140,7 @@ public class NGHelperFunctionDeclarationParser {
 		Enumeration rawDeclarationHeaderEnum = rawDeclarations.keyEnumerator();
 		while( rawDeclarationHeaderEnum.hasMoreElements() ) {
 			String declarationHeader = (String)rawDeclarationHeaderEnum.nextElement();
-			String declarationBody = (String)rawDeclarations.objectForKey( declarationHeader );
+			String declarationBody = (String)rawDeclarations.get( declarationHeader );
 			int colonIndex = declarationHeader.indexOf( ':' );
 			if( colonIndex < 0 ) {
 				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing ':' for declaration:\n" + declarationHeader + " " + declarationBody );
@@ -149,7 +149,7 @@ public class NGHelperFunctionDeclarationParser {
 			if( tagName.length() == 0 ) {
 				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing tag name for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
-			if( declarations.objectForKey( tagName ) != null ) {
+			if( declarations.get( tagName ) != null ) {
 				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Duplicate tag name '" + tagName + "' in declaration:\n" + declarationBody );
 			}
 			String type = declarationHeader.substring( colonIndex + 1 ).trim();
@@ -196,7 +196,7 @@ public class NGHelperFunctionDeclarationParser {
 					throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing value in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 				NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, _quotedStrings );
-				Object quotedString = _quotedStrings.objectForKey( key );
+				Object quotedString = _quotedStrings.get( key );
 				if( quotedString != null ) {
 					associations.setObjectForKey( association, quotedString );
 				}
@@ -228,7 +228,7 @@ public class NGHelperFunctionDeclarationParser {
 					// do nothing
 				}
 				String wodpKey = NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY + associationValue.substring( wodpValueStartIndex, wodpValueEndIndex );
-				String quotedString = (String)quotedStrings.objectForKey( wodpKey );
+				String quotedString = (String)quotedStrings.get( wodpKey );
 				if( quotedString != null ) {
 					quotedString = quotedString.replaceAll( "\\\"", "\\\\\"" );
 					value.append( "\"" );
@@ -242,7 +242,7 @@ public class NGHelperFunctionDeclarationParser {
 			association = NGHelperFunctionAssociation.associationWithValue( associationValue );
 		}
 		else {
-			String quotedString = (String)quotedStrings.objectForKey( associationValue );
+			String quotedString = (String)quotedStrings.get( associationValue );
 			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
 			if( quotedString != null ) {
 				int backslashIndex = quotedString.indexOf( '\\' );

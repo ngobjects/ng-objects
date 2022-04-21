@@ -196,7 +196,7 @@ public class NGHelperFunctionHTMLParser {
 
 				if( !token.endsWith( "/" ) ) {
 					// no need to keep information for self closing tags
-					Stack stack = (Stack)_stackDict.objectForKey( tokenPart );
+					Stack stack = (Stack)_stackDict.get( tokenPart );
 					if( stack == null ) {
 						// create one and push a marker
 						stack = new Stack();
@@ -212,7 +212,7 @@ public class NGHelperFunctionHTMLParser {
 			}
 			else if( !token.startsWith( "</" ) && _stackDict.containsKey( tokenPart ) ) {
 				// standard opening tag
-				Stack stack = (Stack)_stackDict.objectForKey( tokenPart );
+				Stack stack = (Stack)_stackDict.get( tokenPart );
 				if( stack != null ) {
 					stack.push( tokenPart );
 					_stackDict.setObjectForKey( stack, tokenPart );
@@ -220,7 +220,7 @@ public class NGHelperFunctionHTMLParser {
 			}
 			else if( token.startsWith( "</" ) ) {
 				// closing tag
-				Stack stack = (Stack)_stackDict.objectForKey( tokenParts[0].substring( 2 ) );
+				Stack stack = (Stack)_stackDict.get( tokenParts[0].substring( 2 ) );
 				if( stack != null && !stack.empty() ) {
 					String stackContent = (String)stack.pop();
 					if( stackContent.equals( WO_REPLACEMENT_MARKER ) ) {

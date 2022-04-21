@@ -21,10 +21,6 @@ public class _NSDictionary<K, V> extends HashMap<K, V> {
 		return Collections.enumeration( this.keySet() );
 	}
 
-	public Object objectForKey( String key ) {
-		return get( key );
-	}
-
 	public void setObjectForKey( V object, K key ) {
 		put( key, object );
 	}

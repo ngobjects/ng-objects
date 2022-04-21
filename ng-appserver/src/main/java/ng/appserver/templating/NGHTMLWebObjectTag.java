@@ -119,7 +119,7 @@ public class NGHTMLWebObjectTag {
 	public NGElement dynamicElement( _NSDictionary nsdictionary, List nsarray ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
 		String s = name();
 		NGElement woelement = template();
-		NGDeclaration wodeclaration = (NGDeclaration)nsdictionary.objectForKey( s );
+		NGDeclaration wodeclaration = (NGDeclaration)nsdictionary.get( s );
 		return _elementWithDeclaration( wodeclaration, s, woelement, nsarray );
 	}
 
