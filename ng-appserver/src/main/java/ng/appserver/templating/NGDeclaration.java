@@ -6,12 +6,12 @@ public class NGDeclaration {
 
 	final String _name;
 	final String _type;
-	final _NSMutableDictionary<String, NGAssociation> _associations;
+	final _NSDictionary<String, NGAssociation> _associations;
 
 	public NGDeclaration( String aName, String aType, _NSDictionary<String, NGAssociation> theAssocations ) {
 		_name = aName;
 		_type = aType;
-		_associations = theAssocations.mutableClone();
+		_associations = theAssocations;
 	}
 
 	public String name() {
