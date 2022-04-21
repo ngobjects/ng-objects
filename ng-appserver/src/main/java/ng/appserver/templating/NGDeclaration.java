@@ -25,9 +25,4 @@ public class NGDeclaration {
 	public _NSDictionary<String, NGAssociation> associations() {
 		return _associations;
 	}
-
-	@Override
-	public String toString() {
-		return "<" + getClass().getName() + " name = " + _name + " type = " + _type + " associations " + _associations.toString() + " >";
-	}
 }
