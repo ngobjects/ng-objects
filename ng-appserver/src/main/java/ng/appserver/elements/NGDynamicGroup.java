@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import er.extensions.bettertemplates.NSMutableArray;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
+import ng.appserver.templating.NSMutableArray;
 
 public class NGDynamicGroup extends NGDynamicElement {
 

@@ -3,11 +3,11 @@ package ng.appserver;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
-import er.extensions.bettertemplates.NGHelperFunctionDeclarationFormatException;
-import er.extensions.bettertemplates.NGHelperFunctionHTMLFormatException;
-import er.extensions.bettertemplates.NGHelperFunctionParser;
-import er.extensions.bettertemplates.NSArray;
-import er.extensions.bettertemplates.NSDictionary;
+import ng.appserver.templating.NGHelperFunctionDeclarationFormatException;
+import ng.appserver.templating.NGHelperFunctionHTMLFormatException;
+import ng.appserver.templating.NGHelperFunctionParser;
+import ng.appserver.templating.NSArray;
+import ng.appserver.templating.NSDictionary;
 
 public class NGComponentDefinition {
 

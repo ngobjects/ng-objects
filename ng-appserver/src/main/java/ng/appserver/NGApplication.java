@@ -13,9 +13,9 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import er.extensions.bettertemplates._NGUtilities;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.appserver.routing.NGRouteTable;
+import ng.appserver.templating._NGUtilities;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 

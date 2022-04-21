@@ -1,4 +1,4 @@
-package er.extensions.bettertemplates;
+package ng.appserver.templating;
 
 public class NGHelperFunctionHTMLFormatException extends Exception {
 	public NGHelperFunctionHTMLFormatException( String message ) {

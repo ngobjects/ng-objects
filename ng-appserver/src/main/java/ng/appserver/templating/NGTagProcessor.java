@@ -1,4 +1,4 @@
-package er.extensions.bettertemplates;
+package ng.appserver.templating;
 
 /**
  * WOTagProcessor allows you to munge the associations for a tag declaration. For instance, you could map elementType

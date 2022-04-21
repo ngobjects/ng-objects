@@ -1,4 +1,4 @@
-package er.extensions.bettertemplates;
+package ng.appserver.templating;
 
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
