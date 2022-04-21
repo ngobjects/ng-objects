@@ -6,8 +6,7 @@ public class _NSLog {
 	public static Smu err = new Smu();
 
 	public static boolean debugLoggingAllowedForLevelAndGroups( int i, long l ) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public static class Smu {
