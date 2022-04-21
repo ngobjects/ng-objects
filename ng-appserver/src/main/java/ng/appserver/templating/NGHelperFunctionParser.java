@@ -231,7 +231,7 @@ public class NGHelperFunctionParser {
 		Enumeration bindingNameEnum = associations.keyEnumerator();
 		while( bindingNameEnum.hasMoreElements() ) {
 			String bindingName = (String)bindingNameEnum.nextElement();
-			NGAssociation association = (NGAssociation)associations.valueForKey( bindingName );
+			NGAssociation association = (NGAssociation)associations.get( bindingName );
 			NGAssociation helperAssociation = parserHelperAssociation( association );
 			if( helperAssociation != association ) {
 				associations.setObjectForKey( helperAssociation, bindingName );
