@@ -18,6 +18,7 @@ public class NGHelperFunctionTagRegistry {
 	public static Map<String, String> tagShortcutMap() {
 		Map<String, String> m = new HashMap<>();
 		m.put( "str", "NGString" );
+		m.put( "img", "NGImage" );
 		return m;
 	}
 

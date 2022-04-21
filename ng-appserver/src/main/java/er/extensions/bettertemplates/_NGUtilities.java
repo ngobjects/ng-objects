@@ -2,13 +2,19 @@ package er.extensions.bettertemplates;
 
 import java.lang.reflect.Constructor;
 
+import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGString;
 
 public class _NGUtilities {
 
 	public static Class classWithName( String s1 ) {
+
 		if( s1.contains( "NGString" ) ) {
 			return NGString.class;
+		}
+
+		if( s1.contains( "NGImage" ) ) {
+			return NGImage.class;
 		}
 
 		throw new RuntimeException( "Not implemented" );
