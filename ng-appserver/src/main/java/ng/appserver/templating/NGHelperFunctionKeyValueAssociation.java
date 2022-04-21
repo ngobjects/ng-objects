@@ -4,6 +4,7 @@ import ng.appserver.NGComponent;
 import ng.appserver.NGKeyValueAssociation;
 
 public class NGHelperFunctionKeyValueAssociation extends NGKeyValueAssociation {
+
 	public NGHelperFunctionKeyValueAssociation( String s ) {
 		super( s );
 	}
