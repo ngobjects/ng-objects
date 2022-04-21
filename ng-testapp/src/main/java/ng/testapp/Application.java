@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
-import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGUtils;
 import ng.testapp.components.ExampleComponent;
@@ -61,14 +60,14 @@ public class Application extends NGApplication {
 		} );
 	}
 
-	@Override
-	public NGResponse dispatchRequest( NGRequest request ) {
-		logger.info( "uri: {} ", request.uri() );
-		logger.info( "method: {} ", request.method() );
-		logger.info( "headers: {} ", request.headers() );
-		logger.info( "cookieValues: {} ", request.cookieValues() );
-		logger.info( "formValues: {} ", request.formValues() );
-		logger.info( "contentString: {}", request.contentString() );
-		return super.dispatchRequest( request );
-	}
+	//	@Override
+	//	public NGResponse dispatchRequest( NGRequest request ) {
+	//		logger.info( "uri: {} ", request.uri() );
+	//		logger.info( "method: {} ", request.method() );
+	//		logger.info( "headers: {} ", request.headers() );
+	//		logger.info( "cookieValues: {} ", request.cookieValues() );
+	//		logger.info( "formValues: {} ", request.formValues() );
+	//		logger.info( "contentString: {}", request.contentString() );
+	//		return super.dispatchRequest( request );
+	//	}
 }
