@@ -11,6 +11,7 @@ import ng.appserver.NGAssociation;
 import ng.appserver.NGConstantValueAssociation;
 
 public class NGHelperFunctionDeclarationParser {
+
 	public static Logger log = LoggerFactory.getLogger( NGHelperFunctionDeclarationParser.class );
 
 	private _NSMutableDictionary _quotedStrings;
@@ -18,11 +19,6 @@ public class NGHelperFunctionDeclarationParser {
 	private static final int STATE_INSIDE_COMMENT = 2;
 	private static final String ESCAPED_QUOTE_STRING = "_WO_ESCAPED_QUOTE_";
 	private static final String QUOTED_STRING_KEY = "_WODP_";
-
-	static {
-		// 		FIXME: Disabled on switch to slf4j // Hugi 2022-01-05
-		//		WOHelperFunctionDeclarationParser.log.setLevel(Level.WARN);
-	}
 
 	public NGHelperFunctionDeclarationParser() {
 		_quotedStrings = new _NSMutableDictionary();
