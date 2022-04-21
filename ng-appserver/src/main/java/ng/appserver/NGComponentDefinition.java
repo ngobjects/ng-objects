@@ -1,12 +1,12 @@
 package ng.appserver;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.Objects;
 
 import ng.appserver.templating.NGHelperFunctionDeclarationFormatException;
 import ng.appserver.templating.NGHelperFunctionHTMLFormatException;
 import ng.appserver.templating.NGHelperFunctionParser;
-import ng.appserver.templating._NSArray;
 import ng.appserver.templating._NSDictionary;
 
 public class NGComponentDefinition {
@@ -43,7 +43,7 @@ public class NGComponentDefinition {
 	public NGElement template() {
 		//		return NGComponentTemplateParser.parseTemplate( _name );
 		try {
-			return new NGHelperFunctionParser( NGComponentTemplateParser.loadTemplateString( _name ), "", new _NSArray() ).parse();
+			return new NGHelperFunctionParser( NGComponentTemplateParser.loadTemplateString( _name ), "", Collections.emptyList() ).parse();
 		}
 		catch( ClassNotFoundException | NGHelperFunctionDeclarationFormatException | NGHelperFunctionHTMLFormatException e ) {
 			throw new RuntimeException( e );
