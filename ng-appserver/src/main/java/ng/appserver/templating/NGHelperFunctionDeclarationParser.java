@@ -116,7 +116,7 @@ public class NGHelperFunctionDeclarationParser {
 					else {
 						tokenizer.nextToken();
 					}
-					String quotedStringKey = NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.count();
+					String quotedStringKey = NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.size();
 					token = token.replace( NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
 					_quotedStrings.setObjectForKey( token, quotedStringKey );
 					declarationWithoutCommentsBuffer.append( quotedStringKey );
