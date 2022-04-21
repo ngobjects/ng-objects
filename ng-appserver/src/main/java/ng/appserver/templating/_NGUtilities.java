@@ -20,7 +20,11 @@ public class _NGUtilities {
 			}
 		}
 
-		throw new RuntimeException( "Clas not found: " + className );
+		throw new RuntimeException( "Class not found: " + className );
+	}
+
+	public static Class lookForClassInAllBundles( String s1 ) {
+		throw new RuntimeException( "Not implemnted" );
 	}
 
 	public static <E> E instantiateObject( Class<E> objectClass, Class[] parameterTypes, Object[] parameters ) {
@@ -63,9 +67,5 @@ public class _NGUtilities {
 			}
 		}
 		return true;
-	}
-
-	public static Class lookForClassInAllBundles( String s1 ) {
-		throw new RuntimeException( "Not implemnted" );
 	}
 }
