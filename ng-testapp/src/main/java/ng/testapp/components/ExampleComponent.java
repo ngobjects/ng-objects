@@ -10,6 +10,10 @@ public class ExampleComponent extends NGComponent {
 	}
 
 	public String smu() {
-		return "Hehdifugh";
+		return "Þetta er hreint ekki svo slæmt";
+	}
+
+	public String someStuff() {
+		return "Jóhóhó";
 	}
 }
