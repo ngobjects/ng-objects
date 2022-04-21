@@ -23,7 +23,7 @@ public class _NGUtilities {
 		throw new RuntimeException( "Clas not found: " + className );
 	}
 
-	public static Object instantiateObject( Class objectClass, Class[] parameterTypes, Object[] parameters, boolean shouldThrow, boolean shouldLog ) {
+	public static Object instantiateObject( Class objectClass, Class[] parameterTypes, Object[] parameters ) {
 		try {
 			if( (parameterTypes != null) && (parameters != null) ) {
 				Constructor constructor = objectClass.getDeclaredConstructor( parameterTypes );

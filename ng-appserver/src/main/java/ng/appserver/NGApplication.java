@@ -338,33 +338,34 @@ public class NGApplication {
 
 	public NGElement dynamicElementWithName( String aName, Map<String, NGAssociation> someAssociations, NGElement anElement, List aLanguageArray ) {
 		NGElement elementInstance = null;
+
 		if( aName == null ) {
 			throw new IllegalArgumentException( "<" + "bla" + ">: No name provided for dynamic element creation." );
 		}
-		else {
-			Class elementClass = _NGUtilities.classWithName( aName );
-			if( elementClass != null && NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
-				Class[] params = new Class[] { String.class, Map.class, NGElement.class };
-				Object[] arguments = new Object[] { aName, someAssociations, anElement };
-				elementInstance = (NGElement)_NGUtilities.instantiateObject( elementClass, params, arguments, true, this.isDebuggingEnabled() );
-			}
 
-			if( elementInstance == null ) {
-				throw new RuntimeException( "Not implemented" );
-				/*
-				NGComponentDefinition componentDefinition = this._componentDefinition( aName, aLanguageArray );
-				if( componentDefinition != null ) {
-					elementInstance = componentDefinition.componentReferenceWithAssociations( someAssociations, anElement );
-				}
-				*/
-			}
+		Class elementClass = _NGUtilities.classWithName( aName );
 
-			return elementInstance;
+		if( elementClass != null && NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
+			Class[] params = new Class[] { String.class, Map.class, NGElement.class };
+			Object[] arguments = new Object[] { aName, someAssociations, anElement };
+			elementInstance = (NGElement)_NGUtilities.instantiateObject( elementClass, params, arguments );
 		}
+
+		if( elementInstance == null ) {
+			throw new RuntimeException( "Not implemented" );
+			/*
+			NGComponentDefinition componentDefinition = this._componentDefinition( aName, aLanguageArray );
+			if( componentDefinition != null ) {
+				elementInstance = componentDefinition.componentReferenceWithAssociations( someAssociations, anElement );
+			}
+			*/
+		}
+
+		return elementInstance;
 	}
 
 	/**
-	 * @return The componentDefinition corresponding to the given WOComponent class.
+	 * @return The componentDefinition corresponding to the named WOComponent
 	 *
 	 * FIXME: Unsupported. Only here for template parsing experiment
 	 */
