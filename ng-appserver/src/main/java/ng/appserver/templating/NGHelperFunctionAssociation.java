@@ -6,10 +6,6 @@ import ng.appserver.NGKeyValueAssociation;
 
 public class NGHelperFunctionAssociation {
 
-	private static boolean _keyPathIsReadOnly( String keyPath ) {
-		return keyPath.startsWith( "@" ) || keyPath.indexOf( ".@" ) > 0;
-	}
-
 	public static NGAssociation associationWithValue( Object obj ) {
 		return new NGConstantValueAssociation( obj );
 	}
@@ -21,11 +17,15 @@ public class NGHelperFunctionAssociation {
 			throw new RuntimeException( "Binding name associations are not supported" );
 		}
 
-		if( _keyPathIsReadOnly( keyPath ) ) {
+		if( keyPathIsReadOnly( keyPath ) ) {
 			// return new NGReadOnlyKeyValueAssociation( keyPath );
 			throw new RuntimeException( "Read only keypath associations are not supported" );
 		}
 
 		return new NGKeyValueAssociation( keyPath );
+	}
+
+	private static boolean keyPathIsReadOnly( String keyPath ) {
+		return keyPath.startsWith( "@" ) || keyPath.indexOf( ".@" ) > 0;
 	}
 }
