@@ -8,4 +8,8 @@ public class ExampleComponent extends NGComponent {
 	public ExampleComponent( NGContext context ) {
 		super( context );
 	}
+
+	public String smu() {
+		return "Hehdifugh";
+	}
 }
