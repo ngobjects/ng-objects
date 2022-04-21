@@ -9,7 +9,6 @@ import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
-import ng.appserver.templating.NSMutableArray;
 
 public class NGDynamicGroup extends NGDynamicElement {
 
@@ -22,13 +21,11 @@ public class NGDynamicGroup extends NGDynamicElement {
 		super( name, associations, template );
 		_children = new ArrayList<>();
 		this._initChildrenFromTemplate( template );
-		System.out.println( "bla" + " : " + name + " : " + associations + " : " + template );
 	}
 
-	public NGDynamicGroup( String _name, Object associations, NSMutableArray nsmutablearray ) {
+	public NGDynamicGroup( String _name, Object associations, List children ) {
 		this( _name, (Map<String, NGAssociation>)associations, (NGElement)null );
-		_children = nsmutablearray;
-		System.out.println( "smu" + " : " + _name + " : " + associations + " : " + nsmutablearray );
+		_children = children;
 	}
 
 	@Override
