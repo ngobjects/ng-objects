@@ -162,7 +162,7 @@ public class NGHTMLWebObjectTag {
 					if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
 						_NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for com.webobjects.appserver._private." + s1 + " ." );
 					}
-					class1 = NGBundle.lookForClassInAllBundles( s1 );
+					class1 = _NGUtilities.lookForClassInAllBundles( s1 );
 					if( class1 == null ) {
 						_NSLog.err.appendln( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
 					}
