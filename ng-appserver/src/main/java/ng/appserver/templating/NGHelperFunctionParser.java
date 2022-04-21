@@ -14,6 +14,8 @@ import ng.appserver.elements.NGHTMLCommentString;
 public class NGHelperFunctionParser {
 	private static final Logger log = LoggerFactory.getLogger( NGHelperFunctionParser.class );
 
+	public static final String APP_FRAMEWORK_NAME = "app";
+
 	public static boolean _debugSupport;
 
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
@@ -177,7 +179,7 @@ public class NGHelperFunctionParser {
 			elementName = "_" + elementType + "_" + _inlineBindingCount;
 			_inlineBindingCount++;
 		}
-		NGTagProcessor tagProcessor = (NGTagProcessor)NGHelperFunctionTagRegistry.tagProcessorMap().get( elementType );
+		NGTagProcessor tagProcessor = NGHelperFunctionTagRegistry.tagProcessorMap().get( elementType );
 		NGDeclaration declaration;
 		if( tagProcessor == null ) {
 			declaration = NGHelperFunctionParser.createDeclaration( elementName, elementType, associations );
@@ -256,7 +258,7 @@ public class NGHelperFunctionParser {
 			int pipeIndex = originalKeyPath.indexOf( '|' );
 			if( pipeIndex != -1 ) {
 				String targetKeyPath = originalKeyPath.substring( 0, pipeIndex ).trim();
-				String frameworkName = NGHelperFunctionRegistry.APP_FRAMEWORK_NAME;
+				String frameworkName = APP_FRAMEWORK_NAME;
 				String helperFunctionName = originalKeyPath.substring( pipeIndex + 1 ).trim();
 				String otherParams = null;
 				int openParenIndex = helperFunctionName.indexOf( '(' );
@@ -272,7 +274,7 @@ public class NGHelperFunctionParser {
 				}
 				StringBuilder newKeyPath = new StringBuilder();
 				newKeyPath.append( '~' );
-				newKeyPath.append( "@" + NGHelperFunctionRegistry.class.getName() + "@registry()._helperInstanceForFrameworkNamed(#this, \"" );
+				//				newKeyPath.append( "@" + NGHelperFunctionRegistry.class.getName() + "@registry()._helperInstanceForFrameworkNamed(#this, \"" ); // WTF?
 				newKeyPath.append( helperFunctionName );
 				newKeyPath.append( "\", \"" );
 				newKeyPath.append( targetKeyPath );
