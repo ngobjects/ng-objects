@@ -43,7 +43,6 @@ public class NGComponentDefinition {
 	public NGElement template() {
 		//		return NGComponentTemplateParser.parseTemplate( _name );
 		try {
-			System.out.println( "Ha?" );
 			return new NGHelperFunctionParser( NGComponentTemplateParser.loadTemplateString( _name ), "", new NSArray() ).parse();
 		}
 		catch( ClassNotFoundException | NGHelperFunctionDeclarationFormatException | NGHelperFunctionHTMLFormatException e ) {
