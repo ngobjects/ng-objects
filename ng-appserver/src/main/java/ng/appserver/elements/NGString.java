@@ -20,6 +20,12 @@ public class NGString extends NGDynamicElement {
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		Object value = _value.valueInComponent( context.component() );
+
+		// FIXME: Missing valueWhenEmpty binding
+		if( value == null ) {
+			value = "";
+		}
+
 		response.appendContentString( value.toString() );
 	}
 }
