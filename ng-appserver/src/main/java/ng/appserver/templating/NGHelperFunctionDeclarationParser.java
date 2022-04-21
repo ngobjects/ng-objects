@@ -117,10 +117,6 @@ public class NGHelperFunctionDeclarationParser {
 						tokenizer.nextToken();
 					}
 					String quotedStringKey = NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.count();
-					if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 0x0L ) ) {
-						//						NSLog.debug.appendln( "Found a quoted string: " + quotedStringKey + "='" + token + "';" );
-						// FIXME: Do some actual logging here.
-					}
 					token = _NGUtilities.replaceAllInstancesOfString( token, NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
 					_quotedStrings.setObjectForKey( token, quotedStringKey );
 					declarationWithoutCommentsBuffer.append( quotedStringKey );
