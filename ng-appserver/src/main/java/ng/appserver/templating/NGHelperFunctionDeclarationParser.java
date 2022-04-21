@@ -94,7 +94,7 @@ public class NGHelperFunctionDeclarationParser {
 	}
 
 	private String _removeNewStyleCommentsAndQuotedStringsFromString( String declarationsStr ) {
-		String escapedQuoteStr = _NGStringUtilities.replaceAllInstancesOfString( declarationsStr, "\\\"", NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING );
+		String escapedQuoteStr = _NGUtilities.replaceAllInstancesOfString( declarationsStr, "\\\"", NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING );
 		StringBuilder declarationWithoutCommentsBuffer = new StringBuilder( 100 );
 		StringTokenizer tokenizer = new StringTokenizer( escapedQuoteStr, "/\"", true );
 		try {
@@ -103,7 +103,7 @@ public class NGHelperFunctionDeclarationParser {
 				if( token.equals( "/" ) ) {
 					token = tokenizer.nextToken( "\n" );
 					if( token.startsWith( "/" ) ) {
-						token = _NGStringUtilities.replaceAllInstancesOfString( token, NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
+						token = _NGUtilities.replaceAllInstancesOfString( token, NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
 						declarationWithoutCommentsBuffer.append( '\n' );
 						tokenizer.nextToken();
 					}
@@ -125,7 +125,7 @@ public class NGHelperFunctionDeclarationParser {
 						//						NSLog.debug.appendln( "Found a quoted string: " + quotedStringKey + "='" + token + "';" );
 						// FIXME: Do some actual logging here.
 					}
-					token = _NGStringUtilities.replaceAllInstancesOfString( token, NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
+					token = _NGUtilities.replaceAllInstancesOfString( token, NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
 					_quotedStrings.setObjectForKey( token, quotedStringKey );
 					declarationWithoutCommentsBuffer.append( quotedStringKey );
 				}
@@ -280,7 +280,7 @@ public class NGHelperFunctionDeclarationParser {
 				}
 				association = NGHelperFunctionAssociation.associationWithValue( quotedString );
 			}
-			else if( _NGStringUtilities.isNumber( associationValue ) ) {
+			else if( _NGUtilities.isNumber( associationValue ) ) {
 				Number number = null;
 				if( associationValue != null && associationValue.contains( "." ) ) {
 					number = Double.valueOf( associationValue );
