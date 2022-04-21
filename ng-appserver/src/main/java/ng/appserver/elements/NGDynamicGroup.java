@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import er.extensions.bettertemplates.NSMutableArray;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
@@ -20,6 +21,11 @@ public class NGDynamicGroup extends NGDynamicElement {
 	public NGDynamicGroup( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( name, associations, template );
 		_children = new ArrayList<>();
+	}
+
+	public NGDynamicGroup( String _name, Object associations, NSMutableArray nsmutablearray ) {
+		this( _name, (Map<String, NGAssociation>)associations, (NGElement)null );
+		_children = nsmutablearray;
 	}
 
 	@Override

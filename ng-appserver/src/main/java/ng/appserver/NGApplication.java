@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -318,4 +319,25 @@ public class NGApplication {
 	public void terminate() {
 		System.exit( 0 );
 	}
+
+	/**
+	 * FIXME: Added as a temporary measure while we look into templating
+	 */
+	public boolean isDebuggingEnabled() {
+		return false;
+	}
+
+	public NGElement dynamicElementWithName( String name, Map<String, NGAssociation> associations, NGElement woelement, Object object ) {
+		throw new RuntimeException( "Not implemented" );
+	}
+
+	/**
+	 * @return The componentDefinition corresponding to the given WOComponent class.
+	 *
+	 * FIXME: Unsupported. Only here for template parsing experiment
+	 */
+	public NGComponentDefinition _componentDefinition( String s, List<String> a ) {
+		throw new RuntimeException( "Not implemented" );
+	}
+
 }

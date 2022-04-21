@@ -3,6 +3,8 @@ package ng.appserver;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
+import er.extensions.bettertemplates.NSDictionary;
+
 public class NGComponentDefinition {
 
 	/**
@@ -36,5 +38,9 @@ public class NGComponentDefinition {
 	 */
 	public NGElement template() {
 		return NGComponentTemplateParser.parseTemplate( _name );
+	}
+
+	public NGComponentReference componentReferenceWithAssociations( NSDictionary nsdictionary, NGElement woelement ) {
+		throw new RuntimeException( "Not implemented" );
 	}
 }
