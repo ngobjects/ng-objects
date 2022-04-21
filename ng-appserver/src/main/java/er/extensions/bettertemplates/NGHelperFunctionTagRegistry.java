@@ -8,7 +8,7 @@ public class NGHelperFunctionTagRegistry {
 
 	private static NSMutableDictionary _tagShortcutMap = new NSMutableDictionary();
 	private static NSMutableDictionary _tagProcessorMap = new NSMutableDictionary();
-	private static boolean _allowInlineBindings = false;
+	private static boolean _allowInlineBindings = true;
 
 	public static NSDictionary tagShortcutMap() {
 		return _tagShortcutMap;
@@ -50,7 +50,7 @@ public class NGHelperFunctionTagRegistry {
 		NGHelperFunctionTagRegistry.registerTagShortcut( "WORepetition", "loop" ); // not in 5.4
 		NGHelperFunctionTagRegistry.registerTagShortcut( "WOComponentContent", "content" );
 		NGHelperFunctionTagRegistry.registerTagShortcut( "WOComponentContent", "componentContent" );
-		NGHelperFunctionTagRegistry.registerTagShortcut( "WOString", "str" ); // not in 5.4
+		NGHelperFunctionTagRegistry.registerTagShortcut( "NGString", "str" ); // not in 5.4
 		NGHelperFunctionTagRegistry.registerTagShortcut( "WOString", "string" );
 		NGHelperFunctionTagRegistry.registerTagShortcut( "WOSwitchComponent", "switchComponent" );
 		NGHelperFunctionTagRegistry.registerTagShortcut( "WOSwitchComponent", "switch" );
