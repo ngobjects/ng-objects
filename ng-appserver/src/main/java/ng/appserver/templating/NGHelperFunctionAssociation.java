@@ -3,11 +3,6 @@ package ng.appserver.templating;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGConstantValueAssociation;
 
-/**
- * Factory methods for creating WOAssociations (ripped from WOAssociation)
- *
- * @author mschrag
- */
 public class NGHelperFunctionAssociation {
 
 	private static boolean _keyPathIsReadOnly( String keyPath ) {
@@ -19,22 +14,17 @@ public class NGHelperFunctionAssociation {
 	}
 
 	public static NGAssociation associationWithKeyPath( String keyPath ) {
-		NGAssociation association;
 
 		if( keyPath.charAt( 0 ) == '^' ) {
-			//			association = new NGHelperFunctionBindingNameAssociation( keyPath );
+			// return new NGHelperFunctionBindingNameAssociation( keyPath );
 			throw new RuntimeException( "Binding name associations are not supported" );
 		}
-		else if( _keyPathIsReadOnly( keyPath ) ) {
+
+		if( _keyPathIsReadOnly( keyPath ) ) {
+			// return new NGReadOnlyKeyValueAssociation( keyPath );
 			throw new RuntimeException( "Read only keypath associations are not supported" );
-			/*
-			association = new NGReadOnlyKeyValueAssociation( keyPath );
-			*/
-		}
-		else {
-			association = new NGHelperFunctionKeyValueAssociation( keyPath );
 		}
 
-		return association;
+		return new NGHelperFunctionKeyValueAssociation( keyPath );
 	}
 }
