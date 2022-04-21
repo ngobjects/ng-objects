@@ -10,13 +10,11 @@ import ng.appserver.elements.NGStylesheet;
 
 public class _NGUtilities {
 
-	private static List<Class> classes() {
-		return List.of( NGString.class, NGImage.class, NGHyperlink.class, NGStylesheet.class );
-	}
-
 	public static Class classWithName( String className ) {
 
-		for( Class c : classes() ) {
+		final List<Class> classes = List.of( NGString.class, NGImage.class, NGHyperlink.class, NGStylesheet.class );
+
+		for( Class c : classes ) {
 			if( c.getName().contains( className ) ) {
 				return c;
 			}
@@ -51,7 +49,7 @@ public class _NGUtilities {
 		if( length == 0 ) {
 			return false;
 		}
-	
+
 		boolean dot = false;
 		int i = 0;
 		char character = string.charAt( 0 );
@@ -62,7 +60,7 @@ public class _NGUtilities {
 			i = 1;
 			dot = true;
 		}
-	
+
 		while( i < length ) {
 			character = string.charAt( i++ );
 			if( character == '.' ) {
