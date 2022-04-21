@@ -1,6 +1,7 @@
 package ng.appserver.templating;
 
 import java.util.Enumeration;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +27,9 @@ public class NGHelperFunctionParser {
 
 	private String _declarationString;
 	private String _HTMLString;
-	private _NSArray _languages;
+	private List _languages;
 
-	public NGHelperFunctionParser( String htmlString, String declarationString, _NSArray languages ) {
+	public NGHelperFunctionParser( String htmlString, String declarationString, List languages ) {
 		_HTMLString = htmlString;
 		_declarationString = declarationString;
 		_languages = languages;

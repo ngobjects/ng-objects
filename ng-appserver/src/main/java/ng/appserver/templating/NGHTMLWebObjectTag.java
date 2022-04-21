@@ -116,16 +116,16 @@ public class NGHTMLWebObjectTag {
 		_children.add( obj );
 	}
 
-	public NGElement dynamicElement( _NSDictionary nsdictionary, _NSArray nsarray ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
+	public NGElement dynamicElement( _NSDictionary nsdictionary, List nsarray ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
 		String s = name();
 		NGElement woelement = template();
 		NGDeclaration wodeclaration = (NGDeclaration)nsdictionary.objectForKey( s );
 		return _elementWithDeclaration( wodeclaration, s, woelement, nsarray );
 	}
 
-	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( String s, NGDeclaration wodeclaration, NGElement woelement, _NSArray nsarray ) throws ClassNotFoundException {
+	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( String s, NGDeclaration wodeclaration, NGElement woelement, List nsarray ) throws ClassNotFoundException {
 		NGComponentReference wocomponentreference = null;
-		NGComponentDefinition wocomponentdefinition = NGApplication.application()._componentDefinition( s, new ArrayList<>( nsarray ) );
+		NGComponentDefinition wocomponentdefinition = NGApplication.application()._componentDefinition( s, nsarray );
 		if( wocomponentdefinition != null ) {
 			_NSDictionary nsdictionary = wodeclaration.associations();
 			wocomponentreference = wocomponentdefinition.componentReferenceWithAssociations( nsdictionary, woelement );
@@ -148,7 +148,7 @@ public class NGHTMLWebObjectTag {
 		return woelement1;
 	}
 
-	private static NGElement _elementWithDeclaration( NGDeclaration wodeclaration, String s, NGElement woelement, _NSArray nsarray ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
+	private static NGElement _elementWithDeclaration( NGDeclaration wodeclaration, String s, NGElement woelement, List nsarray ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
 		NGElement woelement1 = null;
 
 		if( wodeclaration != null ) {
