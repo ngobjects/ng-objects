@@ -2,6 +2,7 @@ package ng.appserver.templating;
 
 import ng.appserver.NGAssociation;
 import ng.appserver.NGConstantValueAssociation;
+import ng.appserver.NGKeyValueAssociation;
 
 public class NGHelperFunctionAssociation {
 
@@ -25,6 +26,6 @@ public class NGHelperFunctionAssociation {
 			throw new RuntimeException( "Read only keypath associations are not supported" );
 		}
 
-		return new NGHelperFunctionKeyValueAssociation( keyPath );
+		return new NGKeyValueAssociation( keyPath );
 	}
 }
