@@ -21,14 +21,14 @@ public class NGHelperFunctionParser {
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
 	private NGHTMLWebObjectTag _currentWebObjectTag;
-	private NSMutableDictionary _declarations;
+	private _NSMutableDictionary _declarations;
 	private int _inlineBindingCount;
 
 	private String _declarationString;
 	private String _HTMLString;
-	private NSArray _languages;
+	private _NSArray _languages;
 
-	public NGHelperFunctionParser( String htmlString, String declarationString, NSArray languages ) {
+	public NGHelperFunctionParser( String htmlString, String declarationString, _NSArray languages ) {
 		_HTMLString = htmlString;
 		_declarationString = declarationString;
 		_languages = languages;
@@ -93,7 +93,7 @@ public class NGHelperFunctionParser {
 		StringBuffer keyBuffer = new StringBuffer();
 		StringBuffer valueBuffer = new StringBuffer();
 		StringBuffer elementTypeBuffer = new StringBuffer();
-		NSMutableDictionary associations = new NSMutableDictionary();
+		_NSMutableDictionary associations = new _NSMutableDictionary();
 		StringBuffer currentBuffer = elementTypeBuffer;
 		boolean changeBuffers = false;
 		boolean inQuote = false;
@@ -192,10 +192,10 @@ public class NGHelperFunctionParser {
 		return declaration;
 	}
 
-	protected void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, NSMutableDictionary bindings ) throws NGHelperFunctionHTMLFormatException {
+	protected void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, _NSMutableDictionary bindings ) throws NGHelperFunctionHTMLFormatException {
 		String key = keyBuffer.toString().trim();
 		String value = valueBuffer.toString().trim();
-		NSDictionary quotedStrings;
+		_NSDictionary quotedStrings;
 		if( value.startsWith( "\"" ) ) {
 			value = value.substring( 1 );
 			if( value.endsWith( "\"" ) ) {
@@ -209,24 +209,24 @@ public class NGHelperFunctionParser {
 				if( value.endsWith( "VALID" ) ) {
 					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
 				}
-				quotedStrings = new NSDictionary();
+				quotedStrings = new _NSDictionary();
 			}
 			else {
 				value = value.replaceAll( "\\\\\\$", "\\$" );
 				value = value.replaceAll( "\\\"", "\"" );
-				quotedStrings = new NSDictionary( value, "_WODP_0" );
+				quotedStrings = new _NSDictionary( value, "_WODP_0" );
 				value = "_WODP_0";
 			}
 		}
 		else {
-			quotedStrings = new NSDictionary();
+			quotedStrings = new _NSDictionary();
 		}
 		NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, quotedStrings );
 		bindings.setObjectForKey( association, key );
 	}
 
 	protected void processDeclaration( NGDeclaration declaration ) {
-		NSMutableDictionary associations = (NSMutableDictionary)declaration.associations();
+		_NSMutableDictionary associations = (_NSMutableDictionary)declaration.associations();
 		Enumeration bindingNameEnum = associations.keyEnumerator();
 		while( bindingNameEnum.hasMoreElements() ) {
 			String bindingName = (String)bindingNameEnum.nextElement();
@@ -368,11 +368,11 @@ public class NGHelperFunctionParser {
 		_declarationString = value;
 	}
 
-	public NSMutableDictionary declarations() {
+	public _NSMutableDictionary declarations() {
 		return _declarations;
 	}
 
-	public void setDeclarations( NSMutableDictionary value ) {
+	public void setDeclarations( _NSMutableDictionary value ) {
 		_declarations = value;
 	}
 
@@ -382,7 +382,7 @@ public class NGHelperFunctionParser {
 		}
 	}
 
-	public static NGDeclaration createDeclaration( String declarationName, String declarationType, NSMutableDictionary associations ) {
+	public static NGDeclaration createDeclaration( String declarationName, String declarationType, _NSMutableDictionary associations ) {
 		NGDeclaration declaration = new NGDeclaration( declarationName, declarationType, associations );
 
 		if( NGHelperFunctionParser._debugSupport && associations != null /*&& associations.objectForKey( NGHTMLAttribute.Debug ) == null */ ) {

@@ -1,6 +1,6 @@
 package ng.appserver.templating;
 
-public class NSLog {
+public class _NSLog {
 
 	public static Smu debug = new Smu();
 	public static Smu err = new Smu();

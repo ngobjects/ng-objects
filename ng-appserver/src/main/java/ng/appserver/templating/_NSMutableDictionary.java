@@ -1,6 +1,6 @@
 package ng.appserver.templating;
 
-public class NSMutableDictionary<K, V> extends NSDictionary<K, V> {
+public class _NSMutableDictionary<K, V> extends _NSDictionary<K, V> {
 
 	public int count() {
 		return size();

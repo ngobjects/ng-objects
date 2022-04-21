@@ -27,7 +27,7 @@ public class NGHelperFunctionHTMLParser {
 	private static final String XML_CDATA_START_TAG = "<![CDATA[";
 
 	private static boolean _parseStandardTags = false;
-	private NSMutableDictionary _stackDict;
+	private _NSMutableDictionary _stackDict;
 
 	static {
 		// 		FIXME: Disabled on switch to slf4j // Hugi 2022-01-05
@@ -45,7 +45,7 @@ public class NGHelperFunctionHTMLParser {
 	}
 
 	public void parseHTML() throws NGHelperFunctionHTMLFormatException, NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
-		_stackDict = new NSMutableDictionary();
+		_stackDict = new _NSMutableDictionary();
 		StringTokenizer templateTokenizer = new StringTokenizer( _unparsedTemplate, "<" );
 		boolean flag = true;
 		int parserState = STATE_OUTSIDE;

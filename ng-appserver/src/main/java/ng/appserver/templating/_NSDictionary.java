@@ -4,14 +4,14 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 
-public class NSDictionary<K, V> extends HashMap<K, V> {
+public class _NSDictionary<K, V> extends HashMap<K, V> {
 
-	public NSDictionary( V value, K key ) {
+	public _NSDictionary( V value, K key ) {
 		super();
 		put( key, value );
 	}
 
-	public NSDictionary() {}
+	public _NSDictionary() {}
 
 	public Enumeration objectEnumerator() {
 		return Collections.enumeration( this.values() );
@@ -29,7 +29,7 @@ public class NSDictionary<K, V> extends HashMap<K, V> {
 		put( key, object );
 	}
 
-	public NSMutableDictionary<K, V> mutableClone() {
-		return (NSMutableDictionary<K, V>)this.clone();
+	public _NSMutableDictionary<K, V> mutableClone() {
+		return (_NSMutableDictionary<K, V>)this.clone();
 	}
 }

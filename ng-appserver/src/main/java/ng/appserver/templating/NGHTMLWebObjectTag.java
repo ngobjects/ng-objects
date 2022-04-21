@@ -116,18 +116,18 @@ public class NGHTMLWebObjectTag {
 		_children.add( obj );
 	}
 
-	public NGElement dynamicElement( NSDictionary nsdictionary, NSArray nsarray ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
+	public NGElement dynamicElement( _NSDictionary nsdictionary, _NSArray nsarray ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
 		String s = name();
 		NGElement woelement = template();
 		NGDeclaration wodeclaration = (NGDeclaration)nsdictionary.objectForKey( s );
 		return _elementWithDeclaration( wodeclaration, s, woelement, nsarray );
 	}
 
-	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( String s, NGDeclaration wodeclaration, NGElement woelement, NSArray nsarray ) throws ClassNotFoundException {
+	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( String s, NGDeclaration wodeclaration, NGElement woelement, _NSArray nsarray ) throws ClassNotFoundException {
 		NGComponentReference wocomponentreference = null;
 		NGComponentDefinition wocomponentdefinition = NGApplication.application()._componentDefinition( s, new ArrayList<>( nsarray ) );
 		if( wocomponentdefinition != null ) {
-			NSDictionary nsdictionary = wodeclaration.associations();
+			_NSDictionary nsdictionary = wodeclaration.associations();
 			wocomponentreference = wocomponentdefinition.componentReferenceWithAssociations( nsdictionary, woelement );
 		}
 		else {
@@ -139,32 +139,32 @@ public class NGHTMLWebObjectTag {
 	private static NGElement _elementWithClass( Class class1, NGDeclaration wodeclaration, NGElement woelement ) {
 		NGElement woelement1 = NGApplication.application().dynamicElementWithName( class1.getName(), wodeclaration.associations(), woelement, null );
 
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-			NSLog.debug.appendln( "<WOHTMLWebObjectTag> Created Dynamic Element with name :" + class1.getName() );
-			NSLog.debug.appendln( "Declaration : " + wodeclaration );
-			NSLog.debug.appendln( "Element : " + woelement1.toString() );
+		if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
+			_NSLog.debug.appendln( "<WOHTMLWebObjectTag> Created Dynamic Element with name :" + class1.getName() );
+			_NSLog.debug.appendln( "Declaration : " + wodeclaration );
+			_NSLog.debug.appendln( "Element : " + woelement1.toString() );
 		}
 
 		return woelement1;
 	}
 
-	private static NGElement _elementWithDeclaration( NGDeclaration wodeclaration, String s, NGElement woelement, NSArray nsarray ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
+	private static NGElement _elementWithDeclaration( NGDeclaration wodeclaration, String s, NGElement woelement, _NSArray nsarray ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
 		NGElement woelement1 = null;
 
 		if( wodeclaration != null ) {
 			String s1 = wodeclaration.type();
 			if( s1 != null ) {
-				if( NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-					NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for " + s1 + " in the java runtime." );
+				if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
+					_NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for " + s1 + " in the java runtime." );
 				}
 				Class class1 = _NGUtilities.classWithName( s1 );
 				if( class1 == null ) {
-					if( NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-						NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for com.webobjects.appserver._private." + s1 + " ." );
+					if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
+						_NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for com.webobjects.appserver._private." + s1 + " ." );
 					}
 					class1 = NGBundle.lookForClassInAllBundles( s1 );
 					if( class1 == null ) {
-						NSLog.err.appendln( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
+						_NSLog.err.appendln( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
 					}
 					else
 
@@ -174,12 +174,12 @@ public class NGHTMLWebObjectTag {
 				}
 
 				if( class1 != null ) {
-					if( NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-						NSLog.debug.appendln( "<WOHTMLWebObjectTag> Will initialize object of class " + s1 );
+					if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
+						_NSLog.debug.appendln( "<WOHTMLWebObjectTag> Will initialize object of class " + s1 );
 					}
 					if( (NGComponent.class).isAssignableFrom( class1 ) ) {
-						if( NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-							NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for " + s1 + " in the Compiled Components." );
+						if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
+							_NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for " + s1 + " in the Compiled Components." );
 						}
 						woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, nsarray );
 					}
@@ -188,8 +188,8 @@ public class NGHTMLWebObjectTag {
 					}
 				}
 				else {
-					if( NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-						NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for " + s1 + " in the Frameworks." );
+					if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
+						_NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for " + s1 + " in the Frameworks." );
 					}
 					woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, nsarray );
 				}

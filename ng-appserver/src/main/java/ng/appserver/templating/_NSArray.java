@@ -6,15 +6,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 
-public class NSArray extends ArrayList {
+public class _NSArray extends ArrayList {
 
-	public NSArray() {}
+	public _NSArray() {}
 
-	public NSArray( int size ) {
+	public _NSArray( int size ) {
 		super( size );
 	}
 
-	public NSArray( Collection collection ) {
+	public _NSArray( Collection collection ) {
 		super( collection );
 	}
 
@@ -26,7 +26,7 @@ public class NSArray extends ArrayList {
 		return size();
 	}
 
-	public static NSArray componentsSeparatedByString( String trimmedDeclarationBody, String string ) {
-		return new NSArray( Arrays.asList( trimmedDeclarationBody.split( string ) ) );
+	public static _NSArray componentsSeparatedByString( String trimmedDeclarationBody, String string ) {
+		return new _NSArray( Arrays.asList( trimmedDeclarationBody.split( string ) ) );
 	}
 }

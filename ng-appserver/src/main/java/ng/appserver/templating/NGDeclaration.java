@@ -9,9 +9,9 @@ import ng.appserver.NGComponent;
 public class NGDeclaration {
 	String _name;
 	String _type;
-	NSMutableDictionary<String, NGAssociation> _associations;
+	_NSMutableDictionary<String, NGAssociation> _associations;
 
-	public NGDeclaration( String aName, String aType, NSDictionary<String, NGAssociation> theAssocations ) {
+	public NGDeclaration( String aName, String aType, _NSDictionary<String, NGAssociation> theAssocations ) {
 		this._name = aName;
 		this._type = aType;
 		this._associations = theAssocations.mutableClone();
@@ -50,7 +50,7 @@ public class NGDeclaration {
 		return this._type;
 	}
 
-	public NSDictionary<String, NGAssociation> associations() {
+	public _NSDictionary<String, NGAssociation> associations() {
 		return this._associations;
 	}
 
