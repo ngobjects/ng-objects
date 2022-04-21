@@ -22,10 +22,6 @@ public class _NSArray extends ArrayList {
 		return Collections.enumeration( this );
 	}
 
-	public int count() {
-		return size();
-	}
-
 	public static _NSArray componentsSeparatedByString( String trimmedDeclarationBody, String string ) {
 		return new _NSArray( Arrays.asList( trimmedDeclarationBody.split( string ) ) );
 	}
