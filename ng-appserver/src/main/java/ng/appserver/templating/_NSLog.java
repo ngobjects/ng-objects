@@ -6,7 +6,7 @@ public class _NSLog {
 	public static Smu err = new Smu();
 
 	public static boolean debugLoggingAllowedForLevelAndGroups( int i, long l ) {
-		return true;
+		return false;
 	}
 
 	public static class Smu {
