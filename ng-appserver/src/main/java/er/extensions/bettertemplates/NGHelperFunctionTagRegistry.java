@@ -7,6 +7,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.elements.NGHyperlink;
+import ng.appserver.elements.NGImage;
+import ng.appserver.elements.NGString;
+
 public class NGHelperFunctionTagRegistry {
 
 	public static Logger logger = LoggerFactory.getLogger( NGHelperFunctionTagRegistry.class );
@@ -17,8 +21,9 @@ public class NGHelperFunctionTagRegistry {
 
 	public static Map<String, String> tagShortcutMap() {
 		Map<String, String> m = new HashMap<>();
-		m.put( "str", "NGString" );
-		m.put( "img", "NGImage" );
+		m.put( "str", NGString.class.getSimpleName() );
+		m.put( "img", NGImage.class.getSimpleName() );
+		m.put( "link", NGHyperlink.class.getSimpleName() );
 		return m;
 	}
 
