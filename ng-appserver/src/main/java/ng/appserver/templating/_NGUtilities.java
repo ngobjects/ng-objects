@@ -25,19 +25,12 @@ public class _NGUtilities {
 
 	public static <E> E instantiateObject( Class<E> objectClass, Class[] parameterTypes, Object[] parameters ) {
 		try {
-			if( (parameterTypes != null) && (parameters != null) ) {
-				Constructor<E> constructor = objectClass.getDeclaredConstructor( parameterTypes );
-				return constructor.newInstance( parameters );
-			}
-			else {
-				return objectClass.newInstance();
-			}
+			Constructor<E> constructor = objectClass.getDeclaredConstructor( parameterTypes );
+			return constructor.newInstance( parameters );
 		}
-		catch( Throwable throwable ) {
-
-			throwable.printStackTrace();
+		catch( Throwable e ) {
+			throw new RuntimeException( e );
 		}
-		return null;
 	}
 
 	public static String replaceAllInstancesOfString( String s1, String s2, String s3 ) {
