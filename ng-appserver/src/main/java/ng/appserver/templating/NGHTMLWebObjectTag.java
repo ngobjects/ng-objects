@@ -1,7 +1,9 @@
 package ng.appserver.templating;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import ng.appserver.NGApplication;
@@ -16,7 +18,7 @@ import ng.appserver.elements.NGHTMLBareString;
 public class NGHTMLWebObjectTag {
 	private String _name;
 	private NGHTMLWebObjectTag _parent;
-	private NSMutableArray _children;
+	private List _children;
 
 	private void extractName( String s ) throws NGHelperFunctionHTMLFormatException {
 
@@ -63,13 +65,13 @@ public class NGHTMLWebObjectTag {
 	}
 
 	public NGElement template() {
-		NSMutableArray nsmutablearray = null;
+		List nsmutablearray = null;
 		if( _children == null ) {
 			return null;
 		}
-		Enumeration enumeration = _children.objectEnumerator();
+		Enumeration enumeration = Collections.enumeration( _children );
 		if( enumeration != null ) {
-			nsmutablearray = new NSMutableArray( _children.count() );
+			nsmutablearray = new ArrayList( _children.size() );
 			StringBuilder stringbuffer = new StringBuilder( 128 );
 			while( enumeration.hasMoreElements() ) {
 				Object obj1 = enumeration.nextElement();
@@ -79,21 +81,21 @@ public class NGHTMLWebObjectTag {
 				else {
 					if( stringbuffer.length() > 0 ) {
 						NGHTMLBareString wohtmlbarestring1 = new NGHTMLBareString( stringbuffer.toString() );
-						nsmutablearray.addObject( wohtmlbarestring1 );
+						nsmutablearray.add( wohtmlbarestring1 );
 						stringbuffer.setLength( 0 );
 					}
-					nsmutablearray.addObject( obj1 );
+					nsmutablearray.add( obj1 );
 				}
 			}
 			if( stringbuffer.length() > 0 ) {
 				NGHTMLBareString wohtmlbarestring = new NGHTMLBareString( stringbuffer.toString() );
 				stringbuffer.setLength( 0 );
-				nsmutablearray.addObject( wohtmlbarestring );
+				nsmutablearray.add( wohtmlbarestring );
 			}
 		}
 		NGElement obj = null;
-		if( nsmutablearray != null && nsmutablearray.count() == 1 ) {
-			Object obj2 = nsmutablearray.objectAtIndex( 0 );
+		if( nsmutablearray != null && nsmutablearray.size() == 1 ) {
+			Object obj2 = nsmutablearray.get( 0 );
 			if( obj2 instanceof NGComponentReference ) {
 				obj = new NGDynamicGroup( _name, null, (NGElement)obj2 );
 			}
@@ -109,9 +111,9 @@ public class NGHTMLWebObjectTag {
 
 	public void addChildElement( Object obj ) {
 		if( _children == null ) {
-			_children = new NSMutableArray();
+			_children = new ArrayList();
 		}
-		_children.addObject( obj );
+		_children.add( obj );
 	}
 
 	public NGElement dynamicElement( NSDictionary nsdictionary, NSArray nsarray ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
