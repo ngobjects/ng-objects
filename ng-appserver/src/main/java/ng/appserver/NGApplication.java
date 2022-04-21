@@ -343,12 +343,12 @@ public class NGApplication {
 			throw new IllegalArgumentException( "<" + "bla" + ">: No name provided for dynamic element creation." );
 		}
 
-		Class elementClass = _NGUtilities.classWithName( aName );
+		Class<? extends NGElement> elementClass = _NGUtilities.classWithName( aName );
 
 		if( elementClass != null && NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
 			Class[] params = new Class[] { String.class, Map.class, NGElement.class };
 			Object[] arguments = new Object[] { aName, someAssociations, anElement };
-			elementInstance = (NGElement)_NGUtilities.instantiateObject( elementClass, params, arguments );
+			elementInstance = _NGUtilities.instantiateObject( elementClass, params, arguments );
 		}
 
 		if( elementInstance == null ) {
