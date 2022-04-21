@@ -6,17 +6,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 
-public class _NSArray extends ArrayList {
+public class _NSArray<E> extends ArrayList<E> {
 
 	public _NSArray( int size ) {
 		super( size );
 	}
 
-	public _NSArray( Collection collection ) {
+	public _NSArray( Collection<E> collection ) {
 		super( collection );
 	}
 
-	public Enumeration objectEnumerator() {
+	public Enumeration<E> objectEnumerator() {
 		return Collections.enumeration( this );
 	}
 
