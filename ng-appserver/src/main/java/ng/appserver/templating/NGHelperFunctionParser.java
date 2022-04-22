@@ -3,7 +3,6 @@ package ng.appserver.templating;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +23,14 @@ public class NGHelperFunctionParser {
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
 	private NGHTMLWebObjectTag _currentWebObjectTag;
-	private _NSDictionary _declarations;
+	private _NSDictionary<String, NGDeclaration> _declarations;
 	private int _inlineBindingCount;
 
 	private String _declarationString;
 	private String _HTMLString;
-	private List _languages;
+	private List<String> _languages;
 
-	public NGHelperFunctionParser( String htmlString, String declarationString, List languages ) {
+	public NGHelperFunctionParser( String htmlString, String declarationString, List<String> languages ) {
 		_HTMLString = htmlString;
 		_declarationString = declarationString;
 		_languages = languages;
@@ -41,7 +40,7 @@ public class NGHelperFunctionParser {
 
 	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
-		for( NGDeclaration declaration : (Set<NGDeclaration>)declarations().values() ) {
+		for( NGDeclaration declaration : declarations().values() ) {
 			processDeclaration( declaration );
 		}
 		NGElement woelement = parseHTML();
@@ -82,7 +81,7 @@ public class NGHelperFunctionParser {
 			_currentWebObjectTag.addChildElement( element );
 		}
 		catch( RuntimeException e ) {
-			throw new RuntimeException( "Unable to load the component named '" + componentName( _currentWebObjectTag ) + "' with the declaration " + prettyDeclaration( (NGDeclaration)_declarations.get( _currentWebObjectTag.name() ) ) + ". Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.", e );
+			throw new RuntimeException( "Unable to load the component named '" + componentName( _currentWebObjectTag ) + "' with the declaration " + prettyDeclaration( _declarations.get( _currentWebObjectTag.name() ) ) + ". Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.", e );
 		}
 	}
 
@@ -99,7 +98,7 @@ public class NGHelperFunctionParser {
 		StringBuffer keyBuffer = new StringBuffer();
 		StringBuffer valueBuffer = new StringBuffer();
 		StringBuffer elementTypeBuffer = new StringBuffer();
-		_NSDictionary associations = new _NSDictionary();
+		_NSDictionary<String, NGAssociation> associations = new _NSDictionary<>();
 		StringBuffer currentBuffer = elementTypeBuffer;
 		boolean changeBuffers = false;
 		boolean inQuote = false;
@@ -198,10 +197,10 @@ public class NGHelperFunctionParser {
 		return declaration;
 	}
 
-	protected void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, _NSDictionary bindings ) throws NGHelperFunctionHTMLFormatException {
+	protected void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, _NSDictionary<String, NGAssociation> bindings ) throws NGHelperFunctionHTMLFormatException {
 		String key = keyBuffer.toString().trim();
 		String value = valueBuffer.toString().trim();
-		_NSDictionary quotedStrings;
+		_NSDictionary<String, String> quotedStrings;
 		if( value.startsWith( "\"" ) ) {
 			value = value.substring( 1 );
 			if( value.endsWith( "\"" ) ) {
@@ -215,29 +214,31 @@ public class NGHelperFunctionParser {
 				if( value.endsWith( "VALID" ) ) {
 					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
 				}
-				quotedStrings = new _NSDictionary();
+				quotedStrings = new _NSDictionary<>();
 			}
 			else {
 				value = value.replaceAll( "\\\\\\$", "\\$" );
 				value = value.replaceAll( "\\\"", "\"" );
-				quotedStrings = new _NSDictionary( value, "_WODP_0" );
+				quotedStrings = new _NSDictionary<>( value, "_WODP_0" );
 				value = "_WODP_0";
 			}
 		}
 		else {
-			quotedStrings = new _NSDictionary();
+			quotedStrings = new _NSDictionary<>();
 		}
 		NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, quotedStrings );
 		bindings.put( key, association );
 	}
 
 	protected void processDeclaration( NGDeclaration declaration ) {
-		_NSDictionary associations = declaration.associations();
-		Enumeration bindingNameEnum = Collections.enumeration( associations.keySet() );
+		final _NSDictionary<String, NGAssociation> associations = declaration.associations();
+		final Enumeration<String> bindingNameEnum = Collections.enumeration( associations.keySet() );
+
 		while( bindingNameEnum.hasMoreElements() ) {
-			String bindingName = (String)bindingNameEnum.nextElement();
-			NGAssociation association = (NGAssociation)associations.get( bindingName );
-			NGAssociation helperAssociation = parserHelperAssociation( association );
+			final String bindingName = bindingNameEnum.nextElement();
+			final NGAssociation association = associations.get( bindingName );
+			final NGAssociation helperAssociation = parserHelperAssociation( association );
+
 			if( helperAssociation != association ) {
 				associations.put( bindingName, helperAssociation );
 			}
@@ -304,15 +305,16 @@ public class NGHelperFunctionParser {
 
 	protected String prettyDeclaration( NGDeclaration declaration ) {
 		StringBuilder declarationStr = new StringBuilder();
+
 		if( declaration == null ) {
 			declarationStr.append( "[none]" );
 		}
 		else {
 			declarationStr.append( "Component Type = " + declaration.type() );
 			declarationStr.append( ", Bindings = { " );
-			Enumeration keyEnum = Collections.enumeration( declaration.associations().keySet() );
+			Enumeration<String> keyEnum = Collections.enumeration( declaration.associations().keySet() );
 			while( keyEnum.hasMoreElements() ) {
-				String key = (String)keyEnum.nextElement();
+				String key = keyEnum.nextElement();
 				Object assoc = declaration.associations().get( key );
 				if( assoc instanceof NGKeyValueAssociation ) {
 					declarationStr.append( key + "=" + ((NGKeyValueAssociation)assoc).keyPath() );
@@ -329,6 +331,7 @@ public class NGHelperFunctionParser {
 			}
 			declarationStr.append( " }" );
 		}
+
 		return declarationStr.toString();
 	}
 
@@ -374,11 +377,11 @@ public class NGHelperFunctionParser {
 		_declarationString = value;
 	}
 
-	public _NSDictionary declarations() {
+	public _NSDictionary<String, NGDeclaration> declarations() {
 		return _declarations;
 	}
 
-	public void setDeclarations( _NSDictionary value ) {
+	public void setDeclarations( _NSDictionary<String, NGDeclaration> value ) {
 		_declarations = value;
 	}
 
@@ -389,14 +392,15 @@ public class NGHelperFunctionParser {
 	}
 
 	public static NGDeclaration createDeclaration( String declarationName, String declarationType, _NSDictionary associations ) {
-		NGDeclaration declaration = new NGDeclaration( declarationName, declarationType, associations );
+		final NGDeclaration declaration = new NGDeclaration( declarationName, declarationType, associations );
 
 		if( NGHelperFunctionParser._debugSupport && associations != null /*&& associations.objectForKey( NGHTMLAttribute.Debug ) == null */ ) {
 			//associations.setObjectForKey(new WOConstantValueAssociation(Boolean.TRUE), WOHTMLAttribute.Debug);
-			Enumeration associationsEnum = Collections.enumeration( associations.keySet() );
+			final Enumeration<String> associationsEnum = Collections.enumeration( associations.keySet() );
+
 			while( associationsEnum.hasMoreElements() ) {
-				String bindingName = (String)associationsEnum.nextElement();
-				NGAssociation association = (NGAssociation)associations.get( bindingName );
+				final String bindingName = associationsEnum.nextElement();
+				final NGAssociation association = (NGAssociation)associations.get( bindingName );
 				association.setDebugEnabledForBinding( bindingName, declarationName, declarationType );
 				association._setDebuggingEnabled( false );
 			}

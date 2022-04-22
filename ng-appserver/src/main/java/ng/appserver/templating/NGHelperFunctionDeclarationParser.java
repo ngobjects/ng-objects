@@ -17,19 +17,19 @@ public class NGHelperFunctionDeclarationParser {
 
 	public static Logger log = LoggerFactory.getLogger( NGHelperFunctionDeclarationParser.class );
 
-	private _NSDictionary _quotedStrings;
+	private _NSDictionary<String, String> _quotedStrings;
 	private static final int STATE_OUTSIDE = 0;
 	private static final int STATE_INSIDE_COMMENT = 2;
 	private static final String ESCAPED_QUOTE_STRING = "_WO_ESCAPED_QUOTE_";
 	private static final String QUOTED_STRING_KEY = "_WODP_";
 
 	public NGHelperFunctionDeclarationParser() {
-		_quotedStrings = new _NSDictionary();
+		_quotedStrings = new _NSDictionary<>();
 	}
 
-	public static _NSDictionary declarationsWithString( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
+	public static _NSDictionary<String, NGDeclaration> declarationsWithString( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
 		NGHelperFunctionDeclarationParser declarationParser = new NGHelperFunctionDeclarationParser();
-		_NSDictionary declarations = declarationParser.parseDeclarations( declarationStr );
+		_NSDictionary<String, NGDeclaration> declarations = declarationParser.parseDeclarations( declarationStr );
 		return declarations;
 	}
 
