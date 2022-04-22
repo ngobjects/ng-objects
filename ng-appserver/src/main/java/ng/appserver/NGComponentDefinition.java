@@ -50,7 +50,7 @@ public class NGComponentDefinition {
 		}
 	}
 
-	public NGComponentReference componentReferenceWithAssociations( _NSDictionary nsdictionary, NGElement woelement ) {
+	public NGComponentReference componentReferenceWithAssociations( _NSDictionary<String, NGAssociation> nsdictionary, NGElement woelement ) {
 		throw new RuntimeException( "Not implemented" );
 	}
 }
