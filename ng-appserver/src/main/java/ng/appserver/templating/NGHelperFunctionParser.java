@@ -59,14 +59,6 @@ public class NGHelperFunctionParser {
 
 	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
-
-		// FIXME: Disabling this processing since it seems only to apply to HelperFunctions // Hugi 2022-04-22
-		/*
-		for( final NGDeclaration declaration : _declarations.values() ) {
-			processDeclaration( declaration );
-		}
-		*/
-
 		return parseHTML();
 	}
 
@@ -349,76 +341,4 @@ public class NGHelperFunctionParser {
 
 		return declaration;
 	}
-
-	//  FIXME: Code below only seems to apply to OGNL's helper functions, so we shouldn't need this // Hugi 2022-04-22
-	//
-	//  private static final String APP_FRAMEWORK_NAME = "app";
-	//
-	//	@Deprecated
-	//	private void processDeclaration( NGDeclaration declaration ) {
-	//		final Map<String, NGAssociation> associations = declaration.associations();
-	//		final Enumeration<String> bindingNameEnum = Collections.enumeration( associations.keySet() );
-	//
-	//		while( bindingNameEnum.hasMoreElements() ) {
-	//			final String bindingName = bindingNameEnum.nextElement();
-	//			final NGAssociation association = associations.get( bindingName );
-	//			final NGAssociation helperAssociation = parserHelperAssociation( association );
-	//
-	//			if( helperAssociation != association ) {
-	//				associations.put( bindingName, helperAssociation );
-	//			}
-	//		}
-	//	}
-	//
-	//	@Deprecated
-	//	private NGAssociation parserHelperAssociation( NGAssociation originalAssociation ) {
-	//		NGAssociation association = originalAssociation;
-	//		String originalKeyPath = null;
-	//
-	//		if( association instanceof NGKeyValueAssociation ) {
-	//			NGKeyValueAssociation kvAssociation = (NGKeyValueAssociation)association;
-	//			originalKeyPath = kvAssociation.keyPath();
-	//		}
-	//
-	//		if( originalKeyPath != null ) {
-	//			int pipeIndex = originalKeyPath.indexOf( '|' );
-	//			if( pipeIndex != -1 ) {
-	//				String targetKeyPath = originalKeyPath.substring( 0, pipeIndex ).trim();
-	//				String frameworkName = APP_FRAMEWORK_NAME;
-	//				String helperFunctionName = originalKeyPath.substring( pipeIndex + 1 ).trim();
-	//				String otherParams = null;
-	//				int openParenIndex = helperFunctionName.indexOf( '(' );
-	//				if( openParenIndex != -1 ) {
-	//					int closeParenIndex = helperFunctionName.indexOf( ')', openParenIndex + 1 );
-	//					otherParams = helperFunctionName.substring( openParenIndex + 1, closeParenIndex );
-	//					helperFunctionName = helperFunctionName.substring( 0, openParenIndex );
-	//				}
-	//				int helperFunctionDotIndex = helperFunctionName.indexOf( '.' );
-	//				if( helperFunctionDotIndex != -1 ) {
-	//					frameworkName = helperFunctionName.substring( 0, helperFunctionDotIndex );
-	//					helperFunctionName = helperFunctionName.substring( helperFunctionDotIndex + 1 );
-	//				}
-	//				StringBuilder newKeyPath = new StringBuilder();
-	//				newKeyPath.append( '~' );
-	//				//				newKeyPath.append( "@" + NGHelperFunctionRegistry.class.getName() + "@registry()._helperInstanceForFrameworkNamed(#this, \"" ); // WTF?
-	//				newKeyPath.append( helperFunctionName );
-	//				newKeyPath.append( "\", \"" );
-	//				newKeyPath.append( targetKeyPath );
-	//				newKeyPath.append( "\", \"" );
-	//				newKeyPath.append( frameworkName );
-	//				newKeyPath.append( "\")." );
-	//				newKeyPath.append( helperFunctionName );
-	//				newKeyPath.append( '(' );
-	//				newKeyPath.append( targetKeyPath );
-	//				if( otherParams != null ) {
-	//					newKeyPath.append( ',' );
-	//					newKeyPath.append( otherParams );
-	//				}
-	//				newKeyPath.append( ')' );
-	//				logger.debug( "Converted {} into {}", originalKeyPath, newKeyPath );
-	//				association = new NGConstantValueAssociation( newKeyPath.toString() );
-	//			}
-	//		}
-	//		return association;
-	//	}
 }
