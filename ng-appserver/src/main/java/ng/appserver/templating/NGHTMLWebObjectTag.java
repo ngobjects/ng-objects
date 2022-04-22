@@ -72,7 +72,9 @@ public class NGHTMLWebObjectTag {
 				nsmutablearray.add( wohtmlbarestring );
 			}
 		}
+
 		NGElement obj = null;
+
 		if( nsmutablearray != null && nsmutablearray.size() == 1 ) {
 			Object obj2 = nsmutablearray.get( 0 );
 			if( obj2 instanceof NGComponentReference ) {
@@ -85,6 +87,7 @@ public class NGHTMLWebObjectTag {
 		else {
 			obj = new NGDynamicGroup( _name, null, nsmutablearray );
 		}
+
 		return obj;
 	}
 
