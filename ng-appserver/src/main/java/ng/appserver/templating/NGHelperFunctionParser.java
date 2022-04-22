@@ -40,6 +40,10 @@ public class NGHelperFunctionParser {
 		_currentWebObjectTag = new NGHTMLWebObjectTag();
 	}
 
+	public static boolean allowInlineBindings() {
+		return true;
+	}
+
 	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
 
@@ -50,10 +54,6 @@ public class NGHelperFunctionParser {
 		final NGElement woelement = parseHTML();
 
 		return woelement;
-	}
-
-	public static boolean allowInlineBindings() {
-		return true;
 	}
 
 	public void didParseOpeningWebObjectTag( String s, NGHelperFunctionHTMLParser htmlParser ) throws NGHelperFunctionHTMLFormatException {
