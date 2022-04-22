@@ -95,7 +95,8 @@ public class NGComponentDefinition {
 		final Optional<byte[]> templateBytes = NGUtils.readComponentResource( htmlTemplateFilename );
 
 		if( templateBytes.isEmpty() ) {
-			throw new RuntimeException( "Template not found" );
+			return "";
+			//			throw new RuntimeException( String.format( "Template file '%s.%s' not found", templateName, extension ) );
 		}
 
 		return new String( templateBytes.get(), StandardCharsets.UTF_8 );
