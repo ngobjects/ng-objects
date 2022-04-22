@@ -255,7 +255,7 @@ public class NGHelperFunctionParser {
 	/**
 	 * Only used for debug logging
 	 */
-	private String prettyDeclaration( NGDeclaration declaration ) {
+	private static String prettyDeclaration( NGDeclaration declaration ) {
 		StringBuilder declarationStr = new StringBuilder();
 
 		if( declaration == null ) {
