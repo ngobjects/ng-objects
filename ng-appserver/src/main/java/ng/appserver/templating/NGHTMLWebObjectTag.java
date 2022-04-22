@@ -122,16 +122,17 @@ public class NGHTMLWebObjectTag {
 		_children.add( obj );
 	}
 
-	public NGElement dynamicElement( Map<String, NGDeclaration> nsdictionary, List<String> languages ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
-		String s = name();
-		NGElement woelement = template();
-		NGDeclaration wodeclaration = nsdictionary.get( s );
-		return _elementWithDeclaration( wodeclaration, s, woelement, languages );
+	public NGElement dynamicElement( Map<String, NGDeclaration> declarations, List<String> languages ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
+		final String name = name();
+		final NGElement woelement = template();
+		final NGDeclaration wodeclaration = declarations.get( name );
+		return _elementWithDeclaration( wodeclaration, name, woelement, languages );
 	}
 
 	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( String s, NGDeclaration wodeclaration, NGElement woelement, List<String> languages ) throws ClassNotFoundException {
 		NGComponentReference wocomponentreference = null;
 		NGComponentDefinition wocomponentdefinition = NGApplication.application()._componentDefinition( s, languages );
+
 		if( wocomponentdefinition != null ) {
 			Map<String, NGAssociation> nsdictionary = wodeclaration.associations();
 			wocomponentreference = wocomponentdefinition.componentReferenceWithAssociations( nsdictionary, woelement );
@@ -139,6 +140,7 @@ public class NGHTMLWebObjectTag {
 		else {
 			throw new ClassNotFoundException( "Cannot find class or component named \'" + s + "\" in runtime or in a loadable bundle" );
 		}
+
 		return wocomponentreference;
 	}
 
@@ -146,43 +148,46 @@ public class NGHTMLWebObjectTag {
 		return NGApplication.application().dynamicElementWithName( c.getName(), declaration.associations(), element, null );
 	}
 
-	private static NGElement _elementWithDeclaration( NGDeclaration wodeclaration, String s, NGElement woelement, List<String> languages ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
-		NGElement woelement1 = null;
+	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement template, final List<String> languages ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
+		NGElement element = null;
 
-		if( wodeclaration != null ) {
-			String s1 = wodeclaration.type();
-			if( s1 != null ) {
-				Class<? extends NGElement> class1 = _NGUtilities.classWithName( s1 );
-				if( class1 == null ) {
-					class1 = _NGUtilities.lookForClassInAllBundles( s1 );
-					if( class1 == null ) {
+		if( declaration != null ) {
+			final String typeName = declaration.type();
+
+			if( typeName != null ) {
+				Class<? extends NGElement> classForTypeName = _NGUtilities.classWithName( typeName );
+
+				if( classForTypeName == null ) {
+					classForTypeName = _NGUtilities.lookForClassInAllBundles( typeName );
+
+					if( classForTypeName == null ) {
 						//						logger.info( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
 					}
-					else if( !(NGDynamicElement.class).isAssignableFrom( class1 ) ) {
-						class1 = null;
+					else if( !(NGDynamicElement.class).isAssignableFrom( classForTypeName ) ) {
+						classForTypeName = null;
 					}
 				}
 
-				if( class1 != null ) {
-					if( (NGComponent.class).isAssignableFrom( class1 ) ) {
-						woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, languages );
+				if( classForTypeName != null ) {
+					if( (NGComponent.class).isAssignableFrom( classForTypeName ) ) {
+						element = _componentReferenceWithClassNameDeclarationAndTemplate( typeName, declaration, template, languages );
 					}
 					else {
-						woelement1 = _elementWithClass( class1, wodeclaration, woelement );
+						element = _elementWithClass( classForTypeName, declaration, template );
 					}
 				}
 				else {
-					woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, languages );
+					element = _componentReferenceWithClassNameDeclarationAndTemplate( typeName, declaration, template, languages );
 				}
 			}
 			else {
-				throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLWebObjectTag> declaration object for dynamic element (or component) named " + s + "has no class name." );
+				throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLWebObjectTag> declaration object for dynamic element (or component) named " + name + "has no class name." );
 			}
 		}
 		else {
-			throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLTemplateParser> no declaration for dynamic element (or component) named " + s );
+			throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLTemplateParser> no declaration for dynamic element (or component) named " + name );
 		}
 
-		return woelement1;
+		return element;
 	}
 }
