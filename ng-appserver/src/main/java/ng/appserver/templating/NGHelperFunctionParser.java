@@ -55,13 +55,11 @@ public class NGHelperFunctionParser {
 	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
 
-		for( NGDeclaration declaration : declarations().values() ) {
+		for( final NGDeclaration declaration : _declarations.values() ) {
 			processDeclaration( declaration );
 		}
 
-		final NGElement woelement = parseHTML();
-
-		return woelement;
+		return parseHTML();
 	}
 
 	public void didParseOpeningWebObjectTag( String s, NGHelperFunctionHTMLParser htmlParser ) throws NGHelperFunctionHTMLFormatException {
@@ -381,22 +379,6 @@ public class NGHelperFunctionParser {
 			}
 		}
 		return name;
-	}
-
-	public String declarationString() {
-		return _declarationString;
-	}
-
-	public void setDeclarationString( String value ) {
-		_declarationString = value;
-	}
-
-	public Map<String, NGDeclaration> declarations() {
-		return _declarations;
-	}
-
-	public void setDeclarations( Map<String, NGDeclaration> value ) {
-		_declarations = value;
 	}
 
 	private void parseDeclarations() throws NGHelperFunctionDeclarationFormatException {
