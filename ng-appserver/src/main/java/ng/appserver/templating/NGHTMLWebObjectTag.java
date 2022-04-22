@@ -149,45 +149,39 @@ public class NGHTMLWebObjectTag {
 	}
 
 	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement template, final List<String> languages ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
-		NGElement element = null;
 
-		if( declaration != null ) {
-			final String typeName = declaration.type();
-
-			if( typeName != null ) {
-				Class<? extends NGElement> classForTypeName = _NGUtilities.classWithName( typeName );
-
-				if( classForTypeName == null ) {
-					classForTypeName = _NGUtilities.lookForClassInAllBundles( typeName );
-
-					if( classForTypeName == null ) {
-						//						logger.info( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
-					}
-					else if( !(NGDynamicElement.class).isAssignableFrom( classForTypeName ) ) {
-						classForTypeName = null;
-					}
-				}
-
-				if( classForTypeName != null ) {
-					if( (NGComponent.class).isAssignableFrom( classForTypeName ) ) {
-						element = _componentReferenceWithClassNameDeclarationAndTemplate( typeName, declaration, template, languages );
-					}
-					else {
-						element = _elementWithClass( classForTypeName, declaration, template );
-					}
-				}
-				else {
-					element = _componentReferenceWithClassNameDeclarationAndTemplate( typeName, declaration, template, languages );
-				}
-			}
-			else {
-				throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLWebObjectTag> declaration object for dynamic element (or component) named " + name + "has no class name." );
-			}
-		}
-		else {
+		if( declaration == null ) {
 			throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLTemplateParser> no declaration for dynamic element (or component) named " + name );
 		}
 
-		return element;
+		final String typeName = declaration.type();
+
+		if( typeName == null ) {
+			throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLWebObjectTag> declaration object for dynamic element (or component) named " + name + "has no class name." );
+		}
+
+		Class<? extends NGElement> classForTypeName = _NGUtilities.classWithName( typeName );
+
+		if( classForTypeName == null ) {
+			classForTypeName = _NGUtilities.lookForClassInAllBundles( typeName );
+
+			if( classForTypeName == null ) {
+				//						logger.info( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
+			}
+			else if( !(NGDynamicElement.class).isAssignableFrom( classForTypeName ) ) {
+				classForTypeName = null;
+			}
+		}
+
+		if( classForTypeName != null ) {
+			if( (NGComponent.class).isAssignableFrom( classForTypeName ) ) {
+				return _componentReferenceWithClassNameDeclarationAndTemplate( typeName, declaration, template, languages );
+			}
+			else {
+				return _elementWithClass( classForTypeName, declaration, template );
+			}
+		}
+
+		return _componentReferenceWithClassNameDeclarationAndTemplate( typeName, declaration, template, languages );
 	}
 }
