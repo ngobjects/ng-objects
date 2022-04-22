@@ -54,9 +54,9 @@ public class NGHTMLWebObjectTag {
 		_name = null;
 	}
 
-	public NGHTMLWebObjectTag( String s, NGHTMLWebObjectTag wohtmlwebobjecttag ) throws NGHelperFunctionHTMLFormatException {
-		_parent = wohtmlwebobjecttag;
-		extractName( s );
+	public NGHTMLWebObjectTag( final String string, final NGHTMLWebObjectTag parent ) throws NGHelperFunctionHTMLFormatException {
+		_parent = parent;
+		extractName( string );
 	}
 
 	public String name() {
