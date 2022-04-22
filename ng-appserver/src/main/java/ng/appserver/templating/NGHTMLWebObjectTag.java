@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import ng.appserver.NGApplication;
+import ng.appserver.NGAssociation;
 import ng.appserver.NGComponent;
 import ng.appserver.NGComponentDefinition;
 import ng.appserver.NGComponentReference;
@@ -18,7 +19,7 @@ import ng.appserver.elements.NGHTMLBareString;
 public class NGHTMLWebObjectTag {
 	private String _name;
 	private NGHTMLWebObjectTag _parent;
-	private List _children;
+	private List<Object> _children;
 
 	private void extractName( String s ) throws NGHelperFunctionHTMLFormatException {
 
@@ -65,13 +66,16 @@ public class NGHTMLWebObjectTag {
 	}
 
 	public NGElement template() {
-		List nsmutablearray = null;
+		List<Object> nsmutablearray = null;
+
 		if( _children == null ) {
 			return null;
 		}
-		Enumeration enumeration = Collections.enumeration( _children );
+
+		Enumeration<Object> enumeration = Collections.enumeration( _children );
+
 		if( enumeration != null ) {
-			nsmutablearray = new ArrayList( _children.size() );
+			nsmutablearray = new ArrayList<>( _children.size() );
 			StringBuilder stringbuffer = new StringBuilder( 128 );
 			while( enumeration.hasMoreElements() ) {
 				Object obj1 = enumeration.nextElement();
@@ -111,23 +115,23 @@ public class NGHTMLWebObjectTag {
 
 	public void addChildElement( Object obj ) {
 		if( _children == null ) {
-			_children = new ArrayList();
+			_children = new ArrayList<>();
 		}
 		_children.add( obj );
 	}
 
-	public NGElement dynamicElement( _NSDictionary nsdictionary, List nsarray ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
+	public NGElement dynamicElement( _NSDictionary<String, NGDeclaration> nsdictionary, List<String> languages ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
 		String s = name();
 		NGElement woelement = template();
-		NGDeclaration wodeclaration = (NGDeclaration)nsdictionary.get( s );
-		return _elementWithDeclaration( wodeclaration, s, woelement, nsarray );
+		NGDeclaration wodeclaration = nsdictionary.get( s );
+		return _elementWithDeclaration( wodeclaration, s, woelement, languages );
 	}
 
-	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( String s, NGDeclaration wodeclaration, NGElement woelement, List nsarray ) throws ClassNotFoundException {
+	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( String s, NGDeclaration wodeclaration, NGElement woelement, List<String> languages ) throws ClassNotFoundException {
 		NGComponentReference wocomponentreference = null;
-		NGComponentDefinition wocomponentdefinition = NGApplication.application()._componentDefinition( s, nsarray );
+		NGComponentDefinition wocomponentdefinition = NGApplication.application()._componentDefinition( s, languages );
 		if( wocomponentdefinition != null ) {
-			_NSDictionary nsdictionary = wodeclaration.associations();
+			_NSDictionary<String, NGAssociation> nsdictionary = wodeclaration.associations();
 			wocomponentreference = wocomponentdefinition.componentReferenceWithAssociations( nsdictionary, woelement );
 		}
 		else {
@@ -136,17 +140,17 @@ public class NGHTMLWebObjectTag {
 		return wocomponentreference;
 	}
 
-	private static NGElement _elementWithClass( Class c, NGDeclaration declaration, NGElement element ) {
+	private static NGElement _elementWithClass( Class<? extends NGElement> c, NGDeclaration declaration, NGElement element ) {
 		return NGApplication.application().dynamicElementWithName( c.getName(), declaration.associations(), element, null );
 	}
 
-	private static NGElement _elementWithDeclaration( NGDeclaration wodeclaration, String s, NGElement woelement, List nsarray ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
+	private static NGElement _elementWithDeclaration( NGDeclaration wodeclaration, String s, NGElement woelement, List<String> languages ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
 		NGElement woelement1 = null;
 
 		if( wodeclaration != null ) {
 			String s1 = wodeclaration.type();
 			if( s1 != null ) {
-				Class class1 = _NGUtilities.classWithName( s1 );
+				Class<? extends NGElement> class1 = _NGUtilities.classWithName( s1 );
 				if( class1 == null ) {
 					class1 = _NGUtilities.lookForClassInAllBundles( s1 );
 					if( class1 == null ) {
@@ -159,14 +163,14 @@ public class NGHTMLWebObjectTag {
 
 				if( class1 != null ) {
 					if( (NGComponent.class).isAssignableFrom( class1 ) ) {
-						woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, nsarray );
+						woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, languages );
 					}
 					else {
 						woelement1 = _elementWithClass( class1, wodeclaration, woelement );
 					}
 				}
 				else {
-					woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, nsarray );
+					woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, languages );
 				}
 			}
 			else {
@@ -176,9 +180,6 @@ public class NGHTMLWebObjectTag {
 		else {
 			throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLTemplateParser> no declaration for dynamic element (or component) named " + s );
 		}
-
-		// FIXME: I'm not sure what this is supposed to do. Work that out!
-		// NGGenerationSupport.insertInElementsTableWithName( woelement1, s, wodeclaration.associations() );
 
 		return woelement1;
 	}

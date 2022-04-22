@@ -27,7 +27,7 @@ public class NGHelperFunctionHTMLParser {
 	private static final String XML_CDATA_START_TAG = "<![CDATA[";
 
 	private static boolean _parseStandardTags = false;
-	private _NSDictionary _stackDict;
+	private _NSDictionary<String, Stack<String>> _stackDict;
 
 	static {
 		// 		FIXME: Disabled on switch to slf4j // Hugi 2022-01-05
@@ -45,7 +45,7 @@ public class NGHelperFunctionHTMLParser {
 	}
 
 	public void parseHTML() throws NGHelperFunctionHTMLFormatException, NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
-		_stackDict = new _NSDictionary();
+		_stackDict = new _NSDictionary<>();
 		StringTokenizer templateTokenizer = new StringTokenizer( _unparsedTemplate, "<" );
 		boolean flag = true;
 		int parserState = STATE_OUTSIDE;
@@ -196,10 +196,10 @@ public class NGHelperFunctionHTMLParser {
 
 				if( !token.endsWith( "/" ) ) {
 					// no need to keep information for self closing tags
-					Stack stack = (Stack)_stackDict.get( tokenPart );
+					Stack<String> stack = _stackDict.get( tokenPart );
 					if( stack == null ) {
 						// create one and push a marker
-						stack = new Stack();
+						stack = new Stack<>();
 						stack.push( WO_REPLACEMENT_MARKER );
 						_stackDict.put( tokenPart, stack );
 					}
@@ -212,7 +212,7 @@ public class NGHelperFunctionHTMLParser {
 			}
 			else if( !token.startsWith( "</" ) && _stackDict.containsKey( tokenPart ) ) {
 				// standard opening tag
-				Stack stack = (Stack)_stackDict.get( tokenPart );
+				Stack<String> stack = _stackDict.get( tokenPart );
 				if( stack != null ) {
 					stack.push( tokenPart );
 					_stackDict.put( tokenPart, stack );
@@ -220,9 +220,9 @@ public class NGHelperFunctionHTMLParser {
 			}
 			else if( token.startsWith( "</" ) ) {
 				// closing tag
-				Stack stack = (Stack)_stackDict.get( tokenParts[0].substring( 2 ) );
+				Stack<String> stack = _stackDict.get( tokenParts[0].substring( 2 ) );
 				if( stack != null && !stack.empty() ) {
-					String stackContent = (String)stack.pop();
+					String stackContent = stack.pop();
 					if( stackContent.equals( WO_REPLACEMENT_MARKER ) ) {
 						if( log.isDebugEnabled() ) {
 							log.debug( "Replaced end tag for '" + tokenParts[0].substring( 2 ) + "' with 'wo' endtag" );

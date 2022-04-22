@@ -391,7 +391,7 @@ public class NGHelperFunctionParser {
 		}
 	}
 
-	public static NGDeclaration createDeclaration( String declarationName, String declarationType, _NSDictionary associations ) {
+	public static NGDeclaration createDeclaration( String declarationName, String declarationType, _NSDictionary<String, NGAssociation> associations ) {
 		final NGDeclaration declaration = new NGDeclaration( declarationName, declarationType, associations );
 
 		if( NGHelperFunctionParser._debugSupport && associations != null /*&& associations.objectForKey( NGHTMLAttribute.Debug ) == null */ ) {
@@ -400,7 +400,7 @@ public class NGHelperFunctionParser {
 
 			while( associationsEnum.hasMoreElements() ) {
 				final String bindingName = associationsEnum.nextElement();
-				final NGAssociation association = (NGAssociation)associations.get( bindingName );
+				final NGAssociation association = associations.get( bindingName );
 				association.setDebugEnabledForBinding( bindingName, declarationName, declarationType );
 				association._setDebuggingEnabled( false );
 			}
