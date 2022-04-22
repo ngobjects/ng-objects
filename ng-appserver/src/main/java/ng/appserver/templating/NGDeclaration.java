@@ -10,9 +10,9 @@ import ng.appserver.NGAssociation;
 
 public class NGDeclaration {
 
-	final String _name;
-	final String _type;
-	final Map<String, NGAssociation> _associations;
+	private final String _name;
+	private final String _type;
+	private final Map<String, NGAssociation> _associations;
 
 	public NGDeclaration( String aName, String aType, Map<String, NGAssociation> theAssocations ) {
 		_name = aName;
