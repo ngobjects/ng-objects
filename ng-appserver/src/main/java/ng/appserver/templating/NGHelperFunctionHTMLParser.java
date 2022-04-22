@@ -166,7 +166,6 @@ public class NGHelperFunctionHTMLParser {
 	/**
 	 * Checks the current token for dynamic inline bindings
 	 *
-	 * @param token
 	 * @return a rewritten token if it has an inline binding or a closing tag, if it belongs to a rewritten token
 	 */
 	private String checkToken( String token ) {
