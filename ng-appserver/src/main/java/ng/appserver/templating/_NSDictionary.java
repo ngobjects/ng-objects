@@ -13,10 +13,10 @@ public class _NSDictionary<K, V> extends HashMap<K, V> {
 	}
 
 	public Enumeration<V> objectEnumerator() {
-		return Collections.enumeration( this.values() );
+		return Collections.enumeration( values() );
 	}
 
 	public Enumeration<K> keyEnumerator() {
-		return Collections.enumeration( this.keySet() );
+		return Collections.enumeration( keySet() );
 	}
 }
