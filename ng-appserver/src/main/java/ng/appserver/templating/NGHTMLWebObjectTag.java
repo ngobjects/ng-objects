@@ -51,24 +51,24 @@ public class NGHTMLWebObjectTag {
 
 		if( enumeration != null ) {
 			nsmutablearray = new ArrayList<>( _children.size() );
-			StringBuilder stringbuffer = new StringBuilder( 128 );
+			StringBuilder stringb = new StringBuilder( 128 );
 			while( enumeration.hasMoreElements() ) {
 				Object obj1 = enumeration.nextElement();
 				if( obj1 instanceof String ) {
-					stringbuffer.append( (String)obj1 );
+					stringb.append( (String)obj1 );
 				}
 				else {
-					if( stringbuffer.length() > 0 ) {
-						NGHTMLBareString wohtmlbarestring1 = new NGHTMLBareString( stringbuffer.toString() );
+					if( stringb.length() > 0 ) {
+						NGHTMLBareString wohtmlbarestring1 = new NGHTMLBareString( stringb.toString() );
 						nsmutablearray.add( wohtmlbarestring1 );
-						stringbuffer.setLength( 0 );
+						stringb.setLength( 0 );
 					}
 					nsmutablearray.add( obj1 );
 				}
 			}
-			if( stringbuffer.length() > 0 ) {
-				NGHTMLBareString wohtmlbarestring = new NGHTMLBareString( stringbuffer.toString() );
-				stringbuffer.setLength( 0 );
+			if( stringb.length() > 0 ) {
+				NGHTMLBareString wohtmlbarestring = new NGHTMLBareString( stringb.toString() );
+				stringb.setLength( 0 );
 				nsmutablearray.add( wohtmlbarestring );
 			}
 		}

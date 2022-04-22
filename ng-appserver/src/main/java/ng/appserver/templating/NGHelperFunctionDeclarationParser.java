@@ -37,8 +37,8 @@ public class NGHelperFunctionDeclarationParser {
 	}
 
 	private String _removeOldStyleCommentsFromString( String str ) {
-		StringBuilder stringbuffer = new StringBuilder( 100 );
-		StringBuilder stringbuffer1 = new StringBuilder( 100 );
+		StringBuilder stringb = new StringBuilder( 100 );
+		StringBuilder stringb1 = new StringBuilder( 100 );
 		StringTokenizer tokenizer = new StringTokenizer( str, "/", true );
 		int state = NGHelperFunctionDeclarationParser.STATE_OUTSIDE;
 		try {
@@ -53,22 +53,22 @@ public class NGHelperFunctionDeclarationParser {
 						token = tokenizer.nextToken();
 						if( token.startsWith( "*" ) ) {
 							state = NGHelperFunctionDeclarationParser.STATE_INSIDE_COMMENT;
-							stringbuffer1.append( '/' );
-							stringbuffer1.append( token );
+							stringb1.append( '/' );
+							stringb1.append( token );
 						}
 						else {
-							stringbuffer.append( '/' );
-							stringbuffer.append( token );
+							stringb.append( '/' );
+							stringb.append( token );
 						}
 					}
 					else {
-						stringbuffer.append( token );
+						stringb.append( token );
 					}
 					break;
 
 				case STATE_INSIDE_COMMENT:
-					stringbuffer1.append( token );
-					String s2 = stringbuffer1.toString();
+					stringb1.append( token );
+					String s2 = stringb1.toString();
 					if( s2.endsWith( "*/" ) && !s2.equals( "/*/" ) ) {
 						state = NGHelperFunctionDeclarationParser.STATE_OUTSIDE;
 					}
@@ -80,7 +80,7 @@ public class NGHelperFunctionDeclarationParser {
 		catch( NoSuchElementException e ) {
 			logger.debug( "Parsing failed.", e );
 		}
-		return stringbuffer.toString();
+		return stringb.toString();
 	}
 
 	private String _removeNewStyleCommentsAndQuotedStringsFromString( String declarationsStr ) {
