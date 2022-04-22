@@ -252,6 +252,9 @@ public class NGHelperFunctionParser {
 		bindings.put( key, association );
 	}
 
+	/**
+	 * Only used for debug logging
+	 */
 	private String prettyDeclaration( NGDeclaration declaration ) {
 		StringBuilder declarationStr = new StringBuilder();
 
