@@ -17,10 +17,17 @@ public class NGComponentDefinition {
 	 */
 	private String _name;
 
+	/**
+	 * The cached name of this component definition. Corresponds to the component class's simpleName
+	 */
+	private String _className;
+
 	public NGComponentDefinition( final Class<? extends NGComponent> componentClass ) {
 		Objects.requireNonNull( componentClass );
 
+		// FIXME: We need to decide what parts of the component name we're going to keep around // Hugi 2022-04-22
 		_name = componentClass.getSimpleName();
+		_className = componentClass.getName();
 	}
 
 	/**
@@ -53,7 +60,7 @@ public class NGComponentDefinition {
 		}
 	}
 
-	public NGComponentReference componentReferenceWithAssociations( _NSDictionary<String, NGAssociation> nsdictionary, NGElement woelement ) {
-		throw new RuntimeException( "Not implemented" );
+	public NGComponentReference componentReferenceWithAssociations( _NSDictionary<String, NGAssociation> associations, NGElement element ) {
+		return new NGComponentReference( _className, associations, element );
 	}
 }
