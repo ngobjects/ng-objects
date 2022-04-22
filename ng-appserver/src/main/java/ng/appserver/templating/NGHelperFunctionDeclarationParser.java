@@ -1,7 +1,9 @@
 package ng.appserver.templating;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -176,8 +178,8 @@ public class NGHelperFunctionDeclarationParser {
 			return associations;
 		}
 		trimmedDeclarationBody = trimmedDeclarationBody.substring( 1, declarationBodyLength - 1 ).trim();
-		_NSArray bindings = new _NSArray( Arrays.asList( trimmedDeclarationBody.split( ";" ) ) );
-		Enumeration bindingsEnum = bindings.objectEnumerator();
+		List bindings = Arrays.asList( trimmedDeclarationBody.split( ";" ) );
+		Enumeration bindingsEnum = Collections.enumeration( bindings );
 		do {
 			if( !bindingsEnum.hasMoreElements() ) {
 				break;
