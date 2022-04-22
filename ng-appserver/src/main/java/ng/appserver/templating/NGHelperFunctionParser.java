@@ -23,8 +23,6 @@ public class NGHelperFunctionParser {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGHelperFunctionParser.class );
 
-	private static final String APP_FRAMEWORK_NAME = "app";
-
 	/**
 	 * Indicates if WODebug attribute debugging should be enabled.
 	 * Obviously not a good location to set this.
@@ -332,8 +330,10 @@ public class NGHelperFunctionParser {
 	public static NGDeclaration createDeclaration( String declarationName, String declarationType, Map<String, NGAssociation> associations ) {
 		final NGDeclaration declaration = new NGDeclaration( declarationName, declarationType, associations );
 
+		// FIXME: This debug shit is kind of crazy. Can't we remove it?
 		if( NGHelperFunctionParser._debugSupport && associations != null && associations.get( DEBUG_MARKER ) == null ) {
-			//associations.setObjectForKey(new WOConstantValueAssociation(Boolean.TRUE), WOHTMLAttribute.Debug);
+			associations.put( DEBUG_MARKER, new NGConstantValueAssociation( Boolean.TRUE ) );
+
 			final Enumeration<String> associationsEnum = Collections.enumeration( associations.keySet() );
 
 			while( associationsEnum.hasMoreElements() ) {
@@ -347,7 +347,10 @@ public class NGHelperFunctionParser {
 		return declaration;
 	}
 
-	//  FIXME: This only seems to apply to OGNL's helper functions, so we shouldn't need this // Hugi 2022-04-22
+	//  FIXME: Code below only seems to apply to OGNL's helper functions, so we shouldn't need this // Hugi 2022-04-22
+	//
+	//  private static final String APP_FRAMEWORK_NAME = "app";
+	//
 	//	@Deprecated
 	//	private void processDeclaration( NGDeclaration declaration ) {
 	//		final Map<String, NGAssociation> associations = declaration.associations();
