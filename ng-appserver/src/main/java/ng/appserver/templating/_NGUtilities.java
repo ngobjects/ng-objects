@@ -17,7 +17,7 @@ public class _NGUtilities {
 	public static Class classWithName( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
-		final List<Class> classes = List.of( NGString.class, NGImage.class, NGHyperlink.class, NGStylesheet.class );
+		final List<Class> classes = List.of( NGString.class, NGImage.class, NGHyperlink.class, NGStylesheet.class, TestComponent.class );
 
 		for( Class c : classes ) {
 			if( c.getName().equals( classNameToSearchFor ) || c.getSimpleName().equals( classNameToSearchFor ) ) {

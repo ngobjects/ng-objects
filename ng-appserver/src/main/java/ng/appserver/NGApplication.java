@@ -356,13 +356,10 @@ public class NGApplication {
 		}
 
 		if( elementInstance == null ) {
-			throw new RuntimeException( "Not implemented" );
-			/*
 			NGComponentDefinition componentDefinition = this._componentDefinition( aName, aLanguageArray );
 			if( componentDefinition != null ) {
 				elementInstance = componentDefinition.componentReferenceWithAssociations( someAssociations, anElement );
 			}
-			*/
 		}
 
 		return elementInstance;
@@ -373,8 +370,7 @@ public class NGApplication {
 	 *
 	 * FIXME: Unsupported. Only here for template parsing experiment
 	 */
-	public NGComponentDefinition _componentDefinition( String s, List<String> a ) {
-		throw new RuntimeException( "Not implemented" );
+	public NGComponentDefinition _componentDefinition( String componentName, List<String> languages ) {
+		return _componentDefinition( _NGUtilities.classWithName( componentName ) );
 	}
-
 }
