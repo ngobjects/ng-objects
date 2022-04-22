@@ -152,15 +152,6 @@ public class NGApplication {
 		return page;
 	}
 
-	/**
-	 * @return The componentDefinition corresponding to the given WOComponent class.
-	 *
-	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
-	 */
-	private NGComponentDefinition _componentDefinition( Class<? extends NGComponent> componentClass ) {
-		return new NGComponentDefinition( componentClass );
-	}
-
 	public static NGApplication application() {
 		return _application;
 	}
@@ -333,6 +324,24 @@ public class NGApplication {
 		System.exit( 0 );
 	}
 
+	/**
+	 * @return The componentDefinition corresponding to the given WOComponent class.
+	 *
+	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
+	 */
+	private NGComponentDefinition _componentDefinition( Class<? extends NGComponent> componentClass ) {
+		return new NGComponentDefinition( componentClass );
+	}
+
+	/**
+	 * @return The componentDefinition corresponding to the named WOComponent
+	 *
+	 * FIXME: Unsupported. Only here for template parsing experiment
+	 */
+	public NGComponentDefinition _componentDefinition( String componentName, List<String> languages ) {
+		return _componentDefinition( _NGUtilities.classWithName( componentName ) );
+	}
+
 	public NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement element, final List<String> languages ) {
 		NGElement elementInstance = null;
 
@@ -356,14 +365,5 @@ public class NGApplication {
 		}
 
 		return elementInstance;
-	}
-
-	/**
-	 * @return The componentDefinition corresponding to the named WOComponent
-	 *
-	 * FIXME: Unsupported. Only here for template parsing experiment
-	 */
-	public NGComponentDefinition _componentDefinition( String componentName, List<String> languages ) {
-		return _componentDefinition( _NGUtilities.classWithName( componentName ) );
 	}
 }
