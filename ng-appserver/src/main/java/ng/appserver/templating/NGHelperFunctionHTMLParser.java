@@ -10,7 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NGHelperFunctionHTMLParser {
-	public static Logger log = LoggerFactory.getLogger( NGHelperFunctionHTMLParser.class );
+
+	private static Logger logger = LoggerFactory.getLogger( NGHelperFunctionHTMLParser.class );
 
 	private NGHelperFunctionParser _parserDelegate;
 	private String _unparsedTemplate;
@@ -148,7 +149,7 @@ public class NGHelperFunctionHTMLParser {
 			while( true );
 		}
 		catch( NoSuchElementException e ) {
-			log.error( "No Such element dude", e );
+			logger.error( "No Such element dude", e );
 			didParseText();
 			return;
 		}
@@ -187,8 +188,8 @@ public class NGHelperFunctionHTMLParser {
 			if( (token.indexOf( "\"$" ) != -1 || token.indexOf( "\"~" ) != -1) && token.startsWith( "<" ) ) {
 				// we assume a dynamic tag
 				token = token.replaceAll( tokenParts[0], "<wo:" + WO_REPLACEMENT_MARKER + tokenPart );
-				if( log.isDebugEnabled() ) {
-					log.debug( "Rewritten <" + tokenPart + " ...> tag to <wo:" + tokenPart + " ...>" );
+				if( logger.isDebugEnabled() ) {
+					logger.debug( "Rewritten <" + tokenPart + " ...> tag to <wo:" + tokenPart + " ...>" );
 				}
 
 				if( !token.endsWith( "/" ) ) {
@@ -221,8 +222,8 @@ public class NGHelperFunctionHTMLParser {
 				if( stack != null && !stack.empty() ) {
 					String stackContent = stack.pop();
 					if( stackContent.equals( WO_REPLACEMENT_MARKER ) ) {
-						if( log.isDebugEnabled() ) {
-							log.debug( "Replaced end tag for '" + tokenParts[0].substring( 2 ) + "' with 'wo' endtag" );
+						if( logger.isDebugEnabled() ) {
+							logger.debug( "Replaced end tag for '" + tokenParts[0].substring( 2 ) + "' with 'wo' endtag" );
 						}
 						token = "</wo";
 					}
@@ -251,8 +252,8 @@ public class NGHelperFunctionHTMLParser {
 
 	private void didParseText() {
 		if( _contentText != null ) {
-			if( log.isDebugEnabled() ) {
-				log.debug( "Parsed Text (" + _contentText.length() + ") : " + _contentText );
+			if( logger.isDebugEnabled() ) {
+				logger.debug( "Parsed Text (" + _contentText.length() + ") : " + _contentText );
 			}
 			if( _contentText.length() > 0 ) {
 				_parserDelegate.didParseText( _contentText.toString(), this );
@@ -263,8 +264,8 @@ public class NGHelperFunctionHTMLParser {
 
 	private void didParseOpeningWebObjectTag() throws NGHelperFunctionHTMLFormatException {
 		if( _contentText != null ) {
-			if( log.isDebugEnabled() ) {
-				log.debug( "Parsed Opening WebObject (" + _contentText.length() + ") : " + _contentText );
+			if( logger.isDebugEnabled() ) {
+				logger.debug( "Parsed Opening WebObject (" + _contentText.length() + ") : " + _contentText );
 			}
 			if( _contentText.length() > 0 ) {
 				_parserDelegate.didParseOpeningWebObjectTag( _contentText.toString(), this );
@@ -275,8 +276,8 @@ public class NGHelperFunctionHTMLParser {
 
 	private void didParseClosingWebObjectTag() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException, ClassNotFoundException {
 		if( _contentText != null ) {
-			if( log.isDebugEnabled() ) {
-				log.debug( "Parsed Closing WebObject (" + _contentText.length() + ") : " + _contentText );
+			if( logger.isDebugEnabled() ) {
+				logger.debug( "Parsed Closing WebObject (" + _contentText.length() + ") : " + _contentText );
 			}
 			if( _contentText.length() > 0 ) {
 				_parserDelegate.didParseClosingWebObjectTag( _contentText.toString(), this );
@@ -287,8 +288,8 @@ public class NGHelperFunctionHTMLParser {
 
 	private void didParseComment() {
 		if( _contentText != null ) {
-			if( log.isDebugEnabled() ) {
-				log.debug( "Parsed Comment (" + _contentText.length() + ") : " + _contentText );
+			if( logger.isDebugEnabled() ) {
+				logger.debug( "Parsed Comment (" + _contentText.length() + ") : " + _contentText );
 			}
 			if( _contentText.length() > 0 ) {
 				_parserDelegate.didParseComment( _contentText.toString(), this );

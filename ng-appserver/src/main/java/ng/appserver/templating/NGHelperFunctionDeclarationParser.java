@@ -17,7 +17,7 @@ import ng.appserver.NGConstantValueAssociation;
 
 public class NGHelperFunctionDeclarationParser {
 
-	public static Logger log = LoggerFactory.getLogger( NGHelperFunctionDeclarationParser.class );
+	private static Logger logger = LoggerFactory.getLogger( NGHelperFunctionDeclarationParser.class );
 
 	private final Map<String, String> _quotedStrings = new HashMap<>();
 	private static final int STATE_OUTSIDE = 0;
@@ -78,7 +78,7 @@ public class NGHelperFunctionDeclarationParser {
 			while( true );
 		}
 		catch( NoSuchElementException e ) {
-			log.debug( "Parsing failed.", e );
+			logger.debug( "Parsing failed.", e );
 		}
 		return stringbuffer.toString();
 	}
@@ -121,7 +121,7 @@ public class NGHelperFunctionDeclarationParser {
 			}
 		}
 		catch( NoSuchElementException e ) {
-			log.debug( "Parsing failed.", e );
+			logger.debug( "Parsing failed.", e );
 		}
 		return declarationWithoutCommentsBuffer.toString();
 	}
@@ -332,7 +332,7 @@ public class NGHelperFunctionDeclarationParser {
 			}
 		}
 		catch( NoSuchElementException e ) {
-			log.debug( "Failed to parse.", e );
+			logger.debug( "Failed to parse.", e );
 		}
 		return declarations;
 	}
