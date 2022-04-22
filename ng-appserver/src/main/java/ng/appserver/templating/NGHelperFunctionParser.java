@@ -53,7 +53,7 @@ public class NGHelperFunctionParser {
 	/**
 	 * Indicates if inline bindings (<wo: ...> tags in the HTML) are allowed. Obviously, this defaults to true.
 	 */
-	public static boolean allowInlineBindings() {
+	private static boolean allowInlineBindings() {
 		return true;
 	}
 
@@ -113,7 +113,7 @@ public class NGHelperFunctionParser {
 		_currentWebObjectTag.addChildElement( text );
 	}
 
-	protected NGDeclaration parseInlineBindings( String tag, int colonIndex ) throws NGHelperFunctionHTMLFormatException {
+	private NGDeclaration parseInlineBindings( String tag, int colonIndex ) throws NGHelperFunctionHTMLFormatException {
 		StringBuffer keyBuffer = new StringBuffer();
 		StringBuffer valueBuffer = new StringBuffer();
 		StringBuffer elementTypeBuffer = new StringBuffer();
@@ -218,7 +218,7 @@ public class NGHelperFunctionParser {
 		return declaration;
 	}
 
-	protected void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, Map<String, NGAssociation> bindings ) throws NGHelperFunctionHTMLFormatException {
+	private void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, Map<String, NGAssociation> bindings ) throws NGHelperFunctionHTMLFormatException {
 		String key = keyBuffer.toString().trim();
 		String value = valueBuffer.toString().trim();
 		Map<String, String> quotedStrings;
@@ -252,7 +252,7 @@ public class NGHelperFunctionParser {
 		bindings.put( key, association );
 	}
 
-	protected String prettyDeclaration( NGDeclaration declaration ) {
+	private String prettyDeclaration( NGDeclaration declaration ) {
 		StringBuilder declarationStr = new StringBuilder();
 
 		if( declaration == null ) {
@@ -298,12 +298,12 @@ public class NGHelperFunctionParser {
 		return currentWebObjectTemplate;
 	}
 
-	protected boolean isInline( NGHTMLWebObjectTag tag ) {
+	private boolean isInline( NGHTMLWebObjectTag tag ) {
 		String name = tag.name();
 		return name != null && name.startsWith( "_" ) && name.length() > 1 && name.indexOf( '_', 1 ) != -1;
 	}
 
-	protected String componentName( final NGHTMLWebObjectTag tag ) {
+	private String componentName( final NGHTMLWebObjectTag tag ) {
 		String name = tag.name();
 
 		// This goofiness reparses back out inline binding names
