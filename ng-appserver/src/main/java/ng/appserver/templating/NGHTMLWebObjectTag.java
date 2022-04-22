@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import ng.appserver.NGApplication;
@@ -131,7 +132,7 @@ public class NGHTMLWebObjectTag {
 		NGComponentReference wocomponentreference = null;
 		NGComponentDefinition wocomponentdefinition = NGApplication.application()._componentDefinition( s, languages );
 		if( wocomponentdefinition != null ) {
-			_NSDictionary<String, NGAssociation> nsdictionary = wodeclaration.associations();
+			Map<String, NGAssociation> nsdictionary = wodeclaration.associations();
 			wocomponentreference = wocomponentdefinition.componentReferenceWithAssociations( nsdictionary, woelement );
 		}
 		else {

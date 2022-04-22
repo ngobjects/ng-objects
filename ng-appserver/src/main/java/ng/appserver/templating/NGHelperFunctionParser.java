@@ -3,6 +3,7 @@ package ng.appserver.templating;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,7 +232,7 @@ public class NGHelperFunctionParser {
 	}
 
 	protected void processDeclaration( NGDeclaration declaration ) {
-		final _NSDictionary<String, NGAssociation> associations = declaration.associations();
+		final Map<String, NGAssociation> associations = declaration.associations();
 		final Enumeration<String> bindingNameEnum = Collections.enumeration( associations.keySet() );
 
 		while( bindingNameEnum.hasMoreElements() ) {

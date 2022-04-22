@@ -1,14 +1,16 @@
 package ng.appserver.templating;
 
+import java.util.Map;
+
 import ng.appserver.NGAssociation;
 
 public class NGDeclaration {
 
 	final String _name;
 	final String _type;
-	final _NSDictionary<String, NGAssociation> _associations;
+	final Map<String, NGAssociation> _associations;
 
-	public NGDeclaration( String aName, String aType, _NSDictionary<String, NGAssociation> theAssocations ) {
+	public NGDeclaration( String aName, String aType, Map<String, NGAssociation> theAssocations ) {
 		_name = aName;
 		_type = aType;
 		_associations = theAssocations;
@@ -22,7 +24,7 @@ public class NGDeclaration {
 		return _type;
 	}
 
-	public _NSDictionary<String, NGAssociation> associations() {
+	public Map<String, NGAssociation> associations() {
 		return _associations;
 	}
 }
