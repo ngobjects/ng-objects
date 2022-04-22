@@ -38,10 +38,6 @@ public class NGHelperFunctionHTMLParser {
 		_contentText = new StringBuffer( 128 );
 	}
 
-	public static void setParseStandardTags( boolean flag ) {
-		_parseStandardTags = flag;
-	}
-
 	public void parseHTML() throws NGHelperFunctionHTMLFormatException, NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
 		_stackDict = new HashMap<>();
 		StringTokenizer templateTokenizer = new StringTokenizer( _unparsedTemplate, "<" );
