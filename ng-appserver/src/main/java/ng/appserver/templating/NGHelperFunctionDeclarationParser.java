@@ -36,7 +36,7 @@ public class NGHelperFunctionDeclarationParser {
 		return parseDeclarationsWithoutComments( strWithoutComments );
 	}
 
-	private String _removeOldStyleCommentsFromString( String str ) {
+	private static String _removeOldStyleCommentsFromString( String str ) {
 		StringBuilder stringb = new StringBuilder( 100 );
 		StringBuilder stringb1 = new StringBuilder( 100 );
 		StringTokenizer tokenizer = new StringTokenizer( str, "/", true );
