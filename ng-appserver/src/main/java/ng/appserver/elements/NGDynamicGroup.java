@@ -20,11 +20,11 @@ public class NGDynamicGroup extends NGDynamicElement {
 	public NGDynamicGroup( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( name, associations, template );
 		_children = new ArrayList<>();
-		this._initChildrenFromTemplate( template );
+		_addChildren( template );
 	}
 
-	public NGDynamicGroup( String _name, Object associations, List children ) {
-		this( _name, (Map<String, NGAssociation>)associations, (NGElement)null );
+	public NGDynamicGroup( String _name, Map<String, NGAssociation> associations, List<NGElement> children ) {
+		this( _name, associations, (NGElement)null );
 		_children = children;
 	}
 
@@ -46,7 +46,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 		return _children;
 	}
 
-	private void _initChildrenFromTemplate( NGElement template ) {
+	private void _addChildren( final NGElement template ) {
 		List<NGElement> children = null;
 
 		if( template != null ) {
@@ -59,10 +59,10 @@ public class NGDynamicGroup extends NGDynamicElement {
 			}
 		}
 
-		this._children = null;
+		_children = null;
 
 		if( children != null && children.size() > 0 ) {
-			this._children = children;
+			_children = children;
 		}
 	}
 }
