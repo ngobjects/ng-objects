@@ -305,18 +305,21 @@ public class NGHelperFunctionParser {
 		return name != null && name.startsWith( "_" ) && name.length() > 1 && name.indexOf( '_', 1 ) != -1;
 	}
 
-	protected String componentName( NGHTMLWebObjectTag tag ) {
+	protected String componentName( final NGHTMLWebObjectTag tag ) {
 		String name = tag.name();
+
 		// This goofiness reparses back out inline binding names
 		if( name == null ) {
 			name = "[none]";
 		}
 		else if( isInline( tag ) ) {
 			int secondUnderscoreIndex = name.indexOf( '_', 1 );
+
 			if( secondUnderscoreIndex != -1 ) {
 				name = name.substring( 1, secondUnderscoreIndex );
 			}
 		}
+
 		return name;
 	}
 
