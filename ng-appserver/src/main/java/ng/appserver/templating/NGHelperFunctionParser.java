@@ -23,17 +23,6 @@ public class NGHelperFunctionParser {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGHelperFunctionParser.class );
 
-	/**
-	 * Indicates if WODebug attribute debugging should be enabled.
-	 * Obviously not a good location to set this.
-	 */
-	private static boolean _debugSupport = false;
-
-	/**
-	 * Name of an attribute that can be set to enable debugging.
-	 */
-	private static String DEBUG_MARKER = "WODebug";
-
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
 	private NGHTMLWebObjectTag _currentWebObjectTag = new NGHTMLWebObjectTag(); // FIXME: Do we need to set this on initialization?
@@ -323,22 +312,6 @@ public class NGHelperFunctionParser {
 	}
 
 	public static NGDeclaration createDeclaration( String declarationName, String declarationType, Map<String, NGAssociation> associations ) {
-		final NGDeclaration declaration = new NGDeclaration( declarationName, declarationType, associations );
-
-		// FIXME: This debug shit is kind of crazy. Can't we remove it?
-		if( NGHelperFunctionParser._debugSupport && associations != null && associations.get( DEBUG_MARKER ) == null ) {
-			associations.put( DEBUG_MARKER, new NGConstantValueAssociation( Boolean.TRUE ) );
-
-			final Enumeration<String> associationsEnum = Collections.enumeration( associations.keySet() );
-
-			while( associationsEnum.hasMoreElements() ) {
-				final String bindingName = associationsEnum.nextElement();
-				final NGAssociation association = associations.get( bindingName );
-				association.setDebugEnabledForBinding( bindingName, declarationName, declarationType );
-				association._setDebuggingEnabled( false );
-			}
-		}
-
-		return declaration;
+		return new NGDeclaration( declarationName, declarationType, associations );
 	}
 }
