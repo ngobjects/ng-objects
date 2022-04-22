@@ -15,8 +15,13 @@ import ng.appserver.NGElement;
 import ng.appserver.NGKeyValueAssociation;
 import ng.appserver.elements.NGHTMLCommentString;
 
+/**
+ * The primary entry point for component parsing
+ */
+
 public class NGHelperFunctionParser {
-	private static final Logger log = LoggerFactory.getLogger( NGHelperFunctionParser.class );
+
+	private static final Logger logger = LoggerFactory.getLogger( NGHelperFunctionParser.class );
 
 	public static final String APP_FRAMEWORK_NAME = "app";
 
@@ -40,6 +45,9 @@ public class NGHelperFunctionParser {
 		_currentWebObjectTag = new NGHTMLWebObjectTag();
 	}
 
+	/**
+	 * Indicates if inline bindings (<wo: ...> tags in the HTML) are allowed. Obviously, this defaults to true.
+	 */
 	public static boolean allowInlineBindings() {
 		return true;
 	}
@@ -72,7 +80,7 @@ public class NGHelperFunctionParser {
 			}
 		}
 		_currentWebObjectTag = new NGHTMLWebObjectTag( s, _currentWebObjectTag );
-		log.debug( "Inserted WebObject with Name '{}'.", _currentWebObjectTag.name() );
+		logger.debug( "Inserted WebObject with Name '{}'.", _currentWebObjectTag.name() );
 	}
 
 	public void didParseClosingWebObjectTag( String s, NGHelperFunctionHTMLParser htmlParser ) throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
@@ -302,7 +310,7 @@ public class NGHelperFunctionParser {
 					newKeyPath.append( otherParams );
 				}
 				newKeyPath.append( ')' );
-				log.debug( "Converted {} into {}", originalKeyPath, newKeyPath );
+				logger.debug( "Converted {} into {}", originalKeyPath, newKeyPath );
 				association = new NGConstantValueAssociation( newKeyPath.toString() );
 			}
 		}
