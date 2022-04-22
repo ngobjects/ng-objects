@@ -23,33 +23,6 @@ public class NGHTMLWebObjectTag {
 	private NGHTMLWebObjectTag _parent;
 	private List<Object> _children;
 
-	private void extractName( String s ) throws NGHelperFunctionHTMLFormatException {
-
-		StringTokenizer stringtokenizer = new StringTokenizer( s, "=" );
-		if( stringtokenizer.countTokens() != 2 ) {
-			throw new NGHelperFunctionHTMLFormatException( "<WOHTMLWebObjectTag cannot initialize WebObject tag " + s + "> . It has no NAME=... parameter" );
-		}
-
-		stringtokenizer.nextToken();
-		String s1 = stringtokenizer.nextToken();
-
-		int i = s1.indexOf( '"' );
-		if( i != -1 ) {
-			int j = s1.lastIndexOf( '"' );
-			if( j > i ) {
-				_name = s1.substring( i + 1, j );
-			}
-		}
-		else {
-			StringTokenizer stringtokenizer1 = new StringTokenizer( s1 );
-			_name = stringtokenizer1.nextToken();
-		}
-
-		if( _name == null ) {
-			throw new NGHelperFunctionHTMLFormatException( "<WOHTMLWebObjectTag cannot initialize WebObject tag " + s + "> . Failed parsing NAME parameter" );
-		}
-	}
-
 	public NGHTMLWebObjectTag() {
 		_name = null;
 	}
@@ -120,6 +93,33 @@ public class NGHTMLWebObjectTag {
 			_children = new ArrayList<>();
 		}
 		_children.add( obj );
+	}
+
+	private void extractName( String s ) throws NGHelperFunctionHTMLFormatException {
+
+		StringTokenizer stringtokenizer = new StringTokenizer( s, "=" );
+		if( stringtokenizer.countTokens() != 2 ) {
+			throw new NGHelperFunctionHTMLFormatException( "<WOHTMLWebObjectTag cannot initialize WebObject tag " + s + "> . It has no NAME=... parameter" );
+		}
+
+		stringtokenizer.nextToken();
+		String s1 = stringtokenizer.nextToken();
+
+		int i = s1.indexOf( '"' );
+		if( i != -1 ) {
+			int j = s1.lastIndexOf( '"' );
+			if( j > i ) {
+				_name = s1.substring( i + 1, j );
+			}
+		}
+		else {
+			StringTokenizer stringtokenizer1 = new StringTokenizer( s1 );
+			_name = stringtokenizer1.nextToken();
+		}
+
+		if( _name == null ) {
+			throw new NGHelperFunctionHTMLFormatException( "<WOHTMLWebObjectTag cannot initialize WebObject tag " + s + "> . Failed parsing NAME parameter" );
+		}
 	}
 
 	public NGElement dynamicElement( Map<String, NGDeclaration> declarations, List<String> languages ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {

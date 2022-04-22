@@ -4,6 +4,10 @@ import java.util.Map;
 
 import ng.appserver.NGAssociation;
 
+/**
+ * Represents a declaration in a .wod file
+ */
+
 public class NGDeclaration {
 
 	final String _name;
