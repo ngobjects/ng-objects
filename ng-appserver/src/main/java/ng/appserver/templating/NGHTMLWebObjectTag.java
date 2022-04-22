@@ -41,7 +41,7 @@ public class NGHTMLWebObjectTag {
 	}
 
 	public NGElement template() {
-		List<Object> nsmutablearray = null;
+		List nsmutablearray = null;
 
 		if( _children == null ) {
 			return null;
