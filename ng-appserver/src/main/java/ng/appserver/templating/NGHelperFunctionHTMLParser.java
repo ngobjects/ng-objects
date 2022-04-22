@@ -31,11 +31,6 @@ public class NGHelperFunctionHTMLParser {
 	private static boolean _parseStandardTags = false;
 	private Map<String, Stack<String>> _stackDict;
 
-	static {
-		// 		FIXME: Disabled on switch to slf4j // Hugi 2022-01-05
-		//		WOHelperFunctionHTMLParser.log.setLevel(Level.WARN);
-	}
-
 	public NGHelperFunctionHTMLParser( NGHelperFunctionParser parserDelegate, String unparsedTemplate ) {
 		_parserDelegate = parserDelegate;
 		_unparsedTemplate = unparsedTemplate;
