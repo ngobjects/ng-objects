@@ -146,33 +146,19 @@ public class NGHTMLWebObjectTag {
 		if( wodeclaration != null ) {
 			String s1 = wodeclaration.type();
 			if( s1 != null ) {
-				if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-					_NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for " + s1 + " in the java runtime." );
-				}
 				Class class1 = _NGUtilities.classWithName( s1 );
 				if( class1 == null ) {
-					if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-						_NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for com.webobjects.appserver._private." + s1 + " ." );
-					}
 					class1 = _NGUtilities.lookForClassInAllBundles( s1 );
 					if( class1 == null ) {
-						_NSLog.err.appendln( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
+						//						logger.info( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
 					}
-					else
-
-					if( !(NGDynamicElement.class).isAssignableFrom( class1 ) ) {
+					else if( !(NGDynamicElement.class).isAssignableFrom( class1 ) ) {
 						class1 = null;
 					}
 				}
 
 				if( class1 != null ) {
-					if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-						_NSLog.debug.appendln( "<WOHTMLWebObjectTag> Will initialize object of class " + s1 );
-					}
 					if( (NGComponent.class).isAssignableFrom( class1 ) ) {
-						if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-							_NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for " + s1 + " in the Compiled Components." );
-						}
 						woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, nsarray );
 					}
 					else {
@@ -180,9 +166,6 @@ public class NGHTMLWebObjectTag {
 					}
 				}
 				else {
-					if( _NSLog.debugLoggingAllowedForLevelAndGroups( 3, 8388608L ) ) {
-						_NSLog.debug.appendln( "<WOHTMLWebObjectTag> will look for " + s1 + " in the Frameworks." );
-					}
 					woelement1 = _componentReferenceWithClassNameDeclarationAndTemplate( s1, wodeclaration, woelement, nsarray );
 				}
 			}
