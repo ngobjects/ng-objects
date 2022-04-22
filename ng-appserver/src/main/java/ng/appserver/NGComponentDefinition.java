@@ -50,8 +50,8 @@ public class NGComponentDefinition {
 	 */
 	public NGElement template() {
 		try {
-			final String htmlTemplateString = NGComponentTemplateParser.loadTemplateString( _name );
-			final String wodString = "";
+			final String htmlTemplateString = NGComponentTemplateParser.loadHTMLTemplateString( _name );
+			final String wodString = NGComponentTemplateParser.loadWODTemplateString( _name );
 			final List<String> languages = Collections.emptyList();
 			return new NGHelperFunctionParser( htmlTemplateString, wodString, languages ).parse();
 		}

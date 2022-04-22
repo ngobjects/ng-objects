@@ -12,10 +12,27 @@ public class NGComponentTemplateParser {
 	/**
 	 * @return The string template for the named component
 	 */
-	public static String loadTemplateString( final String templateName ) {
+	public static String loadHTMLTemplateString( final String templateName ) {
 		Objects.requireNonNull( templateName );
 
 		final String htmlTemplateFilename = templateName + ".wo/" + templateName + ".html";
+
+		final Optional<byte[]> templateBytes = NGUtils.readComponentResource( htmlTemplateFilename );
+
+		if( templateBytes.isEmpty() ) {
+			throw new RuntimeException( "Template not found" );
+		}
+
+		return new String( templateBytes.get(), StandardCharsets.UTF_8 );
+	}
+
+	/**
+	 * @return The string template for the named component
+	 */
+	public static String loadWODTemplateString( final String templateName ) {
+		Objects.requireNonNull( templateName );
+
+		final String htmlTemplateFilename = templateName + ".wo/" + templateName + ".wod";
 
 		final Optional<byte[]> templateBytes = NGUtils.readComponentResource( htmlTemplateFilename );
 
@@ -32,6 +49,6 @@ public class NGComponentTemplateParser {
 	public static NGElement parseTemplate( final String templateName ) {
 		Objects.requireNonNull( templateName );
 
-		return new NGHTMLBareString( loadTemplateString( templateName ) );
+		return new NGHTMLBareString( loadHTMLTemplateString( templateName ) );
 	}
 }
