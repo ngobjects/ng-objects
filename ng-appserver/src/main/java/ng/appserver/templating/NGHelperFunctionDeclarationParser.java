@@ -118,7 +118,7 @@ public class NGHelperFunctionDeclarationParser {
 					}
 					String quotedStringKey = NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.size();
 					token = token.replace( NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
-					_quotedStrings.setObjectForKey( token, quotedStringKey );
+					_quotedStrings.put( quotedStringKey, token );
 					declarationWithoutCommentsBuffer.append( quotedStringKey );
 				}
 				else {
@@ -158,7 +158,7 @@ public class NGHelperFunctionDeclarationParser {
 			}
 			_NSMutableDictionary associations = _associationsForDictionaryString( declarationHeader, declarationBody );
 			declaration = NGHelperFunctionParser.createDeclaration( tagName, type, associations );
-			declarations.setObjectForKey( declaration, tagName );
+			declarations.put( tagName, declaration );
 		}
 
 		return declarations;
@@ -198,10 +198,10 @@ public class NGHelperFunctionDeclarationParser {
 				NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, _quotedStrings );
 				Object quotedString = _quotedStrings.get( key );
 				if( quotedString != null ) {
-					associations.setObjectForKey( association, quotedString );
+					associations.put( quotedString, association );
 				}
 				else {
-					associations.setObjectForKey( association, key );
+					associations.put( key, association );
 				}
 			}
 		}
@@ -314,7 +314,7 @@ public class NGHelperFunctionDeclarationParser {
 					if( declarationWithoutComment.startsWith( ";" ) ) {
 						declarationWithoutComment = declarationWithoutComment.substring( 1 );
 					}
-					declarations.setObjectForKey( "{" + token + "}", declarationWithoutComment.trim() );
+					declarations.put( declarationWithoutComment.trim(), "{" + token + "}" );
 					declarationWithoutCommentBuffer.setLength( 0 );
 				}
 				else {

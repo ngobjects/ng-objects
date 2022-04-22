@@ -201,12 +201,12 @@ public class NGHelperFunctionHTMLParser {
 						// create one and push a marker
 						stack = new Stack();
 						stack.push( WO_REPLACEMENT_MARKER );
-						_stackDict.setObjectForKey( stack, tokenPart );
+						_stackDict.put( tokenPart, stack );
 					}
 					else {
 						// just push a marker
 						stack.push( WO_REPLACEMENT_MARKER );
-						_stackDict.setObjectForKey( stack, tokenPart );
+						_stackDict.put( tokenPart, stack );
 					}
 				}
 			}
@@ -215,7 +215,7 @@ public class NGHelperFunctionHTMLParser {
 				Stack stack = (Stack)_stackDict.get( tokenPart );
 				if( stack != null ) {
 					stack.push( tokenPart );
-					_stackDict.setObjectForKey( stack, tokenPart );
+					_stackDict.put( tokenPart, stack );
 				}
 			}
 			else if( token.startsWith( "</" ) ) {

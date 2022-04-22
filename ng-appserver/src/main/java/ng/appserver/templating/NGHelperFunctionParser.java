@@ -176,7 +176,7 @@ public class NGHelperFunctionParser {
 			// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
 			// as the elementName binding
 			elementType = elementType.replaceAll( WO_REPLACEMENT_MARKER, "" );
-			associations.setObjectForKey( NGHelperFunctionAssociation.associationWithValue( elementType ), "elementName" );
+			associations.put( "elementName", NGHelperFunctionAssociation.associationWithValue( elementType ) );
 			elementType = "WOGenericContainer";
 		}
 		String elementName;
@@ -192,7 +192,7 @@ public class NGHelperFunctionParser {
 		else {
 			declaration = tagProcessor.createDeclaration( elementName, elementType, associations );
 		}
-		_declarations.setObjectForKey( declaration, elementName );
+		_declarations.put( elementName, declaration );
 		processDeclaration( declaration );
 		return declaration;
 	}
@@ -227,7 +227,7 @@ public class NGHelperFunctionParser {
 			quotedStrings = new _NSDictionary();
 		}
 		NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, quotedStrings );
-		bindings.setObjectForKey( association, key );
+		bindings.put( key, association );
 	}
 
 	protected void processDeclaration( NGDeclaration declaration ) {
@@ -238,7 +238,7 @@ public class NGHelperFunctionParser {
 			NGAssociation association = (NGAssociation)associations.get( bindingName );
 			NGAssociation helperAssociation = parserHelperAssociation( association );
 			if( helperAssociation != association ) {
-				associations.setObjectForKey( helperAssociation, bindingName );
+				associations.put( bindingName, helperAssociation );
 			}
 		}
 	}
