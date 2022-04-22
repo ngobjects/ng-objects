@@ -140,7 +140,7 @@ public class NGHelperFunctionDeclarationParser {
 		_NSDictionary rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
 		String tagName;
 		NGDeclaration declaration;
-		Enumeration rawDeclarationHeaderEnum = rawDeclarations.keyEnumerator();
+		Enumeration rawDeclarationHeaderEnum = Collections.enumeration( rawDeclarations.keySet() );
 		while( rawDeclarationHeaderEnum.hasMoreElements() ) {
 			String declarationHeader = (String)rawDeclarationHeaderEnum.nextElement();
 			String declarationBody = (String)rawDeclarations.get( declarationHeader );

@@ -1,5 +1,6 @@
 package ng.appserver.templating;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
@@ -232,7 +233,7 @@ public class NGHelperFunctionParser {
 
 	protected void processDeclaration( NGDeclaration declaration ) {
 		_NSDictionary associations = declaration.associations();
-		Enumeration bindingNameEnum = associations.keyEnumerator();
+		Enumeration bindingNameEnum = Collections.enumeration( associations.keySet() );
 		while( bindingNameEnum.hasMoreElements() ) {
 			String bindingName = (String)bindingNameEnum.nextElement();
 			NGAssociation association = (NGAssociation)associations.get( bindingName );
@@ -309,7 +310,7 @@ public class NGHelperFunctionParser {
 		else {
 			declarationStr.append( "Component Type = " + declaration.type() );
 			declarationStr.append( ", Bindings = { " );
-			Enumeration keyEnum = declaration.associations().keyEnumerator();
+			Enumeration keyEnum = Collections.enumeration( declaration.associations().keySet() );
 			while( keyEnum.hasMoreElements() ) {
 				String key = (String)keyEnum.nextElement();
 				Object assoc = declaration.associations().get( key );
@@ -392,7 +393,7 @@ public class NGHelperFunctionParser {
 
 		if( NGHelperFunctionParser._debugSupport && associations != null /*&& associations.objectForKey( NGHTMLAttribute.Debug ) == null */ ) {
 			//associations.setObjectForKey(new WOConstantValueAssociation(Boolean.TRUE), WOHTMLAttribute.Debug);
-			Enumeration associationsEnum = associations.keyEnumerator();
+			Enumeration associationsEnum = Collections.enumeration( associations.keySet() );
 			while( associationsEnum.hasMoreElements() ) {
 				String bindingName = (String)associationsEnum.nextElement();
 				NGAssociation association = (NGAssociation)associations.get( bindingName );
