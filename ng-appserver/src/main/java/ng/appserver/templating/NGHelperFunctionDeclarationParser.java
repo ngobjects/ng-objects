@@ -14,19 +14,19 @@ public class NGHelperFunctionDeclarationParser {
 
 	public static Logger log = LoggerFactory.getLogger( NGHelperFunctionDeclarationParser.class );
 
-	private _NSMutableDictionary _quotedStrings;
+	private _NSDictionary _quotedStrings;
 	private static final int STATE_OUTSIDE = 0;
 	private static final int STATE_INSIDE_COMMENT = 2;
 	private static final String ESCAPED_QUOTE_STRING = "_WO_ESCAPED_QUOTE_";
 	private static final String QUOTED_STRING_KEY = "_WODP_";
 
 	public NGHelperFunctionDeclarationParser() {
-		_quotedStrings = new _NSMutableDictionary();
+		_quotedStrings = new _NSDictionary();
 	}
 
-	public static _NSMutableDictionary declarationsWithString( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
+	public static _NSDictionary declarationsWithString( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
 		NGHelperFunctionDeclarationParser declarationParser = new NGHelperFunctionDeclarationParser();
-		_NSMutableDictionary declarations = declarationParser.parseDeclarations( declarationStr );
+		_NSDictionary declarations = declarationParser.parseDeclarations( declarationStr );
 		return declarations;
 	}
 
@@ -35,10 +35,10 @@ public class NGHelperFunctionDeclarationParser {
 		return "<WOHelperFunctionDeclarationParser quotedStrings = " + _quotedStrings.toString() + ">";
 	}
 
-	public _NSMutableDictionary parseDeclarations( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
+	public _NSDictionary parseDeclarations( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
 		String strWithoutComments = _removeOldStyleCommentsFromString( declarationStr );
 		strWithoutComments = _removeNewStyleCommentsAndQuotedStringsFromString( strWithoutComments );
-		_NSMutableDictionary declarations = parseDeclarationsWithoutComments( strWithoutComments );
+		_NSDictionary declarations = parseDeclarationsWithoutComments( strWithoutComments );
 		return declarations;
 	}
 
@@ -132,9 +132,9 @@ public class NGHelperFunctionDeclarationParser {
 		return declarationWithoutCommentsBuffer.toString();
 	}
 
-	private _NSMutableDictionary parseDeclarationsWithoutComments( String declarationWithoutComment ) throws NGHelperFunctionDeclarationFormatException {
-		_NSMutableDictionary declarations = new _NSMutableDictionary();
-		_NSMutableDictionary rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
+	private _NSDictionary parseDeclarationsWithoutComments( String declarationWithoutComment ) throws NGHelperFunctionDeclarationFormatException {
+		_NSDictionary declarations = new _NSDictionary();
+		_NSDictionary rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
 		String tagName;
 		NGDeclaration declaration;
 		Enumeration rawDeclarationHeaderEnum = rawDeclarations.keyEnumerator();
@@ -156,7 +156,7 @@ public class NGHelperFunctionDeclarationParser {
 			if( type.length() == 0 ) {
 				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing element name for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
-			_NSMutableDictionary associations = _associationsForDictionaryString( declarationHeader, declarationBody );
+			_NSDictionary associations = _associationsForDictionaryString( declarationHeader, declarationBody );
 			declaration = NGHelperFunctionParser.createDeclaration( tagName, type, associations );
 			declarations.put( tagName, declaration );
 		}
@@ -164,8 +164,8 @@ public class NGHelperFunctionDeclarationParser {
 		return declarations;
 	}
 
-	private _NSMutableDictionary _associationsForDictionaryString( String declarationHeader, String declarationBody ) throws NGHelperFunctionDeclarationFormatException {
-		_NSMutableDictionary associations = new _NSMutableDictionary();
+	private _NSDictionary _associationsForDictionaryString( String declarationHeader, String declarationBody ) throws NGHelperFunctionDeclarationFormatException {
+		_NSDictionary associations = new _NSDictionary();
 		String trimmedDeclarationBody = declarationBody.trim();
 		if( !trimmedDeclarationBody.startsWith( "{" ) && !trimmedDeclarationBody.endsWith( "}" ) ) {
 			throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Internal inconsistency : invalid dictionary for declaration:\n" + declarationHeader + " " + declarationBody );
@@ -295,8 +295,8 @@ public class NGHelperFunctionDeclarationParser {
 		return association;
 	}
 
-	private _NSMutableDictionary _rawDeclarationsWithoutComment( String declarationStr ) {
-		_NSMutableDictionary declarations = new _NSMutableDictionary();
+	private _NSDictionary _rawDeclarationsWithoutComment( String declarationStr ) {
+		_NSDictionary declarations = new _NSDictionary();
 		StringBuilder declarationWithoutCommentBuffer = new StringBuilder( 100 );
 		StringTokenizer tokenizer = new StringTokenizer( declarationStr, "{", true );
 		try {

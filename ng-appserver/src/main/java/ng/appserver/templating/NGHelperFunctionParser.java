@@ -22,7 +22,7 @@ public class NGHelperFunctionParser {
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
 	private NGHTMLWebObjectTag _currentWebObjectTag;
-	private _NSMutableDictionary _declarations;
+	private _NSDictionary _declarations;
 	private int _inlineBindingCount;
 
 	private String _declarationString;
@@ -98,7 +98,7 @@ public class NGHelperFunctionParser {
 		StringBuffer keyBuffer = new StringBuffer();
 		StringBuffer valueBuffer = new StringBuffer();
 		StringBuffer elementTypeBuffer = new StringBuffer();
-		_NSMutableDictionary associations = new _NSMutableDictionary();
+		_NSDictionary associations = new _NSDictionary();
 		StringBuffer currentBuffer = elementTypeBuffer;
 		boolean changeBuffers = false;
 		boolean inQuote = false;
@@ -197,7 +197,7 @@ public class NGHelperFunctionParser {
 		return declaration;
 	}
 
-	protected void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, _NSMutableDictionary bindings ) throws NGHelperFunctionHTMLFormatException {
+	protected void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, _NSDictionary bindings ) throws NGHelperFunctionHTMLFormatException {
 		String key = keyBuffer.toString().trim();
 		String value = valueBuffer.toString().trim();
 		_NSDictionary quotedStrings;
@@ -231,7 +231,7 @@ public class NGHelperFunctionParser {
 	}
 
 	protected void processDeclaration( NGDeclaration declaration ) {
-		_NSMutableDictionary associations = (_NSMutableDictionary)declaration.associations();
+		_NSDictionary associations = declaration.associations();
 		Enumeration bindingNameEnum = associations.keyEnumerator();
 		while( bindingNameEnum.hasMoreElements() ) {
 			String bindingName = (String)bindingNameEnum.nextElement();
@@ -373,11 +373,11 @@ public class NGHelperFunctionParser {
 		_declarationString = value;
 	}
 
-	public _NSMutableDictionary declarations() {
+	public _NSDictionary declarations() {
 		return _declarations;
 	}
 
-	public void setDeclarations( _NSMutableDictionary value ) {
+	public void setDeclarations( _NSDictionary value ) {
 		_declarations = value;
 	}
 
@@ -387,7 +387,7 @@ public class NGHelperFunctionParser {
 		}
 	}
 
-	public static NGDeclaration createDeclaration( String declarationName, String declarationType, _NSMutableDictionary associations ) {
+	public static NGDeclaration createDeclaration( String declarationName, String declarationType, _NSDictionary associations ) {
 		NGDeclaration declaration = new NGDeclaration( declarationName, declarationType, associations );
 
 		if( NGHelperFunctionParser._debugSupport && associations != null /*&& associations.objectForKey( NGHTMLAttribute.Debug ) == null */ ) {
