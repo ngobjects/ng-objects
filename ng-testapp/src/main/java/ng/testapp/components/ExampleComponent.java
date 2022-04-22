@@ -16,4 +16,8 @@ public class ExampleComponent extends NGComponent {
 	public String someStuff() {
 		return "Jóhóhó";
 	}
+
+	public String someValue() {
+		return "Hehehe";
+	}
 }
