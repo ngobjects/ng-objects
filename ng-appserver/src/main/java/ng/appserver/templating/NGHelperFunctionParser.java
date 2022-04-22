@@ -23,9 +23,18 @@ public class NGHelperFunctionParser {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGHelperFunctionParser.class );
 
-	public static final String APP_FRAMEWORK_NAME = "app";
+	private static final String APP_FRAMEWORK_NAME = "app";
 
-	public static boolean _debugSupport;
+	/**
+	 * Indicates if WODebug attribute debugging should be enabled.
+	 * Obviously not a good location to set this.
+	 */
+	private static boolean _debugSupport = false;
+
+	/**
+	 * Name of an attribute that can be set to enable debugging.
+	 */
+	private static String DEBUG_MARKER = "WODebug";
 
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
@@ -260,10 +269,12 @@ public class NGHelperFunctionParser {
 	protected NGAssociation parserHelperAssociation( NGAssociation originalAssociation ) {
 		NGAssociation association = originalAssociation;
 		String originalKeyPath = null;
+
 		if( association instanceof NGKeyValueAssociation ) {
 			NGKeyValueAssociation kvAssociation = (NGKeyValueAssociation)association;
 			originalKeyPath = kvAssociation.keyPath();
 		}
+
 		// else if (association instanceof WOConstantValueAssociation) {
 		// WOConstantValueAssociation constantAssociation =
 		// (WOConstantValueAssociation) association;
@@ -390,7 +401,7 @@ public class NGHelperFunctionParser {
 	public static NGDeclaration createDeclaration( String declarationName, String declarationType, Map<String, NGAssociation> associations ) {
 		final NGDeclaration declaration = new NGDeclaration( declarationName, declarationType, associations );
 
-		if( NGHelperFunctionParser._debugSupport && associations != null /*&& associations.objectForKey( NGHTMLAttribute.Debug ) == null */ ) {
+		if( NGHelperFunctionParser._debugSupport && associations != null && associations.get( DEBUG_MARKER ) == null ) {
 			//associations.setObjectForKey(new WOConstantValueAssociation(Boolean.TRUE), WOHTMLAttribute.Debug);
 			final Enumeration<String> associationsEnum = Collections.enumeration( associations.keySet() );
 
