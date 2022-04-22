@@ -16,12 +16,5 @@ public abstract class NGAssociation {
 	/**
 	 * FIXME: Only added while we try out templating
 	 */
-	public boolean isValueConstant() {
-		return false;
-	}
-
-	/**
-	 * FIXME: Only added while we try out templating
-	 */
 	public void _setDebuggingEnabled( boolean b ) {}
 }
