@@ -3,12 +3,12 @@ package ng.appserver;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import ng.appserver.templating.NGHelperFunctionDeclarationFormatException;
 import ng.appserver.templating.NGHelperFunctionHTMLFormatException;
 import ng.appserver.templating.NGHelperFunctionParser;
-import ng.appserver.templating._NSDictionary;
 
 public class NGComponentDefinition {
 
@@ -60,7 +60,7 @@ public class NGComponentDefinition {
 		}
 	}
 
-	public NGComponentReference componentReferenceWithAssociations( _NSDictionary<String, NGAssociation> associations, NGElement element ) {
+	public NGComponentReference componentReferenceWithAssociations( Map<String, NGAssociation> associations, NGElement element ) {
 		return new NGComponentReference( _className, associations, element );
 	}
 }
