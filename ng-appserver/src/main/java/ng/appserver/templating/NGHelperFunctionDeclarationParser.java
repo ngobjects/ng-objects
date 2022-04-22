@@ -336,7 +336,7 @@ public class NGHelperFunctionDeclarationParser {
 		return true;
 	}
 
-	private Map<String, String> _rawDeclarationsWithoutComment( String declarationStr ) {
+	private static Map<String, String> _rawDeclarationsWithoutComment( String declarationStr ) {
 		Map<String, String> declarations = new HashMap<>();
 		StringBuilder declarationWithoutCommentBuffer = new StringBuilder( 100 );
 		StringTokenizer tokenizer = new StringTokenizer( declarationStr, "{", true );
