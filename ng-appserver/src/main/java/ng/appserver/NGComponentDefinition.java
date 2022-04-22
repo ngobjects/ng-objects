@@ -2,6 +2,7 @@ package ng.appserver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import ng.appserver.templating.NGHelperFunctionDeclarationFormatException;
@@ -41,9 +42,11 @@ public class NGComponentDefinition {
 	 * @return The parsed template for this component
 	 */
 	public NGElement template() {
-		//		return NGComponentTemplateParser.parseTemplate( _name );
 		try {
-			return new NGHelperFunctionParser( NGComponentTemplateParser.loadTemplateString( _name ), "", Collections.emptyList() ).parse();
+			final String htmlTemplateString = NGComponentTemplateParser.loadTemplateString( _name );
+			final String wodString = "";
+			final List<String> languages = Collections.emptyList();
+			return new NGHelperFunctionParser( htmlTemplateString, wodString, languages ).parse();
 		}
 		catch( ClassNotFoundException | NGHelperFunctionDeclarationFormatException | NGHelperFunctionHTMLFormatException e ) {
 			throw new RuntimeException( e );
