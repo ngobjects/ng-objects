@@ -301,7 +301,7 @@ public class NGHelperFunctionParser {
 		return currentWebObjectTemplate;
 	}
 
-	private boolean isInline( NGHTMLWebObjectTag tag ) {
+	private static boolean isInline( NGHTMLWebObjectTag tag ) {
 		String name = tag.name();
 		return name != null && name.startsWith( "_" ) && name.length() > 1 && name.indexOf( '_', 1 ) != -1;
 	}
