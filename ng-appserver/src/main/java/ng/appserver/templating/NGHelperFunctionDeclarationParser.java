@@ -281,7 +281,7 @@ public class NGHelperFunctionDeclarationParser {
 				}
 				association = NGHelperFunctionAssociation.associationWithValue( quotedString );
 			}
-			else if( _NGUtilities.isNumber( associationValue ) ) {
+			else if( isNumeric( associationValue ) ) {
 				Number number = null;
 				if( associationValue != null && associationValue.contains( "." ) ) {
 					number = Double.valueOf( associationValue );
@@ -302,6 +302,38 @@ public class NGHelperFunctionDeclarationParser {
 			}
 		}
 		return association;
+	}
+
+	private static boolean isNumeric( String string ) {
+		int length = string.length();
+		if( length == 0 ) {
+			return false;
+		}
+
+		boolean dot = false;
+		int i = 0;
+		char character = string.charAt( 0 );
+		if( (character == '-') || (character == '+') ) {
+			i = 1;
+		}
+		else if( character == '.' ) {
+			i = 1;
+			dot = true;
+		}
+
+		while( i < length ) {
+			character = string.charAt( i++ );
+			if( character == '.' ) {
+				if( dot ) {
+					return false;
+				}
+				dot = true;
+			}
+			else if( !(Character.isDigit( character )) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private Map<String, String> _rawDeclarationsWithoutComment( String declarationStr ) {

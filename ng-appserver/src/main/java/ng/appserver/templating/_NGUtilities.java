@@ -41,36 +41,4 @@ public class _NGUtilities {
 			throw new RuntimeException( e );
 		}
 	}
-
-	public static boolean isNumber( String string ) {
-		int length = string.length();
-		if( length == 0 ) {
-			return false;
-		}
-
-		boolean dot = false;
-		int i = 0;
-		char character = string.charAt( 0 );
-		if( (character == '-') || (character == '+') ) {
-			i = 1;
-		}
-		else if( character == '.' ) {
-			i = 1;
-			dot = true;
-		}
-
-		while( i < length ) {
-			character = string.charAt( i++ );
-			if( character == '.' ) {
-				if( dot ) {
-					return false;
-				}
-				dot = true;
-			}
-			else if( !(Character.isDigit( character )) ) {
-				return false;
-			}
-		}
-		return true;
-	}
 }
