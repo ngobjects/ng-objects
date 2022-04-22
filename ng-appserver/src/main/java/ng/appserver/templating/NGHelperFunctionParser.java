@@ -38,20 +38,18 @@ public class NGHelperFunctionParser {
 
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
-	private NGHTMLWebObjectTag _currentWebObjectTag;
+	private NGHTMLWebObjectTag _currentWebObjectTag = new NGHTMLWebObjectTag(); // FIXME: Do we need to set this on initialization?
 	private Map<String, NGDeclaration> _declarations;
 	private int _inlineBindingCount;
 
-	private String _declarationString;
-	private String _HTMLString;
-	private List<String> _languages;
+	private final String _HTMLString;
+	private final String _declarationString;
+	private final List<String> _languages;
 
-	public NGHelperFunctionParser( String htmlString, String declarationString, List<String> languages ) {
+	public NGHelperFunctionParser( final String htmlString, final String declarationString, final List<String> languages ) {
 		_HTMLString = htmlString;
 		_declarationString = declarationString;
 		_languages = languages;
-		_declarations = null;
-		_currentWebObjectTag = new NGHTMLWebObjectTag();
 	}
 
 	/**
@@ -64,9 +62,12 @@ public class NGHelperFunctionParser {
 	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
 
+		// FIXME: Disabling this processing since it seems only to apply to HelperFunctions // Hugi 2022-04-22
+		/*
 		for( final NGDeclaration declaration : _declarations.values() ) {
 			processDeclaration( declaration );
 		}
+		*/
 
 		return parseHTML();
 	}
@@ -206,14 +207,16 @@ public class NGHelperFunctionParser {
 		}
 		NGTagProcessor tagProcessor = NGHelperFunctionTagRegistry.tagProcessorMap().get( elementType );
 		NGDeclaration declaration;
+
 		if( tagProcessor == null ) {
 			declaration = NGHelperFunctionParser.createDeclaration( elementName, elementType, associations );
 		}
 		else {
 			declaration = tagProcessor.createDeclaration( elementName, elementType, associations );
 		}
+
 		_declarations.put( elementName, declaration );
-		processDeclaration( declaration );
+		//		processDeclaration( declaration ); FIXME: This only seems to apply to OGNL's helper functions, so we shouldn't need this // Hugi 2022-04-22
 		return declaration;
 	}
 
@@ -249,81 +252,6 @@ public class NGHelperFunctionParser {
 		}
 		NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, quotedStrings );
 		bindings.put( key, association );
-	}
-
-	protected void processDeclaration( NGDeclaration declaration ) {
-		final Map<String, NGAssociation> associations = declaration.associations();
-		final Enumeration<String> bindingNameEnum = Collections.enumeration( associations.keySet() );
-
-		while( bindingNameEnum.hasMoreElements() ) {
-			final String bindingName = bindingNameEnum.nextElement();
-			final NGAssociation association = associations.get( bindingName );
-			final NGAssociation helperAssociation = parserHelperAssociation( association );
-
-			if( helperAssociation != association ) {
-				associations.put( bindingName, helperAssociation );
-			}
-		}
-	}
-
-	protected NGAssociation parserHelperAssociation( NGAssociation originalAssociation ) {
-		NGAssociation association = originalAssociation;
-		String originalKeyPath = null;
-
-		if( association instanceof NGKeyValueAssociation ) {
-			NGKeyValueAssociation kvAssociation = (NGKeyValueAssociation)association;
-			originalKeyPath = kvAssociation.keyPath();
-		}
-
-		// else if (association instanceof WOConstantValueAssociation) {
-		// WOConstantValueAssociation constantAssociation =
-		// (WOConstantValueAssociation) association;
-		// Object constantValue = constantAssociation.valueInComponent(null);
-		// if (constantValue instanceof String) {
-		// originalKeyPath = (String) constantValue;
-		// }
-		// }
-
-		if( originalKeyPath != null ) {
-			int pipeIndex = originalKeyPath.indexOf( '|' );
-			if( pipeIndex != -1 ) {
-				String targetKeyPath = originalKeyPath.substring( 0, pipeIndex ).trim();
-				String frameworkName = APP_FRAMEWORK_NAME;
-				String helperFunctionName = originalKeyPath.substring( pipeIndex + 1 ).trim();
-				String otherParams = null;
-				int openParenIndex = helperFunctionName.indexOf( '(' );
-				if( openParenIndex != -1 ) {
-					int closeParenIndex = helperFunctionName.indexOf( ')', openParenIndex + 1 );
-					otherParams = helperFunctionName.substring( openParenIndex + 1, closeParenIndex );
-					helperFunctionName = helperFunctionName.substring( 0, openParenIndex );
-				}
-				int helperFunctionDotIndex = helperFunctionName.indexOf( '.' );
-				if( helperFunctionDotIndex != -1 ) {
-					frameworkName = helperFunctionName.substring( 0, helperFunctionDotIndex );
-					helperFunctionName = helperFunctionName.substring( helperFunctionDotIndex + 1 );
-				}
-				StringBuilder newKeyPath = new StringBuilder();
-				newKeyPath.append( '~' );
-				//				newKeyPath.append( "@" + NGHelperFunctionRegistry.class.getName() + "@registry()._helperInstanceForFrameworkNamed(#this, \"" ); // WTF?
-				newKeyPath.append( helperFunctionName );
-				newKeyPath.append( "\", \"" );
-				newKeyPath.append( targetKeyPath );
-				newKeyPath.append( "\", \"" );
-				newKeyPath.append( frameworkName );
-				newKeyPath.append( "\")." );
-				newKeyPath.append( helperFunctionName );
-				newKeyPath.append( '(' );
-				newKeyPath.append( targetKeyPath );
-				if( otherParams != null ) {
-					newKeyPath.append( ',' );
-					newKeyPath.append( otherParams );
-				}
-				newKeyPath.append( ')' );
-				logger.debug( "Converted {} into {}", originalKeyPath, newKeyPath );
-				association = new NGConstantValueAssociation( newKeyPath.toString() );
-			}
-		}
-		return association;
 	}
 
 	protected String prettyDeclaration( NGDeclaration declaration ) {
@@ -415,4 +343,73 @@ public class NGHelperFunctionParser {
 
 		return declaration;
 	}
+
+	//  FIXME: This only seems to apply to OGNL's helper functions, so we shouldn't need this // Hugi 2022-04-22
+	//	@Deprecated
+	//	private void processDeclaration( NGDeclaration declaration ) {
+	//		final Map<String, NGAssociation> associations = declaration.associations();
+	//		final Enumeration<String> bindingNameEnum = Collections.enumeration( associations.keySet() );
+	//
+	//		while( bindingNameEnum.hasMoreElements() ) {
+	//			final String bindingName = bindingNameEnum.nextElement();
+	//			final NGAssociation association = associations.get( bindingName );
+	//			final NGAssociation helperAssociation = parserHelperAssociation( association );
+	//
+	//			if( helperAssociation != association ) {
+	//				associations.put( bindingName, helperAssociation );
+	//			}
+	//		}
+	//	}
+	//
+	//	@Deprecated
+	//	private NGAssociation parserHelperAssociation( NGAssociation originalAssociation ) {
+	//		NGAssociation association = originalAssociation;
+	//		String originalKeyPath = null;
+	//
+	//		if( association instanceof NGKeyValueAssociation ) {
+	//			NGKeyValueAssociation kvAssociation = (NGKeyValueAssociation)association;
+	//			originalKeyPath = kvAssociation.keyPath();
+	//		}
+	//
+	//		if( originalKeyPath != null ) {
+	//			int pipeIndex = originalKeyPath.indexOf( '|' );
+	//			if( pipeIndex != -1 ) {
+	//				String targetKeyPath = originalKeyPath.substring( 0, pipeIndex ).trim();
+	//				String frameworkName = APP_FRAMEWORK_NAME;
+	//				String helperFunctionName = originalKeyPath.substring( pipeIndex + 1 ).trim();
+	//				String otherParams = null;
+	//				int openParenIndex = helperFunctionName.indexOf( '(' );
+	//				if( openParenIndex != -1 ) {
+	//					int closeParenIndex = helperFunctionName.indexOf( ')', openParenIndex + 1 );
+	//					otherParams = helperFunctionName.substring( openParenIndex + 1, closeParenIndex );
+	//					helperFunctionName = helperFunctionName.substring( 0, openParenIndex );
+	//				}
+	//				int helperFunctionDotIndex = helperFunctionName.indexOf( '.' );
+	//				if( helperFunctionDotIndex != -1 ) {
+	//					frameworkName = helperFunctionName.substring( 0, helperFunctionDotIndex );
+	//					helperFunctionName = helperFunctionName.substring( helperFunctionDotIndex + 1 );
+	//				}
+	//				StringBuilder newKeyPath = new StringBuilder();
+	//				newKeyPath.append( '~' );
+	//				//				newKeyPath.append( "@" + NGHelperFunctionRegistry.class.getName() + "@registry()._helperInstanceForFrameworkNamed(#this, \"" ); // WTF?
+	//				newKeyPath.append( helperFunctionName );
+	//				newKeyPath.append( "\", \"" );
+	//				newKeyPath.append( targetKeyPath );
+	//				newKeyPath.append( "\", \"" );
+	//				newKeyPath.append( frameworkName );
+	//				newKeyPath.append( "\")." );
+	//				newKeyPath.append( helperFunctionName );
+	//				newKeyPath.append( '(' );
+	//				newKeyPath.append( targetKeyPath );
+	//				if( otherParams != null ) {
+	//					newKeyPath.append( ',' );
+	//					newKeyPath.append( otherParams );
+	//				}
+	//				newKeyPath.append( ')' );
+	//				logger.debug( "Converted {} into {}", originalKeyPath, newKeyPath );
+	//				association = new NGConstantValueAssociation( newKeyPath.toString() );
+	//			}
+	//		}
+	//		return association;
+	//	}
 }
