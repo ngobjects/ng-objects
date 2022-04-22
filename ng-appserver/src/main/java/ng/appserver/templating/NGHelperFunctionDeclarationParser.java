@@ -19,6 +19,9 @@ public class NGHelperFunctionDeclarationParser {
 
 	private static Logger logger = LoggerFactory.getLogger( NGHelperFunctionDeclarationParser.class );
 
+	/**
+	 * FIXME: Why the hell is this an instance variable?
+	 */
 	private final Map<String, String> _quotedStrings = new HashMap<>();
 	private static final int STATE_OUTSIDE = 0;
 	private static final int STATE_INSIDE_COMMENT = 2;
@@ -30,7 +33,7 @@ public class NGHelperFunctionDeclarationParser {
 		return declarationParser.parseDeclarations( declarationStr );
 	}
 
-	public Map<String, NGDeclaration> parseDeclarations( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
+	private Map<String, NGDeclaration> parseDeclarations( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
 		String strWithoutComments = _removeOldStyleCommentsFromString( declarationStr );
 		strWithoutComments = _removeNewStyleCommentsAndQuotedStringsFromString( strWithoutComments );
 		return parseDeclarationsWithoutComments( strWithoutComments );
