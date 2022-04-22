@@ -18,6 +18,7 @@ import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 
 public class NGHTMLWebObjectTag {
+
 	private String _name;
 	private NGHTMLWebObjectTag _parent;
 	private List<Object> _children;
@@ -121,7 +122,7 @@ public class NGHTMLWebObjectTag {
 		_children.add( obj );
 	}
 
-	public NGElement dynamicElement( _NSDictionary<String, NGDeclaration> nsdictionary, List<String> languages ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
+	public NGElement dynamicElement( Map<String, NGDeclaration> nsdictionary, List<String> languages ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
 		String s = name();
 		NGElement woelement = template();
 		NGDeclaration wodeclaration = nsdictionary.get( s );

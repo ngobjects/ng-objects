@@ -2,6 +2,7 @@ package ng.appserver.templating;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class NGHelperFunctionParser {
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
 	private NGHTMLWebObjectTag _currentWebObjectTag;
-	private _NSDictionary<String, NGDeclaration> _declarations;
+	private Map<String, NGDeclaration> _declarations;
 	private int _inlineBindingCount;
 
 	private String _declarationString;
@@ -41,10 +42,13 @@ public class NGHelperFunctionParser {
 
 	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
+
 		for( NGDeclaration declaration : declarations().values() ) {
 			processDeclaration( declaration );
 		}
-		NGElement woelement = parseHTML();
+
+		final NGElement woelement = parseHTML();
+
 		return woelement;
 	}
 
@@ -99,7 +103,7 @@ public class NGHelperFunctionParser {
 		StringBuffer keyBuffer = new StringBuffer();
 		StringBuffer valueBuffer = new StringBuffer();
 		StringBuffer elementTypeBuffer = new StringBuffer();
-		_NSDictionary<String, NGAssociation> associations = new _NSDictionary<>();
+		Map<String, NGAssociation> associations = new HashMap<>();
 		StringBuffer currentBuffer = elementTypeBuffer;
 		boolean changeBuffers = false;
 		boolean inQuote = false;
@@ -198,10 +202,10 @@ public class NGHelperFunctionParser {
 		return declaration;
 	}
 
-	protected void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, _NSDictionary<String, NGAssociation> bindings ) throws NGHelperFunctionHTMLFormatException {
+	protected void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, Map<String, NGAssociation> bindings ) throws NGHelperFunctionHTMLFormatException {
 		String key = keyBuffer.toString().trim();
 		String value = valueBuffer.toString().trim();
-		_NSDictionary<String, String> quotedStrings;
+		Map<String, String> quotedStrings;
 		if( value.startsWith( "\"" ) ) {
 			value = value.substring( 1 );
 			if( value.endsWith( "\"" ) ) {
@@ -215,17 +219,18 @@ public class NGHelperFunctionParser {
 				if( value.endsWith( "VALID" ) ) {
 					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
 				}
-				quotedStrings = new _NSDictionary<>();
+				quotedStrings = new HashMap<>();
 			}
 			else {
 				value = value.replaceAll( "\\\\\\$", "\\$" );
 				value = value.replaceAll( "\\\"", "\"" );
-				quotedStrings = new _NSDictionary<>( value, "_WODP_0" );
+				quotedStrings = new HashMap<>();
+				quotedStrings.put( "_WODP_0", value );
 				value = "_WODP_0";
 			}
 		}
 		else {
-			quotedStrings = new _NSDictionary<>();
+			quotedStrings = new HashMap<>();
 		}
 		NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, quotedStrings );
 		bindings.put( key, association );
@@ -378,11 +383,11 @@ public class NGHelperFunctionParser {
 		_declarationString = value;
 	}
 
-	public _NSDictionary<String, NGDeclaration> declarations() {
+	public Map<String, NGDeclaration> declarations() {
 		return _declarations;
 	}
 
-	public void setDeclarations( _NSDictionary<String, NGDeclaration> value ) {
+	public void setDeclarations( Map<String, NGDeclaration> value ) {
 		_declarations = value;
 	}
 
@@ -392,7 +397,7 @@ public class NGHelperFunctionParser {
 		}
 	}
 
-	public static NGDeclaration createDeclaration( String declarationName, String declarationType, _NSDictionary<String, NGAssociation> associations ) {
+	public static NGDeclaration createDeclaration( String declarationName, String declarationType, Map<String, NGAssociation> associations ) {
 		final NGDeclaration declaration = new NGDeclaration( declarationName, declarationType, associations );
 
 		if( NGHelperFunctionParser._debugSupport && associations != null /*&& associations.objectForKey( NGHTMLAttribute.Debug ) == null */ ) {
