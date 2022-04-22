@@ -340,25 +340,25 @@ public class NGApplication {
 		return false;
 	}
 
-	public NGElement dynamicElementWithName( String aName, Map<String, NGAssociation> someAssociations, NGElement anElement, List aLanguageArray ) {
+	public NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement element, final List<String> languages ) {
 		NGElement elementInstance = null;
 
-		if( aName == null ) {
+		if( name == null ) {
 			throw new IllegalArgumentException( "<" + "bla" + ">: No name provided for dynamic element creation." );
 		}
 
-		Class<? extends NGElement> elementClass = _NGUtilities.classWithName( aName );
+		Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
 
 		if( elementClass != null && NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
 			Class[] params = new Class[] { String.class, Map.class, NGElement.class };
-			Object[] arguments = new Object[] { aName, someAssociations, anElement };
+			Object[] arguments = new Object[] { name, associations, element };
 			elementInstance = _NGUtilities.instantiateObject( elementClass, params, arguments );
 		}
 
 		if( elementInstance == null ) {
-			NGComponentDefinition componentDefinition = this._componentDefinition( aName, aLanguageArray );
+			NGComponentDefinition componentDefinition = this._componentDefinition( name, languages );
 			if( componentDefinition != null ) {
-				elementInstance = componentDefinition.componentReferenceWithAssociations( someAssociations, anElement );
+				elementInstance = componentDefinition.componentReferenceWithAssociations( associations, element );
 			}
 		}
 
