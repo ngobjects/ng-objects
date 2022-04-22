@@ -2,6 +2,7 @@ package ng.appserver.templating;
 
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,7 @@ public class NGHelperFunctionParser {
 
 	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
-		for( Enumeration e = declarations().objectEnumerator(); e.hasMoreElements(); ) {
-			NGDeclaration declaration = (NGDeclaration)e.nextElement();
+		for( NGDeclaration declaration : (Set<NGDeclaration>)declarations().values() ) {
 			processDeclaration( declaration );
 		}
 		NGElement woelement = parseHTML();
