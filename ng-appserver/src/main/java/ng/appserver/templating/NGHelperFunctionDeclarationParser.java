@@ -19,32 +19,21 @@ public class NGHelperFunctionDeclarationParser {
 
 	public static Logger log = LoggerFactory.getLogger( NGHelperFunctionDeclarationParser.class );
 
-	private final Map<String, String> _quotedStrings;
+	private final Map<String, String> _quotedStrings = new HashMap<>();
 	private static final int STATE_OUTSIDE = 0;
 	private static final int STATE_INSIDE_COMMENT = 2;
 	private static final String ESCAPED_QUOTE_STRING = "_WO_ESCAPED_QUOTE_";
 	private static final String QUOTED_STRING_KEY = "_WODP_";
 
-	public NGHelperFunctionDeclarationParser() {
-		_quotedStrings = new HashMap<>();
-	}
-
 	public static Map<String, NGDeclaration> declarationsWithString( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
 		final NGHelperFunctionDeclarationParser declarationParser = new NGHelperFunctionDeclarationParser();
-		final Map<String, NGDeclaration> declarations = declarationParser.parseDeclarations( declarationStr );
-		return declarations;
-	}
-
-	@Override
-	public String toString() {
-		return "<WOHelperFunctionDeclarationParser quotedStrings = " + _quotedStrings.toString() + ">";
+		return declarationParser.parseDeclarations( declarationStr );
 	}
 
 	public Map<String, NGDeclaration> parseDeclarations( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
 		String strWithoutComments = _removeOldStyleCommentsFromString( declarationStr );
 		strWithoutComments = _removeNewStyleCommentsAndQuotedStringsFromString( strWithoutComments );
-		final Map<String, NGDeclaration> declarations = parseDeclarationsWithoutComments( strWithoutComments );
-		return declarations;
+		return parseDeclarationsWithoutComments( strWithoutComments );
 	}
 
 	private String _removeOldStyleCommentsFromString( String str ) {
@@ -346,5 +335,10 @@ public class NGHelperFunctionDeclarationParser {
 			log.debug( "Failed to parse.", e );
 		}
 		return declarations;
+	}
+
+	@Override
+	public String toString() {
+		return "<WOHelperFunctionDeclarationParser quotedStrings = " + _quotedStrings.toString() + ">";
 	}
 }
