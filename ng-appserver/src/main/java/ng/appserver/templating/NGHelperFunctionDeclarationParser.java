@@ -38,10 +38,10 @@ public class NGHelperFunctionDeclarationParser {
 		return "<WOHelperFunctionDeclarationParser quotedStrings = " + _quotedStrings.toString() + ">";
 	}
 
-	public _NSDictionary parseDeclarations( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
+	public _NSDictionary<String, NGDeclaration> parseDeclarations( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
 		String strWithoutComments = _removeOldStyleCommentsFromString( declarationStr );
 		strWithoutComments = _removeNewStyleCommentsAndQuotedStringsFromString( strWithoutComments );
-		_NSDictionary declarations = parseDeclarationsWithoutComments( strWithoutComments );
+		_NSDictionary<String, NGDeclaration> declarations = parseDeclarationsWithoutComments( strWithoutComments );
 		return declarations;
 	}
 
@@ -135,15 +135,15 @@ public class NGHelperFunctionDeclarationParser {
 		return declarationWithoutCommentsBuffer.toString();
 	}
 
-	private _NSDictionary parseDeclarationsWithoutComments( String declarationWithoutComment ) throws NGHelperFunctionDeclarationFormatException {
-		_NSDictionary declarations = new _NSDictionary();
-		_NSDictionary rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
+	private _NSDictionary<String, NGDeclaration> parseDeclarationsWithoutComments( String declarationWithoutComment ) throws NGHelperFunctionDeclarationFormatException {
+		_NSDictionary<String, NGDeclaration> declarations = new _NSDictionary<>();
+		_NSDictionary<String, String> rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
 		String tagName;
 		NGDeclaration declaration;
-		Enumeration rawDeclarationHeaderEnum = Collections.enumeration( rawDeclarations.keySet() );
+		Enumeration<String> rawDeclarationHeaderEnum = Collections.enumeration( rawDeclarations.keySet() );
 		while( rawDeclarationHeaderEnum.hasMoreElements() ) {
-			String declarationHeader = (String)rawDeclarationHeaderEnum.nextElement();
-			String declarationBody = (String)rawDeclarations.get( declarationHeader );
+			String declarationHeader = rawDeclarationHeaderEnum.nextElement();
+			String declarationBody = rawDeclarations.get( declarationHeader );
 			int colonIndex = declarationHeader.indexOf( ':' );
 			if( colonIndex < 0 ) {
 				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing ':' for declaration:\n" + declarationHeader + " " + declarationBody );
@@ -159,7 +159,7 @@ public class NGHelperFunctionDeclarationParser {
 			if( type.length() == 0 ) {
 				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing element name for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
-			_NSDictionary associations = _associationsForDictionaryString( declarationHeader, declarationBody );
+			_NSDictionary<String, NGAssociation> associations = _associationsForDictionaryString( declarationHeader, declarationBody );
 			declaration = NGHelperFunctionParser.createDeclaration( tagName, type, associations );
 			declarations.put( tagName, declaration );
 		}
@@ -167,24 +167,29 @@ public class NGHelperFunctionDeclarationParser {
 		return declarations;
 	}
 
-	private _NSDictionary _associationsForDictionaryString( String declarationHeader, String declarationBody ) throws NGHelperFunctionDeclarationFormatException {
-		_NSDictionary associations = new _NSDictionary();
+	private _NSDictionary<String, NGAssociation> _associationsForDictionaryString( String declarationHeader, String declarationBody ) throws NGHelperFunctionDeclarationFormatException {
+		_NSDictionary<String, NGAssociation> associations = new _NSDictionary<>();
 		String trimmedDeclarationBody = declarationBody.trim();
+
 		if( !trimmedDeclarationBody.startsWith( "{" ) && !trimmedDeclarationBody.endsWith( "}" ) ) {
 			throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Internal inconsistency : invalid dictionary for declaration:\n" + declarationHeader + " " + declarationBody );
 		}
+
 		int declarationBodyLength = trimmedDeclarationBody.length();
+
 		if( declarationBodyLength <= 2 ) {
 			return associations;
 		}
+
 		trimmedDeclarationBody = trimmedDeclarationBody.substring( 1, declarationBodyLength - 1 ).trim();
-		List bindings = Arrays.asList( trimmedDeclarationBody.split( ";" ) );
-		Enumeration bindingsEnum = Collections.enumeration( bindings );
+		List<String> bindings = Arrays.asList( trimmedDeclarationBody.split( ";" ) );
+		Enumeration<String> bindingsEnum = Collections.enumeration( bindings );
+
 		do {
 			if( !bindingsEnum.hasMoreElements() ) {
 				break;
 			}
-			String binding = ((String)bindingsEnum.nextElement()).trim();
+			String binding = bindingsEnum.nextElement().trim();
 			if( binding.length() != 0 ) {
 				int equalsIndex = binding.indexOf( '=' );
 				if( equalsIndex < 0 ) {
@@ -199,7 +204,7 @@ public class NGHelperFunctionDeclarationParser {
 					throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing value in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 				NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, _quotedStrings );
-				Object quotedString = _quotedStrings.get( key );
+				String quotedString = _quotedStrings.get( key );
 				if( quotedString != null ) {
 					associations.put( quotedString, association );
 				}
@@ -216,7 +221,7 @@ public class NGHelperFunctionDeclarationParser {
 		return associations;
 	}
 
-	public static NGAssociation _associationWithKey( String associationValue, _NSDictionary quotedStrings ) {
+	public static NGAssociation _associationWithKey( String associationValue, _NSDictionary<String, String> quotedStrings ) {
 		NGAssociation association = null;
 		if( associationValue != null && associationValue.startsWith( "~" ) ) {
 			int associationValueLength = associationValue.length();
@@ -231,7 +236,7 @@ public class NGHelperFunctionDeclarationParser {
 					// do nothing
 				}
 				String wodpKey = NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY + associationValue.substring( wodpValueStartIndex, wodpValueEndIndex );
-				String quotedString = (String)quotedStrings.get( wodpKey );
+				String quotedString = quotedStrings.get( wodpKey );
 				if( quotedString != null ) {
 					quotedString = quotedString.replaceAll( "\\\"", "\\\\\"" );
 					value.append( "\"" );
@@ -245,7 +250,7 @@ public class NGHelperFunctionDeclarationParser {
 			association = NGHelperFunctionAssociation.associationWithValue( associationValue );
 		}
 		else {
-			String quotedString = (String)quotedStrings.get( associationValue );
+			String quotedString = quotedStrings.get( associationValue );
 			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
 			if( quotedString != null ) {
 				int backslashIndex = quotedString.indexOf( '\\' );
@@ -298,8 +303,8 @@ public class NGHelperFunctionDeclarationParser {
 		return association;
 	}
 
-	private _NSDictionary _rawDeclarationsWithoutComment( String declarationStr ) {
-		_NSDictionary declarations = new _NSDictionary();
+	private _NSDictionary<String, String> _rawDeclarationsWithoutComment( String declarationStr ) {
+		_NSDictionary<String, String> declarations = new _NSDictionary<>();
 		StringBuilder declarationWithoutCommentBuffer = new StringBuilder( 100 );
 		StringTokenizer tokenizer = new StringTokenizer( declarationStr, "{", true );
 		try {
