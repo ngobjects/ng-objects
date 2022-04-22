@@ -218,10 +218,7 @@ public class NGHelperFunctionDeclarationParser {
 			}
 		}
 		while( true );
-		// if (log.isDebugEnabled()) {
-		// log.debug("Parsed '" + s + "' declarations:\n" + nsmutabledictionary
-		// + "\n--------");
-		// }
+
 		return associations;
 	}
 
