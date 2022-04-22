@@ -229,12 +229,16 @@ public class NGApplication {
 		b.append( String.format( "<h1>%s</h1>", throwable.getClass().getName() ) );
 		b.append( String.format( "<h2>%s</h2>", throwable.getMessage() ) );
 
+		if( throwable.getCause() != null ) {
+			b.append( String.format( "<h3>Cause: %s</h3>", throwable.getCause().getMessage() ) );
+		}
+
 		for( StackTraceElement ste : throwable.getStackTrace() ) {
 			final String packageNameOnly = ste.getClassName().substring( 0, ste.getClassName().lastIndexOf( "." ) );
 			final String simpleClassNameOnly = ste.getClassName().substring( ste.getClassName().lastIndexOf( "." ) + 1 );
 
 			b.append( String.format( "<span style=\"display: inline-block; min-width: 300px\">%s</span>", packageNameOnly ) );
-			b.append( String.format( "<span style=\"display: inline-block; min-width: 400px\">%s</span>", simpleClassNameOnly + "." + ste.getMethodName() + "()" ) );
+			b.append( String.format( "<span style=\"display: inline-block; min-width: 500px\">%s</span>", simpleClassNameOnly + "." + ste.getMethodName() + "()" ) );
 			b.append( ste.getFileName() + ":" + ste.getLineNumber() );
 			b.append( "<br>" );
 		}
