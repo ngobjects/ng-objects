@@ -333,13 +333,6 @@ public class NGApplication {
 		System.exit( 0 );
 	}
 
-	/**
-	 * FIXME: Added as a temporary measure while we look into templating
-	 */
-	public boolean isDebuggingEnabled() {
-		return false;
-	}
-
 	public NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement element, final List<String> languages ) {
 		NGElement elementInstance = null;
 
