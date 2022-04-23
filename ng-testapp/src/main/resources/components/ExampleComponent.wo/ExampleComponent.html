@@ -12,8 +12,8 @@
 		<p>Vulcan craves antennas, cameras and attention in the age of social media.</p>
 		<p><img src="/wr/test-image-1.jpg" width="400" /></p>
 		<p><img src="/wr/test-image-2.jpg" width="400" /></p>
-		<wo:repetition list="$names" item="$item">
-			<wo:str value="$item" /><br>
+		<wo:repetition list="$names" item="$item" index="$index">
+			<wo:str value="$index" />: <wo:str value="$item" /><br>
 		</wo:repetition>
 	</body>
 </html>

@@ -7,6 +7,7 @@ import ng.appserver.NGContext;
 
 public class ExampleComponent extends NGComponent {
 
+	public int index;
 	public String item;
 	public List<String> names = List.of( "Hugi", "Atli", "Logi" );
 
