@@ -1,6 +1,5 @@
 package ng.appserver.elements;
 
-import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGAssociation;
@@ -15,14 +14,14 @@ public class NGRepetition extends NGDynamicGroup {
 	 */
 	private final NGAssociation _count;
 
-	public NGRepetition( String _name, Map<String, NGAssociation> associations, List<NGElement> children ) {
-		super( _name, associations, children );
+	public NGRepetition( String _name, Map<String, NGAssociation> associations, NGElement element ) {
+		super( _name, associations, element );
 		_count = associations.get( "count" );
 	}
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		final int count = (Integer)_count.valueInComponent( context.component() );
+		final int count = Integer.parseInt( (String)_count.valueInComponent( context.component() ) );
 
 		for( int i = 0; i < count; ++i ) {
 			appendChildrenToResponse( response, context );
