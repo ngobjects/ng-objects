@@ -46,6 +46,13 @@ public class NGHelperFunctionParser {
 		return true;
 	}
 
+	/**
+	 * A map of tag processors. Not sure if we should keep this around, but it's here for a while at least // Hugi 2022-04-23
+	 */
+	private static Map<String, NGTagProcessor> tagProcessorMap() {
+		return Collections.emptyMap();
+	}
+
 	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
 		return parseHTML();
@@ -184,7 +191,7 @@ public class NGHelperFunctionParser {
 			elementName = "_" + elementType + "_" + _inlineBindingCount;
 			_inlineBindingCount++;
 		}
-		NGTagProcessor tagProcessor = NGHelperFunctionTagRegistry.tagProcessorMap().get( elementType );
+		NGTagProcessor tagProcessor = tagProcessorMap().get( elementType );
 		NGDeclaration declaration;
 
 		if( tagProcessor == null ) {

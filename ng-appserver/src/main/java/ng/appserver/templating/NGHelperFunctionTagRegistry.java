@@ -1,6 +1,5 @@
 package ng.appserver.templating;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,9 +17,5 @@ public class NGHelperFunctionTagRegistry {
 		m.put( "link", NGHyperlink.class.getSimpleName() );
 		m.put( "stylesheet", NGStylesheet.class.getSimpleName() );
 		return m;
-	}
-
-	public static Map<String, NGTagProcessor> tagProcessorMap() {
-		return Collections.emptyMap();
 	}
 }
