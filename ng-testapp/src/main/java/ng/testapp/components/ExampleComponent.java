@@ -1,9 +1,14 @@
 package ng.testapp.components;
 
+import java.util.List;
+
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 
 public class ExampleComponent extends NGComponent {
+
+	public String item;
+	public List<String> names = List.of( "Hugi", "Atli", "Logi" );
 
 	public ExampleComponent( NGContext context ) {
 		super( context );
