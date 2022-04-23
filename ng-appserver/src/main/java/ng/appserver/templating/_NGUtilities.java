@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
+import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
 
@@ -17,7 +18,13 @@ public class _NGUtilities {
 	public static Class classWithName( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
-		final List<Class> classes = List.of( NGString.class, NGImage.class, NGHyperlink.class, NGStylesheet.class, TestComponent.class );
+		final List<Class> classes = List.of(
+				NGString.class,
+				NGImage.class,
+				NGHyperlink.class,
+				NGRepetition.class,
+				NGStylesheet.class,
+				TestComponent.class );
 
 		for( Class c : classes ) {
 			if( c.getName().equals( classNameToSearchFor ) || c.getSimpleName().equals( classNameToSearchFor ) ) {
