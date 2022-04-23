@@ -174,7 +174,7 @@ public class NGHelperFunctionParser {
 			}
 		}
 		String elementType = elementTypeBuffer.toString();
-		String shortcutType = NGHelperFunctionTagRegistry.tagShortcutMap().get( elementType );
+		String shortcutType = _NGUtilities.tagShortcutMap().get( elementType );
 		if( shortcutType != null ) {
 			elementType = shortcutType;
 		}
