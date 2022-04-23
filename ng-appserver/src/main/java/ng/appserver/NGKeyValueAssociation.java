@@ -15,6 +15,11 @@ public class NGKeyValueAssociation extends NGAssociation {
 		return NGKeyValueCodingAdditions.Utility.valueForKeyPath( aComponent, keyPath() );
 	}
 
+	@Override
+	public void setValue( Object value, NGComponent component ) {
+		NGKeyValueCodingAdditions.Utility.takeValueForKeyPath( component, value, _keyPath );
+	}
+
 	public String keyPath() {
 		return _keyPath;
 	}
