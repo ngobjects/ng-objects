@@ -1,5 +1,6 @@
 package ng.kvc;
 
+import java.lang.reflect.Field;
 import java.util.Objects;
 
 public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
@@ -10,15 +11,31 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 
 	public static class Utility {
 
-		public static Object valueForKeyPath( final Object object, final String key ) {
+		public static Object valueForKeyPath( final Object object, final String keyPath ) {
 			Objects.requireNonNull( object );
-			Objects.requireNonNull( key );
+			Objects.requireNonNull( keyPath );
 
 			if( object instanceof NGKeyValueCodingAdditions kvcAdditionsObject ) {
-				return kvcAdditionsObject.valueForKeyPath( key );
+				return kvcAdditionsObject.valueForKeyPath( keyPath );
 			}
 
-			return DefaultImplementation.valueForKeyPath( object, key );
+			return DefaultImplementation.valueForKeyPath( object, keyPath );
+		}
+
+		/**
+		 * FIXME: Very basic implementation for testing // Hugi 2022-04-23
+		 */
+		public static void takeValueForKeyPath( final Object object, final Object value, final String keyPath ) {
+			Objects.requireNonNull( object );
+			Objects.requireNonNull( keyPath );
+
+			try {
+				Field field = object.getClass().getField( keyPath );
+				field.set( object, value );
+			}
+			catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e ) {
+				throw new RuntimeException( e );
+			}
 		}
 	}
 
