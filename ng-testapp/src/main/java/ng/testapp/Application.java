@@ -9,6 +9,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGUtils;
 import ng.testapp.components.ExampleComponent;
 import ng.testapp.components.ProgrammaticDynamicComponent;
+import ng.testapp.components.RepetitionComponent;
 
 public class Application extends NGApplication {
 
@@ -38,6 +39,10 @@ public class Application extends NGApplication {
 
 		routeTable().map( "/component-plain", ( request ) -> {
 			return pageWithName( ExampleComponent.class, request.context() );
+		} );
+
+		routeTable().map( "/component-repetition", ( request ) -> {
+			return pageWithName( RepetitionComponent.class, request.context() );
 		} );
 
 		routeTable().map( "/print-routes", ( request ) -> {
