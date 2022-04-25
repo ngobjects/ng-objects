@@ -39,20 +39,6 @@ public class NGHelperFunctionParser {
 		_languages = languages;
 	}
 
-	/**
-	 * Indicates if inline bindings (<wo: ...> tags in the HTML) are allowed. Obviously, this defaults to true.
-	 */
-	private static boolean allowInlineBindings() {
-		return true;
-	}
-
-	/**
-	 * A map of tag processors. Not sure if we should keep this around, but it's here for a while at least // Hugi 2022-04-23
-	 */
-	private static Map<String, NGTagProcessor> tagProcessorMap() {
-		return Collections.emptyMap();
-	}
-
 	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
 		return parseHTML();
@@ -186,12 +172,15 @@ public class NGHelperFunctionParser {
 			associations.put( "elementName", NGHelperFunctionAssociation.associationWithValue( elementType ) );
 			elementType = "WOGenericContainer";
 		}
+
 		String elementName;
+
 		synchronized( this ) {
 			elementName = "_" + elementType + "_" + _inlineBindingCount;
 			_inlineBindingCount++;
 		}
-		NGTagProcessor tagProcessor = tagProcessorMap().get( elementType );
+
+		final NGTagProcessor tagProcessor = tagProcessorMap().get( elementType );
 		NGDeclaration declaration;
 
 		if( tagProcessor == null ) {
@@ -202,7 +191,7 @@ public class NGHelperFunctionParser {
 		}
 
 		_declarations.put( elementName, declaration );
-		//		processDeclaration( declaration ); FIXME: This only seems to apply to OGNL's helper functions, so we shouldn't need this // Hugi 2022-04-22
+
 		return declaration;
 	}
 
@@ -320,5 +309,19 @@ public class NGHelperFunctionParser {
 
 	public static NGDeclaration createDeclaration( String declarationName, String declarationType, Map<String, NGAssociation> associations ) {
 		return new NGDeclaration( declarationName, declarationType, associations );
+	}
+
+	/**
+	 * Indicates if inline bindings (<wo: ...> tags in the HTML) are allowed. Obviously, this defaults to true.
+	 */
+	private static boolean allowInlineBindings() {
+		return true;
+	}
+
+	/**
+	 * A map of tag processors. Not sure if we should keep this around, but it's here for a while at least // Hugi 2022-04-23
+	 */
+	private static Map<String, NGTagProcessor> tagProcessorMap() {
+		return Collections.emptyMap();
 	}
 }
