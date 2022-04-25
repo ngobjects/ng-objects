@@ -294,7 +294,7 @@ public class NGHelperFunctionParser {
 		return name != null && name.startsWith( "_" ) && name.length() > 1 && name.indexOf( '_', 1 ) != -1;
 	}
 
-	private String componentName( final NGHTMLWebObjectTag tag ) {
+	private static String componentName( final NGHTMLWebObjectTag tag ) {
 		String name = tag.name();
 
 		// This goofiness reparses back out inline binding names
