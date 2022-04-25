@@ -7,16 +7,17 @@ import ng.appserver.NGContext;
 
 public class RepetitionComponent extends NGComponent {
 
-	public String currentImageName;
+	public Image currentImage;
 
-	public List<String> images = List.of(
-			"test-image-1.jpg",
-			"test-image-2.jpg",
-			"test-image-3.jpg",
-			"test-image-4.jpg" );
+	public List<Image> images = List.of(
+			new Image( "test-image-1.jpg", "Mynd 1" ),
+			new Image( "test-image-2.jpg", "Mynd 2" ),
+			new Image( "test-image-3.jpg", "Mynd 3" ),
+			new Image( "test-image-4.jpg", "Mynd 4" ) );
 
 	public RepetitionComponent( NGContext context ) {
 		super( context );
 	}
 
+	public record Image( String filename, String title ) {}
 }

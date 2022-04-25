@@ -4,8 +4,11 @@
 		<title>Images</title>
 	</head>
 	<body>
-		<wo:repetition list="$images" item="$currentImageName">
-			<p><wo:img filename="$currentImageName" width="200" /></p> 
+		<wo:repetition list="$images" item="$currentImage">
+			<p>
+				<wo:img filename="$currentImage.filename" width="200" />
+				<wo:str value="$currentImage.title" />
+			</p> 
 		</wo:repetition>
 	</body>
 </html>
