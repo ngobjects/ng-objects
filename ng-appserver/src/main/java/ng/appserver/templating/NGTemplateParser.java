@@ -79,16 +79,16 @@ public class NGTemplateParser {
 		}
 	}
 
-	public void didParseComment( String comment ) {
+	public void didParseComment( final String comment ) {
 		NGHTMLCommentString commentString = new NGHTMLCommentString( comment );
 		_currentDynamicTag.addChildElement( commentString );
 	}
 
-	public void didParseText( String text ) {
+	public void didParseText( final String text ) {
 		_currentDynamicTag.addChildElement( text );
 	}
 
-	private NGDeclaration parseInlineBindings( String tag, int colonIndex ) throws NGHTMLFormatException {
+	private NGDeclaration parseInlineBindings( final String tag, final int colonIndex ) throws NGHTMLFormatException {
 		final StringBuffer keyBuffer = new StringBuffer();
 		final StringBuffer valueBuffer = new StringBuffer();
 		final StringBuffer elementTypeBuffer = new StringBuffer();
