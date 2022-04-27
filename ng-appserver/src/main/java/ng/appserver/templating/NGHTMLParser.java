@@ -13,9 +13,6 @@ public class NGHTMLParser {
 
 	private static Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
 
-	private NGTemplateParser _parserDelegate;
-	private String _unparsedTemplate;
-	private StringBuffer _contentText;
 	private static final int STATE_OUTSIDE = 0;
 	private static final int STATE_INSIDE_COMMENT = 3;
 	private static final String JS_START_TAG = "<script";
@@ -29,7 +26,11 @@ public class NGHTMLParser {
 	private static final String WO_REPLACEMENT_MARKER = "__REPL__";
 	private static final String XML_CDATA_START_TAG = "<![CDATA[";
 
-	private static boolean _parseStandardTags = false;
+	private static final boolean _parseStandardTags = false;
+
+	private final NGTemplateParser _parserDelegate;
+	private final String _unparsedTemplate;
+	private final StringBuffer _contentText;
 	private Map<String, Stack<String>> _stackDict;
 
 	public NGHTMLParser( NGTemplateParser parserDelegate, String unparsedTemplate ) {
