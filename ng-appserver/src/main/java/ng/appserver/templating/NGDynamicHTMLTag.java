@@ -161,18 +161,14 @@ public class NGDynamicHTMLTag {
 	}
 
 	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( final String componentName, final NGDeclaration declaration, final NGElement element, final List<String> languages ) throws ClassNotFoundException {
-		NGComponentReference componentReference = null;
-		NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( componentName, languages );
+		final NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( componentName, languages );
 
-		if( componentDefinition != null ) {
-			Map<String, NGAssociation> nsdictionary = declaration.associations();
-			componentReference = componentDefinition.componentReferenceWithAssociations( nsdictionary, element );
-		}
-		else {
+		if( componentDefinition == null ) {
 			throw new ClassNotFoundException( "Cannot find class or component named \'" + componentName + "\" in runtime or in a loadable bundle" );
 		}
 
-		return componentReference;
+		final Map<String, NGAssociation> associations = declaration.associations();
+		return componentDefinition.componentReferenceWithAssociations( associations, element );
 	}
 
 	private static NGElement _elementWithClass( Class<? extends NGElement> c, NGDeclaration declaration, NGElement element ) {
