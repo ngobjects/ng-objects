@@ -18,12 +18,14 @@ public class NGComponentDefinition {
 	/**
 	 * The cached name of this component definition. Corresponds to the component class's simpleName
 	 */
-	private String _name;
+	private final String _name;
 
 	/**
 	 * The cached name of this component definition. Corresponds to the component class's simpleName
 	 */
-	private String _className;
+	private final String _className;
+
+	private final Class<? extends NGComponent> _componentClass;
 
 	public NGComponentDefinition( final Class<? extends NGComponent> componentClass ) {
 		Objects.requireNonNull( componentClass );
@@ -31,17 +33,17 @@ public class NGComponentDefinition {
 		// FIXME: We need to decide what parts of the component name we're going to keep around // Hugi 2022-04-22
 		_name = componentClass.getSimpleName();
 		_className = componentClass.getName();
+		_componentClass = componentClass;
 	}
 
 	/**
 	 * @return A new component of the given class in the given context
 	 */
-	public NGComponent componentInstanceInstanceInContext( final Class<? extends NGComponent> componentClass, final NGContext context ) {
-		Objects.requireNonNull( componentClass );
+	public NGComponent componentInstanceInstanceInContext( final NGContext context ) {
 		Objects.requireNonNull( context );
 
 		try {
-			return componentClass.getConstructor( NGContext.class ).newInstance( context );
+			return _componentClass.getConstructor( NGContext.class ).newInstance( context );
 		}
 		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
 			throw new RuntimeException( e );
