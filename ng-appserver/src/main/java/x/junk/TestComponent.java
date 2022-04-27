@@ -1,4 +1,4 @@
-package ng.appserver.templating;
+package x.junk;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 

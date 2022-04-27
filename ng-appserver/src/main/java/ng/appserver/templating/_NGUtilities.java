@@ -11,6 +11,7 @@ import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
+import x.junk.TestComponent;
 
 public class _NGUtilities {
 
