@@ -41,7 +41,7 @@ public class NGDynamicHTMLTag {
 
 	public NGDynamicHTMLTag() {}
 
-	public NGDynamicHTMLTag( final String tagPart, final NGDynamicHTMLTag parent ) throws NGHelperFunctionHTMLFormatException {
+	public NGDynamicHTMLTag( final String tagPart, final NGDynamicHTMLTag parent ) throws NGHTMLFormatException {
 		Objects.requireNonNull( tagPart );
 
 		_parent = parent;
@@ -117,14 +117,14 @@ public class NGDynamicHTMLTag {
 	/**
 	 * @return The declaration name (name attribute) from the given WebObject tag
 	 */
-	private static String extractDeclarationName( final String tagPart ) throws NGHelperFunctionHTMLFormatException {
+	private static String extractDeclarationName( final String tagPart ) throws NGHTMLFormatException {
 
 		String result = null;
 
 		final StringTokenizer st1 = new StringTokenizer( tagPart, "=" );
 
 		if( st1.countTokens() != 2 ) {
-			throw new NGHelperFunctionHTMLFormatException( "Can't initialize dynamic tag '%s', name=... attribute not found".formatted( tagPart ) );
+			throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', name=... attribute not found".formatted( tagPart ) );
 		}
 
 		st1.nextToken();
@@ -147,13 +147,13 @@ public class NGDynamicHTMLTag {
 		}
 
 		if( result == null ) {
-			throw new NGHelperFunctionHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
+			throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
 		}
 
 		return result;
 	}
 
-	public NGElement dynamicElement( Map<String, NGDeclaration> declarations, List<String> languages ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
+	public NGElement dynamicElement( Map<String, NGDeclaration> declarations, List<String> languages ) throws NGDeclarationFormatException, ClassNotFoundException {
 		final String name = name();
 		final NGElement woelement = template();
 		final NGDeclaration wodeclaration = declarations.get( name );
@@ -179,16 +179,16 @@ public class NGDynamicHTMLTag {
 		return NGApplication.application().dynamicElementWithName( c.getName(), declaration.associations(), element, null );
 	}
 
-	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement template, final List<String> languages ) throws ClassNotFoundException, NGHelperFunctionDeclarationFormatException {
+	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement template, final List<String> languages ) throws ClassNotFoundException, NGDeclarationFormatException {
 
 		if( declaration == null ) {
-			throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLTemplateParser> no declaration for dynamic element (or component) named " + name );
+			throw new NGDeclarationFormatException( "<WOHTMLTemplateParser> no declaration for dynamic element (or component) named " + name );
 		}
 
 		final String typeName = declaration.type();
 
 		if( typeName == null ) {
-			throw new NGHelperFunctionDeclarationFormatException( "<WOHTMLWebObjectTag> declaration object for dynamic element (or component) named " + name + "has no class name." );
+			throw new NGDeclarationFormatException( "<WOHTMLWebObjectTag> declaration object for dynamic element (or component) named " + name + "has no class name." );
 		}
 
 		Class<? extends NGElement> classForTypeName = _NGUtilities.classWithName( typeName );

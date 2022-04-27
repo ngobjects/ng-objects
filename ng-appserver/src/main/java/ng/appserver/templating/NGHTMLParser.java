@@ -9,11 +9,11 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NGHelperFunctionHTMLParser {
+public class NGHTMLParser {
 
-	private static Logger logger = LoggerFactory.getLogger( NGHelperFunctionHTMLParser.class );
+	private static Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
 
-	private NGHelperFunctionParser _parserDelegate;
+	private NGTemplateParser _parserDelegate;
 	private String _unparsedTemplate;
 	private StringBuffer _contentText;
 	private static final int STATE_OUTSIDE = 0;
@@ -32,13 +32,13 @@ public class NGHelperFunctionHTMLParser {
 	private static boolean _parseStandardTags = false;
 	private Map<String, Stack<String>> _stackDict;
 
-	public NGHelperFunctionHTMLParser( NGHelperFunctionParser parserDelegate, String unparsedTemplate ) {
+	public NGHTMLParser( NGTemplateParser parserDelegate, String unparsedTemplate ) {
 		_parserDelegate = parserDelegate;
 		_unparsedTemplate = unparsedTemplate;
 		_contentText = new StringBuffer( 128 );
 	}
 
-	public void parseHTML() throws NGHelperFunctionHTMLFormatException, NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
+	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
 		_stackDict = new HashMap<>();
 		StringTokenizer templateTokenizer = new StringTokenizer( _unparsedTemplate, "<" );
 		boolean flag = true;
@@ -94,13 +94,13 @@ public class NGHelperFunctionHTMLParser {
 					else if( tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.startsWith( WO_COLON_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
 						endOfWebObjectTag( token );
 					}
-					else if( tagLowerCase.startsWith( NGHelperFunctionHTMLParser.JS_START_TAG ) ) {
+					else if( tagLowerCase.startsWith( NGHTMLParser.JS_START_TAG ) ) {
 						didParseText();
 						_contentText.append( token );
 						_contentText.append( '>' );
 						flag = false;
 					}
-					else if( tagLowerCase.startsWith( NGHelperFunctionHTMLParser.JS_END_TAG ) ) {
+					else if( tagLowerCase.startsWith( NGHTMLParser.JS_END_TAG ) ) {
 						didParseText();
 						_contentText.append( token );
 						_contentText.append( '>' );
@@ -233,13 +233,13 @@ public class NGHelperFunctionHTMLParser {
 		return token;
 	}
 
-	private void startOfWebObjectTag( String token ) throws NGHelperFunctionHTMLFormatException {
+	private void startOfWebObjectTag( String token ) throws NGHTMLFormatException {
 		didParseText();
 		_contentText.append( token );
 		didParseOpeningWebObjectTag();
 	}
 
-	private void endOfWebObjectTag( String token ) throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
+	private void endOfWebObjectTag( String token ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 		didParseText();
 		_contentText.append( token );
 		didParseClosingWebObjectTag();
@@ -257,7 +257,7 @@ public class NGHelperFunctionHTMLParser {
 		}
 	}
 
-	private void didParseOpeningWebObjectTag() throws NGHelperFunctionHTMLFormatException {
+	private void didParseOpeningWebObjectTag() throws NGHTMLFormatException {
 		if( _contentText != null ) {
 			if( logger.isDebugEnabled() ) {
 				logger.debug( "Parsed Opening WebObject (" + _contentText.length() + ") : " + _contentText );
@@ -269,7 +269,7 @@ public class NGHelperFunctionHTMLParser {
 		}
 	}
 
-	private void didParseClosingWebObjectTag() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException, ClassNotFoundException {
+	private void didParseClosingWebObjectTag() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException, ClassNotFoundException {
 		if( _contentText != null ) {
 			if( logger.isDebugEnabled() ) {
 				logger.debug( "Parsed Closing WebObject (" + _contentText.length() + ") : " + _contentText );

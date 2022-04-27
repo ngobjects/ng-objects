@@ -7,6 +7,6 @@ import ng.appserver.NGAssociation;
 public abstract class NGTagProcessor {
 
 	public NGDeclaration createDeclaration( String elementName, String elementType, Map<String, NGAssociation> associations ) {
-		return NGHelperFunctionParser.createDeclaration( elementName, elementType, associations );
+		return NGTemplateParser.createDeclaration( elementName, elementType, associations );
 	}
 }

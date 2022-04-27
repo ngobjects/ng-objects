@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGConstantValueAssociation;
 
-public class NGHelperFunctionDeclarationParser {
+public class NGDeclarationParser {
 
-	private static Logger logger = LoggerFactory.getLogger( NGHelperFunctionDeclarationParser.class );
+	private static Logger logger = LoggerFactory.getLogger( NGDeclarationParser.class );
 
 	/**
 	 * FIXME: Why the hell is this an instance variable?
@@ -28,12 +28,12 @@ public class NGHelperFunctionDeclarationParser {
 	private static final String ESCAPED_QUOTE_STRING = "_WO_ESCAPED_QUOTE_";
 	private static final String QUOTED_STRING_KEY = "_WODP_";
 
-	public static Map<String, NGDeclaration> declarationsWithString( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
-		final NGHelperFunctionDeclarationParser declarationParser = new NGHelperFunctionDeclarationParser();
+	public static Map<String, NGDeclaration> declarationsWithString( String declarationStr ) throws NGDeclarationFormatException {
+		final NGDeclarationParser declarationParser = new NGDeclarationParser();
 		return declarationParser.parseDeclarations( declarationStr );
 	}
 
-	private Map<String, NGDeclaration> parseDeclarations( String declarationStr ) throws NGHelperFunctionDeclarationFormatException {
+	private Map<String, NGDeclaration> parseDeclarations( String declarationStr ) throws NGDeclarationFormatException {
 		String strWithoutComments = _removeOldStyleCommentsFromString( declarationStr );
 		strWithoutComments = _removeNewStyleCommentsAndQuotedStringsFromString( strWithoutComments );
 		return parseDeclarationsWithoutComments( strWithoutComments );
@@ -43,7 +43,7 @@ public class NGHelperFunctionDeclarationParser {
 		StringBuilder stringb = new StringBuilder( 100 );
 		StringBuilder stringb1 = new StringBuilder( 100 );
 		StringTokenizer tokenizer = new StringTokenizer( str, "/", true );
-		int state = NGHelperFunctionDeclarationParser.STATE_OUTSIDE;
+		int state = NGDeclarationParser.STATE_OUTSIDE;
 		try {
 			do {
 				if( !tokenizer.hasMoreTokens() ) {
@@ -55,7 +55,7 @@ public class NGHelperFunctionDeclarationParser {
 					if( token.equals( "/" ) ) {
 						token = tokenizer.nextToken();
 						if( token.startsWith( "*" ) ) {
-							state = NGHelperFunctionDeclarationParser.STATE_INSIDE_COMMENT;
+							state = NGDeclarationParser.STATE_INSIDE_COMMENT;
 							stringb1.append( '/' );
 							stringb1.append( token );
 						}
@@ -73,7 +73,7 @@ public class NGHelperFunctionDeclarationParser {
 					stringb1.append( token );
 					String s2 = stringb1.toString();
 					if( s2.endsWith( "*/" ) && !s2.equals( "/*/" ) ) {
-						state = NGHelperFunctionDeclarationParser.STATE_OUTSIDE;
+						state = NGDeclarationParser.STATE_OUTSIDE;
 					}
 					break;
 				}
@@ -87,7 +87,7 @@ public class NGHelperFunctionDeclarationParser {
 	}
 
 	private String _removeNewStyleCommentsAndQuotedStringsFromString( String declarationsStr ) {
-		String escapedQuoteStr = declarationsStr.replace( "\\\"", NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING );
+		String escapedQuoteStr = declarationsStr.replace( "\\\"", NGDeclarationParser.ESCAPED_QUOTE_STRING );
 		StringBuilder declarationWithoutCommentsBuffer = new StringBuilder( 100 );
 		StringTokenizer tokenizer = new StringTokenizer( escapedQuoteStr, "/\"", true );
 		try {
@@ -96,7 +96,7 @@ public class NGHelperFunctionDeclarationParser {
 				if( token.equals( "/" ) ) {
 					token = tokenizer.nextToken( "\n" );
 					if( token.startsWith( "/" ) ) {
-						token = token.replace( NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
+						token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
 						declarationWithoutCommentsBuffer.append( '\n' );
 						tokenizer.nextToken();
 					}
@@ -113,8 +113,8 @@ public class NGHelperFunctionDeclarationParser {
 					else {
 						tokenizer.nextToken();
 					}
-					String quotedStringKey = NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.size();
-					token = token.replace( NGHelperFunctionDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
+					String quotedStringKey = NGDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.size();
+					token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
 					_quotedStrings.put( quotedStringKey, token );
 					declarationWithoutCommentsBuffer.append( quotedStringKey );
 				}
@@ -129,7 +129,7 @@ public class NGHelperFunctionDeclarationParser {
 		return declarationWithoutCommentsBuffer.toString();
 	}
 
-	private Map<String, NGDeclaration> parseDeclarationsWithoutComments( String declarationWithoutComment ) throws NGHelperFunctionDeclarationFormatException {
+	private Map<String, NGDeclaration> parseDeclarationsWithoutComments( String declarationWithoutComment ) throws NGDeclarationFormatException {
 		final Map<String, NGDeclaration> declarations = new HashMap<>();
 		final Map<String, String> rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
 
@@ -144,39 +144,39 @@ public class NGHelperFunctionDeclarationParser {
 			int colonIndex = declarationHeader.indexOf( ':' );
 
 			if( colonIndex < 0 ) {
-				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing ':' for declaration:\n" + declarationHeader + " " + declarationBody );
+				throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing ':' for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
 
 			tagName = declarationHeader.substring( 0, colonIndex ).trim();
 
 			if( tagName.length() == 0 ) {
-				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing tag name for declaration:\n" + declarationHeader + " " + declarationBody );
+				throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing tag name for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
 
 			if( declarations.get( tagName ) != null ) {
-				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Duplicate tag name '" + tagName + "' in declaration:\n" + declarationBody );
+				throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Duplicate tag name '" + tagName + "' in declaration:\n" + declarationBody );
 			}
 
 			String type = declarationHeader.substring( colonIndex + 1 ).trim();
 
 			if( type.length() == 0 ) {
-				throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing element name for declaration:\n" + declarationHeader + " " + declarationBody );
+				throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing element name for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
 
 			Map<String, NGAssociation> associations = _associationsForDictionaryString( declarationHeader, declarationBody );
-			declaration = NGHelperFunctionParser.createDeclaration( tagName, type, associations );
+			declaration = NGTemplateParser.createDeclaration( tagName, type, associations );
 			declarations.put( tagName, declaration );
 		}
 
 		return declarations;
 	}
 
-	private Map<String, NGAssociation> _associationsForDictionaryString( String declarationHeader, String declarationBody ) throws NGHelperFunctionDeclarationFormatException {
+	private Map<String, NGAssociation> _associationsForDictionaryString( String declarationHeader, String declarationBody ) throws NGDeclarationFormatException {
 		final Map<String, NGAssociation> associations = new HashMap<>();
 		String trimmedDeclarationBody = declarationBody.trim();
 
 		if( !trimmedDeclarationBody.startsWith( "{" ) && !trimmedDeclarationBody.endsWith( "}" ) ) {
-			throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Internal inconsistency : invalid dictionary for declaration:\n" + declarationHeader + " " + declarationBody );
+			throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Internal inconsistency : invalid dictionary for declaration:\n" + declarationHeader + " " + declarationBody );
 		}
 
 		int declarationBodyLength = trimmedDeclarationBody.length();
@@ -197,17 +197,17 @@ public class NGHelperFunctionDeclarationParser {
 			if( binding.length() != 0 ) {
 				int equalsIndex = binding.indexOf( '=' );
 				if( equalsIndex < 0 ) {
-					throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Invalid line. No equal in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
+					throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Invalid line. No equal in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 				String key = binding.substring( 0, equalsIndex ).trim();
 				if( key.length() == 0 ) {
-					throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing binding in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
+					throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing binding in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 				String value = binding.substring( equalsIndex + 1 ).trim();
 				if( value.length() == 0 ) {
-					throw new NGHelperFunctionDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing value in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
+					throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing value in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
-				NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, _quotedStrings );
+				NGAssociation association = NGDeclarationParser._associationWithKey( value, _quotedStrings );
 				String quotedString = _quotedStrings.get( key );
 				if( quotedString != null ) {
 					associations.put( quotedString, association );
@@ -229,14 +229,14 @@ public class NGHelperFunctionDeclarationParser {
 			StringBuilder value = new StringBuilder();
 			int lastIndex = 0;
 			int index = 0;
-			while( (index = associationValue.indexOf( NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY, lastIndex )) != -1 ) {
+			while( (index = associationValue.indexOf( NGDeclarationParser.QUOTED_STRING_KEY, lastIndex )) != -1 ) {
 				value.append( associationValue.substring( lastIndex, index ) );
-				int wodpValueStartIndex = index + NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY.length();
+				int wodpValueStartIndex = index + NGDeclarationParser.QUOTED_STRING_KEY.length();
 				int wodpValueEndIndex = wodpValueStartIndex;
 				for( ; wodpValueEndIndex < associationValueLength && Character.isDigit( associationValue.charAt( wodpValueEndIndex ) ); wodpValueEndIndex++ ) {
 					// do nothing
 				}
-				String wodpKey = NGHelperFunctionDeclarationParser.QUOTED_STRING_KEY + associationValue.substring( wodpValueStartIndex, wodpValueEndIndex );
+				String wodpKey = NGDeclarationParser.QUOTED_STRING_KEY + associationValue.substring( wodpValueStartIndex, wodpValueEndIndex );
 				String quotedString = quotedStrings.get( wodpKey );
 				if( quotedString != null ) {
 					quotedString = quotedString.replaceAll( "\\\"", "\\\\\"" );

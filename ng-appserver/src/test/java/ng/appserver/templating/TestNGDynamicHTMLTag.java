@@ -16,7 +16,7 @@ public class TestNGDynamicHTMLTag {
 			NGDynamicHTMLTag tag2 = new NGDynamicHTMLTag( "<wo name=\"bleble\"", null );
 			assertEquals( "bleble", tag2.name() );
 		}
-		catch( NGHelperFunctionHTMLFormatException e ) {
+		catch( NGHTMLFormatException e ) {
 			fail();
 		}
 	}
@@ -30,7 +30,7 @@ public class TestNGDynamicHTMLTag {
 			NGDynamicHTMLTag tag2 = new NGDynamicHTMLTag( "<wo name=bleble", null );
 			assertEquals( "bleble", tag2.name() );
 		}
-		catch( NGHelperFunctionHTMLFormatException e ) {
+		catch( NGHTMLFormatException e ) {
 			fail();
 		}
 	}

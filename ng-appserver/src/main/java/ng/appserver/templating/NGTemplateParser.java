@@ -19,9 +19,9 @@ import ng.appserver.elements.NGHTMLCommentString;
  * The primary entry point for component parsing
  */
 
-public class NGHelperFunctionParser {
+public class NGTemplateParser {
 
-	private static final Logger logger = LoggerFactory.getLogger( NGHelperFunctionParser.class );
+	private static final Logger logger = LoggerFactory.getLogger( NGTemplateParser.class );
 
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
@@ -33,18 +33,18 @@ public class NGHelperFunctionParser {
 	private final String _declarationString;
 	private final List<String> _languages;
 
-	public NGHelperFunctionParser( final String htmlString, final String declarationString, final List<String> languages ) {
+	public NGTemplateParser( final String htmlString, final String declarationString, final List<String> languages ) {
 		_HTMLString = htmlString;
 		_declarationString = declarationString;
 		_languages = languages;
 	}
 
-	public NGElement parse() throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
+	public NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 		parseDeclarations();
 		return parseHTML();
 	}
 
-	public void didParseOpeningWebObjectTag( String s, NGHelperFunctionHTMLParser htmlParser ) throws NGHelperFunctionHTMLFormatException {
+	public void didParseOpeningWebObjectTag( String s, NGHTMLParser htmlParser ) throws NGHTMLFormatException {
 		if( allowInlineBindings() ) {
 			int spaceIndex = s.indexOf( ' ' );
 			int colonIndex;
@@ -63,10 +63,10 @@ public class NGHelperFunctionParser {
 		logger.debug( "Inserted WebObject with Name '{}'.", _currentWebObjectTag.name() );
 	}
 
-	public void didParseClosingWebObjectTag( String s, NGHelperFunctionHTMLParser htmlParser ) throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
+	public void didParseClosingWebObjectTag( String s, NGHTMLParser htmlParser ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 		NGDynamicHTMLTag webobjectTag = _currentWebObjectTag.parentTag();
 		if( webobjectTag == null ) {
-			throw new NGHelperFunctionHTMLFormatException( "<" + getClass().getName() + "> Unbalanced WebObject tags. Either there is an extra closing </WEBOBJECT> tag in the html template, or one of the opening <WEBOBJECT ...> tag has a typo (extra spaces between a < sign and a WEBOBJECT tag ?)." );
+			throw new NGHTMLFormatException( "<" + getClass().getName() + "> Unbalanced WebObject tags. Either there is an extra closing </WEBOBJECT> tag in the html template, or one of the opening <WEBOBJECT ...> tag has a typo (extra spaces between a < sign and a WEBOBJECT tag ?)." );
 		}
 		try {
 			NGElement element = _currentWebObjectTag.dynamicElement( _declarations, _languages );
@@ -78,16 +78,16 @@ public class NGHelperFunctionParser {
 		}
 	}
 
-	public void didParseComment( String comment, NGHelperFunctionHTMLParser htmlParser ) {
+	public void didParseComment( String comment, NGHTMLParser htmlParser ) {
 		NGHTMLCommentString wohtmlcommentstring = new NGHTMLCommentString( comment );
 		_currentWebObjectTag.addChildElement( wohtmlcommentstring );
 	}
 
-	public void didParseText( String text, NGHelperFunctionHTMLParser htmlParser ) {
+	public void didParseText( String text, NGHTMLParser htmlParser ) {
 		_currentWebObjectTag.addChildElement( text );
 	}
 
-	private NGDeclaration parseInlineBindings( String tag, int colonIndex ) throws NGHelperFunctionHTMLFormatException {
+	private NGDeclaration parseInlineBindings( String tag, int colonIndex ) throws NGHTMLFormatException {
 		StringBuffer keyBuffer = new StringBuffer();
 		StringBuffer valueBuffer = new StringBuffer();
 		StringBuffer elementTypeBuffer = new StringBuffer();
@@ -107,7 +107,7 @@ public class NGHelperFunctionParser {
 			else if( inQuote && ch == '\\' ) {
 				index++;
 				if( index == length ) {
-					throw new NGHelperFunctionHTMLFormatException( "'" + tag + "' has a '\\' as the last character." );
+					throw new NGHTMLFormatException( "'" + tag + "' has a '\\' as the last character." );
 				}
 				if( tag.charAt( index ) == '\"' ) {
 					currentBuffer.append( "\"" );
@@ -148,7 +148,7 @@ public class NGHelperFunctionParser {
 			}
 		}
 		if( inQuote ) {
-			throw new NGHelperFunctionHTMLFormatException( "'" + tag + "' has a quote left open." );
+			throw new NGHTMLFormatException( "'" + tag + "' has a quote left open." );
 		}
 
 		if( keyBuffer.length() > 0 ) {
@@ -156,7 +156,7 @@ public class NGHelperFunctionParser {
 				parseInlineAssociation( keyBuffer, valueBuffer, associations );
 			}
 			else {
-				throw new NGHelperFunctionHTMLFormatException( "'" + tag + "' defines a key but no value." );
+				throw new NGHTMLFormatException( "'" + tag + "' defines a key but no value." );
 			}
 		}
 		String elementType = elementTypeBuffer.toString();
@@ -184,7 +184,7 @@ public class NGHelperFunctionParser {
 		NGDeclaration declaration;
 
 		if( tagProcessor == null ) {
-			declaration = NGHelperFunctionParser.createDeclaration( elementName, elementType, associations );
+			declaration = NGTemplateParser.createDeclaration( elementName, elementType, associations );
 		}
 		else {
 			declaration = tagProcessor.createDeclaration( elementName, elementType, associations );
@@ -195,7 +195,7 @@ public class NGHelperFunctionParser {
 		return declaration;
 	}
 
-	private static void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, Map<String, NGAssociation> bindings ) throws NGHelperFunctionHTMLFormatException {
+	private static void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, Map<String, NGAssociation> bindings ) throws NGHTMLFormatException {
 		String key = keyBuffer.toString().trim();
 		String value = valueBuffer.toString().trim();
 		Map<String, String> quotedStrings;
@@ -205,7 +205,7 @@ public class NGHelperFunctionParser {
 				value = value.substring( 0, value.length() - 1 );
 			}
 			else {
-				throw new NGHelperFunctionHTMLFormatException( valueBuffer + " starts with quote but does not end with one." );
+				throw new NGHTMLFormatException( valueBuffer + " starts with quote but does not end with one." );
 			}
 			if( value.startsWith( "$" ) ) {
 				value = value.substring( 1 );
@@ -225,7 +225,7 @@ public class NGHelperFunctionParser {
 		else {
 			quotedStrings = new HashMap<>();
 		}
-		NGAssociation association = NGHelperFunctionDeclarationParser._associationWithKey( value, quotedStrings );
+		NGAssociation association = NGDeclarationParser._associationWithKey( value, quotedStrings );
 		bindings.put( key, association );
 	}
 
@@ -264,14 +264,14 @@ public class NGHelperFunctionParser {
 		return declarationStr.toString();
 	}
 
-	private NGElement parseHTML() throws NGHelperFunctionHTMLFormatException, NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
+	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
 		NGElement currentWebObjectTemplate = null;
 		if( _HTMLString != null && _declarations != null ) {
-			NGHelperFunctionHTMLParser htmlParser = new NGHelperFunctionHTMLParser( this, _HTMLString );
+			NGHTMLParser htmlParser = new NGHTMLParser( this, _HTMLString );
 			htmlParser.parseHTML();
 			String webobjectTagName = _currentWebObjectTag.name();
 			if( webobjectTagName != null ) {
-				throw new NGHelperFunctionHTMLFormatException( "There is an unbalanced WebObjects tag named '" + webobjectTagName + "'." );
+				throw new NGHTMLFormatException( "There is an unbalanced WebObjects tag named '" + webobjectTagName + "'." );
 			}
 			currentWebObjectTemplate = _currentWebObjectTag.template();
 		}
@@ -301,9 +301,9 @@ public class NGHelperFunctionParser {
 		return name;
 	}
 
-	private void parseDeclarations() throws NGHelperFunctionDeclarationFormatException {
+	private void parseDeclarations() throws NGDeclarationFormatException {
 		if( _declarations == null && _declarationString != null ) {
-			_declarations = NGHelperFunctionDeclarationParser.declarationsWithString( _declarationString );
+			_declarations = NGDeclarationParser.declarationsWithString( _declarationString );
 		}
 	}
 

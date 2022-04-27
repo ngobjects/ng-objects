@@ -9,9 +9,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 import ng.appserver.privates.NGUtils;
-import ng.appserver.templating.NGHelperFunctionDeclarationFormatException;
-import ng.appserver.templating.NGHelperFunctionHTMLFormatException;
-import ng.appserver.templating.NGHelperFunctionParser;
+import ng.appserver.templating.NGDeclarationFormatException;
+import ng.appserver.templating.NGHTMLFormatException;
+import ng.appserver.templating.NGTemplateParser;
 
 public class NGComponentDefinition {
 
@@ -56,9 +56,9 @@ public class NGComponentDefinition {
 			final String htmlTemplateString = loadHTMLTemplateString( _name );
 			final String wodString = loadWODTemplateString( _name );
 			final List<String> languages = Collections.emptyList();
-			return new NGHelperFunctionParser( htmlTemplateString, wodString, languages ).parse();
+			return new NGTemplateParser( htmlTemplateString, wodString, languages ).parse();
 		}
-		catch( ClassNotFoundException | NGHelperFunctionDeclarationFormatException | NGHelperFunctionHTMLFormatException e ) {
+		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );
 		}
 	}
