@@ -1,8 +1,6 @@
 package ng.appserver.templating;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -62,12 +60,11 @@ public class NGDynamicHTMLTag {
 			return null;
 		}
 
-		Enumeration<Object> enumeration = Collections.enumeration( _children );
-
 		List list = new ArrayList<>( _children.size() );
 		StringBuilder stringb = new StringBuilder( 128 );
-		while( enumeration.hasMoreElements() ) {
-			Object obj1 = enumeration.nextElement();
+
+		for( Object obj1 : _children ) {
+
 			if( obj1 instanceof String ) {
 				stringb.append( (String)obj1 );
 			}
