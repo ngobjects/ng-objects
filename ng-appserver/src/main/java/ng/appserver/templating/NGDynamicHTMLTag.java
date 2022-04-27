@@ -156,21 +156,6 @@ public class NGDynamicHTMLTag {
 		return _elementWithDeclaration( declaration, name, element, languages );
 	}
 
-	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( final String componentName, final NGDeclaration declaration, final NGElement element, final List<String> languages ) throws ClassNotFoundException {
-		final NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( componentName, languages );
-
-		if( componentDefinition == null ) {
-			throw new ClassNotFoundException( "Cannot find class or component named \'" + componentName + "\" in runtime or in a loadable bundle" );
-		}
-
-		final Map<String, NGAssociation> associations = declaration.associations();
-		return componentDefinition.componentReferenceWithAssociations( associations, element );
-	}
-
-	private static NGElement _elementWithClass( Class<? extends NGElement> c, NGDeclaration declaration, NGElement element ) {
-		return NGApplication.application().dynamicElementWithName( c.getName(), declaration.associations(), element, null );
-	}
-
 	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement template, final List<String> languages ) throws ClassNotFoundException, NGDeclarationFormatException {
 
 		if( declaration == null ) {
@@ -198,13 +183,28 @@ public class NGDynamicHTMLTag {
 
 		if( classForTypeName != null ) {
 			if( (NGComponent.class).isAssignableFrom( classForTypeName ) ) {
-				return _componentReferenceWithClassNameDeclarationAndTemplate( typeName, declaration, template, languages );
+				return _componentReferenceWithName( typeName, declaration, template, languages );
 			}
 			else {
-				return _elementWithClass( classForTypeName, declaration, template );
+				return _dynamicElementWithName( classForTypeName, declaration, template );
 			}
 		}
 
-		return _componentReferenceWithClassNameDeclarationAndTemplate( typeName, declaration, template, languages );
+		return _componentReferenceWithName( typeName, declaration, template, languages );
+	}
+
+	private static NGElement _componentReferenceWithName( final String componentName, final NGDeclaration declaration, final NGElement element, final List<String> languages ) throws ClassNotFoundException {
+		final NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( componentName, languages );
+
+		if( componentDefinition == null ) {
+			throw new ClassNotFoundException( "Cannot find class or component named \'" + componentName + "\" in runtime or in a loadable bundle" );
+		}
+
+		final Map<String, NGAssociation> associations = declaration.associations();
+		return componentDefinition.componentReferenceWithAssociations( associations, element );
+	}
+
+	private static NGElement _dynamicElementWithName( Class<? extends NGElement> c, NGDeclaration declaration, NGElement element ) {
+		return NGApplication.application().dynamicElementWithName( c.getName(), declaration.associations(), element, null );
 	}
 }
