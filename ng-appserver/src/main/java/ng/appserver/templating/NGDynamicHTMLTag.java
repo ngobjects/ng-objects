@@ -25,19 +25,22 @@ public class NGDynamicHTMLTag {
 	/**
 	 * Name of the tag (i.e. the value of the 'name' attribute, that links to the declaration
 	 */
-	private String _name;
+	private final String _name;
 
 	/**
 	 * Parent tag
 	 */
-	private NGDynamicHTMLTag _parent;
+	private final NGDynamicHTMLTag _parent;
 
 	/**
 	 * Children of this tag
 	 */
 	private List<Object> _children;
 
-	public NGDynamicHTMLTag() {}
+	public NGDynamicHTMLTag() {
+		_parent = null;
+		_name = null;
+	}
 
 	public NGDynamicHTMLTag( final String tagPart, final NGDynamicHTMLTag parent ) throws NGHTMLFormatException {
 		Objects.requireNonNull( tagPart );
