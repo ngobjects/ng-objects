@@ -57,7 +57,7 @@ public class NGDynamicHTMLTag {
 	}
 
 	public NGElement template() {
-		List nsmutablearray = null;
+		List list = null;
 
 		if( _children == null ) {
 			return null;
@@ -66,7 +66,7 @@ public class NGDynamicHTMLTag {
 		Enumeration<Object> enumeration = Collections.enumeration( _children );
 
 		if( enumeration != null ) {
-			nsmutablearray = new ArrayList<>( _children.size() );
+			list = new ArrayList<>( _children.size() );
 			StringBuilder stringb = new StringBuilder( 128 );
 			while( enumeration.hasMoreElements() ) {
 				Object obj1 = enumeration.nextElement();
@@ -75,24 +75,24 @@ public class NGDynamicHTMLTag {
 				}
 				else {
 					if( stringb.length() > 0 ) {
-						NGHTMLBareString wohtmlbarestring1 = new NGHTMLBareString( stringb.toString() );
-						nsmutablearray.add( wohtmlbarestring1 );
+						NGHTMLBareString bareString = new NGHTMLBareString( stringb.toString() );
+						list.add( bareString );
 						stringb.setLength( 0 );
 					}
-					nsmutablearray.add( obj1 );
+					list.add( obj1 );
 				}
 			}
 			if( stringb.length() > 0 ) {
-				NGHTMLBareString wohtmlbarestring = new NGHTMLBareString( stringb.toString() );
+				NGHTMLBareString bareString = new NGHTMLBareString( stringb.toString() );
 				stringb.setLength( 0 );
-				nsmutablearray.add( wohtmlbarestring );
+				list.add( bareString );
 			}
 		}
 
 		NGElement obj = null;
 
-		if( nsmutablearray != null && nsmutablearray.size() == 1 ) {
-			Object obj2 = nsmutablearray.get( 0 );
+		if( list != null && list.size() == 1 ) {
+			Object obj2 = list.get( 0 );
 			if( obj2 instanceof NGComponentReference ) {
 				obj = new NGDynamicGroup( _name, null, (NGElement)obj2 );
 			}
@@ -101,7 +101,7 @@ public class NGDynamicHTMLTag {
 			}
 		}
 		else {
-			obj = new NGDynamicGroup( _name, null, nsmutablearray );
+			obj = new NGDynamicGroup( _name, null, list );
 		}
 
 		return obj;
@@ -182,13 +182,13 @@ public class NGDynamicHTMLTag {
 	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement template, final List<String> languages ) throws ClassNotFoundException, NGDeclarationFormatException {
 
 		if( declaration == null ) {
-			throw new NGDeclarationFormatException( "<WOHTMLTemplateParser> no declaration for dynamic element (or component) named " + name );
+			throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named " + name );
 		}
 
 		final String typeName = declaration.type();
 
 		if( typeName == null ) {
-			throw new NGDeclarationFormatException( "<WOHTMLWebObjectTag> declaration object for dynamic element (or component) named " + name + "has no class name." );
+			throw new NGDeclarationFormatException( "Declaration object for dynamic element (or component) named " + name + "has no class name." );
 		}
 
 		Class<? extends NGElement> classForTypeName = _NGUtilities.classWithName( typeName );

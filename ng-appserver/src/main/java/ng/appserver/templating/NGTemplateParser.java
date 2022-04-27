@@ -79,8 +79,8 @@ public class NGTemplateParser {
 	}
 
 	public void didParseComment( String comment, NGHTMLParser htmlParser ) {
-		NGHTMLCommentString wohtmlcommentstring = new NGHTMLCommentString( comment );
-		_currentWebObjectTag.addChildElement( wohtmlcommentstring );
+		NGHTMLCommentString commentString = new NGHTMLCommentString( comment );
+		_currentWebObjectTag.addChildElement( commentString );
 	}
 
 	public void didParseText( String text, NGHTMLParser htmlParser ) {

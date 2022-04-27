@@ -144,23 +144,23 @@ public class NGDeclarationParser {
 			int colonIndex = declarationHeader.indexOf( ':' );
 
 			if( colonIndex < 0 ) {
-				throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing ':' for declaration:\n" + declarationHeader + " " + declarationBody );
+				throw new NGDeclarationFormatException( "Missing ':' for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
 
 			tagName = declarationHeader.substring( 0, colonIndex ).trim();
 
 			if( tagName.length() == 0 ) {
-				throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing tag name for declaration:\n" + declarationHeader + " " + declarationBody );
+				throw new NGDeclarationFormatException( "Missing tag name for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
 
 			if( declarations.get( tagName ) != null ) {
-				throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Duplicate tag name '" + tagName + "' in declaration:\n" + declarationBody );
+				throw new NGDeclarationFormatException( "Duplicate tag name '" + tagName + "' in declaration:\n" + declarationBody );
 			}
 
 			String type = declarationHeader.substring( colonIndex + 1 ).trim();
 
 			if( type.length() == 0 ) {
-				throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing element name for declaration:\n" + declarationHeader + " " + declarationBody );
+				throw new NGDeclarationFormatException( "Missing element name for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
 
 			Map<String, NGAssociation> associations = _associationsForDictionaryString( declarationHeader, declarationBody );
@@ -176,7 +176,7 @@ public class NGDeclarationParser {
 		String trimmedDeclarationBody = declarationBody.trim();
 
 		if( !trimmedDeclarationBody.startsWith( "{" ) && !trimmedDeclarationBody.endsWith( "}" ) ) {
-			throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Internal inconsistency : invalid dictionary for declaration:\n" + declarationHeader + " " + declarationBody );
+			throw new NGDeclarationFormatException( "Internal inconsistency : invalid dictionary for declaration:\n" + declarationHeader + " " + declarationBody );
 		}
 
 		int declarationBodyLength = trimmedDeclarationBody.length();
@@ -197,15 +197,15 @@ public class NGDeclarationParser {
 			if( binding.length() != 0 ) {
 				int equalsIndex = binding.indexOf( '=' );
 				if( equalsIndex < 0 ) {
-					throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Invalid line. No equal in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
+					throw new NGDeclarationFormatException( "Invalid line. No equal in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 				String key = binding.substring( 0, equalsIndex ).trim();
 				if( key.length() == 0 ) {
-					throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing binding in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
+					throw new NGDeclarationFormatException( "Missing binding in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 				String value = binding.substring( equalsIndex + 1 ).trim();
 				if( value.length() == 0 ) {
-					throw new NGDeclarationFormatException( "<WOHelperFunctionDeclarationParser> Missing value in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
+					throw new NGDeclarationFormatException( "Missing value in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 				NGAssociation association = NGDeclarationParser._associationWithKey( value, _quotedStrings );
 				String quotedString = _quotedStrings.get( key );
@@ -371,6 +371,6 @@ public class NGDeclarationParser {
 
 	@Override
 	public String toString() {
-		return "<WOHelperFunctionDeclarationParser quotedStrings = " + _quotedStrings.toString() + ">";
+		return "quotedStrings = " + _quotedStrings.toString() + ">";
 	}
 }
