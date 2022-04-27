@@ -223,6 +223,9 @@ public class NGDeclarationParser {
 		return associations;
 	}
 
+	/**
+	 * FIXME: Doesn't this belong in NGAssociationFactory? // Hugi 2022-04-27
+	 */
 	public static NGAssociation _associationWithKey( String associationValue, Map<String, String> quotedStrings ) {
 		NGAssociation association = null;
 		if( associationValue != null && associationValue.startsWith( "~" ) ) {
