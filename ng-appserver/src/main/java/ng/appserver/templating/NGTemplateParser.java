@@ -45,32 +45,38 @@ public class NGTemplateParser {
 	}
 
 	public void didParseOpeningWebObjectTag( String s, NGHTMLParser htmlParser ) throws NGHTMLFormatException {
+
 		if( allowInlineBindings() ) {
 			int spaceIndex = s.indexOf( ' ' );
 			int colonIndex;
+
 			if( spaceIndex != -1 ) {
 				colonIndex = s.substring( 0, spaceIndex ).indexOf( ':' );
 			}
 			else {
 				colonIndex = s.indexOf( ':' );
 			}
+
 			if( colonIndex != -1 ) {
 				NGDeclaration declaration = parseInlineBindings( s, colonIndex );
 				s = "<wo name = \"" + declaration.name() + "\"";
 			}
 		}
+
 		_currentDynamicTag = new NGDynamicHTMLTag( s, _currentDynamicTag );
 		logger.debug( "Inserted dynamic tag with Name '{}'.", _currentDynamicTag.name() );
 	}
 
 	public void didParseClosingWebObjectTag( String s, NGHTMLParser htmlParser ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
-		NGDynamicHTMLTag webobjectTag = _currentDynamicTag.parentTag();
-		if( webobjectTag == null ) {
+		final NGDynamicHTMLTag dynamicTag = _currentDynamicTag.parentTag();
+
+		if( dynamicTag == null ) {
 			throw new NGHTMLFormatException( "<" + getClass().getName() + "> Unbalanced WebObject tags. Either there is an extra closing </WEBOBJECT> tag in the html template, or one of the opening <WEBOBJECT ...> tag has a typo (extra spaces between a < sign and a WEBOBJECT tag ?)." );
 		}
+
 		try {
-			NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
-			_currentDynamicTag = webobjectTag;
+			final NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
+			_currentDynamicTag = dynamicTag;
 			_currentDynamicTag.addChildElement( element );
 		}
 		catch( RuntimeException e ) {
