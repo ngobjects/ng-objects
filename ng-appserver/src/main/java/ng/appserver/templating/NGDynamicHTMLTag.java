@@ -123,8 +123,6 @@ public class NGDynamicHTMLTag {
 	private static String extractDeclarationName( final String tagPart ) throws NGHTMLFormatException {
 		Objects.requireNonNull( tagPart );
 
-		String result = null;
-
 		final StringTokenizer st1 = new StringTokenizer( tagPart, "=" );
 
 		if( st1.countTokens() != 2 ) {
@@ -136,25 +134,22 @@ public class NGDynamicHTMLTag {
 
 		int i = s1.indexOf( '"' );
 
+		// Go here if the attribute name is unquoted
 		if( i != -1 ) {
 			// this is where we go if the name attribute is quoted
 			int j = s1.lastIndexOf( '"' );
 
 			if( j > i ) {
-				result = s1.substring( i + 1, j );
+				return s1.substring( i + 1, j );
 			}
 		}
 		else {
 			// Assume an unquoted name attributes
 			final StringTokenizer st2 = new StringTokenizer( s1 );
-			result = st2.nextToken();
+			return st2.nextToken();
 		}
 
-		if( result == null ) {
-			throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
-		}
-
-		return result;
+		throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
 	}
 
 	public NGElement dynamicElement( final Map<String, NGDeclaration> declarations, final List<String> languages ) throws NGDeclarationFormatException, ClassNotFoundException {
