@@ -44,6 +44,30 @@ public class NGTemplateParser {
 		return parseHTML();
 	}
 
+	private void parseDeclarations() throws NGDeclarationFormatException {
+		if( _declarations == null && _declarationString != null ) {
+			_declarations = NGDeclarationParser.declarationsWithString( _declarationString );
+		}
+	}
+
+	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
+		NGElement currentWebObjectTemplate = null;
+
+		if( _HTMLString != null && _declarations != null ) {
+			NGHTMLParser htmlParser = new NGHTMLParser( this, _HTMLString );
+			htmlParser.parseHTML();
+			String webobjectTagName = _currentDynamicTag.name();
+
+			if( webobjectTagName != null ) {
+				throw new NGHTMLFormatException( "There is an unbalanced WebObjects tag named '" + webobjectTagName + "'." );
+			}
+
+			currentWebObjectTemplate = _currentDynamicTag.template();
+		}
+
+		return currentWebObjectTemplate;
+	}
+
 	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException {
 
 		if( allowInlineBindings() ) {
@@ -275,24 +299,6 @@ public class NGTemplateParser {
 		return sb.toString();
 	}
 
-	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
-		NGElement currentWebObjectTemplate = null;
-
-		if( _HTMLString != null && _declarations != null ) {
-			NGHTMLParser htmlParser = new NGHTMLParser( this, _HTMLString );
-			htmlParser.parseHTML();
-			String webobjectTagName = _currentDynamicTag.name();
-
-			if( webobjectTagName != null ) {
-				throw new NGHTMLFormatException( "There is an unbalanced WebObjects tag named '" + webobjectTagName + "'." );
-			}
-
-			currentWebObjectTemplate = _currentDynamicTag.template();
-		}
-
-		return currentWebObjectTemplate;
-	}
-
 	private static boolean isInline( final NGDynamicHTMLTag tag ) {
 		Objects.requireNonNull( tag );
 
@@ -318,12 +324,6 @@ public class NGTemplateParser {
 		}
 
 		return name;
-	}
-
-	private void parseDeclarations() throws NGDeclarationFormatException {
-		if( _declarations == null && _declarationString != null ) {
-			_declarations = NGDeclarationParser.declarationsWithString( _declarationString );
-		}
 	}
 
 	public static NGDeclaration createDeclaration( final String declarationName, final String declarationType, final Map<String, NGAssociation> associations ) {
