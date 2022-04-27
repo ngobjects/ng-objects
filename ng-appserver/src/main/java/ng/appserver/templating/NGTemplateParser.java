@@ -40,7 +40,7 @@ public class NGTemplateParser {
 		return parseHTML();
 	}
 
-	public void didParseOpeningWebObjectTag( String tagString, NGHTMLParser htmlParser ) throws NGHTMLFormatException {
+	public void didParseOpeningWebObjectTag( String tagString ) throws NGHTMLFormatException {
 
 		if( allowInlineBindings() ) {
 			int spaceIndex = tagString.indexOf( ' ' );
@@ -62,7 +62,7 @@ public class NGTemplateParser {
 		_currentDynamicTag = new NGDynamicHTMLTag( tagString, _currentDynamicTag );
 	}
 
-	public void didParseClosingWebObjectTag( String s, NGHTMLParser htmlParser ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+	public void didParseClosingWebObjectTag( String s ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 		final NGDynamicHTMLTag dynamicTag = _currentDynamicTag.parentTag();
 
 		if( dynamicTag == null ) {
@@ -79,12 +79,12 @@ public class NGTemplateParser {
 		}
 	}
 
-	public void didParseComment( String comment, NGHTMLParser htmlParser ) {
+	public void didParseComment( String comment ) {
 		NGHTMLCommentString commentString = new NGHTMLCommentString( comment );
 		_currentDynamicTag.addChildElement( commentString );
 	}
 
-	public void didParseText( String text, NGHTMLParser htmlParser ) {
+	public void didParseText( String text ) {
 		_currentDynamicTag.addChildElement( text );
 	}
 
