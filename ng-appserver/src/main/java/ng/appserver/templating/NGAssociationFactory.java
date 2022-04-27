@@ -13,12 +13,10 @@ public class NGAssociationFactory {
 	public static NGAssociation associationWithKeyPath( String keyPath ) {
 
 		if( keyPath.charAt( 0 ) == '^' ) {
-			// return new NGHelperFunctionBindingNameAssociation( keyPath );
 			throw new RuntimeException( "Binding name associations are not supported" );
 		}
 
 		if( keyPathIsReadOnly( keyPath ) ) {
-			// return new NGReadOnlyKeyValueAssociation( keyPath );
 			throw new RuntimeException( "Read only keypath associations are not supported" );
 		}
 
