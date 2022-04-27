@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -284,12 +285,16 @@ public class NGTemplateParser {
 		return currentWebObjectTemplate;
 	}
 
-	private static boolean isInline( NGDynamicHTMLTag tag ) {
+	private static boolean isInline( final NGDynamicHTMLTag tag ) {
+		Objects.requireNonNull( tag );
+
 		String name = tag.name();
 		return name != null && name.startsWith( "_" ) && name.length() > 1 && name.indexOf( '_', 1 ) != -1;
 	}
 
 	private static String componentName( final NGDynamicHTMLTag tag ) {
+		Objects.requireNonNull( tag );
+
 		String name = tag.name();
 
 		// This goofiness reparses back out inline binding names
