@@ -45,26 +45,26 @@ public class NGTemplateParser {
 		return parseHTML();
 	}
 
-	public void didParseOpeningWebObjectTag( String s, NGHTMLParser htmlParser ) throws NGHTMLFormatException {
+	public void didParseOpeningWebObjectTag( String tagString, NGHTMLParser htmlParser ) throws NGHTMLFormatException {
 
 		if( allowInlineBindings() ) {
-			int spaceIndex = s.indexOf( ' ' );
+			int spaceIndex = tagString.indexOf( ' ' );
 			int colonIndex;
 
 			if( spaceIndex != -1 ) {
-				colonIndex = s.substring( 0, spaceIndex ).indexOf( ':' );
+				colonIndex = tagString.substring( 0, spaceIndex ).indexOf( ':' );
 			}
 			else {
-				colonIndex = s.indexOf( ':' );
+				colonIndex = tagString.indexOf( ':' );
 			}
 
 			if( colonIndex != -1 ) {
-				NGDeclaration declaration = parseInlineBindings( s, colonIndex );
-				s = "<wo name = \"" + declaration.name() + "\"";
+				NGDeclaration declaration = parseInlineBindings( tagString, colonIndex );
+				tagString = "<wo name = \"" + declaration.name() + "\"";
 			}
 		}
 
-		_currentDynamicTag = new NGDynamicHTMLTag( s, _currentDynamicTag );
+		_currentDynamicTag = new NGDynamicHTMLTag( tagString, _currentDynamicTag );
 		logger.debug( "Inserted dynamic tag with Name '{}'.", _currentDynamicTag.name() );
 	}
 
@@ -95,10 +95,11 @@ public class NGTemplateParser {
 	}
 
 	private NGDeclaration parseInlineBindings( String tag, int colonIndex ) throws NGHTMLFormatException {
-		StringBuffer keyBuffer = new StringBuffer();
-		StringBuffer valueBuffer = new StringBuffer();
-		StringBuffer elementTypeBuffer = new StringBuffer();
-		Map<String, NGAssociation> associations = new HashMap<>();
+		final StringBuffer keyBuffer = new StringBuffer();
+		final StringBuffer valueBuffer = new StringBuffer();
+		final StringBuffer elementTypeBuffer = new StringBuffer();
+		final Map<String, NGAssociation> associations = new HashMap<>();
+
 		StringBuffer currentBuffer = elementTypeBuffer;
 		boolean changeBuffers = false;
 		boolean inQuote = false;
@@ -202,12 +203,19 @@ public class NGTemplateParser {
 		return declaration;
 	}
 
-	private static void parseInlineAssociation( StringBuffer keyBuffer, StringBuffer valueBuffer, Map<String, NGAssociation> bindings ) throws NGHTMLFormatException {
-		String key = keyBuffer.toString().trim();
+	private static void parseInlineAssociation( final StringBuffer keyBuffer, final StringBuffer valueBuffer, final Map<String, NGAssociation> bindings ) throws NGHTMLFormatException {
+		Objects.requireNonNull( keyBuffer );
+		Objects.requireNonNull( valueBuffer );
+		Objects.requireNonNull( bindings );
+
+		final String key = keyBuffer.toString().trim();
 		String value = valueBuffer.toString().trim();
-		Map<String, String> quotedStrings;
+
+		final Map<String, String> quotedStrings;
+
 		if( value.startsWith( "\"" ) ) {
 			value = value.substring( 1 );
+
 			if( value.endsWith( "\"" ) ) {
 				value = value.substring( 0, value.length() - 1 );
 			}
@@ -216,9 +224,11 @@ public class NGTemplateParser {
 			}
 			if( value.startsWith( "$" ) ) {
 				value = value.substring( 1 );
+
 				if( value.endsWith( "VALID" ) ) {
 					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
 				}
+
 				quotedStrings = new HashMap<>();
 			}
 			else {
@@ -232,7 +242,8 @@ public class NGTemplateParser {
 		else {
 			quotedStrings = new HashMap<>();
 		}
-		NGAssociation association = NGDeclarationParser._associationWithKey( value, quotedStrings );
+
+		final NGAssociation association = NGDeclarationParser._associationWithKey( value, quotedStrings );
 		bindings.put( key, association );
 	}
 
