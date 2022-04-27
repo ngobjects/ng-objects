@@ -51,19 +51,16 @@ public class NGTemplateParser {
 	}
 
 	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
-		NGElement currentWebObjectTemplate = null;
 
 		new NGHTMLParser( this, _HTMLString ).parseHTML();
 
-		final String webobjectTagName = _currentDynamicTag.name();
+		final String currentDynamicTagName = _currentDynamicTag.name();
 
-		if( webobjectTagName != null ) {
-			throw new NGHTMLFormatException( "There is an unbalanced WebObjects tag named '" + webobjectTagName + "'." );
+		if( currentDynamicTagName != null ) {
+			throw new NGHTMLFormatException( "There is an unbalanced WebObjects tag named '%s'.".formatted( currentDynamicTagName ) );
 		}
 
-		currentWebObjectTemplate = _currentDynamicTag.template();
-
-		return currentWebObjectTemplate;
+		return _currentDynamicTag.template();
 	}
 
 	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException {
