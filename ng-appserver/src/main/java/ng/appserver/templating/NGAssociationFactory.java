@@ -4,7 +4,7 @@ import ng.appserver.NGAssociation;
 import ng.appserver.NGConstantValueAssociation;
 import ng.appserver.NGKeyValueAssociation;
 
-public class NGHelperFunctionAssociation {
+public class NGAssociationFactory {
 
 	public static NGAssociation associationWithValue( Object obj ) {
 		return new NGConstantValueAssociation( obj );

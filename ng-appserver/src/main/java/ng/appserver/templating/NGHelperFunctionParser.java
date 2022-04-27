@@ -169,7 +169,7 @@ public class NGHelperFunctionParser {
 			// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
 			// as the elementName binding
 			elementType = elementType.replaceAll( WO_REPLACEMENT_MARKER, "" );
-			associations.put( "elementName", NGHelperFunctionAssociation.associationWithValue( elementType ) );
+			associations.put( "elementName", NGAssociationFactory.associationWithValue( elementType ) );
 			elementType = "WOGenericContainer";
 		}
 

@@ -248,7 +248,7 @@ public class NGHelperFunctionDeclarationParser {
 			}
 			value.append( associationValue.substring( lastIndex ) );
 			associationValue = value.toString();
-			association = NGHelperFunctionAssociation.associationWithValue( associationValue );
+			association = NGAssociationFactory.associationWithValue( associationValue );
 		}
 		else {
 			String quotedString = quotedStrings.get( associationValue );
@@ -279,7 +279,7 @@ public class NGHelperFunctionDeclarationParser {
 					}
 					quotedString = sb.toString();
 				}
-				association = NGHelperFunctionAssociation.associationWithValue( quotedString );
+				association = NGAssociationFactory.associationWithValue( quotedString );
 			}
 			else if( isNumeric( associationValue ) ) {
 				Number number = null;
@@ -289,7 +289,7 @@ public class NGHelperFunctionDeclarationParser {
 				else {
 					number = Integer.parseInt( associationValue );
 				}
-				association = NGHelperFunctionAssociation.associationWithValue( number );
+				association = NGAssociationFactory.associationWithValue( number );
 			}
 			else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
 				association = NGConstantValueAssociation.TRUE;
@@ -298,7 +298,7 @@ public class NGHelperFunctionDeclarationParser {
 				association = NGConstantValueAssociation.FALSE;
 			}
 			else {
-				association = NGHelperFunctionAssociation.associationWithKeyPath( associationValue );
+				association = NGAssociationFactory.associationWithKeyPath( associationValue );
 			}
 		}
 		return association;
