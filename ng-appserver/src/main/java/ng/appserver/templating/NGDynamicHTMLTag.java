@@ -104,19 +104,21 @@ public class NGDynamicHTMLTag {
 		return template;
 	}
 
-	public void addChildElement( Object obj ) {
+	public void addChildElement( final Object stringOrElement ) {
+		Objects.requireNonNull( stringOrElement );
 
 		if( _children == null ) {
 			_children = new ArrayList<>();
 		}
 
-		_children.add( obj );
+		_children.add( stringOrElement );
 	}
 
 	/**
 	 * @return The declaration name (name attribute) from the given dynamic tag
 	 */
 	private static String extractDeclarationName( final String tagPart ) throws NGHTMLFormatException {
+		Objects.requireNonNull( tagPart );
 
 		String result = null;
 
