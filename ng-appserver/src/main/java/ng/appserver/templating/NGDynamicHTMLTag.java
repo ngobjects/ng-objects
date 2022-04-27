@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import ng.appserver.NGApplication;
@@ -17,19 +18,36 @@ import ng.appserver.NGElement;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 
+/**
+ * Represents a dynamic tag in the HTML part of a template
+ */
+
 public class NGDynamicHTMLTag {
 
+	/**
+	 * Name of the tag (i.e. the value of the 'name' attribute, that links to the declaration
+	 */
 	private String _name;
+
+	/**
+	 * Parent tag
+	 */
 	private NGDynamicHTMLTag _parent;
+
+	/**
+	 * Children of this tag
+	 */
 	private List<Object> _children;
 
 	public NGDynamicHTMLTag() {
 		_name = null;
 	}
 
-	public NGDynamicHTMLTag( final String string, final NGDynamicHTMLTag parent ) throws NGHelperFunctionHTMLFormatException {
+	public NGDynamicHTMLTag( final String tagPart, final NGDynamicHTMLTag parent ) throws NGHelperFunctionHTMLFormatException {
+		Objects.requireNonNull( tagPart );
+
 		_parent = parent;
-		extractName( string );
+		extractName( tagPart );
 	}
 
 	public String name() {
