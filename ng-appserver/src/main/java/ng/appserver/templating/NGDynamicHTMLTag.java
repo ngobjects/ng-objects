@@ -105,9 +105,11 @@ public class NGDynamicHTMLTag {
 	}
 
 	public void addChildElement( Object obj ) {
+
 		if( _children == null ) {
 			_children = new ArrayList<>();
 		}
+
 		_children.add( obj );
 	}
 
