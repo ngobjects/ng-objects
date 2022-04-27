@@ -39,15 +39,13 @@ public class NGDynamicHTMLTag {
 	 */
 	private List<Object> _children;
 
-	public NGDynamicHTMLTag() {
-		_name = null;
-	}
+	public NGDynamicHTMLTag() {}
 
 	public NGDynamicHTMLTag( final String tagPart, final NGDynamicHTMLTag parent ) throws NGHelperFunctionHTMLFormatException {
 		Objects.requireNonNull( tagPart );
 
 		_parent = parent;
-		extractName( tagPart );
+		_name = extractDeclarationName( tagPart );
 	}
 
 	public String name() {
@@ -116,31 +114,43 @@ public class NGDynamicHTMLTag {
 		_children.add( obj );
 	}
 
-	private void extractName( String s ) throws NGHelperFunctionHTMLFormatException {
+	/**
+	 * @return The declaration name (name attribute) from the given WebObject tag
+	 */
+	private static String extractDeclarationName( final String tagPart ) throws NGHelperFunctionHTMLFormatException {
 
-		StringTokenizer stringtokenizer = new StringTokenizer( s, "=" );
-		if( stringtokenizer.countTokens() != 2 ) {
-			throw new NGHelperFunctionHTMLFormatException( "<WOHTMLWebObjectTag cannot initialize WebObject tag " + s + "> . It has no NAME=... parameter" );
+		String result = null;
+
+		final StringTokenizer st1 = new StringTokenizer( tagPart, "=" );
+
+		if( st1.countTokens() != 2 ) {
+			throw new NGHelperFunctionHTMLFormatException( "Can't initialize dynamic tag '%s', name=... attribute not found".formatted( tagPart ) );
 		}
 
-		stringtokenizer.nextToken();
-		String s1 = stringtokenizer.nextToken();
+		st1.nextToken();
+		String s1 = st1.nextToken();
 
 		int i = s1.indexOf( '"' );
+
 		if( i != -1 ) {
+			// this is where we go if the name attribute is quoted
 			int j = s1.lastIndexOf( '"' );
+
 			if( j > i ) {
-				_name = s1.substring( i + 1, j );
+				result = s1.substring( i + 1, j );
 			}
 		}
 		else {
-			StringTokenizer stringtokenizer1 = new StringTokenizer( s1 );
-			_name = stringtokenizer1.nextToken();
+			// Assume an unquoted name attributes
+			final StringTokenizer st2 = new StringTokenizer( s1 );
+			result = st2.nextToken();
 		}
 
-		if( _name == null ) {
-			throw new NGHelperFunctionHTMLFormatException( "<WOHTMLWebObjectTag cannot initialize WebObject tag " + s + "> . Failed parsing NAME parameter" );
+		if( result == null ) {
+			throw new NGHelperFunctionHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
 		}
+
+		return result;
 	}
 
 	public NGElement dynamicElement( Map<String, NGDeclaration> declarations, List<String> languages ) throws NGHelperFunctionDeclarationFormatException, ClassNotFoundException {
