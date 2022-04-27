@@ -60,33 +60,36 @@ public class NGDynamicHTMLTag {
 			return null;
 		}
 
-		List list = new ArrayList<>( _children.size() );
-		StringBuilder stringb = new StringBuilder( 128 );
+		final List list = new ArrayList<>( _children.size() );
+		final StringBuilder sb = new StringBuilder( 128 );
 
-		for( Object obj1 : _children ) {
+		for( final Object currentChild : _children ) {
 
-			if( obj1 instanceof String ) {
-				stringb.append( (String)obj1 );
+			if( currentChild instanceof String ) {
+				sb.append( (String)currentChild );
 			}
 			else {
-				if( stringb.length() > 0 ) {
-					NGHTMLBareString bareString = new NGHTMLBareString( stringb.toString() );
+				if( sb.length() > 0 ) {
+					NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
 					list.add( bareString );
-					stringb.setLength( 0 );
+					sb.setLength( 0 );
 				}
-				list.add( obj1 );
+
+				list.add( currentChild );
 			}
 		}
-		if( stringb.length() > 0 ) {
-			NGHTMLBareString bareString = new NGHTMLBareString( stringb.toString() );
-			stringb.setLength( 0 );
+
+		if( sb.length() > 0 ) {
+			NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
+			sb.setLength( 0 );
 			list.add( bareString );
 		}
 
-		NGElement obj = null;
+		NGElement obj;
 
 		if( list != null && list.size() == 1 ) {
 			Object obj2 = list.get( 0 );
+
 			if( obj2 instanceof NGComponentReference ) {
 				obj = new NGDynamicGroup( _name, null, (NGElement)obj2 );
 			}
