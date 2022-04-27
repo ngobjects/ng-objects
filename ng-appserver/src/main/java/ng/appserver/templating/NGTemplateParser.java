@@ -188,15 +188,7 @@ public class NGTemplateParser {
 			_inlineBindingCount++;
 		}
 
-		final NGTagProcessor tagProcessor = tagProcessorMap().get( elementType );
-		NGDeclaration declaration;
-
-		if( tagProcessor == null ) {
-			declaration = NGTemplateParser.createDeclaration( elementName, elementType, associations );
-		}
-		else {
-			declaration = tagProcessor.createDeclaration( elementName, elementType, associations );
-		}
+		final NGDeclaration declaration = NGTemplateParser.createDeclaration( elementName, elementType, associations );
 
 		_declarations.put( elementName, declaration );
 
@@ -342,12 +334,5 @@ public class NGTemplateParser {
 	 */
 	private static boolean allowInlineBindings() {
 		return true;
-	}
-
-	/**
-	 * A map of tag processors. Not sure if we should keep this around, but it's here for a while at least // Hugi 2022-04-23
-	 */
-	private static Map<String, NGTagProcessor> tagProcessorMap() {
-		return Collections.emptyMap();
 	}
 }
