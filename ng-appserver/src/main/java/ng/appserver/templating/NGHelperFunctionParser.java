@@ -25,7 +25,7 @@ public class NGHelperFunctionParser {
 
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
-	private NGHTMLWebObjectTag _currentWebObjectTag = new NGHTMLWebObjectTag(); // FIXME: Do we need to set this on initialization?
+	private NGDynamicHTMLTag _currentWebObjectTag = new NGDynamicHTMLTag(); // FIXME: Do we need to set this on initialization?
 	private Map<String, NGDeclaration> _declarations;
 	private int _inlineBindingCount;
 
@@ -59,12 +59,12 @@ public class NGHelperFunctionParser {
 				s = "<wo name = \"" + declaration.name() + "\"";
 			}
 		}
-		_currentWebObjectTag = new NGHTMLWebObjectTag( s, _currentWebObjectTag );
+		_currentWebObjectTag = new NGDynamicHTMLTag( s, _currentWebObjectTag );
 		logger.debug( "Inserted WebObject with Name '{}'.", _currentWebObjectTag.name() );
 	}
 
 	public void didParseClosingWebObjectTag( String s, NGHelperFunctionHTMLParser htmlParser ) throws NGHelperFunctionDeclarationFormatException, NGHelperFunctionHTMLFormatException, ClassNotFoundException {
-		NGHTMLWebObjectTag webobjectTag = _currentWebObjectTag.parentTag();
+		NGDynamicHTMLTag webobjectTag = _currentWebObjectTag.parentTag();
 		if( webobjectTag == null ) {
 			throw new NGHelperFunctionHTMLFormatException( "<" + getClass().getName() + "> Unbalanced WebObject tags. Either there is an extra closing </WEBOBJECT> tag in the html template, or one of the opening <WEBOBJECT ...> tag has a typo (extra spaces between a < sign and a WEBOBJECT tag ?)." );
 		}
@@ -278,12 +278,12 @@ public class NGHelperFunctionParser {
 		return currentWebObjectTemplate;
 	}
 
-	private static boolean isInline( NGHTMLWebObjectTag tag ) {
+	private static boolean isInline( NGDynamicHTMLTag tag ) {
 		String name = tag.name();
 		return name != null && name.startsWith( "_" ) && name.length() > 1 && name.indexOf( '_', 1 ) != -1;
 	}
 
-	private static String componentName( final NGHTMLWebObjectTag tag ) {
+	private static String componentName( final NGDynamicHTMLTag tag ) {
 		String name = tag.name();
 
 		// This goofiness reparses back out inline binding names

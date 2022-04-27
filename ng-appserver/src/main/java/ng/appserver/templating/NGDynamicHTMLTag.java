@@ -17,17 +17,17 @@ import ng.appserver.NGElement;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 
-public class NGHTMLWebObjectTag {
+public class NGDynamicHTMLTag {
 
 	private String _name;
-	private NGHTMLWebObjectTag _parent;
+	private NGDynamicHTMLTag _parent;
 	private List<Object> _children;
 
-	public NGHTMLWebObjectTag() {
+	public NGDynamicHTMLTag() {
 		_name = null;
 	}
 
-	public NGHTMLWebObjectTag( final String string, final NGHTMLWebObjectTag parent ) throws NGHelperFunctionHTMLFormatException {
+	public NGDynamicHTMLTag( final String string, final NGDynamicHTMLTag parent ) throws NGHelperFunctionHTMLFormatException {
 		_parent = parent;
 		extractName( string );
 	}
@@ -36,7 +36,7 @@ public class NGHTMLWebObjectTag {
 		return _name;
 	}
 
-	public NGHTMLWebObjectTag parentTag() {
+	public NGDynamicHTMLTag parentTag() {
 		return _parent;
 	}
 
