@@ -237,36 +237,36 @@ public class NGTemplateParser {
 	 * Only used to create a pretty string for debug logging
 	 */
 	private static String prettyDeclaration( final NGDeclaration declaration ) {
-		StringBuilder declarationString = new StringBuilder();
 
 		if( declaration == null ) {
 			return "[none]";
 		}
 
-		declarationString.append( "Component Type = " + declaration.type() );
-		declarationString.append( ", Bindings = { " );
+		final StringBuilder sb = new StringBuilder();
+		sb.append( "Component Type = " + declaration.type() );
+		sb.append( ", Bindings = { " );
 		Enumeration<String> keyEnum = Collections.enumeration( declaration.associations().keySet() );
 
 		while( keyEnum.hasMoreElements() ) {
 			String key = keyEnum.nextElement();
 			Object assoc = declaration.associations().get( key );
 			if( assoc instanceof NGKeyValueAssociation ) {
-				declarationString.append( key + "=" + ((NGKeyValueAssociation)assoc).keyPath() );
+				sb.append( key + "=" + ((NGKeyValueAssociation)assoc).keyPath() );
 			}
 			else if( assoc instanceof NGConstantValueAssociation ) {
-				declarationString.append( key + "='" + ((NGConstantValueAssociation)assoc).valueInComponent( null ) + "'" );
+				sb.append( key + "='" + ((NGConstantValueAssociation)assoc).valueInComponent( null ) + "'" );
 			}
 			else {
-				declarationString.append( key + "=" + assoc );
+				sb.append( key + "=" + assoc );
 			}
 			if( keyEnum.hasMoreElements() ) {
-				declarationString.append( ", " );
+				sb.append( ", " );
 			}
 		}
 
-		declarationString.append( " }" );
+		sb.append( " }" );
 
-		return declarationString.toString();
+		return sb.toString();
 	}
 
 	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
