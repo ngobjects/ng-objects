@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.NGAssociation;
 import ng.appserver.NGConstantValueAssociation;
 import ng.appserver.NGElement;
@@ -21,8 +18,6 @@ import ng.appserver.elements.NGHTMLCommentString;
  */
 
 public class NGTemplateParser {
-
-	private static final Logger logger = LoggerFactory.getLogger( NGTemplateParser.class );
 
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
@@ -65,7 +60,6 @@ public class NGTemplateParser {
 		}
 
 		_currentDynamicTag = new NGDynamicHTMLTag( tagString, _currentDynamicTag );
-		logger.debug( "Inserted dynamic tag with Name '{}'.", _currentDynamicTag.name() );
 	}
 
 	public void didParseClosingWebObjectTag( String s, NGHTMLParser htmlParser ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
