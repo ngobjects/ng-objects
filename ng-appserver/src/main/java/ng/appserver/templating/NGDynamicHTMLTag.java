@@ -153,26 +153,26 @@ public class NGDynamicHTMLTag {
 		return result;
 	}
 
-	public NGElement dynamicElement( Map<String, NGDeclaration> declarations, List<String> languages ) throws NGDeclarationFormatException, ClassNotFoundException {
+	public NGElement dynamicElement( final Map<String, NGDeclaration> declarations, final List<String> languages ) throws NGDeclarationFormatException, ClassNotFoundException {
 		final String name = name();
-		final NGElement woelement = template();
-		final NGDeclaration wodeclaration = declarations.get( name );
-		return _elementWithDeclaration( wodeclaration, name, woelement, languages );
+		final NGElement element = template();
+		final NGDeclaration declaration = declarations.get( name );
+		return _elementWithDeclaration( declaration, name, element, languages );
 	}
 
-	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( String s, NGDeclaration wodeclaration, NGElement woelement, List<String> languages ) throws ClassNotFoundException {
-		NGComponentReference wocomponentreference = null;
-		NGComponentDefinition wocomponentdefinition = NGApplication.application()._componentDefinition( s, languages );
+	private static NGElement _componentReferenceWithClassNameDeclarationAndTemplate( final String componentName, final NGDeclaration declaration, final NGElement element, final List<String> languages ) throws ClassNotFoundException {
+		NGComponentReference componentReference = null;
+		NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( componentName, languages );
 
-		if( wocomponentdefinition != null ) {
-			Map<String, NGAssociation> nsdictionary = wodeclaration.associations();
-			wocomponentreference = wocomponentdefinition.componentReferenceWithAssociations( nsdictionary, woelement );
+		if( componentDefinition != null ) {
+			Map<String, NGAssociation> nsdictionary = declaration.associations();
+			componentReference = componentDefinition.componentReferenceWithAssociations( nsdictionary, element );
 		}
 		else {
-			throw new ClassNotFoundException( "Cannot find class or component named \'" + s + "\" in runtime or in a loadable bundle" );
+			throw new ClassNotFoundException( "Cannot find class or component named \'" + componentName + "\" in runtime or in a loadable bundle" );
 		}
 
-		return wocomponentreference;
+		return componentReference;
 	}
 
 	private static NGElement _elementWithClass( Class<? extends NGElement> c, NGDeclaration declaration, NGElement element ) {
