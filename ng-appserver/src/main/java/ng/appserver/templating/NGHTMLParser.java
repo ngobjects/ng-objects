@@ -24,7 +24,7 @@ public class NGHTMLParser {
 	private static final String WEBOBJECT_START_TAG = "<webobject";
 	private static final String WO_COLON_END_TAG = "</wo:";
 	private static final String WO_COLON_START_TAG = "<wo:";
-	private static final String WO_REPLACEMENT_MARKER = "__REPL__";
+	public static final String WO_REPLACEMENT_MARKER = "__REPL__";
 	private static final String XML_CDATA_START_TAG = "<![CDATA[";
 
 	private static final boolean _parseStandardTags = false;

@@ -19,8 +19,6 @@ import ng.appserver.elements.NGHTMLCommentString;
 
 public class NGTemplateParser {
 
-	private static String WO_REPLACEMENT_MARKER = "__REPL__";
-
 	/**
 	 * Our context, i.e. the dynamic tag currently being parsed
 	 */
@@ -196,13 +194,13 @@ public class NGTemplateParser {
 		if( shortcutType != null ) {
 			elementType = shortcutType;
 		}
-		else if( elementType.startsWith( WO_REPLACEMENT_MARKER ) ) {
+		else if( elementType.startsWith( NGHTMLParser.WO_REPLACEMENT_MARKER ) ) {
 			// Acts only on tags, where we have "dynamified" inside the tag parser
 			// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
 			// as the elementName binding
-			elementType = elementType.replaceAll( WO_REPLACEMENT_MARKER, "" );
+			elementType = elementType.replaceAll( NGHTMLParser.WO_REPLACEMENT_MARKER, "" );
 			associations.put( "elementName", NGAssociationFactory.associationWithValue( elementType ) );
-			elementType = "WOGenericContainer";
+			elementType = "NGGenericContainer"; // FIXME: This element name might change // Hugi 2022-04-27
 		}
 
 		String elementName;
