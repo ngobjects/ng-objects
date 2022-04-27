@@ -19,14 +19,15 @@ public class NGDeclarationParser {
 
 	private static Logger logger = LoggerFactory.getLogger( NGDeclarationParser.class );
 
-	/**
-	 * FIXME: Why the hell is this an instance variable?
-	 */
-	private final Map<String, String> _quotedStrings = new HashMap<>();
 	private static final int STATE_OUTSIDE = 0;
 	private static final int STATE_INSIDE_COMMENT = 2;
 	private static final String ESCAPED_QUOTE_STRING = "_WO_ESCAPED_QUOTE_";
 	private static final String QUOTED_STRING_KEY = "_WODP_";
+
+	/**
+	 * FIXME: Why the hell is this an instance variable?
+	 */
+	private final Map<String, String> _quotedStrings = new HashMap<>();
 
 	public static Map<String, NGDeclaration> declarationsWithString( String declarationStr ) throws NGDeclarationFormatException {
 		final NGDeclarationParser declarationParser = new NGDeclarationParser();
