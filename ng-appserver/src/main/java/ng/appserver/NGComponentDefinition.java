@@ -43,7 +43,9 @@ public class NGComponentDefinition {
 		Objects.requireNonNull( context );
 
 		try {
-			return _componentClass.getConstructor( NGContext.class ).newInstance( context );
+			final NGComponent newComponentInstance = _componentClass.getConstructor( NGContext.class ).newInstance( context );
+			newComponentInstance._componentDefinition = this; // FIXME: Moved from NGApplication.pageWithName(). Works?
+			return newComponentInstance;
 		}
 		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
 			throw new RuntimeException( e );

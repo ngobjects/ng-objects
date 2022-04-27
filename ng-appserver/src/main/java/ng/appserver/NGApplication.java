@@ -147,9 +147,7 @@ public class NGApplication {
 			throw new RuntimeException( "No such component definition: " + componentClass );
 		}
 
-		final E page = (E)definition.componentInstanceInstanceInContext( context );
-		page._componentDefinition = definition; // FIXME: Butt ugly to do this here // Hugi 2022-01-16
-		return page;
+		return (E)definition.componentInstanceInstanceInContext( context );
 	}
 
 	public static NGApplication application() {
