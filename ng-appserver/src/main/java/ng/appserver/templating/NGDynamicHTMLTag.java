@@ -87,7 +87,7 @@ public class NGDynamicHTMLTag {
 
 		NGElement obj;
 
-		if( list != null && list.size() == 1 ) {
+		if( list.size() == 1 ) {
 			Object obj2 = list.get( 0 );
 
 			if( obj2 instanceof NGComponentReference ) {
