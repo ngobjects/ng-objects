@@ -56,10 +56,9 @@ public class NGDynamicHTMLTag {
 
 	public NGElement template() {
 
-		//		FIXME: removing this null check to see if it does any harm // Hugi 2022-04-27		
-		//		if( _children == null ) {
-		//			return null;
-		//		}
+		if( _children == null ) {
+			return null;
+		}
 
 		final List list = new ArrayList<>( _children.size() );
 		final StringBuilder sb = new StringBuilder( 128 );
