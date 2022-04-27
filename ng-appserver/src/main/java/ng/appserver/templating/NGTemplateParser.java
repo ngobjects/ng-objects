@@ -23,6 +23,10 @@ public class NGTemplateParser {
 
 	private NGDynamicHTMLTag _currentDynamicTag = new NGDynamicHTMLTag();
 	private Map<String, NGDeclaration> _declarations;
+
+	/**
+	 * Keeps track of how many inline bindings have been parsed, used in the generated declaration's name
+	 */
 	private int _inlineBindingCount;
 
 	private final String _HTMLString;
