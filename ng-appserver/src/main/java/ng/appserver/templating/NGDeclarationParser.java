@@ -134,21 +134,18 @@ public class NGDeclarationParser {
 		final Map<String, NGDeclaration> declarations = new HashMap<>();
 		final Map<String, String> rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
 
-		String tagName;
-		NGDeclaration declaration;
-
 		final Enumeration<String> rawDeclarationHeaderEnum = Collections.enumeration( rawDeclarations.keySet() );
 
 		while( rawDeclarationHeaderEnum.hasMoreElements() ) {
-			String declarationHeader = rawDeclarationHeaderEnum.nextElement();
-			String declarationBody = rawDeclarations.get( declarationHeader );
-			int colonIndex = declarationHeader.indexOf( ':' );
+			final String declarationHeader = rawDeclarationHeaderEnum.nextElement();
+			final String declarationBody = rawDeclarations.get( declarationHeader );
+			final int colonIndex = declarationHeader.indexOf( ':' );
 
 			if( colonIndex < 0 ) {
 				throw new NGDeclarationFormatException( "Missing ':' for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
 
-			tagName = declarationHeader.substring( 0, colonIndex ).trim();
+			String tagName = declarationHeader.substring( 0, colonIndex ).trim();
 
 			if( tagName.length() == 0 ) {
 				throw new NGDeclarationFormatException( "Missing tag name for declaration:\n" + declarationHeader + " " + declarationBody );
@@ -164,8 +161,8 @@ public class NGDeclarationParser {
 				throw new NGDeclarationFormatException( "Missing element name for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
 
-			Map<String, NGAssociation> associations = _associationsForDictionaryString( declarationHeader, declarationBody );
-			declaration = NGTemplateParser.createDeclaration( tagName, type, associations );
+			final Map<String, NGAssociation> associations = _associationsForDictionaryString( declarationHeader, declarationBody );
+			NGDeclaration declaration = NGTemplateParser.createDeclaration( tagName, type, associations );
 			declarations.put( tagName, declaration );
 		}
 
