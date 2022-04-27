@@ -21,7 +21,14 @@ public class NGTemplateParser {
 
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
+	/**
+	 * Our context, i.e. the dynamic tag currently being parsed
+	 */
 	private NGDynamicHTMLTag _currentDynamicTag = new NGDynamicHTMLTag();
+
+	/**
+	 * The parsed declarationString
+	 */
 	private Map<String, NGDeclaration> _declarations;
 
 	/**
