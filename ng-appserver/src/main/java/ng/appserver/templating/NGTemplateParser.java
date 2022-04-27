@@ -273,15 +273,19 @@ public class NGTemplateParser {
 
 	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
 		NGElement currentWebObjectTemplate = null;
+
 		if( _HTMLString != null && _declarations != null ) {
 			NGHTMLParser htmlParser = new NGHTMLParser( this, _HTMLString );
 			htmlParser.parseHTML();
 			String webobjectTagName = _currentDynamicTag.name();
+
 			if( webobjectTagName != null ) {
 				throw new NGHTMLFormatException( "There is an unbalanced WebObjects tag named '" + webobjectTagName + "'." );
 			}
+
 			currentWebObjectTemplate = _currentDynamicTag.template();
 		}
+
 		return currentWebObjectTemplate;
 	}
 
