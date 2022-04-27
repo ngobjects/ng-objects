@@ -56,9 +56,10 @@ public class NGDynamicHTMLTag {
 
 	public NGElement template() {
 
-		if( _children == null ) {
-			return null;
-		}
+		//		FIXME: removing this null check to see if it does any harm // Hugi 2022-04-27		
+		//		if( _children == null ) {
+		//			return null;
+		//		}
 
 		final List list = new ArrayList<>( _children.size() );
 		final StringBuilder sb = new StringBuilder( 128 );
@@ -85,23 +86,23 @@ public class NGDynamicHTMLTag {
 			list.add( bareString );
 		}
 
-		NGElement obj;
+		NGElement template;
 
 		if( list.size() == 1 ) {
-			Object obj2 = list.get( 0 );
+			final NGElement onlyElement = (NGElement)list.get( 0 );
 
-			if( obj2 instanceof NGComponentReference ) {
-				obj = new NGDynamicGroup( _name, null, (NGElement)obj2 );
+			if( onlyElement instanceof NGComponentReference ) {
+				template = new NGDynamicGroup( _name, null, onlyElement );
 			}
 			else {
-				obj = (NGElement)obj2;
+				template = onlyElement;
 			}
 		}
 		else {
-			obj = new NGDynamicGroup( _name, null, list );
+			template = new NGDynamicGroup( _name, null, list );
 		}
 
-		return obj;
+		return template;
 	}
 
 	public void addChildElement( Object obj ) {
