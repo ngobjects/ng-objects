@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class NGComponentReference extends NGDynamicElement {
@@ -13,11 +14,25 @@ public class NGComponentReference extends NGDynamicElement {
 		_name = name;
 		_associations = associations;
 		_template = template;
-
 	}
 
 	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
-		_template.appendToResponse( response, context );
+
+		// First we need to keep the context going
+		final NGComponent previousComponent = context.component();
+
+		// Load up our component's definition
+		final NGComponentDefinition newComponent = NGApplication.application()._componentDefinition( _name, Collections.emptyList() );
+
+		final NGComponent newComponentInstance = newComponent.componentInstanceInstanceInContext( context );
+
+		// Set the component in the context
+		context.setCurrentComponent( newComponentInstance );
+
+		newComponentInstance.appendToResponse( response, context );
+
+		// Return control to the previous component
+		context.setCurrentComponent( previousComponent );
 	}
 }
