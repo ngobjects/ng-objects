@@ -44,29 +44,29 @@ public class NGTemplateParser {
 		return parseHTML();
 	}
 
-	public void didParseOpeningWebObjectTag( String tagString ) throws NGHTMLFormatException {
+	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException {
 
 		if( allowInlineBindings() ) {
-			int spaceIndex = tagString.indexOf( ' ' );
+			int spaceIndex = parsedString.indexOf( ' ' );
 			int colonIndex;
 
 			if( spaceIndex != -1 ) {
-				colonIndex = tagString.substring( 0, spaceIndex ).indexOf( ':' );
+				colonIndex = parsedString.substring( 0, spaceIndex ).indexOf( ':' );
 			}
 			else {
-				colonIndex = tagString.indexOf( ':' );
+				colonIndex = parsedString.indexOf( ':' );
 			}
 
 			if( colonIndex != -1 ) {
-				NGDeclaration declaration = parseInlineBindings( tagString, colonIndex );
-				tagString = "<wo name = \"" + declaration.name() + "\"";
+				NGDeclaration declaration = parseInlineBindings( parsedString, colonIndex );
+				parsedString = "<wo name = \"" + declaration.name() + "\"";
 			}
 		}
 
-		_currentDynamicTag = new NGDynamicHTMLTag( tagString, _currentDynamicTag );
+		_currentDynamicTag = new NGDynamicHTMLTag( parsedString, _currentDynamicTag );
 	}
 
-	public void didParseClosingWebObjectTag( String s ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+	public void didParseClosingWebObjectTag( final String parsedString ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 		final NGDynamicHTMLTag dynamicTag = _currentDynamicTag.parentTag();
 
 		if( dynamicTag == null ) {
@@ -83,13 +83,13 @@ public class NGTemplateParser {
 		}
 	}
 
-	public void didParseComment( final String comment ) {
-		NGHTMLCommentString commentString = new NGHTMLCommentString( comment );
+	public void didParseComment( final String parsedString ) {
+		NGHTMLCommentString commentString = new NGHTMLCommentString( parsedString );
 		_currentDynamicTag.addChildElement( commentString );
 	}
 
-	public void didParseText( final String text ) {
-		_currentDynamicTag.addChildElement( text );
+	public void didParseText( final String parsedString ) {
+		_currentDynamicTag.addChildElement( parsedString );
 	}
 
 	private NGDeclaration parseInlineBindings( final String tag, final int colonIndex ) throws NGHTMLFormatException {
