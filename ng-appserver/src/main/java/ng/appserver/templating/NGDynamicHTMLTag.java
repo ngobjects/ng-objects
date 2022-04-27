@@ -115,7 +115,7 @@ public class NGDynamicHTMLTag {
 	}
 
 	/**
-	 * @return The declaration name (name attribute) from the given WebObject tag
+	 * @return The declaration name (name attribute) from the given dynamic tag
 	 */
 	private static String extractDeclarationName( final String tagPart ) throws NGHTMLFormatException {
 

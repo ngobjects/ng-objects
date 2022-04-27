@@ -25,7 +25,7 @@ public class NGTemplateParser {
 
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
-	private NGDynamicHTMLTag _currentWebObjectTag = new NGDynamicHTMLTag(); // FIXME: Do we need to set this on initialization?
+	private NGDynamicHTMLTag _currentDynamicTag = new NGDynamicHTMLTag(); // FIXME: Do we need to set this on initialization?
 	private Map<String, NGDeclaration> _declarations;
 	private int _inlineBindingCount;
 
@@ -59,32 +59,32 @@ public class NGTemplateParser {
 				s = "<wo name = \"" + declaration.name() + "\"";
 			}
 		}
-		_currentWebObjectTag = new NGDynamicHTMLTag( s, _currentWebObjectTag );
-		logger.debug( "Inserted WebObject with Name '{}'.", _currentWebObjectTag.name() );
+		_currentDynamicTag = new NGDynamicHTMLTag( s, _currentDynamicTag );
+		logger.debug( "Inserted dynamic tag with Name '{}'.", _currentDynamicTag.name() );
 	}
 
 	public void didParseClosingWebObjectTag( String s, NGHTMLParser htmlParser ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
-		NGDynamicHTMLTag webobjectTag = _currentWebObjectTag.parentTag();
+		NGDynamicHTMLTag webobjectTag = _currentDynamicTag.parentTag();
 		if( webobjectTag == null ) {
 			throw new NGHTMLFormatException( "<" + getClass().getName() + "> Unbalanced WebObject tags. Either there is an extra closing </WEBOBJECT> tag in the html template, or one of the opening <WEBOBJECT ...> tag has a typo (extra spaces between a < sign and a WEBOBJECT tag ?)." );
 		}
 		try {
-			NGElement element = _currentWebObjectTag.dynamicElement( _declarations, _languages );
-			_currentWebObjectTag = webobjectTag;
-			_currentWebObjectTag.addChildElement( element );
+			NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
+			_currentDynamicTag = webobjectTag;
+			_currentDynamicTag.addChildElement( element );
 		}
 		catch( RuntimeException e ) {
-			throw new RuntimeException( "Unable to load the component named '" + componentName( _currentWebObjectTag ) + "' with the declaration " + prettyDeclaration( _declarations.get( _currentWebObjectTag.name() ) ) + ". Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.", e );
+			throw new RuntimeException( "Unable to load the component named '" + componentName( _currentDynamicTag ) + "' with the declaration " + prettyDeclaration( _declarations.get( _currentDynamicTag.name() ) ) + ". Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.", e );
 		}
 	}
 
 	public void didParseComment( String comment, NGHTMLParser htmlParser ) {
 		NGHTMLCommentString commentString = new NGHTMLCommentString( comment );
-		_currentWebObjectTag.addChildElement( commentString );
+		_currentDynamicTag.addChildElement( commentString );
 	}
 
 	public void didParseText( String text, NGHTMLParser htmlParser ) {
-		_currentWebObjectTag.addChildElement( text );
+		_currentDynamicTag.addChildElement( text );
 	}
 
 	private NGDeclaration parseInlineBindings( String tag, int colonIndex ) throws NGHTMLFormatException {
@@ -269,11 +269,11 @@ public class NGTemplateParser {
 		if( _HTMLString != null && _declarations != null ) {
 			NGHTMLParser htmlParser = new NGHTMLParser( this, _HTMLString );
 			htmlParser.parseHTML();
-			String webobjectTagName = _currentWebObjectTag.name();
+			String webobjectTagName = _currentDynamicTag.name();
 			if( webobjectTagName != null ) {
 				throw new NGHTMLFormatException( "There is an unbalanced WebObjects tag named '" + webobjectTagName + "'." );
 			}
-			currentWebObjectTemplate = _currentWebObjectTag.template();
+			currentWebObjectTemplate = _currentDynamicTag.template();
 		}
 		return currentWebObjectTemplate;
 	}
