@@ -3,6 +3,7 @@ package ng.appserver.templating;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -34,6 +35,9 @@ public class NGHTMLParser {
 	private Map<String, Stack<String>> _stackDict;
 
 	public NGHTMLParser( NGTemplateParser parserDelegate, String unparsedTemplate ) {
+		Objects.requireNonNull( parserDelegate );
+		Objects.requireNonNull( unparsedTemplate );
+
 		_parserDelegate = parserDelegate;
 		_unparsedTemplate = unparsedTemplate;
 		_contentText = new StringBuffer( 128 );
