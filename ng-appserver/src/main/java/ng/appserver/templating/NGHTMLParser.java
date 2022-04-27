@@ -251,50 +251,42 @@ public class NGHTMLParser {
 	}
 
 	private void didParseText() {
-		if( _contentText != null ) {
-			if( logger.isDebugEnabled() ) {
-				logger.debug( "Parsed Text (" + _contentText.length() + ") : " + _contentText );
-			}
-			if( _contentText.length() > 0 ) {
-				_parserDelegate.didParseText( _contentText.toString() );
-				_contentText.setLength( 0 );
-			}
+		if( logger.isDebugEnabled() ) {
+			logger.debug( "Parsed Text (" + _contentText.length() + ") : " + _contentText );
+		}
+		if( _contentText.length() > 0 ) {
+			_parserDelegate.didParseText( _contentText.toString() );
+			_contentText.setLength( 0 );
 		}
 	}
 
 	private void didParseOpeningWebObjectTag() throws NGHTMLFormatException {
-		if( _contentText != null ) {
-			if( logger.isDebugEnabled() ) {
-				logger.debug( "Parsed Opening WebObject (" + _contentText.length() + ") : " + _contentText );
-			}
-			if( _contentText.length() > 0 ) {
-				_parserDelegate.didParseOpeningWebObjectTag( _contentText.toString() );
-				_contentText.setLength( 0 );
-			}
+		if( logger.isDebugEnabled() ) {
+			logger.debug( "Parsed Opening WebObject (" + _contentText.length() + ") : " + _contentText );
+		}
+		if( _contentText.length() > 0 ) {
+			_parserDelegate.didParseOpeningWebObjectTag( _contentText.toString() );
+			_contentText.setLength( 0 );
 		}
 	}
 
 	private void didParseClosingWebObjectTag() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException, ClassNotFoundException {
-		if( _contentText != null ) {
-			if( logger.isDebugEnabled() ) {
-				logger.debug( "Parsed Closing WebObject (" + _contentText.length() + ") : " + _contentText );
-			}
-			if( _contentText.length() > 0 ) {
-				_parserDelegate.didParseClosingWebObjectTag( _contentText.toString() );
-				_contentText.setLength( 0 );
-			}
+		if( logger.isDebugEnabled() ) {
+			logger.debug( "Parsed Closing WebObject (" + _contentText.length() + ") : " + _contentText );
+		}
+		if( _contentText.length() > 0 ) {
+			_parserDelegate.didParseClosingWebObjectTag( _contentText.toString() );
+			_contentText.setLength( 0 );
 		}
 	}
 
 	private void didParseComment() {
-		if( _contentText != null ) {
-			if( logger.isDebugEnabled() ) {
-				logger.debug( "Parsed Comment (" + _contentText.length() + ") : " + _contentText );
-			}
-			if( _contentText.length() > 0 ) {
-				_parserDelegate.didParseComment( _contentText.toString() );
-				_contentText.setLength( 0 );
-			}
+		if( logger.isDebugEnabled() ) {
+			logger.debug( "Parsed Comment (" + _contentText.length() + ") : " + _contentText );
+		}
+		if( _contentText.length() > 0 ) {
+			_parserDelegate.didParseComment( _contentText.toString() );
+			_contentText.setLength( 0 );
 		}
 	}
 }
