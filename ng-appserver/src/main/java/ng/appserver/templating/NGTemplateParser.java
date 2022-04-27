@@ -21,7 +21,7 @@ public class NGTemplateParser {
 
 	private static String WO_REPLACEMENT_MARKER = "__REPL__";
 
-	private NGDynamicHTMLTag _currentDynamicTag = new NGDynamicHTMLTag(); // FIXME: Do we need to set this on initialization?
+	private NGDynamicHTMLTag _currentDynamicTag = new NGDynamicHTMLTag();
 	private Map<String, NGDeclaration> _declarations;
 	private int _inlineBindingCount;
 
@@ -245,11 +245,13 @@ public class NGTemplateParser {
 		final StringBuilder sb = new StringBuilder();
 		sb.append( "Component Type = " + declaration.type() );
 		sb.append( ", Bindings = { " );
-		Enumeration<String> keyEnum = Collections.enumeration( declaration.associations().keySet() );
+
+		final Enumeration<String> keyEnum = Collections.enumeration( declaration.associations().keySet() );
 
 		while( keyEnum.hasMoreElements() ) {
-			String key = keyEnum.nextElement();
-			Object assoc = declaration.associations().get( key );
+			final String key = keyEnum.nextElement();
+			final Object assoc = declaration.associations().get( key );
+
 			if( assoc instanceof NGKeyValueAssociation ) {
 				sb.append( key + "=" + ((NGKeyValueAssociation)assoc).keyPath() );
 			}
