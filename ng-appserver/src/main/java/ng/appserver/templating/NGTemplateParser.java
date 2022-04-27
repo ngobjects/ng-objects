@@ -62,7 +62,7 @@ public class NGTemplateParser {
 		final String currentDynamicTagName = _currentDynamicTag.name();
 
 		if( currentDynamicTagName != null ) {
-			throw new NGHTMLFormatException( "There is an unbalanced WebObjects tag named '%s'.".formatted( currentDynamicTagName ) );
+			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( currentDynamicTagName ) );
 		}
 
 		return _currentDynamicTag.template();
@@ -94,7 +94,8 @@ public class NGTemplateParser {
 		final NGDynamicHTMLTag dynamicTag = _currentDynamicTag.parentTag();
 
 		if( dynamicTag == null ) {
-			throw new NGHTMLFormatException( "<" + getClass().getName() + "> Unbalanced WebObject tags. Either there is an extra closing </WEBOBJECT> tag in the html template, or one of the opening <WEBOBJECT ...> tag has a typo (extra spaces between a < sign and a WEBOBJECT tag ?)." );
+			final String message = "<%s> Unbalanced WebObject tags. Either there is an extra closing </WEBOBJECT> tag in the html template, or one of the opening <WEBOBJECT ...> tag has a typo (extra spaces between a < sign and a WEBOBJECT tag ?).".formatted( getClass().getName() );
+			throw new NGHTMLFormatException( message );
 		}
 
 		try {
@@ -103,7 +104,7 @@ public class NGTemplateParser {
 			_currentDynamicTag.addChildElement( element );
 		}
 		catch( RuntimeException e ) {
-			throw new RuntimeException( "Unable to load the component named '" + componentName( _currentDynamicTag ) + "' with the declaration " + prettyDeclaration( _declarations.get( _currentDynamicTag.name() ) ) + ". Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.", e );
+			throw new RuntimeException( "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.".formatted( componentName( _currentDynamicTag ), prettyDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
 		}
 	}
 
