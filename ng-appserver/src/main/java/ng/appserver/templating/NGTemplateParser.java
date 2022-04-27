@@ -318,7 +318,11 @@ public class NGTemplateParser {
 		}
 	}
 
-	public static NGDeclaration createDeclaration( String declarationName, String declarationType, Map<String, NGAssociation> associations ) {
+	public static NGDeclaration createDeclaration( final String declarationName, final String declarationType, final Map<String, NGAssociation> associations ) {
+		Objects.requireNonNull( declarationName );
+		Objects.requireNonNull( declarationType );
+		Objects.requireNonNull( associations );
+
 		return new NGDeclaration( declarationName, declarationType, associations );
 	}
 
