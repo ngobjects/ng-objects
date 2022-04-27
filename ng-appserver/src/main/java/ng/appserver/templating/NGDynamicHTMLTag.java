@@ -57,7 +57,6 @@ public class NGDynamicHTMLTag {
 	}
 
 	public NGElement template() {
-		List list = null;
 
 		if( _children == null ) {
 			return null;
@@ -65,28 +64,26 @@ public class NGDynamicHTMLTag {
 
 		Enumeration<Object> enumeration = Collections.enumeration( _children );
 
-		if( enumeration != null ) {
-			list = new ArrayList<>( _children.size() );
-			StringBuilder stringb = new StringBuilder( 128 );
-			while( enumeration.hasMoreElements() ) {
-				Object obj1 = enumeration.nextElement();
-				if( obj1 instanceof String ) {
-					stringb.append( (String)obj1 );
-				}
-				else {
-					if( stringb.length() > 0 ) {
-						NGHTMLBareString bareString = new NGHTMLBareString( stringb.toString() );
-						list.add( bareString );
-						stringb.setLength( 0 );
-					}
-					list.add( obj1 );
-				}
+		List list = new ArrayList<>( _children.size() );
+		StringBuilder stringb = new StringBuilder( 128 );
+		while( enumeration.hasMoreElements() ) {
+			Object obj1 = enumeration.nextElement();
+			if( obj1 instanceof String ) {
+				stringb.append( (String)obj1 );
 			}
-			if( stringb.length() > 0 ) {
-				NGHTMLBareString bareString = new NGHTMLBareString( stringb.toString() );
-				stringb.setLength( 0 );
-				list.add( bareString );
+			else {
+				if( stringb.length() > 0 ) {
+					NGHTMLBareString bareString = new NGHTMLBareString( stringb.toString() );
+					list.add( bareString );
+					stringb.setLength( 0 );
+				}
+				list.add( obj1 );
 			}
+		}
+		if( stringb.length() > 0 ) {
+			NGHTMLBareString bareString = new NGHTMLBareString( stringb.toString() );
+			stringb.setLength( 0 );
+			list.add( bareString );
 		}
 
 		NGElement obj = null;
