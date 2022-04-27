@@ -240,38 +240,39 @@ public class NGTemplateParser {
 	}
 
 	/**
-	 * Only used for debug logging
+	 * Only used to create a pretty string for debug logging
 	 */
-	private static String prettyDeclaration( NGDeclaration declaration ) {
-		StringBuilder declarationStr = new StringBuilder();
+	private static String prettyDeclaration( final NGDeclaration declaration ) {
+		StringBuilder declarationString = new StringBuilder();
 
 		if( declaration == null ) {
-			declarationStr.append( "[none]" );
-		}
-		else {
-			declarationStr.append( "Component Type = " + declaration.type() );
-			declarationStr.append( ", Bindings = { " );
-			Enumeration<String> keyEnum = Collections.enumeration( declaration.associations().keySet() );
-			while( keyEnum.hasMoreElements() ) {
-				String key = keyEnum.nextElement();
-				Object assoc = declaration.associations().get( key );
-				if( assoc instanceof NGKeyValueAssociation ) {
-					declarationStr.append( key + "=" + ((NGKeyValueAssociation)assoc).keyPath() );
-				}
-				else if( assoc instanceof NGConstantValueAssociation ) {
-					declarationStr.append( key + "='" + ((NGConstantValueAssociation)assoc).valueInComponent( null ) + "'" );
-				}
-				else {
-					declarationStr.append( key + "=" + assoc );
-				}
-				if( keyEnum.hasMoreElements() ) {
-					declarationStr.append( ", " );
-				}
-			}
-			declarationStr.append( " }" );
+			return "[none]";
 		}
 
-		return declarationStr.toString();
+		declarationString.append( "Component Type = " + declaration.type() );
+		declarationString.append( ", Bindings = { " );
+		Enumeration<String> keyEnum = Collections.enumeration( declaration.associations().keySet() );
+
+		while( keyEnum.hasMoreElements() ) {
+			String key = keyEnum.nextElement();
+			Object assoc = declaration.associations().get( key );
+			if( assoc instanceof NGKeyValueAssociation ) {
+				declarationString.append( key + "=" + ((NGKeyValueAssociation)assoc).keyPath() );
+			}
+			else if( assoc instanceof NGConstantValueAssociation ) {
+				declarationString.append( key + "='" + ((NGConstantValueAssociation)assoc).valueInComponent( null ) + "'" );
+			}
+			else {
+				declarationString.append( key + "=" + assoc );
+			}
+			if( keyEnum.hasMoreElements() ) {
+				declarationString.append( ", " );
+			}
+		}
+
+		declarationString.append( " }" );
+
+		return declarationString.toString();
 	}
 
 	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
