@@ -69,9 +69,9 @@ public class NGResourceManager {
 		final StringBuilder b = new StringBuilder();
 
 		// FIXME: This is horrible just added for testing // Hugi
-		if( !NGApplication.application().isDevelopmentMode() ) {
-			b.append( "/Apps/WebObjects/Rebelliant.woa" );
-		}
+		//		if( !NGApplication.application().isDevelopmentMode() ) {
+		//			b.append( "/Apps/WebObjects/Rebelliant.woa" );
+		//		}
 
 		b.append( "/wr/" );
 		b.append( resourceName );
@@ -92,9 +92,9 @@ public class NGResourceManager {
 		final StringBuilder b = new StringBuilder();
 
 		// FIXME: This is horriblem just added for testing // Hugi
-		if( !NGApplication.application().isDevelopmentMode() ) {
-			b.append( "/Apps/WebObjects/Rebelliant.woa" );
-		}
+		//		if( !NGApplication.application().isDevelopmentMode() ) {
+		//			b.append( "/Apps/WebObjects/Rebelliant.woa" );
+		//		}
 
 		b.append( "/wd/" );
 		b.append( resourceName );
