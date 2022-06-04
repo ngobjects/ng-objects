@@ -3,7 +3,6 @@ package ng.appserver.elements;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
@@ -26,25 +25,11 @@ public class NGDynamicGroup extends NGDynamicElement {
 	 * @param template
 	 */
 	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
-		super( null, null, null );
-
-		if( template != null ) {
-			if( template instanceof NGDynamicGroup dynamicGroup ) {
-				_children = dynamicGroup.children();
-			}
-			else {
-				_children = new ArrayList<>();
-				_children.add( template );
-			}
-		}
-		else {
-			_children = new ArrayList<>();
-		}
+		this( name, associations, childrenFromTemplate( template ) );
 	}
 
 	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final List<NGElement> children ) {
 		super( null, null, null );
-		Objects.requireNonNull( children );
 		_children = children;
 	}
 
@@ -66,5 +51,19 @@ public class NGDynamicGroup extends NGDynamicElement {
 	 */
 	public List<NGElement> children() {
 		return _children;
+	}
+
+	private static List<NGElement> childrenFromTemplate( final NGElement template ) {
+		if( template == null ) {
+			return new ArrayList<>();
+		}
+
+		if( template instanceof NGDynamicGroup dg ) {
+			return dg.children();
+		}
+
+		List<NGElement> children = new ArrayList<>();
+		children.add( template );
+		return children;
 	}
 }
