@@ -226,6 +226,8 @@ public class NGDeclarationParser {
 	public static NGAssociation _associationWithKey( String associationValue, Map<String, String> quotedStrings ) {
 		NGAssociation association = null;
 		if( associationValue != null && associationValue.startsWith( "~" ) ) {
+			throw new RuntimeException( "This is probably just old woognl code that can be thrown out" );
+			/*
 			int associationValueLength = associationValue.length();
 			StringBuilder value = new StringBuilder();
 			int lastIndex = 0;
@@ -250,6 +252,7 @@ public class NGDeclarationParser {
 			value.append( associationValue.substring( lastIndex ) );
 			associationValue = value.toString();
 			association = NGAssociationFactory.associationWithValue( associationValue );
+			*/
 		}
 		else {
 			String quotedString = quotedStrings.get( associationValue );
