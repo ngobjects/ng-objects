@@ -30,7 +30,7 @@ public class NGDynamicHTMLTag {
 	/**
 	 * Parent tag
 	 */
-	private final NGDynamicHTMLTag _parent;
+	private final NGDynamicHTMLTag _parentTag;
 
 	/**
 	 * Children of this tag
@@ -38,14 +38,14 @@ public class NGDynamicHTMLTag {
 	private List<Object> _children;
 
 	public NGDynamicHTMLTag() {
-		_parent = null;
+		_parentTag = null;
 		_name = null;
 	}
 
-	public NGDynamicHTMLTag( final String tagPart, final NGDynamicHTMLTag parent ) throws NGHTMLFormatException {
+	public NGDynamicHTMLTag( final String tagPart, final NGDynamicHTMLTag parentTag ) throws NGHTMLFormatException {
 		Objects.requireNonNull( tagPart );
 
-		_parent = parent;
+		_parentTag = parentTag;
 		_name = extractDeclarationName( tagPart );
 	}
 
@@ -54,7 +54,7 @@ public class NGDynamicHTMLTag {
 	}
 
 	public NGDynamicHTMLTag parentTag() {
-		return _parent;
+		return _parentTag;
 	}
 
 	public NGElement template() {
