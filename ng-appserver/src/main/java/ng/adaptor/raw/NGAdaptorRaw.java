@@ -172,7 +172,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 			String line = in.readLine();
 
-			while( line.length() > 0 ) {
+			while( line != null && line.length() > 0 ) {
 				logger.info( "Parsing request line {} : {}", currentLineNumber, line );
 
 				if( currentLineNumber++ == 0 ) {
