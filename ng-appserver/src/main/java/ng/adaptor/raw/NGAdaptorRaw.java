@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +27,7 @@ import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.templating._NGUtilities;
 
 /**
  * Experimental raw socket adaptor
@@ -66,9 +68,16 @@ public class NGAdaptorRaw extends NGAdaptor {
 				}
 			}
 			catch( final Exception e ) {
-				// FIXME: Actually handle this exception. We're going to have to implement the equivalent of an NSForwardException to return an error page.
-				e.printStackTrace();
-				throw new RuntimeException( e );
+				if( NGApplication.application().properties().isDevelopmentMode() && e instanceof BindException ) {
+					logger.info( "Our port seems to be in use and we're in development mode. Let's try murdering the bastard that's blocking us" );
+					_NGUtilities.stopPreviousDevelopmentInstance( Properties.port );
+					start();
+				}
+				else {
+					// FIXME: Handle this a bit more gracefully perhaps? // Hugi 2021-11-20
+					e.printStackTrace();
+					System.exit( -1 );
+				}
 			}
 		}, "Listener" ).start();
 	}
