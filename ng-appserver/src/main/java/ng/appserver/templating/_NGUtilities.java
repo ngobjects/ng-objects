@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGRepetition;
@@ -28,6 +29,7 @@ public class _NGUtilities {
 		Objects.requireNonNull( classNameToSearchFor );
 
 		final List<Class> classes = List.of(
+				NGComponentContent.class,
 				NGString.class,
 				NGImage.class,
 				NGHyperlink.class,
@@ -61,6 +63,7 @@ public class _NGUtilities {
 	 */
 	public static Map<String, String> tagShortcutMap() {
 		Map<String, String> m = new HashMap<>();
+		m.put( "content", NGComponentContent.class.getSimpleName() );
 		m.put( "img", NGImage.class.getSimpleName() );
 		m.put( "link", NGHyperlink.class.getSimpleName() );
 		m.put( "repetition", NGRepetition.class.getSimpleName() );
