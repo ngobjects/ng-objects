@@ -17,6 +17,11 @@ public class NGComponent extends NGElement implements NGActionResults {
 	 */
 	public NGComponentDefinition _componentDefinition;
 
+	/**
+	 * Stores a reference to the component's parent component
+	 */
+	private NGComponent _parent;
+
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
 		_context = context;
@@ -33,6 +38,14 @@ public class NGComponent extends NGElement implements NGActionResults {
 	 */
 	public Object valueForBinding( String bindingName ) {
 		return "Not implemented";
+	}
+
+	public void setParent( NGComponent parent ) {
+		_parent = parent;
+	}
+
+	public NGComponent parent() {
+		return _parent;
 	}
 
 	@Override
