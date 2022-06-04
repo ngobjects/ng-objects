@@ -17,9 +17,7 @@ public class NGDirectAction {
 
 	public NGDirectAction( final NGRequest request ) {
 		Objects.requireNonNull( request );
-
-		// FIXME: I'm not entirely sure we should be generating a new context here // Hugi 2021-12-31
-		_context = NGApplication.application().createContextForRequest( request );
+		_context = request().context();
 	}
 
 	public NGContext context() {
