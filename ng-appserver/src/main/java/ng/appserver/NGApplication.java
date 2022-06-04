@@ -105,7 +105,7 @@ public class NGApplication {
 	 * FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
 	 */
 	public String adaptorClassName() {
-		return "ng.adaptor.jetty.NGAdaptorJetty";
+		return "ng.adaptor.raw.NGAdaptorRaw";
 	}
 
 	private NGAdaptor createAdaptor() {
@@ -328,17 +328,24 @@ public class NGApplication {
 	 *
 	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
 	 */
-	private NGComponentDefinition _componentDefinition( Class<? extends NGComponent> componentClass ) {
+	private NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass ) {
+		Objects.requireNonNull( componentClass );
+
 		return new NGComponentDefinition( componentClass );
 	}
 
 	/**
 	 * @return The componentDefinition corresponding to the named WOComponent
 	 *
-	 * FIXME: Unsupported. Only here for template parsing experiment
+	 * FIXME: Kind of unsupported. We really only want to allow components that have a class, and in these cases we should have loaded the component's class earlier in the process.
+	 * FIXME: Languages aren't supported either yet, but I'm including the parameter while I consider what to do about it.
 	 */
-	public NGComponentDefinition _componentDefinition( String componentName, List<String> languages ) {
-		return _componentDefinition( _NGUtilities.classWithName( componentName ) );
+	public NGComponentDefinition _componentDefinition( final String componentName, final List<String> languages ) {
+		Objects.requireNonNull( componentName );
+		Objects.requireNonNull( languages );
+
+		final Class<? extends NGComponent> componentClass = _NGUtilities.classWithName( componentName );
+		return _componentDefinition( componentClass );
 	}
 
 	public NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement element, final List<String> languages ) {
