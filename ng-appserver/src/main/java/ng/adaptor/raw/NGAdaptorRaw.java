@@ -99,7 +99,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 				_clientSocket.close();
 			}
 			catch( final IOException e ) {
-				e.printStackTrace();
+				throw new RuntimeException( e );
 			}
 		}
 	}
@@ -142,8 +142,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 			stream.write( string.getBytes( StandardCharsets.UTF_8 ) );
 		}
 		catch( final IOException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException( e );
 		}
 	}
 
