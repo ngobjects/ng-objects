@@ -8,4 +8,8 @@ public class WrapperComponent extends NGComponent {
 	public WrapperComponent( NGContext context ) {
 		super( context );
 	}
+
+	public String someString() {
+		return "I am a string from a wrapper component";
+	}
 }

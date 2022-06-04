@@ -8,22 +8,22 @@ import ng.appserver.NGContext;
 public class ExampleComponent extends NGComponent {
 
 	public int index;
-	public String item;
+	public String currentName;
 	public List<String> names = List.of( "Hugi", "Atli", "Logi" );
 
 	public ExampleComponent( NGContext context ) {
 		super( context );
 	}
 
-	public String smu() {
-		return "Þetta er hreint ekki svo slæmt";
+	public String someValue() {
+		return "This is a string from a java method";
 	}
 
 	public String someStuff() {
-		return "Jóhóhó";
+		return "Some string stuff";
 	}
 
-	public String someValue() {
-		return "Hehehe";
+	public String currentHref() {
+		return "https://www.hugi.io/" + currentName;
 	}
 }

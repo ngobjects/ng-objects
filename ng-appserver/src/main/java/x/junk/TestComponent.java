@@ -10,7 +10,7 @@ public class TestComponent extends NGComponent {
 	}
 
 	public String testString() {
-		return "TestString";
+		return "I am a string in a subcomponent";
 	}
 
 	public String someString() {
