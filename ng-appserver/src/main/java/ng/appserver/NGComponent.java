@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -22,6 +23,11 @@ public class NGComponent extends NGElement implements NGActionResults {
 	 */
 	private NGComponent _parent;
 
+	/**
+	 * Store a reference to the associations
+	 */
+	private Map<String, NGAssociation> _associations;
+
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
 		_context = context;
@@ -33,15 +39,38 @@ public class NGComponent extends NGElement implements NGActionResults {
 
 	/**
 	 * @return The value of the named binding/association.
-	 *
-	 * FIXME: Not implemented
 	 */
 	public Object valueForBinding( String bindingName ) {
-		return "Not implemented";
+
+		// FIXME: Not a fan of nulls
+		if( _associations == null ) {
+			return null;
+		}
+
+		// The associations
+		final NGAssociation association = _associations.get( bindingName );
+
+		// A null association means it's not bound, so we're going to return null.
+		if( association == null ) {
+			return null;
+		}
+
+		// Now let's go into the parent component and get that value.
+		return association.valueInComponent( parent() );
 	}
 
+	/**
+	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 */
 	public void setParent( NGComponent parent ) {
 		_parent = parent;
+	}
+
+	/**
+	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 */
+	public void setAssociations( final Map<String, NGAssociation> associations ) {
+		_associations = associations;
 	}
 
 	public NGComponent parent() {
