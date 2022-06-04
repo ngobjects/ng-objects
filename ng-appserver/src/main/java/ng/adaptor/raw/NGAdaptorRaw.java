@@ -159,7 +159,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 			String line = in.readLine();
 
 			while( line != null && line.length() > 0 ) {
-				logger.info( "Parsing request line {} : {}", currentLineNumber, line );
+				logger.debug( "Parsing request line {} : {}", currentLineNumber, line );
 
 				if( currentLineNumber++ == 0 ) {
 					final String[] values = line.split( " " );
@@ -205,8 +205,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 				}
 			}
 			else {
-				// FIXME
-				logger.warn( "I didn't find a content-length header, so I'm not parsing any content. Just so you know it" );
+				logger.debug( "I didn't find a content-length header, so I'm not parsing any content. Just so you know it" ); // FIXME: We're going to want to look into this // Hugi 2022-06-04
 				content = new byte[0];
 			}
 
