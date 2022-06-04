@@ -11,7 +11,6 @@ import ng.appserver.NGAssociation;
 import ng.appserver.NGComponent;
 import ng.appserver.NGComponentDefinition;
 import ng.appserver.NGComponentReference;
-import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
@@ -173,6 +172,8 @@ public class NGDynamicHTMLTag {
 
 		Class<? extends NGElement> classForTypeName = _NGUtilities.classWithName( typeName );
 
+		/*
+		 * FIXME: Disabling this code path for now, since we shouldn't really need to go down this // Hugi 2022-06-04
 		if( classForTypeName == null ) {
 			classForTypeName = _NGUtilities.lookForClassInAllBundles( typeName );
 
@@ -183,6 +184,7 @@ public class NGDynamicHTMLTag {
 				classForTypeName = null;
 			}
 		}
+		*/
 
 		if( classForTypeName != null ) {
 			if( (NGComponent.class).isAssignableFrom( classForTypeName ) ) {
