@@ -4,20 +4,22 @@
 		<title>Þetta er vefsíða!</title>
 	</head>
 	<body>
-		<h2>All hail the glorious Vulcan! Smusmus</h2>
+		<h2>This is a test component</h2>
 		<h3><webobject name="smu" /></h3>
 		<p>
 			<wo:link href="https://www.apple.com"><wo:img filename="test-image-3.jpg" width="200" /></wo:link>
 		</p>
 		<p>Vulcan craves antennas, cameras and attention in the age of social media.</p>
-		<p><img src="/wr/test-image-1.jpg" width="400" /></p>
-		<p><img src="/wr/test-image-2.jpg" width="400" /></p>
+		<p>
+			<img src="/wr/test-image-1.jpg" width="300" />
+			<img src="/wr/test-image-2.jpg" width="300" />
+		</p>
 		<wo:repetition list="$names" item="$item" index="$index">
 			<wo:str value="$index" />: <wo:str value="$item" /><br>
 		</wo:repetition>
 		<wo:TestComponent someString="Þetta er nú svolítið sniðugt" />
-		<wo:ng.testapp.components.WrapperComponent>
+		<wo:WrapperComponent>
 			<p>Þetta verður eitthvað</p>
-		</wo:ng.testapp.components.WrapperComponent>
+		</wo:WrapperComponent>
 	</body>
 </html>
