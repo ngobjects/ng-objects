@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ng.appserver.privates.NGUtils;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGHTMLFormatException;
@@ -15,22 +18,27 @@ import ng.appserver.templating.NGTemplateParser;
 
 public class NGComponentDefinition {
 
+	private static final Logger logger = LoggerFactory.getLogger( NGComponentDefinition.class );
+
 	/**
 	 * The cached name of this component definition. Corresponds to the component class's simpleName
 	 */
 	private final String _name;
 
 	/**
-	 * The cached name of this component definition. Corresponds to the component class's simpleName
+	 * The fully qualified class name of this component definition.
 	 */
 	private final String _className;
 
+	/**
+	 * The referenced component's class
+	 */
 	private final Class<? extends NGComponent> _componentClass;
 
 	public NGComponentDefinition( final Class<? extends NGComponent> componentClass ) {
 		Objects.requireNonNull( componentClass );
 
-		// FIXME: We need to decide what parts of the component name we're going to keep around // Hugi 2022-04-22
+		// FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
 		_name = componentClass.getSimpleName();
 		_className = componentClass.getName();
 		_componentClass = componentClass;
@@ -99,8 +107,8 @@ public class NGComponentDefinition {
 		final Optional<byte[]> templateBytes = NGUtils.readComponentResource( htmlTemplateFilename );
 
 		if( templateBytes.isEmpty() ) {
+			logger.warn( String.format( "Template file '%s.%s' not found", templateName, extension ) );
 			return "";
-			//			throw new RuntimeException( String.format( "Template file '%s.%s' not found", templateName, extension ) );
 		}
 
 		return new String( templateBytes.get(), StandardCharsets.UTF_8 );
