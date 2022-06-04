@@ -207,7 +207,7 @@ public class NGDynamicHTMLTag {
 		return componentDefinition.componentReferenceWithAssociations( associations, element );
 	}
 
-	private static NGElement _dynamicElementWithName( Class<? extends NGElement> c, NGDeclaration declaration, NGElement element ) {
-		return NGApplication.application().dynamicElementWithName( c.getName(), declaration.associations(), element, null );
+	private static NGElement _dynamicElementWithName( final Class<? extends NGElement> elementClass, final NGDeclaration declaration, final NGElement element ) {
+		return NGApplication.application().dynamicElementWithName( elementClass.getName(), declaration.associations(), element, null );
 	}
 }
