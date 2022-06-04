@@ -351,7 +351,11 @@ public class NGApplication {
 	public NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement element, final List<String> languages ) {
 		Objects.requireNonNull( name, "No name provided for dynamic element creation." );
 
-		Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
+		final Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
+
+		if( elementClass == null ) {
+			throw new RuntimeException( "Element class not found: " + name );
+		}
 
 		NGElement elementInstance = null;
 
