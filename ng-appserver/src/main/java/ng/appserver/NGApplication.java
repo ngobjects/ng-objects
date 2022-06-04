@@ -353,16 +353,12 @@ public class NGApplication {
 
 		final Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
 
-		if( elementClass == null ) {
-			throw new RuntimeException( "Element class not found: " + name );
-		}
-
 		NGElement elementInstance = null;
 
 		// First we try to locate a DynamicElement class
 		if( elementClass != null && NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
-			final Class<?>[] params = new Class[] { String.class, Map.class, NGElement.class };
-			final Object[] arguments = new Object[] { name, associations, element };
+			final Class<?>[] params = { String.class, Map.class, NGElement.class };
+			final Object[] arguments = { name, associations, element };
 			elementInstance = _NGUtilities.instantiateObject( elementClass, params, arguments );
 		}
 
