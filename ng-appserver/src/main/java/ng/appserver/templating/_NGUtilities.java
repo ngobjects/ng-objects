@@ -1,10 +1,14 @@
 package ng.appserver.templating;
 
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
@@ -14,6 +18,8 @@ import ng.appserver.elements.NGStylesheet;
 import x.junk.TestComponent;
 
 public class _NGUtilities {
+
+	private static final Logger logger = LoggerFactory.getLogger( _NGUtilities.class );
 
 	/**
 	 * @return A class matching classNameToSearch for. Searches by fully qualified class name and simpleName.
@@ -64,6 +70,20 @@ public class _NGUtilities {
 		}
 		catch( Throwable e ) {
 			throw new RuntimeException( e );
+		}
+	}
+
+	/**
+	 * FIXME: This functionality should really be in a nicer location // Hugi 2021-11-20
+	 */
+	public static void stopPreviousDevelopmentInstance( int portNumber ) {
+		try {
+			final String urlString = String.format( "http://localhost:%s/wa/ng.appserver.privates.NGAdminAction/terminate", portNumber );
+			new URL( urlString ).openConnection().getContent();
+			Thread.sleep( 1000 );
+		}
+		catch( Throwable e ) {
+			logger.info( "Terminated existing development instance" );
 		}
 	}
 }

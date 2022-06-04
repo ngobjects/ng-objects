@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.BindException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -32,6 +31,7 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.templating._NGUtilities;
 
 public class NGAdaptorJetty extends NGAdaptor {
 
@@ -77,7 +77,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		catch( final Exception e ) {
 			if( NGApplication.application().properties().isDevelopmentMode() && e instanceof IOException && e.getCause() instanceof BindException ) {
 				logger.info( "Our port seems to be in use and we're in development mode. Let's try murdering the bastard that's blocking us" );
-				stopPreviousDevelopmentInstance( port );
+				_NGUtilities.stopPreviousDevelopmentInstance( port );
 				start();
 			}
 			else {
@@ -248,19 +248,5 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		return map;
-	}
-
-	/**
-	 * FIXME: This functionality should really be in a more central/generic location, not within the adaptor // Hugi 2021-11-20
-	 */
-	private static void stopPreviousDevelopmentInstance( int portNumber ) {
-		try {
-			final String urlString = String.format( "http://localhost:%s/wa/ng.appserver.privates.NGAdminAction/terminate", portNumber );
-			new URL( urlString ).openConnection().getContent();
-			Thread.sleep( 1000 );
-		}
-		catch( Throwable e ) {
-			logger.info( "Terminated existing development instance" );
-		}
 	}
 }
