@@ -29,11 +29,9 @@ import ng.appserver.NGResponse;
 import ng.appserver.templating._NGUtilities;
 
 /**
- * Experimental raw socket adaptor
+ * This is an extremely experimental adaptor that evolves with the framework to support only the exact HTTP features required by it.
  *
- * This document will be our best friend throughout this journey:
- *
- * https://www.ietf.org/rfc/rfc2616.txt
+ * This document will probably be our best friend throughout this journey: https://www.ietf.org/rfc/rfc2616.txt
  */
 
 public class NGAdaptorRaw extends NGAdaptor {
