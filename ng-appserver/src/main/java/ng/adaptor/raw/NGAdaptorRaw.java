@@ -49,7 +49,6 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 		final ExecutorService es = Executors.newFixedThreadPool( workerThreadCount );
 		new Thread( () -> {
-
 			try( final ServerSocket serverSocket = new ServerSocket( port ) ;) {
 				logger.info( "Started listening for connections on port {}", port );
 				while( true ) {
@@ -110,12 +109,13 @@ public class NGAdaptorRaw extends NGAdaptor {
 			write( stream, response.httpVersion() + " " + response.status() /* + " OK" */ ); // FIXME: We might want to consider a reason phrase
 			write( stream, CRLF );
 
-			// FIXME: Currently only writing out the first header value
 			for( final Entry<String, List<String>> entry : response.headers().entrySet() ) {
-				write( stream, entry.getKey() );
-				write( stream, ": " );
-				write( stream, entry.getValue().get( 0 ) );
-				write( stream, CRLF );
+				for( final String headerValue : entry.getValue() ) {
+					write( stream, entry.getKey() );
+					write( stream, ": " );
+					write( stream, headerValue );
+					write( stream, CRLF );
+				}
 			}
 
 			write( stream, CRLF );
