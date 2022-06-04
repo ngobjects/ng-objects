@@ -12,4 +12,8 @@ public class TestComponent extends NGComponent {
 	public String testString() {
 		return "TestString";
 	}
+
+	public String someString() {
+		return (String)valueForBinding( "someString" );
+	}
 }
