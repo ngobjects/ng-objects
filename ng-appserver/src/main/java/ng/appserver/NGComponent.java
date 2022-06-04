@@ -26,6 +26,15 @@ public class NGComponent extends NGElement implements NGActionResults {
 		return _context;
 	}
 
+	/**
+	 * @return The value of the named binding/association.
+	 *
+	 * FIXME: Not implemented
+	 */
+	public Object valueForBinding( String bindingName ) {
+		return "Not implemented";
+	}
+
 	@Override
 	public NGResponse generateResponse() {
 		final NGResponse response = new NGResponse();
