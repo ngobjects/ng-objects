@@ -113,8 +113,8 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 		try {
 			stream = new BufferedOutputStream( stream, 32000 );
-			write( stream, response.httpVersion() + " " + response.status() + " OK" ); // FIXME: Don't just write OK here!
-			write( stream, CRLF ); // FIXME: Do we need CRLF?
+			write( stream, response.httpVersion() + " " + response.status() /* + " OK" */ ); // FIXME: We might want to consider a reason phrase
+			write( stream, CRLF );
 
 			// FIXME: Currently only writing out the first header value
 			for( final Entry<String, List<String>> entry : response.headers().entrySet() ) {
