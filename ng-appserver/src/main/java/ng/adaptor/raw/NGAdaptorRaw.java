@@ -39,26 +39,22 @@ import ng.appserver.templating._NGUtilities;
 
 public class NGAdaptorRaw extends NGAdaptor {
 
-	/**
-	 * FIXME: This should be coming from NGPRoperties eventually, put here as a placeholder for now... // Hugi 2021-12-29
-	 */
-	private static class Properties {
-		private static int port = 1200;
-		private static int workerThreadCount = 4;
-	}
-
-	private static final String CRLF = "\r\n";
 	private static Logger logger = LoggerFactory.getLogger( NGAdaptorRaw.class );
+	private static final String CRLF = "\r\n";
 
 	private static LongAdder numberOfRequestsServed = new LongAdder();
 
 	@Override
 	public void start() {
-		final ExecutorService es = Executors.newFixedThreadPool( Properties.workerThreadCount );
+		// FIXME: Properties should be loaded from NGProperties eventually, put here as a placeholder for now... // Hugi 2021-12-29
+		final int port = 1200;
+		final int workerThreadCount = 4;
+
+		final ExecutorService es = Executors.newFixedThreadPool( workerThreadCount );
 		new Thread( () -> {
 
-			try( final ServerSocket serverSocket = new ServerSocket( Properties.port ) ;) {
-				logger.info( "Started listening for connections on port {}", Properties.port );
+			try( final ServerSocket serverSocket = new ServerSocket( port ) ;) {
+				logger.info( "Started listening for connections on port {}", port );
 				while( true ) {
 					final Socket clientSocket = serverSocket.accept();
 					//					clientSocket.setTcpNoDelay( true ); // We're not totally sure if we want to disable Nagle's algorithm.
@@ -70,7 +66,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 			catch( final Exception e ) {
 				if( NGApplication.application().properties().isDevelopmentMode() && e instanceof BindException ) {
 					logger.info( "Our port seems to be in use and we're in development mode. Let's try murdering the bastard that's blocking us" );
-					_NGUtilities.stopPreviousDevelopmentInstance( Properties.port );
+					_NGUtilities.stopPreviousDevelopmentInstance( port );
 					start();
 				}
 				else {
