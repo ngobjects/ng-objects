@@ -46,6 +46,7 @@ public class NGComponentReference extends NGDynamicElement {
 
 		newComponentInstance.setParent( previousComponent );
 		newComponentInstance.setAssociations( _associations );
+		newComponentInstance.setContentElement( _template );
 
 		// Set the component in the context
 		context.setCurrentComponent( newComponentInstance );

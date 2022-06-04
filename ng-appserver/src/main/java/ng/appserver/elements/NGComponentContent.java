@@ -3,6 +3,7 @@ package ng.appserver.elements;
 import java.util.Map;
 
 import ng.appserver.NGAssociation;
+import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
@@ -17,5 +18,12 @@ public class NGComponentContent extends NGDynamicElement {
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		super.appendToResponse( response, context );
+
+		final NGComponent component = context.component();
+
+		// FIXME: We also need to append the content of the component itself
+		if( component.contentElement() != null ) {
+			component.contentElement().appendToResponse( response, context );
+		}
 	}
 }

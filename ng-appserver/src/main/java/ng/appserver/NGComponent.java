@@ -28,6 +28,11 @@ public class NGComponent extends NGElement implements NGActionResults {
 	 */
 	private Map<String, NGAssociation> _associations;
 
+	/**
+	 * Reference to the template contained within the element
+	 */
+	private NGElement _contentElement;
+
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
 		_context = context;
@@ -59,10 +64,14 @@ public class NGComponent extends NGElement implements NGActionResults {
 		return association.valueInComponent( parent() );
 	}
 
+	public NGComponent parent() {
+		return _parent;
+	}
+
 	/**
 	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
 	 */
-	public void setParent( NGComponent parent ) {
+	public void setParent( final NGComponent parent ) {
 		_parent = parent;
 	}
 
@@ -73,8 +82,18 @@ public class NGComponent extends NGElement implements NGActionResults {
 		_associations = associations;
 	}
 
-	public NGComponent parent() {
-		return _parent;
+	/**
+	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 */
+	public void setContentElement( final NGElement contentElement ) {
+		_contentElement = contentElement;
+	}
+
+	/**
+	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 */
+	public NGElement contentElement() {
+		return _contentElement;
 	}
 
 	@Override
