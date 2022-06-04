@@ -129,8 +129,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 			stream.flush();
 		}
 		catch( final IOException e ) {
-			// FIXME: Actually handle this exception
-			e.printStackTrace();
+			throw new RuntimeException( e );
 		}
 	}
 
