@@ -41,6 +41,12 @@ public class _NGUtilities {
 			}
 		}
 
+		// If the class isn't found by simple name, let's try constructing from a fully qualified class name.
+		try {
+			return Class.forName( classNameToSearchFor );
+		}
+		catch( ClassNotFoundException e ) {}
+
 		throw new RuntimeException( "Class not found: " + classNameToSearchFor );
 	}
 
