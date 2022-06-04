@@ -18,7 +18,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.LongAdder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +41,6 @@ public class NGAdaptorRaw extends NGAdaptor {
 	private static Logger logger = LoggerFactory.getLogger( NGAdaptorRaw.class );
 	private static final String CRLF = "\r\n";
 
-	private static LongAdder numberOfRequestsServed = new LongAdder();
-
 	@Override
 	public void start() {
 		// FIXME: Properties should be loaded from NGProperties eventually, put here as a placeholder for now... // Hugi 2021-12-29
@@ -59,8 +56,6 @@ public class NGAdaptorRaw extends NGAdaptor {
 					final Socket clientSocket = serverSocket.accept();
 					//					clientSocket.setTcpNoDelay( true ); // We're not totally sure if we want to disable Nagle's algorithm.
 					es.execute( new WorkerThread( clientSocket ) );
-					numberOfRequestsServed.increment();
-					logger.info( "Served requests: {}", numberOfRequestsServed );
 				}
 			}
 			catch( final Exception e ) {
