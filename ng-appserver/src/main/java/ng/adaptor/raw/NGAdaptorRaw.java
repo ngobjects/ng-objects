@@ -89,8 +89,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 				writeResponseToStream( response, _clientSocket.getOutputStream() );
 
-				// Closing the socket also closes it's inputstream and outputstream
-				// FIXME: finally clause?
+				// Note that closing the socket also closes it's inputstream and outputstream
 				_clientSocket.close();
 			}
 			catch( final IOException e ) {
