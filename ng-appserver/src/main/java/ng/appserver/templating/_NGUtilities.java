@@ -2,6 +2,7 @@ package ng.appserver.templating;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.NGElement;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
@@ -22,22 +24,29 @@ public class _NGUtilities {
 
 	private static final Logger logger = LoggerFactory.getLogger( _NGUtilities.class );
 
+	private static final List<Class<? extends NGElement>> _classes = new ArrayList<>();
+
+	public static void addClass( final Class<? extends NGElement> clazz ) {
+		_classes.add( clazz );
+	}
+
+	static {
+		addClass( NGComponentContent.class );
+		addClass( NGString.class );
+		addClass( NGImage.class );
+		addClass( NGHyperlink.class );
+		addClass( NGRepetition.class );
+		addClass( NGStylesheet.class );
+		addClass( TestComponent.class );
+	}
+
 	/**
 	 * @return A class matching classNameToSearch for. Searches by fully qualified class name and simpleName.
 	 */
 	public static Class classWithName( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
-		final List<Class> classes = List.of(
-				NGComponentContent.class,
-				NGString.class,
-				NGImage.class,
-				NGHyperlink.class,
-				NGRepetition.class,
-				NGStylesheet.class,
-				TestComponent.class );
-
-		for( Class c : classes ) {
+		for( Class c : _classes ) {
 			if( c.getName().equals( classNameToSearchFor ) || c.getSimpleName().equals( classNameToSearchFor ) ) {
 				return c;
 			}

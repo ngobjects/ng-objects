@@ -1,25 +1,24 @@
 package ng.testapp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGUtils;
+import ng.appserver.templating._NGUtilities;
 import ng.testapp.components.ExampleComponent;
 import ng.testapp.components.ProgrammaticDynamicComponent;
 import ng.testapp.components.RepetitionComponent;
+import ng.testapp.components.WrapperComponent;
 
 public class Application extends NGApplication {
-
-	private static Logger logger = LoggerFactory.getLogger( Application.class );
 
 	public static void main( String[] args ) {
 		NGApplication.run( args, Application.class );
 	}
 
 	public Application() {
+		_NGUtilities.addClass( WrapperComponent.class );
+
 		routeTable().map( "/response-plain", ( request ) -> {
 			NGResponse response = new NGResponse( "Oh look, a response!", 200 );
 			response.addCookie( new NGCookie( "nafn", "Hugi" ) );
