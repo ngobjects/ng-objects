@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -341,22 +342,23 @@ public class NGApplication {
 	}
 
 	public NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement element, final List<String> languages ) {
-		NGElement elementInstance = null;
-
-		if( name == null ) {
-			throw new IllegalArgumentException( "<" + "bla" + ">: No name provided for dynamic element creation." );
-		}
+		Objects.requireNonNull( name, "No name provided for dynamic element creation." );
 
 		Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
 
+		NGElement elementInstance = null;
+
+		// First we try to locate a DynamicElement class
 		if( elementClass != null && NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
-			Class[] params = new Class[] { String.class, Map.class, NGElement.class };
-			Object[] arguments = new Object[] { name, associations, element };
+			final Class<?>[] params = new Class[] { String.class, Map.class, NGElement.class };
+			final Object[] arguments = new Object[] { name, associations, element };
 			elementInstance = _NGUtilities.instantiateObject( elementClass, params, arguments );
 		}
 
+		// If no element is found, we move on to creating a component instead
 		if( elementInstance == null ) {
-			NGComponentDefinition componentDefinition = this._componentDefinition( name, languages );
+			final NGComponentDefinition componentDefinition = _componentDefinition( name, languages );
+
 			if( componentDefinition != null ) {
 				elementInstance = componentDefinition.componentReferenceWithAssociations( associations, element );
 			}
