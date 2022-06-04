@@ -132,9 +132,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 	}
 
 	private static Cookie ngCookieToServletCookie( final NGCookie ngCookie ) {
-		Cookie servletCookie = new Cookie( ngCookie.name(), ngCookie.value() );
+		final Cookie servletCookie = new Cookie( ngCookie.name(), ngCookie.value() );
 
-		servletCookie.setVersion( 1 ); // FIXME: Check this, need to read up on this attribute // Hugi 2022-01-01
+		servletCookie.setVersion( 1 );
 
 		if( ngCookie.domain() != null ) {
 			servletCookie.setDomain( ngCookie.domain() );
