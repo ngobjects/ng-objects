@@ -67,10 +67,6 @@ public class _NGUtilities {
 		throw new RuntimeException( "Class not found: " + classNameToSearchFor );
 	}
 
-	public static Class lookForClassInAllBundles( String s1 ) {
-		throw new RuntimeException( "Not implemnted" );
-	}
-
 	/**
 	 * Maps tag names to their dynamic element names
 	 *
