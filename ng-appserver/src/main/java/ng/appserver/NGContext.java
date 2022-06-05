@@ -21,6 +21,13 @@ public class NGContext {
 	private String _elementID;
 
 	/**
+	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
+	 *
+	 * FIXME: I kind of feel like it should be the responsibility of the component request handler to maintain this. Component actions are leaking into the framework here.
+	 */
+	private String _senderID;
+
+	/**
 	 * Indicates the the context is currently rendering something nested inside a form element.
 	 */
 	private boolean _isInForm;
@@ -58,6 +65,14 @@ public class NGContext {
 	 */
 	public String elementID() {
 		return _elementID;
+	}
+
+	public String senderID() {
+		return _senderID;
+	}
+
+	public void setSenderID( String value ) {
+		_senderID = value;
 	}
 
 	public boolean isInForm() {
