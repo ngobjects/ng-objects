@@ -33,6 +33,13 @@ public class NGComponent extends NGElement implements NGActionResults {
 	 */
 	private NGElement _contentElement;
 
+	/**
+	 * Indicates that this is a page level element
+	 *
+	 * FIXME: I don't like having this here
+	 */
+	private boolean _isPage;
+
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
 		_context = context;
@@ -85,6 +92,13 @@ public class NGComponent extends NGElement implements NGActionResults {
 	/**
 	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
 	 */
+	public NGElement contentElement() {
+		return _contentElement;
+	}
+
+	/**
+	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 */
 	public void setContentElement( final NGElement contentElement ) {
 		_contentElement = contentElement;
 	}
@@ -92,8 +106,15 @@ public class NGComponent extends NGElement implements NGActionResults {
 	/**
 	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
 	 */
-	public NGElement contentElement() {
-		return _contentElement;
+	public boolean isPage() {
+		return _isPage;
+	}
+
+	/**
+	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 */
+	public void setIsPage( boolean value ) {
+		_isPage = value;
 	}
 
 	@Override
