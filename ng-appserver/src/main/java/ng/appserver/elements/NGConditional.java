@@ -29,9 +29,15 @@ public class NGConditional extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		final Boolean condition = (Boolean)_conditionAssociation.valueInComponent( context.component() );
+		Boolean condition = (Boolean)_conditionAssociation.valueInComponent( context.component() );
 
-		// FIXME: Implement negate // Hugi 2022-06-05
+		if( _negateAssociation != null ) {
+			final Boolean negate = (Boolean)_negateAssociation.valueInComponent( context.component() );
+
+			if( negate == true ) {
+				condition = !condition;
+			}
+		}
 
 		if( condition ) {
 			appendChildrenToResponse( response, context );
