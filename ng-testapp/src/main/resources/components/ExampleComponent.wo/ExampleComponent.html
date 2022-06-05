@@ -9,7 +9,9 @@
 		<p>
 			<wo:link href="https://www.apple.com"><wo:img filename="test-image-3.jpg" width="200" /></wo:link>
 		</p>
-		<p>Vulcan craves antennas, cameras and attention in the age of social media.</p>
+		<wo:if condition="$true">
+			<p>Vulcan craves antennas, cameras and attention in the age of social media.</p>
+		</wo:if>
 		<p>
 			<img src="/wr/test-image-1.jpg" width="300" />
 			<img src="/wr/test-image-2.jpg" width="300" />
@@ -20,6 +22,7 @@
 		<wo:TestComponent someString="This is a value from a constant binding, being passed to a component" />
 		<wo:WrapperComponent>
 			<p>This content is wrapped inside a wrapper component</p>
+			<p>Form values: <wo:str value="$context.request.formValues" /></p>
 		</wo:WrapperComponent>
 	</body>
 </html>
