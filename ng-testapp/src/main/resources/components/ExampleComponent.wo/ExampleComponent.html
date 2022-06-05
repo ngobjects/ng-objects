@@ -17,7 +17,7 @@
 			<img src="/wr/test-image-2.jpg" width="300" />
 		</p>
 		<wo:repetition list="$names" item="$currentName" index="$index">
-			<wo:str value="$index" />: <wo:link href="$currentHref"><wo:str value="$currentName" /></wo:link><br>
+			<wo:str value="$index" /> : <wo:link href="$currentHref"><wo:str value="$currentName" /></wo:link> : <wo:link action="$printCurrentName">Print</wo:link><br>
 		</wo:repetition>
 		<wo:TestComponent someString="This is a value from a constant binding, being passed to a component" />
 		<wo:WrapperComponent>
