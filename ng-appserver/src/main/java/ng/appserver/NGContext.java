@@ -15,6 +15,11 @@ public class NGContext {
 	 */
 	private NGComponent _currentComponent;
 
+	/**
+	 * ID of the element currently being rendered by the context.
+	 */
+	private String _elementID;
+
 	public NGContext( final NGRequest request ) {
 		_request = request;
 	}
@@ -41,5 +46,12 @@ public class NGContext {
 
 	public void setCurrentComponent( NGComponent component ) {
 		_currentComponent = component;
+	}
+
+	/**
+	 * ID of the element currently being rendered by the context.
+	 */
+	public String elementID() {
+		return _elementID;
 	}
 }
