@@ -8,7 +8,14 @@ import java.util.UUID;
 
 public class NGSession {
 
+	/**
+	 * A unique identifier for this session
+	 */
 	final String _sessionID;
+
+	/**
+	 * The birthdate of this session, as provided by System.currentTimeMillis()
+	 */
 	final long _birthDate;
 
 	public NGSession() {
