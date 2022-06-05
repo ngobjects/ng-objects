@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGElement;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
+import ng.appserver.elements.NGForm;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGRepetition;
@@ -35,6 +36,7 @@ public class _NGUtilities {
 	static {
 		addClass( NGComponentContent.class );
 		addClass( NGConditional.class );
+		addClass( NGForm.class );
 		addClass( NGString.class );
 		addClass( NGImage.class );
 		addClass( NGHyperlink.class );
@@ -77,6 +79,7 @@ public class _NGUtilities {
 	public static Map<String, String> tagShortcutMap() {
 		Map<String, String> m = new HashMap<>();
 		m.put( "content", NGComponentContent.class.getSimpleName() );
+		m.put( "form", NGForm.class.getSimpleName() );
 		m.put( "if", NGConditional.class.getSimpleName() );
 		m.put( "img", NGImage.class.getSimpleName() );
 		m.put( "link", NGHyperlink.class.getSimpleName() );
