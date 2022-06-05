@@ -20,6 +20,11 @@ public class NGContext {
 	 */
 	private String _elementID;
 
+	/**
+	 * Indicates the the context is currently rendering something nested inside a form element.
+	 */
+	private boolean _isInForm;
+
 	public NGContext( final NGRequest request ) {
 		_request = request;
 	}
@@ -53,5 +58,13 @@ public class NGContext {
 	 */
 	public String elementID() {
 		return _elementID;
+	}
+
+	public boolean isInForm() {
+		return _isInForm;
+	}
+
+	public void setIsInForm( boolean value ) {
+		_isInForm = value;
 	}
 }

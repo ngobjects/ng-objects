@@ -1,6 +1,5 @@
 package ng.appserver.elements;
 
-import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGAssociation;
@@ -14,12 +13,14 @@ import ng.appserver.NGResponse;
 
 public class NGForm extends NGDynamicGroup {
 
-	public NGForm( String name, Map<String, NGAssociation> associations, List<NGElement> children ) {
-		super( name, associations, children );
+	public NGForm( String name, Map<String, NGAssociation> associations, NGElement contentTemplate ) {
+		super( name, associations, contentTemplate );
 	}
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+		context.setIsInForm( true );
 		appendChildrenToResponse( response, context );
+		context.setIsInForm( false );
 	}
 }
