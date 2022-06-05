@@ -105,7 +105,8 @@ public class NGApplication {
 	 * FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
 	 */
 	public String adaptorClassName() {
-		return ng.adaptor.raw.NGAdaptorRaw.class.getName();
+		return "ng.adaptor.jetty.NGAdaptorJetty";
+		//		return ng.adaptor.raw.NGAdaptorRaw.class.getName();
 	}
 
 	private NGAdaptor createAdaptor() {
@@ -148,7 +149,8 @@ public class NGApplication {
 			throw new RuntimeException( "No such component definition: " + componentClass );
 		}
 
-		return (E)definition.componentInstanceInstanceInContext( context );
+		E componentInstance = (E)definition.componentInstanceInstanceInContext( context );
+		return componentInstance;
 	}
 
 	public static NGApplication application() {
