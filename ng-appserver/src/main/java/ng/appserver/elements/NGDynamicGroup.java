@@ -18,11 +18,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 	private final List<NGElement> _children;
 
 	/**
-	 * Construct a new Dynamic Group from template
-	 *
-	 * @param name
-	 * @param associations
-	 * @param template
+	 * Construct a new Dynamic Group from a content template
 	 */
 	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 		this( name, associations, childrenFromTemplate( template ) );
