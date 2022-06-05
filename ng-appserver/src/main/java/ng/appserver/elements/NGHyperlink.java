@@ -2,9 +2,11 @@ package ng.appserver.elements;
 
 import java.util.Map;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
+import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 public class NGHyperlink extends NGDynamicGroup {
@@ -27,8 +29,8 @@ public class NGHyperlink extends NGDynamicGroup {
 			href = (String)_hrefAssociation.valueInComponent( context.component() );
 		}
 
+		// FIXME: Work in progress
 		if( _actionAssociation != null ) {
-			System.out.println( context.senderID() );
 			href = "/wo/" + "smu"; // Here we're going to need to add the sender ID
 		}
 
@@ -39,5 +41,10 @@ public class NGHyperlink extends NGDynamicGroup {
 		response.appendContentString( "<a href=\"" + href + "\">" );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</a>" );
+	}
+
+	@Override
+	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+		return super.invokeAction( request, context );
 	}
 }
