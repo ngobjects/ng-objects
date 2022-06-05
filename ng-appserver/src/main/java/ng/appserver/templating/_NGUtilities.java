@@ -23,26 +23,35 @@ import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGTextField;
 import x.junk.TestComponent;
 
+/**
+ * An abomination of a class that serves as a repository for temporary hacky stuff
+ */
+
 public class _NGUtilities {
 
 	private static final Logger logger = LoggerFactory.getLogger( _NGUtilities.class );
 
 	private static final List<Class<? extends NGElement>> _classes = new ArrayList<>();
+	private static final Map<String, String> _tagShortcutMap = new HashMap<>();
 
-	public static void addClass( final Class<? extends NGElement> clazz ) {
+	public static void addClass( final Class<? extends NGElement> clazz, final String... shortcuts ) {
 		_classes.add( clazz );
+
+		for( String shortcut : shortcuts ) {
+			_tagShortcutMap.put( shortcut, clazz.getSimpleName() );
+		}
 	}
 
 	static {
-		addClass( NGComponentContent.class );
-		addClass( NGConditional.class );
-		addClass( NGForm.class );
-		addClass( NGString.class );
-		addClass( NGImage.class );
-		addClass( NGHyperlink.class );
-		addClass( NGRepetition.class );
-		addClass( NGStylesheet.class );
-		addClass( NGTextField.class );
+		addClass( NGComponentContent.class, "content" );
+		addClass( NGConditional.class, "if" );
+		addClass( NGForm.class, "form" );
+		addClass( NGString.class, "str" );
+		addClass( NGImage.class, "img" );
+		addClass( NGHyperlink.class, "link" );
+		addClass( NGRepetition.class, "repetition" );
+		addClass( NGStylesheet.class, "stylesheet" );
+		addClass( NGTextField.class, "textfield" );
 		addClass( TestComponent.class );
 	}
 
@@ -73,16 +82,7 @@ public class _NGUtilities {
 	 * FIXME: Definitely not the final home of this functionality // Hugi 2022-04-23
 	 */
 	public static Map<String, String> tagShortcutMap() {
-		Map<String, String> m = new HashMap<>();
-		m.put( "content", NGComponentContent.class.getSimpleName() );
-		m.put( "form", NGForm.class.getSimpleName() );
-		m.put( "if", NGConditional.class.getSimpleName() );
-		m.put( "img", NGImage.class.getSimpleName() );
-		m.put( "link", NGHyperlink.class.getSimpleName() );
-		m.put( "repetition", NGRepetition.class.getSimpleName() );
-		m.put( "str", NGString.class.getSimpleName() );
-		m.put( "stylesheet", NGStylesheet.class.getSimpleName() );
-		return m;
+		return _tagShortcutMap;
 	}
 
 	public static <E> E instantiateObject( Class<E> objectClass, Class[] parameterTypes, Object[] parameters ) {
