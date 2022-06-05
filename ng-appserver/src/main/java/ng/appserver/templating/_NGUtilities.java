@@ -18,6 +18,7 @@ import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
+import ng.appserver.elements.NGTextField;
 import x.junk.TestComponent;
 
 public class _NGUtilities {
@@ -37,6 +38,7 @@ public class _NGUtilities {
 		addClass( NGHyperlink.class );
 		addClass( NGRepetition.class );
 		addClass( NGStylesheet.class );
+		addClass( NGTextField.class );
 		addClass( TestComponent.class );
 	}
 
