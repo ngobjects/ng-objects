@@ -20,15 +20,15 @@ public class NGComponentReference extends NGDynamicElement {
 	 */
 	private Map<String, NGAssociation> _associations;
 
-	private final NGElement _template;
+	private final NGElement _contentTemplate;
 
-	public NGComponentReference( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
+	public NGComponentReference( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		super( null, null, null );
 		Objects.requireNonNull( name );
 		Objects.requireNonNull( associations );
 		_name = name;
 		_associations = associations;
-		_template = template;
+		_contentTemplate = contentTemplate;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class NGComponentReference extends NGDynamicElement {
 
 		newComponentInstance.setParent( previousComponent );
 		newComponentInstance.setAssociations( _associations );
-		newComponentInstance.setContentElement( _template );
+		newComponentInstance.setContentElement( _contentTemplate );
 
 		// Set the component in the context
 		context.setCurrentComponent( newComponentInstance );

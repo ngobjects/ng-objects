@@ -75,8 +75,8 @@ public class NGComponentDefinition {
 		}
 	}
 
-	public NGComponentReference componentReferenceWithAssociations( Map<String, NGAssociation> associations, NGElement element ) {
-		return new NGComponentReference( _className, associations, element );
+	public NGComponentReference componentReferenceWithAssociations( final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		return new NGComponentReference( _className, associations, contentTemplate );
 	}
 
 	/**
