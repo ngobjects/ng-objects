@@ -1,6 +1,7 @@
 package ng.appserver.templating;
 
 import java.util.Map;
+import java.util.Objects;
 
 import ng.appserver.NGAssociation;
 
@@ -12,4 +13,12 @@ import ng.appserver.NGAssociation;
  * @param associations A Map of associations (bindings) on the declaration
  */
 
-public record NGDeclaration( String name, String type, Map<String, NGAssociation> associations ) {}
+public record NGDeclaration( String name, String type, Map<String, NGAssociation> associations ) {
+
+	public static NGDeclaration create( final String declarationName, final String declarationType, final Map<String, NGAssociation> associations ) {
+		Objects.requireNonNull( declarationName );
+		Objects.requireNonNull( declarationType );
+		Objects.requireNonNull( associations );
+		return new NGDeclaration( declarationName, declarationType, associations );
+	}
+}

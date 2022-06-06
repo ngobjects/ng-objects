@@ -211,7 +211,7 @@ public class NGTemplateParser {
 			_inlineBindingCount++;
 		}
 
-		final NGDeclaration declaration = NGTemplateParser.createDeclaration( elementName, elementType, associations );
+		final NGDeclaration declaration = NGDeclaration.create( elementName, elementType, associations );
 
 		_declarations.put( elementName, declaration );
 
@@ -325,14 +325,6 @@ public class NGTemplateParser {
 		}
 
 		return name;
-	}
-
-	public static NGDeclaration createDeclaration( final String declarationName, final String declarationType, final Map<String, NGAssociation> associations ) {
-		Objects.requireNonNull( declarationName );
-		Objects.requireNonNull( declarationType );
-		Objects.requireNonNull( associations );
-
-		return new NGDeclaration( declarationName, declarationType, associations );
 	}
 
 	/**
