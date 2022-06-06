@@ -52,12 +52,19 @@ public class NGComponentDefinition {
 
 		try {
 			final NGComponent newComponentInstance = _componentClass.getConstructor( NGContext.class ).newInstance( context );
-			newComponentInstance._componentDefinition = this; // FIXME: Moved from NGApplication.pageWithName(). Works?
+			newComponentInstance._componentDefinition = this; // FIXME: Feel like this is ugly as all hell, the _componentDefinition variable should not be exposed
 			return newComponentInstance;
 		}
 		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
 			throw new RuntimeException( e );
 		}
+	}
+
+	/**
+	 * @return A new component reference to insert into a template being rendered
+	 */
+	public NGComponentReference componentReferenceWithAssociations( final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		return new NGComponentReference( _className, associations, contentTemplate );
 	}
 
 	/**
@@ -73,10 +80,6 @@ public class NGComponentDefinition {
 		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );
 		}
-	}
-
-	public NGComponentReference componentReferenceWithAssociations( final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		return new NGComponentReference( _className, associations, contentTemplate );
 	}
 
 	/**
