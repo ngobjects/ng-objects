@@ -158,6 +158,9 @@ public class NGDynamicHTMLTag {
 		return _elementWithDeclaration( declaration, name, element, languages );
 	}
 
+	/**
+	 * FIXME: We're kind of duplicating some functionality here from NGApplication. We're going to want to consolidate this with the functionality already found there // Hugi 2022-06-06
+	 */
 	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement contentTemplate, final List<String> languages ) throws ClassNotFoundException, NGDeclarationFormatException {
 
 		if( declaration == null ) {
