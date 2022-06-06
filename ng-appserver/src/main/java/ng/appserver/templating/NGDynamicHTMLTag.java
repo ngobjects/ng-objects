@@ -158,7 +158,7 @@ public class NGDynamicHTMLTag {
 		return _elementWithDeclaration( declaration, name, element, languages );
 	}
 
-	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement template, final List<String> languages ) throws ClassNotFoundException, NGDeclarationFormatException {
+	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement contentTemplate, final List<String> languages ) throws ClassNotFoundException, NGDeclarationFormatException {
 
 		if( declaration == null ) {
 			throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named " + name );
@@ -176,7 +176,7 @@ public class NGDynamicHTMLTag {
 		 * FIXME: Disabling this code path for now, since we shouldn't really need to go down this // Hugi 2022-06-04
 		if( classForTypeName == null ) {
 			classForTypeName = _NGUtilities.lookForClassInAllBundles( typeName );
-
+		
 			if( classForTypeName == null ) {
 				//						logger.info( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
 			}
@@ -188,17 +188,17 @@ public class NGDynamicHTMLTag {
 
 		if( classForTypeName != null ) {
 			if( (NGComponent.class).isAssignableFrom( classForTypeName ) ) {
-				return _componentReferenceWithName( typeName, declaration, template, languages );
+				return _componentReferenceWithName( typeName, declaration, contentTemplate, languages );
 			}
 			else {
-				return _dynamicElementWithName( classForTypeName, declaration, template );
+				return _dynamicElementWithName( classForTypeName, declaration, contentTemplate );
 			}
 		}
 
-		return _componentReferenceWithName( typeName, declaration, template, languages );
+		return _componentReferenceWithName( typeName, declaration, contentTemplate, languages );
 	}
 
-	private static NGElement _componentReferenceWithName( final String componentName, final NGDeclaration declaration, final NGElement element, final List<String> languages ) throws ClassNotFoundException {
+	private static NGElement _componentReferenceWithName( final String componentName, final NGDeclaration declaration, final NGElement contentTemplate, final List<String> languages ) throws ClassNotFoundException {
 		final NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( componentName, languages );
 
 		if( componentDefinition == null ) {
@@ -206,10 +206,10 @@ public class NGDynamicHTMLTag {
 		}
 
 		final Map<String, NGAssociation> associations = declaration.associations();
-		return componentDefinition.componentReferenceWithAssociations( associations, element );
+		return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 	}
 
-	private static NGElement _dynamicElementWithName( final Class<? extends NGElement> elementClass, final NGDeclaration declaration, final NGElement element ) {
-		return NGApplication.application().dynamicElementWithName( elementClass.getName(), declaration.associations(), element, null );
+	private static NGElement _dynamicElementWithName( final Class<? extends NGElement> elementClass, final NGDeclaration declaration, final NGElement contentTemplate ) {
+		return NGApplication.application().dynamicElementWithName( elementClass.getName(), declaration.associations(), contentTemplate, null );
 	}
 }

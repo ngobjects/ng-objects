@@ -350,7 +350,7 @@ public class NGApplication {
 		return _componentDefinition( componentClass );
 	}
 
-	public NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement element, final List<String> languages ) {
+	public NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
 		Objects.requireNonNull( name, "No name provided for dynamic element creation." );
 
 		final Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
@@ -360,7 +360,7 @@ public class NGApplication {
 		// First we try to locate a DynamicElement class
 		if( elementClass != null && NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
 			final Class<?>[] params = { String.class, Map.class, NGElement.class };
-			final Object[] arguments = { name, associations, element };
+			final Object[] arguments = { name, associations, contentTemplate };
 			elementInstance = _NGUtilities.instantiateObject( elementClass, params, arguments );
 		}
 
@@ -369,7 +369,7 @@ public class NGApplication {
 			final NGComponentDefinition componentDefinition = _componentDefinition( name, languages );
 
 			if( componentDefinition != null ) {
-				elementInstance = componentDefinition.componentReferenceWithAssociations( associations, element );
+				elementInstance = componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 			}
 		}
 
