@@ -71,6 +71,8 @@ public class _NGUtilities {
 	public static Class classWithName( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
+		logger.info( "Searching for class '{}'", classNameToSearchFor );
+
 		for( Class c : _classes ) {
 			if( c.getName().equals( classNameToSearchFor ) || c.getSimpleName().equals( classNameToSearchFor ) ) {
 				return c;
@@ -79,6 +81,7 @@ public class _NGUtilities {
 
 		// If the class isn't found by simple name, let's try constructing from a fully qualified class name.
 		try {
+			logger.warn( "Did not find class '{}'. Trying Class.forName()", classNameToSearchFor );
 			return Class.forName( classNameToSearchFor );
 		}
 		catch( ClassNotFoundException e ) {}
