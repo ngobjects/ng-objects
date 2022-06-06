@@ -31,16 +31,15 @@ public class _NGUtilities {
 
 	private static final Logger logger = LoggerFactory.getLogger( _NGUtilities.class );
 
+	/**
+	 * Classes registered to be searchable by classWithName()
+	 */
 	private static final List<Class<? extends NGElement>> _classes = new ArrayList<>();
+
+	/**
+	 * A mapping of shortcuts to element classes. For example, mapping of <wo:str /> to <wo:NGString />
+	 */
 	private static final Map<String, String> _tagShortcutMap = new HashMap<>();
-
-	public static void addClass( final Class<? extends NGElement> clazz, final String... shortcuts ) {
-		_classes.add( clazz );
-
-		for( String shortcut : shortcuts ) {
-			_tagShortcutMap.put( shortcut, clazz.getSimpleName() );
-		}
-	}
 
 	static {
 		addClass( NGComponentContent.class, "content" );
@@ -53,6 +52,17 @@ public class _NGUtilities {
 		addClass( NGStylesheet.class, "stylesheet" );
 		addClass( NGTextField.class, "textfield" );
 		addClass( TestComponent.class );
+	}
+
+	/**
+	 * Add a class to make searchable by it's simpleName, full class name or any of the given shortcuts (for tags)
+	 */
+	public static void addClass( final Class<? extends NGElement> clazz, final String... shortcuts ) {
+		_classes.add( clazz );
+
+		for( String shortcut : shortcuts ) {
+			_tagShortcutMap.put( shortcut, clazz.getSimpleName() );
+		}
 	}
 
 	/**
