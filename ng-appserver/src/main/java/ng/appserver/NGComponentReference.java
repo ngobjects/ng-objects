@@ -20,6 +20,11 @@ public class NGComponentReference extends NGDynamicElement {
 	 */
 	private Map<String, NGAssociation> _associations;
 
+	/**
+	 * In the case of wrapper components, the content placed inside the component tags.
+	 *
+	 * <wo:SomeComponent>[contentTemplate]</wo:SomeComponent>
+	 */
 	private final NGElement _contentTemplate;
 
 	public NGComponentReference( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
@@ -38,6 +43,7 @@ public class NGComponentReference extends NGDynamicElement {
 		final NGComponent previousComponent = context.component();
 
 		// Load up our component's definition
+		// FIXME: We construct a component reference from a component definition. Shouldn't we have cached the definition at that stage?
 		final NGComponentDefinition newComponent = NGApplication.application()._componentDefinition( _name, Collections.emptyList() );
 
 		// Create an instance of the component

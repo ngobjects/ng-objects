@@ -21,27 +21,32 @@ public class NGComponentDefinition {
 	private static final Logger logger = LoggerFactory.getLogger( NGComponentDefinition.class );
 
 	/**
-	 * The cached name of this component definition. Corresponds to the component class's simpleName
-	 */
-	private final String _name;
-
-	/**
-	 * The fully qualified class name of this component definition.
-	 */
-	private final String _className;
-
-	/**
 	 * The referenced component's class
 	 */
 	private final Class<? extends NGComponent> _componentClass;
 
+	/**
+	 * Construct a new component definition based on the given class.
+	 *
+	 * FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
+	 */
 	public NGComponentDefinition( final Class<? extends NGComponent> componentClass ) {
 		Objects.requireNonNull( componentClass );
-
-		// FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
-		_name = componentClass.getSimpleName();
-		_className = componentClass.getName();
 		_componentClass = componentClass;
+	}
+
+	/**
+	 * The cached name of this component definition. Corresponds to the component class's simpleName
+	 */
+	private String name() {
+		return _componentClass.getSimpleName();
+	};
+
+	/**
+	 * The fully qualified class name of this component definition.
+	 */
+	private String className() {
+		return _componentClass.getName();
 	}
 
 	/**
@@ -64,7 +69,7 @@ public class NGComponentDefinition {
 	 * @return A new component reference to insert into a template being rendered
 	 */
 	public NGComponentReference componentReferenceWithAssociations( final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		return new NGComponentReference( _className, associations, contentTemplate );
+		return new NGComponentReference( className(), associations, contentTemplate );
 	}
 
 	/**
@@ -72,8 +77,8 @@ public class NGComponentDefinition {
 	 */
 	public NGElement template() {
 		try {
-			final String htmlTemplateString = loadHTMLTemplateString( _name );
-			final String wodString = loadWODTemplateString( _name );
+			final String htmlTemplateString = loadHTMLTemplateString( name() );
+			final String wodString = loadWODTemplateString( name() );
 			final List<String> languages = Collections.emptyList();
 			return new NGTemplateParser( htmlTemplateString, wodString, languages ).parse();
 		}
