@@ -47,7 +47,7 @@ public class NGComponentDefinition {
 	/**
 	 * @return A new component of the given class in the given context
 	 */
-	public NGComponent componentInstanceInstanceInContext( final NGContext context ) {
+	public NGComponent componentInstanceInContext( final NGContext context ) {
 		Objects.requireNonNull( context );
 
 		try {

@@ -42,7 +42,7 @@ public class NGComponentReference extends NGDynamicElement {
 
 		// Create an instance of the component
 		// FIXME: In this case we might want to reuse instances of the components are stateless. But stateless components are not implemented yet, so...
-		final NGComponent newComponentInstance = newComponent.componentInstanceInstanceInContext( context );
+		final NGComponent newComponentInstance = newComponent.componentInstanceInContext( context );
 
 		newComponentInstance.setParent( previousComponent );
 		newComponentInstance.setAssociations( _associations );

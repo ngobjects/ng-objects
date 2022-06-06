@@ -149,7 +149,7 @@ public class NGApplication {
 			throw new RuntimeException( "No such component definition: " + componentClass );
 		}
 
-		E componentInstance = (E)definition.componentInstanceInstanceInContext( context );
+		E componentInstance = (E)definition.componentInstanceInContext( context );
 		return componentInstance;
 	}
 
