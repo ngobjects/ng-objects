@@ -23,6 +23,9 @@ public class NGAssociationFactory {
 		return new NGKeyValueAssociation( keyPath );
 	}
 
+	/**
+	 * FIXME: This represents a keypath that contains an operator (@). We currently don't use that type of keypaths (I don't think they're a good idea) but I'm keeping the functionality around for a bit.
+	 */
 	private static boolean keyPathIsReadOnly( String keyPath ) {
 		return keyPath.startsWith( "@" ) || keyPath.indexOf( ".@" ) > 0;
 	}
