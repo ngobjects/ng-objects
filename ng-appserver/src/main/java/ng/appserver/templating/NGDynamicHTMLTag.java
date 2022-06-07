@@ -175,20 +175,6 @@ public class NGDynamicHTMLTag {
 
 		Class<? extends NGElement> classForTypeName = _NGUtilities.classWithName( typeName );
 
-		/*
-		 * FIXME: Disabling this code path for now, since we shouldn't really need to go down this // Hugi 2022-06-04
-		if( classForTypeName == null ) {
-			classForTypeName = _NGUtilities.lookForClassInAllBundles( typeName );
-		
-			if( classForTypeName == null ) {
-				//						logger.info( "WOBundle.lookForClassInAllBundles(" + s1 + ") failed!" );
-			}
-			else if( !(NGDynamicElement.class).isAssignableFrom( classForTypeName ) ) {
-				classForTypeName = null;
-			}
-		}
-		*/
-
 		if( classForTypeName != null ) {
 			if( (NGComponent.class).isAssignableFrom( classForTypeName ) ) {
 				return _componentReferenceWithName( typeName, declaration, contentTemplate, languages );
