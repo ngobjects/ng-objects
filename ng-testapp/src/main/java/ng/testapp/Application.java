@@ -6,6 +6,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGUtils;
 import ng.appserver.templating._NGUtilities;
 import ng.testapp.components.ExampleComponent;
+import ng.testapp.components.FormComponent;
 import ng.testapp.components.ProgrammaticDynamicComponent;
 import ng.testapp.components.RepetitionComponent;
 import ng.testapp.components.WrapperComponent;
@@ -42,6 +43,16 @@ public class Application extends NGApplication {
 
 		routeTable().map( "/component-repetition", ( request ) -> {
 			return pageWithName( RepetitionComponent.class, request.context() );
+		} );
+
+		routeTable().map( "/component-form", ( request ) -> {
+			return pageWithName( FormComponent.class, request.context() );
+		} );
+
+		routeTable().map( "/form-handler", ( request ) -> {
+			System.out.println( request.contentString() );
+			System.out.println( request.formValues() );
+			return new NGResponse();
 		} );
 
 		routeTable().map( "/print-routes", ( request ) -> {
