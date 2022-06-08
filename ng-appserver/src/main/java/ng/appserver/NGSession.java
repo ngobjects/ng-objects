@@ -1,5 +1,7 @@
 package ng.appserver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -7,6 +9,11 @@ import java.util.UUID;
  */
 
 public class NGSession {
+
+	/**
+	 * FIXME: This is not the way we're going to store/cache contexts. Just for testing
+	 */
+	public List<NGContext> contexts = new ArrayList<>();
 
 	/**
 	 * A unique identifier for this session
