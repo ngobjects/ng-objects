@@ -1,0 +1,33 @@
+package ng.appserver;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
+public class TestNGElementID {
+
+	@Test
+	public void testElementID() {
+		NGElementID elementID = new NGElementID();
+		assertEquals( "", elementID.toString() );
+
+		elementID.addBranch();
+		assertEquals( "0", elementID.toString() );
+
+		elementID.addBranch();
+		assertEquals( "0.0", elementID.toString() );
+
+		elementID.increment();
+		assertEquals( "0.1", elementID.toString() );
+
+		elementID.addBranch();
+		assertEquals( "0.1.0", elementID.toString() );
+
+		elementID.increment();
+		elementID.increment();
+		assertEquals( "0.1.2", elementID.toString() );
+
+		elementID.removeBranch();
+		assertEquals( "0.1", elementID.toString() );
+	}
+}
