@@ -20,9 +20,15 @@ public class NGTextField extends NGDynamicElement {
 	 */
 	private NGAssociation _nameAssociation;
 
+	/**
+	 * The value for the field. This is a bidirectional binding that will also pass the value upstrem.
+	 */
+	private NGAssociation _valueAssociation;
+
 	public NGTextField( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( name, associations, template );
 		_nameAssociation = associations.get( "name" );
+		_valueAssociation = associations.get( "value" );
 	}
 
 	@Override
@@ -42,8 +48,15 @@ public class NGTextField extends NGDynamicElement {
 			name = nameFromCurrentElementId( context );
 		}
 
+		String value = "";
+
+		if( _valueAssociation != null ) { // FIXME: _valueAssociation should actually not be allowed to be null
+			value = (String)_valueAssociation.valueInComponent( context.component() ); // FIXME: This value might need to be converted/formatted
+		}
+
 		// FIXME: Using String.format for convenience. We probably want to change that later for performance reasons // Hugi 2022-06-05
-		final String tagString = String.format( "<input type=\"text\" name=\"%s\" />", name );
+		// FIXME: Omit empty tags
+		final String tagString = String.format( "<input type=\"text\" name=\"%s\" value=\"%s\" />", name, value );
 		response.appendContentString( tagString );
 
 	}
