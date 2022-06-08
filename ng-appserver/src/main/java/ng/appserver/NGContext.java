@@ -32,7 +32,7 @@ public class NGContext {
 	 *
 	 * FIXME: Rename to currentElementID?
 	 */
-	private String _elementID;
+	private NGElementID _elementID;
 
 	/**
 	 * The ID of the context that initiated the request In the case of component actions, this will be used to restore the page we're working in.
@@ -98,11 +98,11 @@ public class NGContext {
 	/**
 	 * ID of the element currently being rendered by the context.
 	 */
-	public String elementID() {
+	public NGElementID elementID() {
 		return _elementID;
 	}
 
-	public void setElementID( String value ) {
+	public void setElementID( NGElementID value ) {
 		_elementID = value;
 	}
 
