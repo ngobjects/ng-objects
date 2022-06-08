@@ -8,6 +8,8 @@ import ng.appserver.NGContext;
 
 public class ExampleComponent extends NGComponent {
 
+	public String valueForTheTestTextField = "I am a field value";
+
 	public int index;
 	public String currentName;
 	public List<String> names = List.of( "Hugi", "Atli", "Logi" );
