@@ -30,9 +30,10 @@ public class NGContext {
 	/**
 	 * ID of the element currently being rendered by the context.
 	 *
-	 * FIXME: Rename to currentElementID?
+	 * FIXME: Rename to currentElementID?  // Hugi 2022-06-06
+	 * FIXME: Not sure we want to initialize the elementID here. Cheaper to do elsewhere? // Hugi 2022-06-08
 	 */
-	private NGElementID _elementID;
+	private NGElementID _elementID = new NGElementID();
 
 	/**
 	 * The ID of the context that initiated the request In the case of component actions, this will be used to restore the page we're working in.
