@@ -150,6 +150,10 @@ public class NGApplication {
 		}
 
 		E componentInstance = (E)definition.componentInstanceInContext( context );
+
+		// FIXME: Horrible stuff, just to test the component request handler
+		context.setPage( componentInstance );
+
 		return componentInstance;
 	}
 
