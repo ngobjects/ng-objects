@@ -29,9 +29,11 @@ public class NGHyperlink extends NGDynamicGroup {
 			href = (String)_hrefAssociation.valueInComponent( context.component() );
 		}
 
+		String senderID = context.contextID() + "." + context.elementID().toString();
+
 		// FIXME: Work in progress
 		if( _actionAssociation != null ) {
-			href = "/wo/" + "smu"; // Here we're going to need to add the sender ID
+			href = "/wo/" + senderID;
 		}
 
 		if( href == null ) {
