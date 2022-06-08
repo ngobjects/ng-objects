@@ -66,6 +66,24 @@ public class NGDynamicGroup extends NGDynamicElement {
 		return actionResults;
 	}
 
+	@Override
+	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
+		takeChildrenValuesFromRequest( request, context );
+	}
+
+	private void takeChildrenValuesFromRequest( NGRequest request, NGContext context ) {
+		if( _children != null ) { // See mention of nullyness in the declaration of _children
+			context.elementID().addBranch();
+
+			for( final NGElement child : children() ) {
+				child.takeValuesFromRequest( request, context );
+				context.elementID().increment();
+			}
+
+			context.elementID().removeBranch();
+		}
+	}
+
 	/**
 	 * @return The child elements of this DynamicGroup
 	 */
