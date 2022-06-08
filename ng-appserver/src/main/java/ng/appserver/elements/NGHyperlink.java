@@ -51,6 +51,7 @@ public class NGHyperlink extends NGDynamicGroup {
 		System.out.println( context.contextID() );
 		System.out.println( "ELEMENTID: " + context.elementID() );
 		System.out.println( "SENDERID: " + context.senderID() );
+		System.out.println( "COMPONENT: " + context.component() );
 
 		if( context.elementID().toString().equals( context.senderID() ) ) {
 			return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
