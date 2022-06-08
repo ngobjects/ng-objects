@@ -14,8 +14,10 @@ public class NGContext {
 
 	/**
 	 * Stores the context's session
+	 *
+	 * FIXME: THIS SHOULD NOT BE STATIC!
 	 */
-	private NGSession _session;
+	private static NGSession _session = new NGSession();
 
 	/**
 	 * The component currently being processed by this context
@@ -63,6 +65,16 @@ public class NGContext {
 
 	public NGContext( final NGRequest request ) {
 		_request = request;
+
+		// FIXME: Horrible session and context caching implementation just for testing purposes
+		_contextID = String.valueOf( session().contexts.size() );
+		session().contexts.add( this );
+
+		if( request.uri().contains( "/wo/" ) ) {
+			_requestContextID = request.parsedURI().getString( 1 ).split( "\\." )[0];
+			System.out.println( "contextID: " + _contextID );
+			System.out.println( "requestContextID: " + _contextID );
+		}
 	}
 
 	public NGRequest request() {
