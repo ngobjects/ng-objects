@@ -50,6 +50,11 @@ public class NGContext {
 	private String _requestContextID;
 
 	/**
+	 * FIXME: Testing. Should not be public
+	 */
+	public NGContext _originalContext;
+
+	/**
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
 	 * Used in combination with _requestContextID to find the proper action to initiate.
 	 *
@@ -75,6 +80,7 @@ public class NGContext {
 			final String componentPart = request.parsedURI().getString( 1 );
 
 			_requestContextID = componentPart.split( "\\." )[0];
+			_originalContext = session().contexts.get( Integer.parseInt( _requestContextID ) );
 			_senderID = componentPart.substring( 2 ); // FIXME: Only works with one letter context IDs
 			System.out.println( "Parsed senderID: " + _senderID );
 			System.out.println( "contextID: " + _contextID );
