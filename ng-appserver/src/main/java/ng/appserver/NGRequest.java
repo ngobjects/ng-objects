@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ng.appserver.privates.NGParsedURI;
 
 /**
@@ -11,6 +14,8 @@ import ng.appserver.privates.NGParsedURI;
  */
 
 public class NGRequest extends NGMessage {
+
+	private static final Logger logger = LoggerFactory.getLogger( NGRequest.class );
 
 	private static final String SESSION_ID_COOKIE_NAME = "wosid";
 
@@ -82,8 +87,13 @@ public class NGRequest extends NGMessage {
 		setContentBytes( contentBytes );
 	}
 
+	/**
+	 *
+	 */
 	public String _extractSessionID() {
-		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
+		logger.warn( "Returning fake session ID" );
+		return "fake-session-id";
+		//		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
 	}
 
 	public Map<String, List<String>> cookieValues() {
