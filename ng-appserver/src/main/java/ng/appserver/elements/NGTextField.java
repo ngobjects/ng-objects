@@ -54,6 +54,6 @@ public class NGTextField extends NGDynamicElement {
 	 * FIXME: Implement
 	 */
 	private String nameFromCurrentElementId( final NGContext context ) {
-		return "nameThatShouldHaveBeenMadeFromElementId";
+		return context.elementID().toString();
 	}
 }
