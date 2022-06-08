@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
+import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 public class NGDynamicGroup extends NGDynamicElement {
@@ -40,6 +42,28 @@ public class NGDynamicGroup extends NGDynamicElement {
 				child.appendToResponse( response, context );
 			}
 		}
+	}
+
+	@Override
+	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+		return invokeChildrenAction( request, context );
+	}
+
+	private NGActionResults invokeChildrenAction( NGRequest request, NGContext context ) {
+		NGActionResults actionResults = null;
+
+		if( _children != null ) { // See mention of nullyness in the declaration of _children
+			context.elementID().addBranch();
+
+			for( final NGElement child : children() ) {
+				actionResults = child.invokeAction( request, context );
+				context.elementID().increment();
+			}
+
+			context.elementID().removeBranch();
+		}
+
+		return actionResults;
 	}
 
 	/**
