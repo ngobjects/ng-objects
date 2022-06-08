@@ -38,9 +38,14 @@ public class NGDynamicGroup extends NGDynamicElement {
 
 	protected void appendChildrenToResponse( NGResponse response, NGContext context ) {
 		if( _children != null ) { // See mention of nullyness in the declaration of _children
+			context.elementID().addBranch();
+
 			for( final NGElement child : children() ) {
 				child.appendToResponse( response, context );
+				context.elementID().increment();
 			}
+
+			context.elementID().removeBranch();
 		}
 	}
 
