@@ -23,6 +23,11 @@ public class NGContext {
 	private NGComponent _currentComponent;
 
 	/**
+	 * The page level component
+	 */
+	private NGComponent _page;
+
+	/**
 	 * This context's uniqueID within it's session
 	 */
 	private String _contextID;
@@ -87,6 +92,17 @@ public class NGContext {
 
 	public void setCurrentComponent( NGComponent component ) {
 		_currentComponent = component;
+	}
+
+	/**
+	 * The page level component
+	 */
+	public NGComponent page() {
+		return _page;
+	}
+
+	public void setPage( NGComponent value ) {
+		_page = value;
 	}
 
 	/**
