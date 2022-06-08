@@ -5,16 +5,14 @@
 	</head>
 	<body>
 		<h2>This is a test component</h2>
-		<h3><webobject name="smu" /></h3>
-		<p>
-			<wo:link href="https://www.apple.com"><wo:img filename="test-image-3.jpg" width="200" /></wo:link>
-		</p>
+		<h3><webobject name="MyDefinitionComesFromTheWodFile" /></h3>
 		<wo:if condition="$true">
 			<p>Vulcan craves antennas, cameras and attention in the age of social media.</p>
 		</wo:if>
 		<p>
 			<img src="/wr/test-image-1.jpg" width="300" />
 			<img src="/wr/test-image-2.jpg" width="300" />
+			<wo:link href="https://www.apple.com"><wo:img filename="test-image-3.jpg" width="300" /></wo:link>
 		</p>
 		<wo:repetition list="$names" item="$currentName" index="$index">
 			<wo:str value="$index" /> : <wo:link href="$currentHref"><wo:str value="$currentName" /></wo:link> : <wo:link action="$printCurrentName">Print</wo:link><br>

@@ -18,12 +18,8 @@ public class ExampleComponent extends NGComponent {
 		super( context );
 	}
 
-	public String someValue() {
-		return "This is a string from a java method";
-	}
-
-	public String someStuff() {
-		return "Some string stuff";
+	public String someValueBoundInTheWodFile() {
+		return "This is a string from a java method, bound in the wod file";
 	}
 
 	public String currentHref() {
