@@ -66,14 +66,19 @@ public class NGContext {
 	public NGContext( final NGRequest request ) {
 		_request = request;
 
+		System.out.println( "Creating context" );
 		// FIXME: Horrible session and context caching implementation just for testing purposes
 		_contextID = String.valueOf( session().contexts.size() );
 		session().contexts.add( this );
 
 		if( request.uri().contains( "/wo/" ) ) {
-			_requestContextID = request.parsedURI().getString( 1 ).split( "\\." )[0];
+			final String componentPart = request.parsedURI().getString( 1 );
+
+			_requestContextID = componentPart.split( "\\." )[0];
+			_senderID = componentPart.substring( 2 ); // FIXME: Only works with one letter context IDs
+			System.out.println( "Parsed senderID: " + _senderID );
 			System.out.println( "contextID: " + _contextID );
-			System.out.println( "requestContextID: " + _contextID );
+			System.out.println( "requestContextID: " + _requestContextID );
 		}
 	}
 

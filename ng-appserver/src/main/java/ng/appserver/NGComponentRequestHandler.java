@@ -2,15 +2,11 @@ package ng.appserver;
 
 public class NGComponentRequestHandler extends NGRequestHandler {
 
-	/**
-	 * Just a little experiment, instead of a page cache
-	 */
-	public static NGComponent currentPage;
-
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
-		NGResponse response = new NGResponse();
-		currentPage.appendToResponse( response, request.context() );
-		return response;
+		final NGContext originalContext = request.context().session().contexts.get( Integer.parseInt( request.context().requestContextID() ) );
+		System.out.println( originalContext.page().getClass().getName() );
+		originalContext.page().takeValuesFromRequest( request, request.context() );
+		return originalContext.page().invokeAction( request, request.context() ).generateResponse();
 	}
 }

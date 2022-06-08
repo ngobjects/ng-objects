@@ -48,6 +48,10 @@ public class NGHyperlink extends NGDynamicGroup {
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 
+		System.out.println( context.contextID() );
+		System.out.println( "ELEMENTID: " + context.elementID() );
+		System.out.println( "SENDERID: " + context.senderID() );
+
 		if( context.elementID().toString().equals( context.senderID() ) ) {
 			return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 		}
