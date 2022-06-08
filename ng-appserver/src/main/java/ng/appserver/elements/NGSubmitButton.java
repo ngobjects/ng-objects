@@ -23,6 +23,7 @@ public class NGSubmitButton extends NGDynamicElement {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		response.appendContentString( "<input type=\"submit\">" );
+		// FIXME: Add a proper name/value based on the elementID so we can catch the button pressed for a later invocation of invokeAction()
+		response.appendContentString( "<input type=\"submit\" name=\"hehe\">" );
 	}
 }
