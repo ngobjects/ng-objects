@@ -20,6 +20,7 @@ import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
+import ng.appserver.elements.NGSubmitButton;
 import ng.appserver.elements.NGTextField;
 import x.junk.TestComponent;
 
@@ -49,6 +50,7 @@ public class _NGUtilities {
 		addClass( NGImage.class, "img" );
 		addClass( NGHyperlink.class, "link" );
 		addClass( NGRepetition.class, "repetition" );
+		addClass( NGSubmitButton.class, "submit" );
 		addClass( NGStylesheet.class, "stylesheet" );
 		addClass( NGTextField.class, "textfield" );
 		addClass( TestComponent.class );
