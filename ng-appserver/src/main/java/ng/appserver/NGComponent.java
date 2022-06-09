@@ -49,6 +49,10 @@ public class NGComponent extends NGElement implements NGActionResults {
 		return _context;
 	}
 
+	public NGComponent pageWithName( Class<? extends NGComponent> pageClass ) {
+		return NGApplication.application().pageWithName( pageClass, context() );
+	}
+
 	/**
 	 * @return The value of the named binding/association.
 	 */
