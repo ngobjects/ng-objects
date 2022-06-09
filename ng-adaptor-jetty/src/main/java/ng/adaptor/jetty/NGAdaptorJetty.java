@@ -168,9 +168,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 	 * @return the given HttpServletRequest converted to an NGRequest
 	 *
 	 * FIXME: We're not passing in the request parameters
-	 * FIXME: WE need to read the request's content as well
+	 * FIXME: We need to read the request's content as well
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
+
+		// FIXME: We're reading the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
+		final Map<String, List<String>> formValuesFromServletRequest = formValues( sr.getParameterMap() );
+
 		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		try( final InputStream is = sr.getInputStream()) {
@@ -182,8 +186,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
 
-		// FIXME: Form value parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
-		request._setFormValues( formValues( sr.getParameterMap() ) );
+		// FIXME: Form value parsing should really happen within the request object, not in the adaptor // Hugi 2021-12-31
+		request._setFormValues( formValuesFromServletRequest );
 
 		// FIXME: Cookie parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
 		request._setCookieValues( cookieValues( sr.getCookies() ) );
