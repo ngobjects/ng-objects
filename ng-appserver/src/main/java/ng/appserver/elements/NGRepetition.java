@@ -94,16 +94,18 @@ public class NGRepetition extends NGDynamicGroup {
 
 			int i = 0;
 
-			for( Object object : list ) {
-				context.elementID().increment();
-				_itemAssociation.setValue( object, context.component() );
+			if( list != null ) {
+				for( Object object : list ) {
+					context.elementID().increment();
+					_itemAssociation.setValue( object, context.component() );
 
-				// If an index binding is present, set and increment
-				if( _indexAssociation != null ) {
-					_indexAssociation.setValue( i++, context.component() );
+					// If an index binding is present, set and increment
+					if( _indexAssociation != null ) {
+						_indexAssociation.setValue( i++, context.component() );
+					}
+
+					appendChildrenToResponse( response, context );
 				}
-
-				appendChildrenToResponse( response, context );
 			}
 		}
 
