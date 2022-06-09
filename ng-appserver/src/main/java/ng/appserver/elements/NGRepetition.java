@@ -3,9 +3,11 @@ package ng.appserver.elements;
 import java.util.List;
 import java.util.Map;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
+import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 /**
@@ -43,12 +45,33 @@ public class NGRepetition extends NGDynamicGroup {
 	}
 
 	@Override
+	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+		context.elementID().addBranch();
+
+		NGActionResults result = null;
+
+		for( Object object : (List<?>)_list.valueInComponent( context.component() ) ) {
+			context.elementID().increment();
+			_item.setValue( object, context.component() );
+			result = super.invokeAction( request, context );
+		}
+
+		context.elementID().removeBranch();
+
+		return result;
+	}
+
+	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+
+		context.elementID().addBranch();
 
 		if( _count != null ) {
 			final int count = Integer.parseInt( (String)_count.valueInComponent( context.component() ) );
 
 			for( int i = 0; i < count; ++i ) {
+				context.elementID().increment();
+
 				// If an index binding is present, set and increment
 				if( _index != null ) {
 					_index.setValue( i++, context.component() );
@@ -64,6 +87,7 @@ public class NGRepetition extends NGDynamicGroup {
 			int i = 0;
 
 			for( Object object : list ) {
+				context.elementID().increment();
 				_item.setValue( object, context.component() );
 
 				// If an index binding is present, set and increment
@@ -74,5 +98,7 @@ public class NGRepetition extends NGDynamicGroup {
 				appendChildrenToResponse( response, context );
 			}
 		}
+
+		context.elementID().removeBranch();
 	}
 }
