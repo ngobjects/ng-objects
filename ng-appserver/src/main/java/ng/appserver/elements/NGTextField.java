@@ -70,6 +70,11 @@ public class NGTextField extends NGDynamicElement {
 			value = (String)_valueAssociation.valueInComponent( context.component() ); // FIXME: This value might need to be converted/formatted
 		}
 
+		// FIXME: Not sure if we should be setting the empty string here or making some other special accommodation for null
+		if( value == null ) {
+			value = "";
+		}
+
 		// FIXME: Using String.format for convenience. We probably want to change that later for performance reasons // Hugi 2022-06-05
 		// FIXME: Omit empty tags
 		final String tagString = String.format( "<input type=\"text\" name=\"%s\" value=\"%s\" />", name, value );
