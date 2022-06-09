@@ -6,7 +6,6 @@
 	<artifactId>ng-testapp</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>nb-testapp</name>
-	<packaging>woapplication</packaging>
 	<build>
 		<plugins>
 			<plugin>
@@ -16,12 +15,6 @@
 					<source>17</source>
 					<target>17</target>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>is.rebbi</groupId>
-				<artifactId>vermilingua-maven-plugin</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
-				<extensions>true</extensions>
 			</plugin>
 		</plugins>
 	</build>
