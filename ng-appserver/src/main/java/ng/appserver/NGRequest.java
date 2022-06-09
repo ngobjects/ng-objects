@@ -143,6 +143,10 @@ public class NGRequest extends NGMessage {
 		return _context;
 	}
 
+	public void setContext( NGContext context ) {
+		_context = context;
+	}
+
 	/**
 	 * FIXME: This method needs to be thread safe // Hugi 2021-11-28
 	 */
