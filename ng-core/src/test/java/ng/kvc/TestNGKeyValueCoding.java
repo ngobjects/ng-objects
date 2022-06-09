@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 public class TestNGKeyValueCoding {
 
 	@Test
-	public void testMethodAccess() {
+	public void testValueForKeyMethodWithExactName() {
 		Person person = new Person( "Hugi" );
 
 		assertEquals( "interfaceValue", NGKeyValueCoding.Utility.valueForKey( person, "getClass" ) );
@@ -18,7 +18,7 @@ public class TestNGKeyValueCoding {
 	}
 
 	@Test
-	public void testFieldAccess() {
+	public void testValueForKeyFieldWithExactName() {
 		Home home = new Home();
 		home.address1 = "Hraunteigur 23";
 
