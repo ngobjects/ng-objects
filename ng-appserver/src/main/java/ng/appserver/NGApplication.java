@@ -138,6 +138,13 @@ public class NGApplication {
 	}
 
 	/**
+	 * FIXME: Added to allow for NGHyperlink's pageName binding. I guess string component names can be useful after all... // Hugi 2022-06-09
+	 */
+	public NGComponent pageWithName( String componentName, final NGContext context ) {
+		return pageWithName( _NGUtilities.classWithName( componentName ), context );
+	}
+
+	/**
 	 * @return A new instance of [componentClass] in the given [context]
 	 *
 	 * FIXME: Are components really a part of the basic framework? If so; does component construction really belong in NGApplication // Hugi 2021-12-29
