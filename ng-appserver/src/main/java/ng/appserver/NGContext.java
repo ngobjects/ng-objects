@@ -72,7 +72,6 @@ public class NGContext {
 		_request = request;
 		request.setContext( this );
 
-		System.out.println( "Creating context" );
 		// FIXME: Horrible session and context caching implementation just for testing purposes
 		_contextID = String.valueOf( session().contexts.size() );
 		session().contexts.add( this );
@@ -80,12 +79,14 @@ public class NGContext {
 		if( request.uri().contains( "/wo/" ) ) {
 			final String componentPart = request.parsedURI().getString( 1 );
 
+			// The _requestContextID is the first part of the request handler path
 			_requestContextID = componentPart.split( "\\." )[0];
+
+			// That context is currently stored in the session's context array (which will just keep on incrementing infinitely)
 			_originalContext = session().contexts.get( Integer.parseInt( _requestContextID ) );
+
+			// And finally, the sending element ID is all the integers after the first one.
 			_senderID = componentPart.substring( 2 ); // FIXME: Only works with one letter context IDs
-			System.out.println( "Parsed senderID: " + _senderID );
-			System.out.println( "contextID: " + _contextID );
-			System.out.println( "requestContextID: " + _requestContextID );
 		}
 	}
 
