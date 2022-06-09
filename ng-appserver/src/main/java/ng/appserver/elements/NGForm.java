@@ -20,7 +20,7 @@ public class NGForm extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		response.appendContentString( "<form>" );
+		response.appendContentString( "<form method=\"POST\">" );
 		context.setIsInForm( true );
 		appendChildrenToResponse( response, context );
 		context.setIsInForm( false );
