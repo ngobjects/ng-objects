@@ -187,21 +187,21 @@ public class NGApplication {
 
 		logger.info( "Handling URI: " + request.uri() );
 
-		cleanupWOURL( request );
-
-		// FIXME: Handle the case of no default request handler gracefully // Hugi 2021-12-29
-		if( request.parsedURI().length() == 0 ) {
-			return defaultResponse( request );
-		}
-
-		final NGRequestHandler requestHandler = _routeTable.handlerForURL( request.uri() );
-
-		if( requestHandler == null ) {
-			return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
-		}
-
-		// FIXME: We might want to look into a little more exception handling // Hugi 2022-04-18
 		try {
+			cleanupWOURL( request );
+
+			// FIXME: Handle the case of no default request handler gracefully // Hugi 2021-12-29
+			if( request.parsedURI().length() == 0 ) {
+				return defaultResponse( request );
+			}
+
+			final NGRequestHandler requestHandler = _routeTable.handlerForURL( request.uri() );
+
+			if( requestHandler == null ) {
+				return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
+			}
+
+			// FIXME: We might want to look into a little more exception handling // Hugi 2022-04-18
 			final NGResponse response = requestHandler.handleRequest( request );
 
 			if( response == null ) {
@@ -211,6 +211,7 @@ public class NGApplication {
 			return response;
 		}
 		catch( Throwable throwable ) {
+			System.out.println();
 			handleException( throwable );
 			return exceptionResponse( throwable );
 		}
