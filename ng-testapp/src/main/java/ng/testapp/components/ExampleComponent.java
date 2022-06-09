@@ -27,7 +27,7 @@ public class ExampleComponent extends NGComponent {
 	}
 
 	public NGActionResults printCurrentName() {
-		System.out.println( currentName );
+		System.out.println( "The clicked name is: " + currentName );
 		return null;
 	}
 }
