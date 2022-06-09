@@ -19,6 +19,7 @@ public class Application extends NGApplication {
 
 	public Application() {
 		_NGUtilities.addClass( WrapperComponent.class );
+		_NGUtilities.addClass( RepetitionComponent.class );
 
 		routeTable().map( "/response-plain", ( request ) -> {
 			NGResponse response = new NGResponse( "Oh look, a response!", 200 );
