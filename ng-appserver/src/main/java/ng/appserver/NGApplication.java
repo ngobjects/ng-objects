@@ -192,7 +192,7 @@ public class NGApplication {
 
 			// FIXME: Handle the case of no default request handler gracefully // Hugi 2021-12-29
 			if( request.parsedURI().length() == 0 ) {
-				return defaultResponse( request );
+				return defaultResponse( request ).generateResponse();
 			}
 
 			final NGRequestHandler requestHandler = _routeTable.handlerForURL( request.uri() );
@@ -213,7 +213,7 @@ public class NGApplication {
 		catch( Throwable throwable ) {
 			System.out.println();
 			handleException( throwable );
-			return exceptionResponse( throwable );
+			return exceptionResponse( throwable ).generateResponse();
 		}
 	}
 
@@ -229,7 +229,7 @@ public class NGApplication {
 	 *
 	 * FIXME: We need to allow for different response types for production/development environments // Hugi 2022-04-20
 	 */
-	public NGResponse exceptionResponse( final Throwable throwable ) {
+	public NGActionResults exceptionResponse( final Throwable throwable ) {
 		final StringBuilder b = new StringBuilder();
 		b.append( "<style>body{ font-family: sans-serif}</style>" );
 		b.append( String.format( "<h3>An exception occurred</h3>" ) );
@@ -258,7 +258,7 @@ public class NGApplication {
 	 *
 	 *  FIXME: This is just here as a temporary placeholder until we decide on a nicer default request handling mechanism
 	 */
-	public NGResponse defaultResponse( final NGRequest request ) {
+	public NGActionResults defaultResponse( final NGRequest request ) {
 		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
 		response.appendContentString( "\n\nWould you like to see your request headers instead?\n\n" );
 
