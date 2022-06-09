@@ -70,6 +70,7 @@ public class NGContext {
 
 	public NGContext( final NGRequest request ) {
 		_request = request;
+		request.setContext( this );
 
 		System.out.println( "Creating context" );
 		// FIXME: Horrible session and context caching implementation just for testing purposes
