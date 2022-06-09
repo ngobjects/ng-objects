@@ -15,7 +15,7 @@ public class NGContext {
 	/**
 	 * Stores the context's session
 	 *
-	 * FIXME: THIS SHOULD NOT BE STATIC!
+	 * FIXME: THIS SHOULD ABSOLUTELY NOT BE STATIC! Just for testing, most applications need (ahem) more than one session // Hugi 2022-06-09
 	 */
 	private static NGSession _session = new NGSession();
 
@@ -73,7 +73,11 @@ public class NGContext {
 		request.setContext( this );
 
 		// FIXME: Horrible session and context caching implementation just for testing purposes
+
+		// Our contextID is just the next free slot in the session's context array
 		_contextID = String.valueOf( session().contexts.size() );
+
+		// Store our context with the session
 		session().contexts.add( this );
 
 		if( request.uri().contains( "/wo/" ) ) {
@@ -86,7 +90,7 @@ public class NGContext {
 			_originalContext = session().contexts.get( Integer.parseInt( _requestContextID ) );
 
 			// And finally, the sending element ID is all the integers after the first one.
-			_senderID = componentPart.substring( 2 ); // FIXME: Only works with one letter context IDs
+			_senderID = componentPart.substring( _requestContextID.length() + 1 );
 		}
 	}
 
