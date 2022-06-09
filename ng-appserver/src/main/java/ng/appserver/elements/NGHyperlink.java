@@ -2,6 +2,9 @@ package ng.appserver.elements;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
@@ -10,6 +13,8 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 public class NGHyperlink extends NGDynamicGroup {
+
+	private static final Logger logger = LoggerFactory.getLogger( NGHyperlink.class );
 
 	private final NGAssociation _hrefAssociation;
 	private final NGAssociation _actionAssociation;
@@ -48,10 +53,10 @@ public class NGHyperlink extends NGDynamicGroup {
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 
-		System.out.println( context.contextID() );
-		System.out.println( "ELEMENTID: " + context.elementID() );
-		System.out.println( "SENDERID: " + context.senderID() );
-		System.out.println( "COMPONENT: " + context.component() );
+		logger.debug( "invokeAction() : current contextID is: " + context.contextID() );
+		logger.debug( "invokeAction() : current elementID is: " + context.elementID() );
+		logger.debug( "invokeAction() : current senderID is: " + context.senderID() );
+		logger.debug( "invokeAction() : current component is: " + context.component() );
 
 		if( context.elementID().toString().equals( context.senderID() ) ) {
 			return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
