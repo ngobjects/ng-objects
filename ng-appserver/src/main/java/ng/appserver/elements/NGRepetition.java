@@ -19,29 +19,29 @@ public class NGRepetition extends NGDynamicGroup {
 	/**
 	 * The number of iterations to do
 	 */
-	private final NGAssociation _count;
+	private final NGAssociation _countAssociation;
 
 	/**
 	 * The object that will take on the value from [list] during each iteration
 	 */
-	private final NGAssociation _item;
+	private final NGAssociation _itemAssociation;
 
 	/**
 	 * List of objects to iterate over
 	 */
-	private final NGAssociation _list;
+	private final NGAssociation _listAssociation;
 
 	/**
 	 * Hold the number of current iteration (zero-based)
 	 */
-	private final NGAssociation _index;
+	private final NGAssociation _indexAssociation;
 
 	public NGRepetition( String _name, Map<String, NGAssociation> associations, NGElement element ) {
 		super( _name, associations, element );
-		_count = associations.get( "count" );
-		_item = associations.get( "item" );
-		_index = associations.get( "index" );
-		_list = associations.get( "list" );
+		_countAssociation = associations.get( "count" );
+		_itemAssociation = associations.get( "item" );
+		_indexAssociation = associations.get( "index" );
+		_listAssociation = associations.get( "list" );
 	}
 
 	/**
@@ -58,9 +58,9 @@ public class NGRepetition extends NGDynamicGroup {
 
 		NGActionResults result = null;
 
-		for( Object object : (List<?>)_list.valueInComponent( context.component() ) ) {
+		for( Object object : (List<?>)_listAssociation.valueInComponent( context.component() ) ) {
 			context.elementID().increment();
-			_item.setValue( object, context.component() );
+			_itemAssociation.setValue( object, context.component() );
 			result = super.invokeAction( request, context );
 		}
 
@@ -74,33 +74,33 @@ public class NGRepetition extends NGDynamicGroup {
 
 		context.elementID().addBranch();
 
-		if( _count != null ) {
-			final int count = Integer.parseInt( (String)_count.valueInComponent( context.component() ) );
+		if( _countAssociation != null ) {
+			final int count = Integer.parseInt( (String)_countAssociation.valueInComponent( context.component() ) );
 
 			for( int i = 0; i < count; ++i ) {
 				context.elementID().increment();
 
 				// If an index binding is present, set and increment
-				if( _index != null ) {
-					_index.setValue( i++, context.component() );
+				if( _indexAssociation != null ) {
+					_indexAssociation.setValue( i++, context.component() );
 				}
 
 				appendChildrenToResponse( response, context );
 			}
 		}
 
-		if( _list != null ) {
-			final List<?> list = (List<?>)_list.valueInComponent( context.component() );
+		if( _listAssociation != null ) {
+			final List<?> list = (List<?>)_listAssociation.valueInComponent( context.component() );
 
 			int i = 0;
 
 			for( Object object : list ) {
 				context.elementID().increment();
-				_item.setValue( object, context.component() );
+				_itemAssociation.setValue( object, context.component() );
 
 				// If an index binding is present, set and increment
-				if( _index != null ) {
-					_index.setValue( i++, context.component() );
+				if( _indexAssociation != null ) {
+					_indexAssociation.setValue( i++, context.component() );
 				}
 
 				appendChildrenToResponse( response, context );
