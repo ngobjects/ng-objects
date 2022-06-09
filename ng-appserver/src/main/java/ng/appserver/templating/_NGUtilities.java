@@ -73,7 +73,7 @@ public class _NGUtilities {
 	public static Class classWithName( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
-		logger.info( "Searching for class '{}'", classNameToSearchFor );
+		logger.debug( "Searching for class '{}'", classNameToSearchFor );
 
 		for( Class c : _classes ) {
 			if( c.getName().equals( classNameToSearchFor ) || c.getSimpleName().equals( classNameToSearchFor ) ) {

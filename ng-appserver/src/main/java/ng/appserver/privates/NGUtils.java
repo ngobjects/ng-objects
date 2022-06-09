@@ -61,7 +61,7 @@ public class NGUtils {
 	private static Optional<byte[]> readJavaResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
 
-		logger.info( "Reading resource from path: " + resourcePath );
+		logger.debug( "Reading resource from path: " + resourcePath );
 
 		try( final InputStream resourceAsStream = NGUtils.class.getResourceAsStream( resourcePath )) {
 

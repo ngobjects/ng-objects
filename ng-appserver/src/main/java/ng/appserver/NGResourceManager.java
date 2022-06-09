@@ -36,7 +36,7 @@ public class NGResourceManager {
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
 
-		logger.info( "Loading resource named {}. Caching: {}", resourceName, useCache() );
+		logger.debug( "Loading resource named {}. Caching: {}", resourceName, useCache() );
 
 		Optional<byte[]> resource;
 
