@@ -127,12 +127,19 @@ public class NGComponent extends NGElement implements NGActionResults {
 
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
+		final NGComponent previouslyCurrentComponent = context.component();
+		context.setCurrentComponent( this );
 		template().takeValuesFromRequest( request, context );
+		context.setCurrentComponent( previouslyCurrentComponent );
 	}
 
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
-		return template().invokeAction( request, context ); // FIXME: Extremely simplistic implementation
+		final NGComponent previouslyCurrentComponent = context.component();
+		context.setCurrentComponent( this );
+		NGActionResults actionREsults = template().invokeAction( request, context );
+		context.setCurrentComponent( previouslyCurrentComponent );
+		return actionREsults;
 	}
 
 	@Override
