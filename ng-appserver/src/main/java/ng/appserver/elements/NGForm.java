@@ -9,6 +9,7 @@ import ng.appserver.NGResponse;
 
 /**
  * FIXME: Implement
+ * FIXME: The form's method should default to POST (once we can handle POST requests)
  */
 
 public class NGForm extends NGDynamicGroup {

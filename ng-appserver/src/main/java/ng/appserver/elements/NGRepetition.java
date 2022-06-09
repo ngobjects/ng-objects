@@ -44,6 +44,14 @@ public class NGRepetition extends NGDynamicGroup {
 		_list = associations.get( "list" );
 	}
 
+	/**
+	 * FIXME: This needs to be implemented
+	 */
+	@Override
+	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
+		super.takeValuesFromRequest( request, context );
+	}
+
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 		context.elementID().addBranch();
