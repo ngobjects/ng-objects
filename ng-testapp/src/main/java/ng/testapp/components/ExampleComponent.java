@@ -14,6 +14,8 @@ public class ExampleComponent extends NGComponent {
 	public String currentName;
 	public List<String> names = List.of( "Hugi", "Atli", "Logi" );
 
+	public boolean showHiddenPart;
+
 	public ExampleComponent( NGContext context ) {
 		super( context );
 	}
@@ -29,5 +31,14 @@ public class ExampleComponent extends NGComponent {
 	public NGActionResults printCurrentName() {
 		System.out.println( "The clicked name is: " + currentName );
 		return null;
+	}
+
+	public NGActionResults toggleShowHidden() {
+		showHiddenPart = !showHiddenPart;
+		return null;
+	}
+
+	public String showHideToggleString() {
+		return showHiddenPart ? "Hide" : "Show";
 	}
 }
