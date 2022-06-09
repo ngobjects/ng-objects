@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
+import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 public class NGTextField extends NGDynamicElement {
@@ -32,10 +34,24 @@ public class NGTextField extends NGDynamicElement {
 	}
 
 	@Override
+	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
+		// FIXME: we should only grab values from the request if it's containing form is being submitted. We probably need to pass that info along from NGForm (or perhaps NGSubmitButton?)
+		// FIXME: In that case, we're going to want to push the field's value through the value binding
+
+		final List<String> valuesFromRequest = request.formValues().get( nameFromCurrentElementId( context ) ); // FIXME: Account for multiple values/no value
+
+		if( valuesFromRequest != null ) { // FIXME: Should formValues return an empty list or null if not present? // Hugi 2022-06-08
+			String valueFromRequest = valuesFromRequest.get( 0 );
+			logger.info( "We're going for it! We're setting that value to: " + valueFromRequest );
+			_valueAssociation.setValue( valueFromRequest, context.component() );
+		}
+	}
+
+	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
 
 		if( !context.isInForm() ) {
-			// FIXME: This warning should be suppressable. IT's really just
+			// FIXME: This warning should be suppressable (or not present, just here for testing). There are excellent reasons to have a textfield outside of a form
 			logger.warn( "Warning, you're rendering an NGTextField outside of a form" );
 		}
 
@@ -58,7 +74,6 @@ public class NGTextField extends NGDynamicElement {
 		// FIXME: Omit empty tags
 		final String tagString = String.format( "<input type=\"text\" name=\"%s\" value=\"%s\" />", name, value );
 		response.appendContentString( tagString );
-
 	}
 
 	/**
