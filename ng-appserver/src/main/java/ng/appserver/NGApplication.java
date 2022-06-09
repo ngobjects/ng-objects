@@ -78,7 +78,7 @@ public class NGApplication {
 			_application._routeTable.map( "/wa/", new NGDirectActionRequestHandler() );
 			_application._routeTable.map( "/womp/", new WOMPRequestHandler() );
 
-			_application.run();
+			_application.start();
 		}
 		catch( final Exception e ) {
 			e.printStackTrace();
@@ -92,7 +92,10 @@ public class NGApplication {
 		logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 	}
 
-	private void run() {
+	/**
+	 * Starts the adaptor
+	 */
+	private void start() {
 		try {
 			createAdaptor().start();
 		}
