@@ -49,7 +49,7 @@ public class NGComponent extends NGElement implements NGActionResults {
 		return _context;
 	}
 
-	public NGComponent pageWithName( Class<? extends NGComponent> pageClass ) {
+	public <E extends NGComponent> E pageWithName( Class<E> pageClass ) {
 		return NGApplication.application().pageWithName( pageClass, context() );
 	}
 
