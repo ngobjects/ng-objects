@@ -17,7 +17,7 @@ public class NGDirectAction {
 
 	public NGDirectAction( final NGRequest request ) {
 		Objects.requireNonNull( request );
-		_context = request().context();
+		_context = request.context();
 	}
 
 	public NGContext context() {
