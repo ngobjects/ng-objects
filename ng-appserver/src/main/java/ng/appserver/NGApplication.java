@@ -153,6 +153,9 @@ public class NGApplication {
 	 * FIXME: Are components really a part of the basic framework? If so; does component construction really belong in NGApplication // Hugi 2021-12-29
 	 */
 	public <E extends NGComponent> E pageWithName( final Class<E> componentClass, final NGContext context ) {
+		Objects.requireNonNull( componentClass, "'componentClass' must not be null. I can't create components from nothing." );
+		Objects.requireNonNull( componentClass, "'context' must not be null. What's life without context?" );
+
 		final NGComponentDefinition definition = _componentDefinition( componentClass );
 
 		if( definition == null ) {
