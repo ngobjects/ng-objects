@@ -11,7 +11,7 @@ import java.util.Objects;
 public class NGComponentReference extends NGDynamicElement {
 
 	/**
-	 * Holds a reference to the fully qualified classname of the component we're going to render
+	 * Holds a reference to the fully qualified class name of the component we're going to render
 	 */
 	private final String _name;
 
@@ -27,11 +27,11 @@ public class NGComponentReference extends NGDynamicElement {
 	 */
 	private final NGElement _contentTemplate;
 
-	public NGComponentReference( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+	public NGComponentReference( final String fullyQualifiedClassName, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		super( null, null, null );
-		Objects.requireNonNull( name );
+		Objects.requireNonNull( fullyQualifiedClassName );
 		Objects.requireNonNull( associations );
-		_name = name;
+		_name = fullyQualifiedClassName;
 		_associations = associations;
 		_contentTemplate = contentTemplate;
 	}
@@ -61,5 +61,21 @@ public class NGComponentReference extends NGDynamicElement {
 
 		// Return control to the previous component
 		context.setCurrentComponent( previousComponent );
+	}
+
+	/**
+	 * FIXME: Implement
+	 */
+	@Override
+	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
+		super.takeValuesFromRequest( request, context );
+	}
+
+	/**
+	 * FIXME: Implement
+	 */
+	@Override
+	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+		return super.invokeAction( request, context );
 	}
 }
