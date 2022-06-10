@@ -23,9 +23,11 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 
 		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourceName.get() );
 
-		// FIXME: How to handle this properly? User configurable? Just always a 404
+		// FIXME: How to handle this properly? User configurable? Just always a 404 // Hugi 2021-12-06
 		if( resourceBytes.isEmpty() ) {
-			return new NGResponse( "Resource '" + resourceName.get() + "' does not exist", 404 );
+			final NGResponse errorResponse = new NGResponse( "webserver resources '" + resourceName.get() + "' does not exist", 404 );
+			errorResponse.setHeader( "content-type", "text/html" );
+			return errorResponse;
 		}
 
 		final String mimeType = NGMimeTypeDetector.mimeTypeForResourceName( resourceName.get() );
