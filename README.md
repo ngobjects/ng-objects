@@ -10,15 +10,15 @@ ng-objects is an open source exploration of Apple's WebObjects (WO) framework. I
 
 ## To launch the test application (ng-testapp)
 
-### Step 1: Install the ng-objects dependencies.
+### Install dependencies/frameworks
 
-    1. Clone this repo.
-    2. Run `mvn install` at the project's root.
+1. Clone this repo.
+2. Run `mvn install` at the project's root.
 
-### Step 2: Build and launch `ng-testapp`:
-    1. `cd ng-testapp`
-    2. `mvn package`
-    3. `./target/ng-testapp-1.0.0-SNAPSHOT.woa/ng-testapp`
+### Build and launch `ng-testapp`:
+1. `cd ng-testapp`
+2. `mvn package`
+3. `./target/ng-testapp-1.0.0-SNAPSHOT.woa/ng-testapp`
 
 Now point your browser to [localhost:1200](http://localhost:1200/) you should be greeted with a test component showing some of the current features. Congratulations!
 
