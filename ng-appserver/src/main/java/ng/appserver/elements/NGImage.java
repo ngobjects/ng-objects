@@ -28,6 +28,11 @@ public class NGImage extends NGDynamicElement {
 	private final NGAssociation _filenameAssociation;
 
 	/**
+	 * The src of the image. We include this as a separate association so we can check if it's bound (if filename is missing)
+	 */
+	private final NGAssociation _srcAssociation;
+
+	/**
 	 * For storing associations that aren't part of the component's basic associations
 	 */
 	private final Map<String, NGAssociation> _additionalAssociations;
@@ -35,16 +40,19 @@ public class NGImage extends NGDynamicElement {
 	public NGImage( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 		super( name, associations, template );
 		_filenameAssociation = associations.get( "filename" );
+		_srcAssociation = associations.get( "src" );
 		_dataAssociation = associations.get( "data" );
 
-		if( _filenameAssociation == null && _dataAssociation == null ) {
-			throw new IllegalArgumentException( "You must set either [filename] or [data] bindings" );
+		if( _srcAssociation == null && _filenameAssociation == null && _dataAssociation == null ) {
+			throw new IllegalArgumentException( "You must set [filename], [data] or [src] bindings" );
 		}
 
+		// Now we collect the associations that we've already consumed and keep the rest around, to add to the image as attributes
 		// Not exactly pretty, but let's work with this a little
 		_additionalAssociations = new HashMap<>( associations );
 		_additionalAssociations.remove( "filename" );
 		_additionalAssociations.remove( "data" );
+		_additionalAssociations.remove( "src" );
 	}
 
 	@Override
@@ -73,6 +81,10 @@ public class NGImage extends NGDynamicElement {
 			final String id = UUID.randomUUID().toString();
 			NGResourceRequestHandlerDynamic.push( id, bytes );
 			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( id ).get();
+		}
+
+		if( _srcAssociation != null ) {
+			src = (String)_srcAssociation.valueInComponent( context.component() );
 		}
 
 		final StringBuilder b = new StringBuilder();
