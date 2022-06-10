@@ -29,18 +29,30 @@ public class NGConditional extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		Boolean condition = (Boolean)_conditionAssociation.valueInComponent( context.component() );
+		final Object condition = _conditionAssociation.valueInComponent( context.component() );
+		Boolean conditionAsBoolean = evaluate( condition );
 
 		if( _negateAssociation != null ) {
 			final Boolean negate = (Boolean)_negateAssociation.valueInComponent( context.component() );
 
 			if( negate == true ) {
-				condition = !condition;
+				conditionAsBoolean = !conditionAsBoolean;
 			}
 		}
 
-		if( condition ) {
+		if( conditionAsBoolean ) {
 			appendChildrenToResponse( response, context );
 		}
+	}
+
+	/**
+	 * FIXME: This is here as a temporary placeholder. We need to globally define the concepts of truthy/falsy within the framework // Hugi 2022-06-10
+	 */
+	private static boolean evaluate( Object object ) {
+		if( object == null ) {
+			return false;
+		}
+
+		return (boolean)object;
 	}
 }
