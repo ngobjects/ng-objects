@@ -1,41 +1,73 @@
 <!doctype html>
 <html>
 	<head>
-		<title>Þetta er vefsíða!</title>
+		<title>ng-objects test page</title>
+		<style>
+			body {
+				font-family: sans-serif;
+				font-size: 14px;
+			}
+
+			code {
+				background-color: rgb(240,240,240);
+				border: 1px solid rgb(200,200,200);
+				border-radius: 5px;
+				padding: 2px;
+			}
+		</style>
 	</head>
 	<body>
-		<h2>This is a test component</h2>
-		<h3><webobject name="MyDefinitionComesFromTheWodFile" /></h3>
+		<h2>Welcome to the ng-objects test page</h2>
+		
+		<p><webobject name="MyDefinitionComesFromTheWodFile" /></p>
+
+		<h3>How about conditionals</h3>
 
 		<wo:if condition="$true">
-			<p>Vulcan craves <wo:link pageName="RepetitionComponent">antennas</wo:link>, cameras and attention in the age of social media.</p>
+			<p>This paragraph is inside a conditional with constant value association <code>$true</code></p>
 		</wo:if>
 
 		<p>
 			<wo:link action="$toggleShowHidden"><wo:str value="$showHideToggleString" /> horrible secret</wo:link>
-			<wo:if condition="$showHiddenPart"><br>I sometimes like light beer.</wo:if>
+			<wo:if condition="$showHiddenPart"><br>I sometimes like light beer. Also, you just flipped a boolean bound to a wo:conditional</wo:if>
 		</p>
 
+		<h3>Let's look at the three different ways to load up an image (filename,src,data)</h3>
 		<p>
-			<img src="/wr/test-image-1.jpg" width="300" />
-			<img src="/wr/test-image-2.jpg" width="300" />
-			<wo:link href="https://www.apple.com"><wo:img filename="test-image-3.jpg" width="300" /></wo:link>
+			<wo:img filename="test-image-1.jpg" height="150" />
+			<wo:img src="/wr/test-image-2.jpg" height="150" />
+			<wo:img data="$testImage3Data" height="150" />
 		</p>
 
-		<wo:repetition list="$names" item="$currentName" index="$index">
-			<wo:str value="$index" /> : <wo:link href="$currentHref"><wo:str value="$currentName" /></wo:link> : <wo:str value="$context.elementID" /> : <wo:link action="$printCurrentName">Print</wo:link><br>
-		</wo:repetition>
+		<h3>Let's see a repetition</h3>
 
-		<wo:TestComponent someString="This is a value from a constant binding, being passed to a component" />
+		<table>
+			<wo:repetition list="$names" item="$currentName" index="$index">
+				<tr>
+					<td><wo:str value="$index" /></td>
+					<td><wo:str value="$currentName" /></td>
+					<td><wo:str value="$context.elementID" /></td>
+					<td><wo:link action="$printCurrentName">Print</wo:link></td>
+				</tr>
+			</wo:repetition>
+		</table>
+
+		<h3>Now for our own embedded component</h3>
+
+		<wo:TestComponent someString="And this is a value from a constant binding, being passed to that component" />
+
+		<h3>And of course, a wrapper component</h3>
 
 		<wo:WrapperComponent>
-			<p>This content is wrapped inside a wrapper component</p>
-			<p>Form values: <wo:str value="$context.request.formValues" /></p>
+			<p>This paragraph is inside a wrapper component</p>
 		</wo:WrapperComponent>
+
+		<h3>Let's try a form</h3>
 
 		<wo:form>
 			<wo:NGTextField value="$valueForTheTestTextField" /> <wo:submit action="$testAction" />
 		</wo:form>
 		<p>The field's value is: <strong><wo:str value="$valueForTheTestTextField" /></strong></p>
+		<p>Form values: <wo:str value="$context.request.formValues" /></p>
 	</body>
 </html>

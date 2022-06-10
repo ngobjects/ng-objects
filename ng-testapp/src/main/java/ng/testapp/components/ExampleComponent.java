@@ -5,6 +5,7 @@ import java.util.List;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
+import ng.appserver.privates.NGUtils;
 
 public class ExampleComponent extends NGComponent {
 
@@ -40,5 +41,9 @@ public class ExampleComponent extends NGComponent {
 
 	public String showHideToggleString() {
 		return showHiddenPart ? "Hide" : "Show";
+	}
+
+	public byte[] testImage3Data() {
+		return NGUtils.readAppResource( "test-image-3.jpg" ).get();
 	}
 }

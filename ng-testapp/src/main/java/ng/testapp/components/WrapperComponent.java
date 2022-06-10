@@ -10,6 +10,6 @@ public class WrapperComponent extends NGComponent {
 	}
 
 	public String someString() {
-		return "I am a string from a wrapper component";
+		return "I am a string from that same wrapper component";
 	}
 }
