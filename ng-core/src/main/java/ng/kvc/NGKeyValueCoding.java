@@ -123,7 +123,8 @@ public interface NGKeyValueCoding {
 			}
 			catch( SecurityException | NoSuchFieldException e ) {
 				// FIXME: Error handling is missing entirely
-				throw new RuntimeException( e );
+				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, targetClass );
+				throw new RuntimeException( message, e );
 			}
 		}
 
