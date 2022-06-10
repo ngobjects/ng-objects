@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -22,11 +23,23 @@ public class NGHyperlink extends NGDynamicGroup {
 	private final NGAssociation _actionAssociation;
 	private final NGAssociation _pageNameAssociation;
 
+	/**
+	 * For storing associations that aren't part of the component's basic associations
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
+
 	public NGHyperlink( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( name, associations, template );
 		_hrefAssociation = associations.get( "href" );
 		_actionAssociation = associations.get( "action" );
 		_pageNameAssociation = associations.get( "pageName" );
+
+		// Now we collect the associations that we've already consumed and keep the rest around, to add to the image as attributes
+		// Not exactly pretty, but let's work with this a little
+		_additionalAssociations = new HashMap<>( associations );
+		_additionalAssociations.remove( "href" );
+		_additionalAssociations.remove( "action" );
+		_additionalAssociations.remove( "pageName" );
 	}
 
 	@Override
@@ -49,7 +62,21 @@ public class NGHyperlink extends NGDynamicGroup {
 			throw new IllegalStateException( "Failed to generate the href attribute for a hyperlink" );
 		}
 
-		response.appendContentString( "<a href=\"" + href + "\">" );
+		StringBuilder startTag = new StringBuilder( "<a href=\"" + href + "\"" );
+
+		if( !_additionalAssociations.isEmpty() ) {
+			startTag.append( " " );
+
+			_additionalAssociations.forEach( ( name, ass ) -> {
+				startTag.append( " " );
+				startTag.append( name );
+				startTag.append( "=" );
+				startTag.append( "\"" + ass.valueInComponent( context.component() ) + "\"" );
+			} );
+		}
+
+		startTag.append( ">" );
+		response.appendContentString( startTag.toString() );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</a>" );
 	}
