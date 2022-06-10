@@ -1,7 +1,9 @@
 package ng.testapp;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
+import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGUtils;
 import ng.appserver.templating._NGUtilities;
@@ -74,6 +76,11 @@ public class Application extends NGApplication {
 			response.setHeader( "content-type", "text/html" );
 			return response;
 		} );
+	}
+
+	@Override
+	public NGActionResults defaultResponse( NGRequest request ) {
+		return pageWithName( ExampleComponent.class, request.context() );
 	}
 
 	//	@Override
