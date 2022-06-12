@@ -76,6 +76,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 			final Map<String, String> map = new HashMap<>();
 			map.put( "jpg", "image/jpeg" );
 			map.put( "jpeg", "image/jpeg" );
+			map.put( "js", "text/javascript" );
 			map.put( "png", "image/png" );
 			map.put( "css", "text/css" );
 			return map;
