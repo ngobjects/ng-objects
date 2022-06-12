@@ -18,6 +18,7 @@ import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGForm;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
+import ng.appserver.elements.NGJavaScript;
 import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
@@ -50,6 +51,7 @@ public class _NGUtilities {
 		addClass( NGString.class, "str" );
 		addClass( NGImage.class, "img" );
 		addClass( NGHyperlink.class, "link" );
+		addClass( NGJavaScript.class, "script" );
 		addClass( NGRepetition.class, "repetition" );
 		addClass( NGSubmitButton.class, "submit" );
 		addClass( NGStylesheet.class, "stylesheet" );
