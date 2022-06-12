@@ -3,7 +3,6 @@ package ng.appserver;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -77,10 +76,17 @@ public class NGComponentDefinition {
 	 */
 	public NGElement template() {
 		try {
-			final String htmlTemplateString = loadHTMLTemplateString( name() );
-			final String wodString = loadWODTemplateString( name() );
-			final List<String> languages = Collections.emptyList();
-			return new NGTemplateParser( htmlTemplateString, wodString, languages ).parse();
+			// Let's try first for the traditional template
+			String htmlTemplateString = loadHTMLTemplateString( name() );
+			String wodString = loadWODTemplateString( name() );
+
+			// If that fails, let's go for the single file html template
+			// FIXME: this is not a good way to check for this. Check for existence of files and determine heuristics from there
+			if( htmlTemplateString.isEmpty() && wodString.isEmpty() ) {
+				htmlTemplateString = new String( NGUtils.readComponentResource( name() + ".html" ).get(), StandardCharsets.UTF_8 );
+			}
+
+			return new NGTemplateParser( htmlTemplateString, wodString, Collections.emptyList() ).parse();
 		}
 		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );
