@@ -13,7 +13,14 @@ import ng.appserver.NGResponse;
 
 public class NGConditional extends NGDynamicGroup {
 
+	/**
+	 * The condition this conditional evaluates
+	 */
 	private NGAssociation _conditionAssociation;
+
+	/**
+	 * If set to true, will reverse the condition in the "condition" binding. Defaults to false (…of course)
+	 */
 	private NGAssociation _negateAssociation;
 
 	public NGConditional( final String name, final Map<String, NGAssociation> associations, final NGElement content ) {
