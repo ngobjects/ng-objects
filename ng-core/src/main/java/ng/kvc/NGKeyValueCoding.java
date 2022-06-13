@@ -58,8 +58,13 @@ public interface NGKeyValueCoding {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( key );
 
-			KVCBinding kvcBinding = bindingForKey( object.getClass(), key );
-			// FIXME: Around here we should be handling the case of a missing key.
+			final KVCBinding kvcBinding = bindingForKey( object.getClass(), key );
+
+			if( kvcBinding == null ) {
+				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass() );
+				throw new UnkownKeyException( message );
+			}
+
 			return kvcBinding.valueInObject( object );
 		}
 	}
@@ -72,12 +77,17 @@ public interface NGKeyValueCoding {
 	public static KVCBinding bindingForKey( Class<?> targetClass, String key ) {
 		KVCBinding binding;
 
+		// FIXME: This is a horrid way to walk the key tree
 		try {
 			binding = new MethodBinding( targetClass, key );
 		}
-		catch( Exception e ) {
-			// FIXME: Don't catch all exceptions
-			binding = new FieldBinding( targetClass, key );
+		catch( Exception e1 ) {
+			try {
+				binding = new FieldBinding( targetClass, key );
+			}
+			catch( Exception e2 ) {
+				return null;
+			}
 		}
 
 		return binding;
@@ -96,7 +106,6 @@ public interface NGKeyValueCoding {
 				_method = targetClass.getMethod( key, new Class[] {} );
 			}
 			catch( NoSuchMethodException | SecurityException e ) {
-				// FIXME: Error handling is missing entirely
 				throw new RuntimeException( e );
 			}
 		}
@@ -137,6 +146,13 @@ public interface NGKeyValueCoding {
 				// FIXME: Error handling is missing entirely
 				throw new RuntimeException( e );
 			}
+		}
+	}
+
+	public static class UnkownKeyException extends RuntimeException {
+
+		public UnkownKeyException( String message ) {
+			super( message );
 		}
 	}
 }
