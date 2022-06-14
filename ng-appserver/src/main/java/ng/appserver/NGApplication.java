@@ -170,6 +170,7 @@ public class NGApplication {
 		return componentInstance;
 	}
 
+	@Deprecated
 	public static NGApplication application() {
 		return _application;
 	}
