@@ -21,16 +21,3 @@ ng-objects is an open source exploration of Apple's WebObjects (WO) framework. I
 3. `./target/ng-testapp-1.0.0-SNAPSHOT.woa/ng-testapp`
 
 Now point your browser to [localhost:1200](http://localhost:1200/) you should be greeted with a test component showing some of the current features. Congratulations!
-
-## parts (TODO)
-
-* WO webserver adaptor compatibility
-* wotaskd and JavaMonitor compatibility
-* More deployment goodies (application lifecycle management)
-* Basic Request handling and HTTP apis
-* Property loading
-* Session management
-* Component actions
-* Components/Templating/Dynamic elements/Associations
-* KVC
-* Resource management
