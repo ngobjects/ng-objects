@@ -2,6 +2,8 @@ package ng.appserver;
 
 import java.util.Map;
 
+import ng.appserver.elements.docs.NGDynamicElementDescription;
+
 public abstract class NGDynamicElement extends NGElement {
 
 	/**
