@@ -15,7 +15,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 
 	public record NGBindingDescription( String name, String text ) {}
 
-	public List<NGDynamicElementDescription> all() {
+	public static List<NGDynamicElementDescription> all() {
 		final ArrayList<NGDynamicElementDescription> list = new ArrayList<>();
 
 		list.add( new NGDynamicElementDescription(
