@@ -296,6 +296,20 @@ public class NGApplication {
 			request.setURI( request.uri().substring( woStart.length() ) );
 			logger.info( "Rewrote WO URI to {}", request.uri() );
 		}
+
+		woStart = "/Apps/WebObjects/ng-website.woa/1";
+
+		if( request.uri().startsWith( woStart ) ) {
+			request.setURI( request.uri().substring( woStart.length() ) );
+			logger.info( "Rewrote WO URI to {}", request.uri() );
+		}
+
+		woStart = "/cgi-bin/WebObjects/ng-website.woa";
+
+		if( request.uri().startsWith( woStart ) ) {
+			request.setURI( request.uri().substring( woStart.length() ) );
+			logger.info( "Rewrote WO URI to {}", request.uri() );
+		}
 	}
 
 	/**
