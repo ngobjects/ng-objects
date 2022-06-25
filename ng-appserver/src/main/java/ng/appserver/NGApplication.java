@@ -141,16 +141,14 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: Added to allow for NGHyperlink's pageName binding. I guess string component names can be useful after all... // Hugi 2022-06-09
+	 * Return the named component, where [componentName] can be ither the component's simple class name or full class name.
 	 */
-	public NGComponent pageWithName( String componentName, final NGContext context ) {
+	public NGComponent pageWithName( final String componentName, final NGContext context ) {
 		return pageWithName( _NGUtilities.classWithName( componentName ), context );
 	}
 
 	/**
 	 * @return A new instance of [componentClass] in the given [context]
-	 *
-	 * FIXME: Are components really a part of the basic framework? If so; does component construction really belong in NGApplication // Hugi 2021-12-29
 	 */
 	public <E extends NGComponent> E pageWithName( final Class<E> componentClass, final NGContext context ) {
 		Objects.requireNonNull( componentClass, "'componentClass' must not be null. I can't create components from nothing." );
@@ -164,7 +162,7 @@ public class NGApplication {
 
 		E componentInstance = (E)definition.componentInstanceInContext( context );
 
-		// FIXME: Horrible stuff, just to test the component request handler
+		// FIXME: I'm not sure we should be setting the context's page here. But it works for us for now // Hugi 2022-06-25
 		context.setPage( componentInstance );
 
 		return componentInstance;
