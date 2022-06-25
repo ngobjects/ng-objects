@@ -19,6 +19,9 @@ import ng.appserver.NGResponse;
  *
  * - Named parameters are prefixed with a colon
  * - Positional parameters are a star
+ *
+ * FIXME: Implement subtables, allowing us to create a table tree
+ * FIXME: Allow named routing tables
  */
 
 public class NGRouteTable {
