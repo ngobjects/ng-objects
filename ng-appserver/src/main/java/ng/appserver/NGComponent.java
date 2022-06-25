@@ -141,9 +141,9 @@ public class NGComponent extends NGElement implements NGActionResults {
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 		final NGComponent previouslyCurrentComponent = context.component();
 		context.setCurrentComponent( this );
-		NGActionResults actionREsults = template().invokeAction( request, context );
+		NGActionResults actionResults = template().invokeAction( request, context );
 		context.setCurrentComponent( previouslyCurrentComponent );
-		return actionREsults;
+		return actionResults;
 	}
 
 	@Override
