@@ -47,7 +47,7 @@ public class NGApplication {
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		final long startTime = System.currentTimeMillis();
 
-		NGProperties properties = new NGProperties( args );
+		final NGProperties properties = new NGProperties( args );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		initLogging( properties.propWOOutputPath() );
@@ -213,7 +213,6 @@ public class NGApplication {
 			return response;
 		}
 		catch( Throwable throwable ) {
-			System.out.println();
 			handleException( throwable );
 			return exceptionResponse( throwable ).generateResponse();
 		}
