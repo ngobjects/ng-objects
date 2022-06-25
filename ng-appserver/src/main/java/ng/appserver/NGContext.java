@@ -17,7 +17,7 @@ public class NGContext {
 	 *
 	 * FIXME: THIS SHOULD ABSOLUTELY NOT BE STATIC! Just for testing, most applications need (ahem) more than one session // Hugi 2022-06-09
 	 */
-	private static NGSession _session = new NGSession();
+	private static NGSession _session = NGSession.createSession();
 
 	/**
 	 * The component currently being processed by this context

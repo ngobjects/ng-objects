@@ -105,6 +105,19 @@ public class NGApplication {
 	}
 
 	/**
+	 * @return The class to use when constructing a new session. By default we look for a class named "Session" in the same package as the application class
+	 */
+	protected Class<? extends NGSession> _sessionClass() {
+		try {
+			return (Class<? extends NGSession>)Class.forName( getClass().getPackageName() + ".Session" );
+		}
+		catch( ClassNotFoundException e ) {
+			logger.info( "Custom session class not found. Defaulting to " + NGSession.class.getName() );
+			return NGSession.class;
+		}
+	}
+
+	/**
 	 * FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
 	 */
 	public String adaptorClassName() {

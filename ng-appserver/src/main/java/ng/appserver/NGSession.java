@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,12 +30,24 @@ public class NGSession {
 		this( UUID.randomUUID().toString() );
 	}
 
-	public NGSession( final String sessionID ) {
+	private NGSession( final String sessionID ) {
 		this( sessionID, System.currentTimeMillis() );
 	}
 
 	private NGSession( final String sessionID, long birthDate ) {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
+	}
+
+	/**
+	 * FIXME: This is horrid and does not belong here // Hugi 2022-06-25
+	 */
+	public static NGSession createSession() {
+		try {
+			return NGApplication.application()._sessionClass().getConstructor().newInstance();
+		}
+		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
+			throw new RuntimeException( e );
+		}
 	}
 }
