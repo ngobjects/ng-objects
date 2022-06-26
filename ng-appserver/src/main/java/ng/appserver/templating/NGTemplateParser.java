@@ -34,8 +34,19 @@ public class NGTemplateParser {
 	 */
 	private int _inlineBindingCount;
 
+	/**
+	 * The template's HTML string
+	 */
 	private final String _htmlString;
+
+	/**
+	 * The template's declaration string (a.k.a. the wod file)
+	 */
 	private final String _declarationString;
+
+	/**
+	 * List of languages. Used when constructing element instances for the template.
+	 */
 	private final List<String> _languages;
 
 	private NGTemplateParser( final String htmlString, final String declarationString, final List<String> languages ) {
