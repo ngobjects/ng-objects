@@ -6,6 +6,7 @@ import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
+import ng.appserver.templating._NGUtilities;
 
 /**
  * FIXME: Work in progress
@@ -37,7 +38,7 @@ public class NGConditional extends NGDynamicGroup {
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		final Object condition = _conditionAssociation.valueInComponent( context.component() );
-		Boolean conditionAsBoolean = evaluate( condition );
+		Boolean conditionAsBoolean = _NGUtilities.isTruthy( condition );
 
 		if( _negateAssociation != null ) {
 			final Boolean negate = (Boolean)_negateAssociation.valueInComponent( context.component() );
@@ -50,16 +51,5 @@ public class NGConditional extends NGDynamicGroup {
 		if( conditionAsBoolean ) {
 			appendChildrenToResponse( response, context );
 		}
-	}
-
-	/**
-	 * FIXME: This is here as a temporary placeholder. We need to globally define the concepts of truthy/falsy within the framework // Hugi 2022-06-10
-	 */
-	private static boolean evaluate( Object object ) {
-		if( object == null ) {
-			return false;
-		}
-
-		return (boolean)object;
 	}
 }
