@@ -41,10 +41,12 @@ public class NGDeclarationParser {
 	}
 
 	private static String _removeOldStyleCommentsFromString( String str ) {
-		StringBuilder stringb = new StringBuilder( 100 );
-		StringBuilder stringb1 = new StringBuilder( 100 );
-		StringTokenizer tokenizer = new StringTokenizer( str, "/", true );
+		final StringBuilder stringb = new StringBuilder( 100 );
+		final StringBuilder stringb1 = new StringBuilder( 100 );
+		final StringTokenizer tokenizer = new StringTokenizer( str, "/", true );
+
 		int state = NGDeclarationParser.STATE_OUTSIDE;
+
 		try {
 			do {
 				if( !tokenizer.hasMoreTokens() ) {
@@ -82,15 +84,18 @@ public class NGDeclarationParser {
 			while( true );
 		}
 		catch( NoSuchElementException e ) {
+			// FIXME: Why are we swallowing this exception? // Hugi 2022-06-26
 			logger.debug( "Parsing failed.", e );
 		}
+
 		return stringb.toString();
 	}
 
 	private String _removeNewStyleCommentsAndQuotedStringsFromString( String declarationsStr ) {
-		String escapedQuoteStr = declarationsStr.replace( "\\\"", NGDeclarationParser.ESCAPED_QUOTE_STRING );
-		StringBuilder declarationWithoutCommentsBuffer = new StringBuilder( 100 );
-		StringTokenizer tokenizer = new StringTokenizer( escapedQuoteStr, "/\"", true );
+		final String escapedQuoteStr = declarationsStr.replace( "\\\"", NGDeclarationParser.ESCAPED_QUOTE_STRING );
+		final StringBuilder declarationWithoutCommentsBuffer = new StringBuilder( 100 );
+		final StringTokenizer tokenizer = new StringTokenizer( escapedQuoteStr, "/\"", true );
+
 		try {
 			while( tokenizer.hasMoreTokens() ) {
 				String token = tokenizer.nextToken( "/\"" );
@@ -125,8 +130,10 @@ public class NGDeclarationParser {
 			}
 		}
 		catch( NoSuchElementException e ) {
+			// FIXME: Why are we swallowing this exception? // Hugi 2022-06-26
 			logger.debug( "Parsing failed.", e );
 		}
+
 		return declarationWithoutCommentsBuffer.toString();
 	}
 
