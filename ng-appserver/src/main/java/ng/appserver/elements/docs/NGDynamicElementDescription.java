@@ -7,6 +7,7 @@ import ng.appserver.NGDynamicElement;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGImage;
+import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.docs.NGDynamicElementDescription.NGBindingDescription;
 
@@ -15,6 +16,8 @@ import ng.appserver.elements.docs.NGDynamicElementDescription.NGBindingDescripti
  *
  * FIXME: Specify required bindings/binding combinations
  * FIXME: Specify default values for bindings
+ * FIXME: Specify binding directionality, i.e. if they are pull/push or both.
+ * FIXME: Specify allowed binding types
  */
 
 public record NGDynamicElementDescription( Class<? extends NGDynamicElement> elementClass, List<String> aliases, List<NGBindingDescription> bindings, String text ) {
@@ -49,6 +52,16 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 						new NGBindingDescription( "src", "Same as using an src attribute on a regular img tag" ),
 						new NGBindingDescription( "data", "byte array containing image data" ) ),
 				"Displays an image. Bindings that are not part of the elements standard associations are passed on as attributes to the generated img tag." ) );
+
+		list.add( new NGDynamicElementDescription(
+				NGRepetition.class,
+				List.of( "repetition" ),
+				List.of(
+						new NGBindingDescription( "list", "A java.util.List of objects to iterate over" ),
+						new NGBindingDescription( "item", "Takes the value of the object currently being iterated over" ),
+						new NGBindingDescription( "index", "Takes the number of the current iteration. Zero based, i.e. the first iteration is zero." ),
+						new NGBindingDescription( "count", "Can be used instead of [list] and [item] to just iterate [count] times" ) ),
+				"Iterates over items in [list], with [item] taking on the value of the object for each iteration. Or iterates [count] times. If [index] is bound, that variable will take on the current index." ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGString.class,
