@@ -268,7 +268,7 @@ public class NGHTMLParser {
 		}
 	}
 
-	private void didParseClosingWebObjectTag() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException, ClassNotFoundException {
+	private void didParseClosingWebObjectTag() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 		logger.debug( "Parsed Closing WebObject (" + _contentText.length() + ") : " + _contentText );
 
 		if( _contentText.length() > 0 ) {
