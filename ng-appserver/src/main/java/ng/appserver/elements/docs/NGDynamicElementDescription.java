@@ -2,6 +2,7 @@ package ng.appserver.elements.docs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import ng.appserver.NGDynamicElement;
 import ng.appserver.elements.NGConditional;
@@ -10,6 +11,7 @@ import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.docs.NGDynamicElementDescription.NGBindingDescription;
+import ng.appserver.templating._NGUtilities;
 
 /**
  * Provides a description of a dynamic element, particularly what it's bindings are and how they work.
@@ -30,7 +32,22 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 	 * FIXME: We're making the grand assumption that all container elements inherit from NGDynamicGroup. This is not always true, for example for components (which might end up documented with the same API)
 	 */
 	public boolean isContainerElement() {
-		return NGDynamicGroup.class.isAssignableFrom( elementClass );
+		return NGDynamicGroup.class.isAssignableFrom( elementClass() );
+	}
+
+	/**
+	 * @return The list of shortcuts for the tag. FIXME: Butt-ugly
+	 */
+	public List<String> aliases() {
+		final List<String> result = new ArrayList<>();
+
+		for( Entry<String, String> entry : _NGUtilities.tagShortcutMap().entrySet() ) {
+			if( entry.getValue().equals( elementClass().getSimpleName() ) ) {
+				result.add( entry.getKey() );
+			}
+		}
+
+		return result;
 	}
 
 	public static List<NGDynamicElementDescription> all() {
