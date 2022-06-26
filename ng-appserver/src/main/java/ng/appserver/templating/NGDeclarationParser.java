@@ -225,86 +225,57 @@ public class NGDeclarationParser {
 	 */
 	public static NGAssociation _associationWithKey( String associationValue, Map<String, String> quotedStrings ) {
 		NGAssociation association = null;
-		if( associationValue != null && associationValue.startsWith( "~" ) ) {
-			throw new RuntimeException( "This is probably just old woognl code that can be thrown out" );
-			/*
-			int associationValueLength = associationValue.length();
-			StringBuilder value = new StringBuilder();
-			int lastIndex = 0;
-			int index = 0;
-			while( (index = associationValue.indexOf( NGDeclarationParser.QUOTED_STRING_KEY, lastIndex )) != -1 ) {
-				value.append( associationValue.substring( lastIndex, index ) );
-				int wodpValueStartIndex = index + NGDeclarationParser.QUOTED_STRING_KEY.length();
-				int wodpValueEndIndex = wodpValueStartIndex;
-				for( ; wodpValueEndIndex < associationValueLength && Character.isDigit( associationValue.charAt( wodpValueEndIndex ) ); wodpValueEndIndex++ ) {
-					// do nothing
-				}
-				String wodpKey = NGDeclarationParser.QUOTED_STRING_KEY + associationValue.substring( wodpValueStartIndex, wodpValueEndIndex );
-				String quotedString = quotedStrings.get( wodpKey );
-				if( quotedString != null ) {
-					quotedString = quotedString.replaceAll( "\\\"", "\\\\\"" );
-					value.append( "\"" );
-					value.append( quotedString );
-					value.append( "\"" );
-				}
-				lastIndex = wodpValueEndIndex;
-			}
-			value.append( associationValue.substring( lastIndex ) );
-			associationValue = value.toString();
-			association = NGAssociationFactory.associationWithValue( associationValue );
-			*/
-		}
-		else {
-			String quotedString = quotedStrings.get( associationValue );
-			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
-			if( quotedString != null ) {
-				int backslashIndex = quotedString.indexOf( '\\' );
-				if( backslashIndex != -1 ) {
-					StringBuilder sb = new StringBuilder( quotedString );
-					int length = sb.length();
-					for( int i = backslashIndex; i < length; i++ ) {
-						char ch = sb.charAt( i );
-						if( ch == '\\' && i < length ) {
-							char nextCh = sb.charAt( i + 1 );
-							if( nextCh == 'n' ) {
-								sb.replace( i, i + 2, "\n" );
-							}
-							else if( nextCh == 'r' ) {
-								sb.replace( i, i + 2, "\r" );
-							}
-							else if( nextCh == 't' ) {
-								sb.replace( i, i + 2, "\t" );
-							}
-							else {
-								sb.replace( i, i + 2, String.valueOf( nextCh ) );
-							}
-							length--;
+
+		String quotedString = quotedStrings.get( associationValue );
+		// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
+		if( quotedString != null ) {
+			int backslashIndex = quotedString.indexOf( '\\' );
+			if( backslashIndex != -1 ) {
+				StringBuilder sb = new StringBuilder( quotedString );
+				int length = sb.length();
+				for( int i = backslashIndex; i < length; i++ ) {
+					char ch = sb.charAt( i );
+					if( ch == '\\' && i < length ) {
+						char nextCh = sb.charAt( i + 1 );
+						if( nextCh == 'n' ) {
+							sb.replace( i, i + 2, "\n" );
 						}
+						else if( nextCh == 'r' ) {
+							sb.replace( i, i + 2, "\r" );
+						}
+						else if( nextCh == 't' ) {
+							sb.replace( i, i + 2, "\t" );
+						}
+						else {
+							sb.replace( i, i + 2, String.valueOf( nextCh ) );
+						}
+						length--;
 					}
-					quotedString = sb.toString();
 				}
-				association = NGAssociationFactory.associationWithValue( quotedString );
+				quotedString = sb.toString();
 			}
-			else if( isNumeric( associationValue ) ) {
-				Number number = null;
-				if( associationValue != null && associationValue.contains( "." ) ) {
-					number = Double.valueOf( associationValue );
-				}
-				else {
-					number = Integer.parseInt( associationValue );
-				}
-				association = NGAssociationFactory.associationWithValue( number );
-			}
-			else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
-				association = NGConstantValueAssociation.TRUE;
-			}
-			else if( "false".equalsIgnoreCase( associationValue ) || "no".equalsIgnoreCase( associationValue ) || "nil".equalsIgnoreCase( associationValue ) || "null".equalsIgnoreCase( associationValue ) ) {
-				association = NGConstantValueAssociation.FALSE;
+			association = NGAssociationFactory.associationWithValue( quotedString );
+		}
+		else if( isNumeric( associationValue ) ) {
+			Number number = null;
+			if( associationValue != null && associationValue.contains( "." ) ) {
+				number = Double.valueOf( associationValue );
 			}
 			else {
-				association = NGAssociationFactory.associationWithKeyPath( associationValue );
+				number = Integer.parseInt( associationValue );
 			}
+			association = NGAssociationFactory.associationWithValue( number );
 		}
+		else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
+			association = NGConstantValueAssociation.TRUE;
+		}
+		else if( "false".equalsIgnoreCase( associationValue ) || "no".equalsIgnoreCase( associationValue ) || "nil".equalsIgnoreCase( associationValue ) || "null".equalsIgnoreCase( associationValue ) ) {
+			association = NGConstantValueAssociation.FALSE;
+		}
+		else {
+			association = NGAssociationFactory.associationWithKeyPath( associationValue );
+		}
+
 		return association;
 	}
 
