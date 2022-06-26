@@ -42,7 +42,7 @@ public class _NGUtilities {
 	/**
 	 * A mapping of shortcuts to element classes. For example, mapping of <wo:str /> to <wo:NGString />
 	 */
-	private static final Map<String, String> _tagShortcutMap = new HashMap<>();
+	private static final Map<String, String> _shortcutToClassMap = new HashMap<>();
 
 	static {
 		addClass( NGComponentContent.class, "content" );
@@ -66,7 +66,7 @@ public class _NGUtilities {
 		_classes.add( clazz );
 
 		for( String shortcut : shortcuts ) {
-			_tagShortcutMap.put( shortcut, clazz.getSimpleName() );
+			_shortcutToClassMap.put( shortcut, clazz.getSimpleName() );
 		}
 	}
 
@@ -100,7 +100,7 @@ public class _NGUtilities {
 	 * FIXME: Definitely not the final home of this functionality // Hugi 2022-04-23
 	 */
 	public static Map<String, String> tagShortcutMap() {
-		return _tagShortcutMap;
+		return _shortcutToClassMap;
 	}
 
 	public static <E> E instantiateObject( Class<E> objectClass, Class[] parameterTypes, Object[] parameters ) {
