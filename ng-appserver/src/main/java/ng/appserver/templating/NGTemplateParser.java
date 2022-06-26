@@ -34,12 +34,12 @@ public class NGTemplateParser {
 	 */
 	private int _inlineBindingCount;
 
-	private final String _HTMLString;
+	private final String _htmlString;
 	private final String _declarationString;
 	private final List<String> _languages;
 
 	private NGTemplateParser( final String htmlString, final String declarationString, final List<String> languages ) {
-		_HTMLString = htmlString;
+		_htmlString = htmlString;
 		_declarationString = declarationString;
 		_languages = languages;
 	}
@@ -52,7 +52,7 @@ public class NGTemplateParser {
 	private NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 
 		// FIXME: This is a somewhat ugly hack for the template parser returning a null template for an empty HTML String (which is not what we want) // Hugi 2022-06-09
-		if( _HTMLString.isEmpty() ) {
+		if( _htmlString.isEmpty() ) {
 			return new NGElement() {};
 		}
 
@@ -68,7 +68,7 @@ public class NGTemplateParser {
 
 	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
 
-		new NGHTMLParser( this, _HTMLString ).parseHTML();
+		new NGHTMLParser( this, _htmlString ).parseHTML();
 
 		final String currentDynamicTagName = _currentDynamicTag.name();
 
