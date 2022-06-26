@@ -38,13 +38,18 @@ public class NGTemplateParser {
 	private final String _declarationString;
 	private final List<String> _languages;
 
-	public NGTemplateParser( final String htmlString, final String declarationString, final List<String> languages ) {
+	private NGTemplateParser( final String htmlString, final String declarationString, final List<String> languages ) {
 		_HTMLString = htmlString;
 		_declarationString = declarationString;
 		_languages = languages;
 	}
 
-	public NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+	public static NGElement parse( final String htmlString, final String declarationString, final List<String> languages ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+		NGTemplateParser parser = new NGTemplateParser( htmlString, declarationString, languages );
+		return parser.parse();
+	}
+
+	private NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 
 		// FIXME: This is a somewhat ugly hack for the template parser returning a null template for an empty HTML String (which is not what we want) // Hugi 2022-06-09
 		if( _HTMLString.isEmpty() ) {

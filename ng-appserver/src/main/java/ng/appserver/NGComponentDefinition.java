@@ -86,7 +86,7 @@ public class NGComponentDefinition {
 				htmlTemplateString = new String( NGUtils.readComponentResource( name() + ".html" ).get(), StandardCharsets.UTF_8 );
 			}
 
-			return new NGTemplateParser( htmlTemplateString, wodString, Collections.emptyList() ).parse();
+			return NGTemplateParser.parse( htmlTemplateString, wodString, Collections.emptyList() );
 		}
 		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );
