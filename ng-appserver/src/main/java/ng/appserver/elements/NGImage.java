@@ -15,6 +15,10 @@ import ng.appserver.NGElement;
 import ng.appserver.NGResourceRequestHandlerDynamic;
 import ng.appserver.NGResponse;
 
+/**
+ * FIXME: Add a [mimeType] binding for use in conjunction with the [data] binding. Requires a better management of cached resources.
+ */
+
 public class NGImage extends NGDynamicElement {
 
 	/**
