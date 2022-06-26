@@ -26,7 +26,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 						new NGBindingDescription( "filename", "Path to a webserver resource" ),
 						new NGBindingDescription( "src", "Same as using an src attribute on a regular img tag" ),
 						new NGBindingDescription( "data", "byte array containing image data" ) ),
-				"Displays an image" ) );
+				"Displays an image. Bindings that are not part of the elements standard associations are passed on as attributes to the img tag generated." ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGString.class,
@@ -34,7 +34,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 				List.of(
 						new NGBindingDescription( "value", "The string's value" ),
 						new NGBindingDescription( "valueWhenEmpty", "A string to show if the string is blank or empty" ) ),
-				"Renders to a string in a template. If anything other than a string gets passed to [value] it, toString() will be invoked on it to render it" ) );
+				"Renders to a string in a template. If anything other than a string gets passed to [value] it, toString() will be invoked on it to render it." ) );
 
 		return list;
 	}
