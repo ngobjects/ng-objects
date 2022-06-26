@@ -61,7 +61,7 @@ public class NGTemplateParser {
 	}
 
 	private void parseDeclarations() throws NGDeclarationFormatException {
-		if( _declarations == null && _declarationString != null ) {
+		if( _declarationString != null ) {
 			_declarations = NGDeclarationParser.declarationsWithString( _declarationString );
 		}
 	}
