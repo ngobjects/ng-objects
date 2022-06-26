@@ -134,4 +134,29 @@ public class _NGUtilities {
 			logger.info( "Terminated existing development instance" );
 		}
 	}
+
+	/**
+	 * @return true if the given object is "truthy" for conditionals
+	 *
+	 * The conditions under which that is are
+	 * - boolean true
+	 * - a number that's exactly zero
+	 * - null
+	 */
+	public static boolean isTruthy( Object object ) {
+
+		if( object == null ) {
+			return false;
+		}
+
+		if( object instanceof Boolean b ) {
+			return b;
+		}
+
+		if( object instanceof Number n ) {
+			return n.doubleValue() != 0;
+		}
+
+		return true;
+	}
 }
