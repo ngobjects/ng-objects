@@ -45,8 +45,7 @@ public class NGTemplateParser {
 	}
 
 	public static NGElement parse( final String htmlString, final String declarationString, final List<String> languages ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
-		NGTemplateParser parser = new NGTemplateParser( htmlString, declarationString, languages );
-		return parser.parse();
+		return new NGTemplateParser( htmlString, declarationString, languages ).parse();
 	}
 
 	private NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
