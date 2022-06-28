@@ -8,7 +8,6 @@ import java.util.Objects;
 /**
  * NGKeyValueCoding is a simplified reimplementation of NSKeyValueCoding.
  *
- * FIXME: Currently only handles
  * FIXME: Implement missing key handling
  * FIXME: Decide if we're going to go all the way and do validation as well
  * FIXME: We should be marking bindings for directionality (read only/set only etc)
