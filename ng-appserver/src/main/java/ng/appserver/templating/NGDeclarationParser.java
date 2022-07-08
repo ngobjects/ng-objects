@@ -42,6 +42,8 @@ public class NGDeclarationParser {
 	}
 
 	private static String _removeOldStyleCommentsFromString( String str ) {
+		Objects.requireNonNull( str );
+
 		final StringBuilder stringb = new StringBuilder( 100 );
 		final StringBuilder stringb1 = new StringBuilder( 100 );
 		final StringTokenizer tokenizer = new StringTokenizer( str, "/", true );
@@ -93,6 +95,8 @@ public class NGDeclarationParser {
 	}
 
 	private String _removeNewStyleCommentsAndQuotedStringsFromString( String declarationsStr ) {
+		Objects.requireNonNull( declarationsStr );
+
 		final String escapedQuoteStr = declarationsStr.replace( "\\\"", NGDeclarationParser.ESCAPED_QUOTE_STRING );
 		final StringBuilder declarationWithoutCommentsBuffer = new StringBuilder( 100 );
 		final StringTokenizer tokenizer = new StringTokenizer( escapedQuoteStr, "/\"", true );
@@ -139,6 +143,8 @@ public class NGDeclarationParser {
 	}
 
 	private Map<String, NGDeclaration> parseDeclarationsWithoutComments( String declarationWithoutComment ) throws NGDeclarationFormatException {
+		Objects.requireNonNull( declarationWithoutComment );
+
 		final Map<String, NGDeclaration> declarations = new HashMap<>();
 		final Map<String, String> rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
 
