@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
@@ -177,6 +178,9 @@ public class NGDeclarationParser {
 	}
 
 	private Map<String, NGAssociation> _associationsForDictionaryString( String declarationHeader, String declarationBody ) throws NGDeclarationFormatException {
+		Objects.requireNonNull( declarationHeader );
+		Objects.requireNonNull( declarationBody );
+
 		final Map<String, NGAssociation> associations = new HashMap<>();
 		String trimmedDeclarationBody = declarationBody.trim();
 
@@ -191,29 +195,39 @@ public class NGDeclarationParser {
 		}
 
 		trimmedDeclarationBody = trimmedDeclarationBody.substring( 1, declarationBodyLength - 1 ).trim();
-		List<String> bindings = Arrays.asList( trimmedDeclarationBody.split( ";" ) );
-		Enumeration<String> bindingsEnum = Collections.enumeration( bindings );
+
+		final List<String> bindings = Arrays.asList( trimmedDeclarationBody.split( ";" ) );
+		final Enumeration<String> bindingsEnum = Collections.enumeration( bindings );
 
 		do {
 			if( !bindingsEnum.hasMoreElements() ) {
 				break;
 			}
-			String binding = bindingsEnum.nextElement().trim();
+
+			final String binding = bindingsEnum.nextElement().trim();
+
 			if( binding.length() != 0 ) {
-				int equalsIndex = binding.indexOf( '=' );
+				final int equalsIndex = binding.indexOf( '=' );
+
 				if( equalsIndex < 0 ) {
 					throw new NGDeclarationFormatException( "Invalid line. No equal in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
-				String key = binding.substring( 0, equalsIndex ).trim();
+
+				final String key = binding.substring( 0, equalsIndex ).trim();
+
 				if( key.length() == 0 ) {
 					throw new NGDeclarationFormatException( "Missing binding in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
-				String value = binding.substring( equalsIndex + 1 ).trim();
+
+				final String value = binding.substring( equalsIndex + 1 ).trim();
+
 				if( value.length() == 0 ) {
 					throw new NGDeclarationFormatException( "Missing value in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
-				NGAssociation association = NGDeclarationParser._associationWithKey( value, _quotedStrings );
-				String quotedString = _quotedStrings.get( key );
+
+				final NGAssociation association = NGDeclarationParser._associationWithKey( value, _quotedStrings );
+				final String quotedString = _quotedStrings.get( key );
+
 				if( quotedString != null ) {
 					associations.put( quotedString, association );
 				}
@@ -231,6 +245,9 @@ public class NGDeclarationParser {
 	 * FIXME: Doesn't this belong in NGAssociationFactory? // Hugi 2022-04-27
 	 */
 	public static NGAssociation _associationWithKey( String associationValue, Map<String, String> quotedStrings ) {
+		Objects.requireNonNull( associationValue );
+		Objects.requireNonNull( quotedStrings );
+
 		NGAssociation association = null;
 
 		String quotedString = quotedStrings.get( associationValue );
