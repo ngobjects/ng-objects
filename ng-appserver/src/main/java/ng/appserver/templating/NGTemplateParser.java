@@ -139,6 +139,7 @@ public class NGTemplateParser {
 	}
 
 	private NGDeclaration parseInlineBindings( final String tag, final int colonIndex ) throws NGHTMLFormatException {
+
 		final StringBuffer keyBuffer = new StringBuffer();
 		final StringBuffer valueBuffer = new StringBuffer();
 		final StringBuffer elementTypeBuffer = new StringBuffer();
@@ -148,6 +149,7 @@ public class NGTemplateParser {
 		boolean changeBuffers = false;
 		boolean inQuote = false;
 		int length = tag.length();
+
 		for( int index = colonIndex + 1; index < length; index++ ) {
 			char ch = tag.charAt( index );
 			if( !inQuote && (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') ) {
@@ -199,6 +201,7 @@ public class NGTemplateParser {
 				currentBuffer.append( ch );
 			}
 		}
+
 		if( inQuote ) {
 			throw new NGHTMLFormatException( "'" + tag + "' has a quote left open." );
 		}
@@ -211,8 +214,10 @@ public class NGTemplateParser {
 				throw new NGHTMLFormatException( "'" + tag + "' defines a key but no value." );
 			}
 		}
+
 		String elementType = elementTypeBuffer.toString();
-		String shortcutType = _NGUtilities.tagShortcutMap().get( elementType );
+		final String shortcutType = _NGUtilities.tagShortcutMap().get( elementType );
+
 		if( shortcutType != null ) {
 			elementType = shortcutType;
 		}
