@@ -23,7 +23,7 @@ public abstract class NGDynamicElement extends NGElement {
 	public NGDynamicElement( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 
 		if( name != null || associations != null || template != null ) {
-			logger.warn( "name, associations or template was not null. This constructor should only be invoked with null parameters" );
+			logger.warn( getClass().getSimpleName() + ": [name], [associations] or [template] was not null. This constructor should only be invoked with null parameters" );
 			// FIXME: Since this is a weird state, we should probably be throwing here instead of logging. Babysteps. // Hugi 2022-07-09
 			// throw new IllegalArgumentException( "name, associations or template was not null. This constructor should only be invoked with null parameters" );
 		}
