@@ -21,7 +21,7 @@ public class NGString extends NGDynamicElement {
 	private NGAssociation _valueWhenEmptyAss;
 
 	public NGString( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
-		super( name, associations, template );
+		super( null, null, null );
 		_valueAss = associations.get( "value" );
 		_valueWhenEmptyAss = associations.get( "valueWhenEmpty" );
 	}
