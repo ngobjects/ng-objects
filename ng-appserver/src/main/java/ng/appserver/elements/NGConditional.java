@@ -3,13 +3,14 @@ package ng.appserver.elements;
 import java.util.Map;
 
 import ng.appserver.NGAssociation;
+import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
 import ng.appserver.templating._NGUtilities;
 
 /**
- * FIXME: Work in progress
+ * Container element that will only render it's contained content if the binding [condition] evaluates to true.
  */
 
 public class NGConditional extends NGDynamicGroup {
@@ -30,8 +31,7 @@ public class NGConditional extends NGDynamicGroup {
 		_negateAssociation = associations.get( "negate" );
 
 		if( _conditionAssociation == null ) {
-			// FIXME: We should probably have an exception class for missing bindings, IllegalArgumentException isn't really nice // Hugi 2022-06-05
-			throw new IllegalArgumentException( "The binding [condition] is required" );
+			throw new NGBindingConfigurationException( "The binding [condition] is required" );
 		}
 	}
 
