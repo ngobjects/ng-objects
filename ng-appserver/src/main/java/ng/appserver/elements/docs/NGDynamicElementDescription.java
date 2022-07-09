@@ -81,8 +81,8 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 				List.of(
 						new NGBindingDescription( "list", List.class, "A java.util.List of objects to iterate over" ),
 						new NGBindingDescription( "item", Object.class, "Takes the value of the object currently being iterated over" ),
-						new NGBindingDescription( "index", int.class, "Takes the number of the current iteration. Zero based, i.e. the first iteration is zero." ),
-						new NGBindingDescription( "count", int.class, "Can be used instead of [list] and [item] to just iterate [count] times" ) ),
+						new NGBindingDescription( "index", Integer.class, "Takes the number of the current iteration. Zero based, i.e. the first iteration is zero." ),
+						new NGBindingDescription( "count", Integer.class, "Can be used instead of [list] and [item] to just iterate [count] times" ) ),
 				"Iterates over items in [list], with [item] taking on the value of the object for each iteration. Or iterates [count] times. If [index] is bound, that variable will take on the current index." ) );
 
 		list.add( new NGDynamicElementDescription(
