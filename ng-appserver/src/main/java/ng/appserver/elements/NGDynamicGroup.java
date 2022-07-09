@@ -12,6 +12,10 @@ import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
+/**
+ * A common superclass for dynamic elements that have multiple children in our template element tree
+ */
+
 public class NGDynamicGroup extends NGDynamicElement {
 
 	/**
