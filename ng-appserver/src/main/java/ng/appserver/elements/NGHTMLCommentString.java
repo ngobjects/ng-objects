@@ -5,8 +5,6 @@ import ng.appserver.NGResponse;
 
 /**
  * Represents a comment string.
- *
- *  FIXME: Missing a global way to disable comments in appendToResponse.
  */
 
 public class NGHTMLCommentString extends NGHTMLBareString {
