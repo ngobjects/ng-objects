@@ -17,6 +17,8 @@ public class NGString extends NGDynamicElement {
 
 	/**
 	 * A value to display if the string is null or empty (length==0)
+	 *
+	 * FIXME: I think this binding could be better served as two separate bindings, "valueWhenNull" and "valueWhenBlank" or "valueWhenEmpty". These are separate situations // Hugi 2022-07-09
 	 */
 	private NGAssociation _valueWhenEmptyAss;
 
