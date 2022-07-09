@@ -29,7 +29,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 	 */
 	public static NGDynamicElementDescription NoDescription = new NGDynamicElementDescription( null, null, null, null );
 
-	public record NGBindingDescription( String name, String text ) {}
+	public record NGBindingDescription( String name, Class<?> bindingClass, String text ) {}
 
 	/**
 	 * @return true if this is a container element
@@ -62,35 +62,35 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 				NGConditional.class,
 				List.of( "if" ),
 				List.of(
-						new NGBindingDescription( "condition", "The condition to evaluate" ),
-						new NGBindingDescription( "negate", "Can be set to $true to 'flip' the condition" ) ),
+						new NGBindingDescription( "condition", Object.class, "The condition to evaluate" ),
+						new NGBindingDescription( "negate", Boolean.class, "Can be set to $true to 'flip' the condition" ) ),
 				"If the binding [condition] evaluates to $false, the contained content will not be rendered (and vice versa). If the 'negate' binding is set to $true, the condition will be flipped." ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGImage.class,
 				List.of( "img" ),
 				List.of(
-						new NGBindingDescription( "filename", "Path to a webserver resource" ),
-						new NGBindingDescription( "src", "Same as using an src attribute on a regular img tag" ),
-						new NGBindingDescription( "data", "byte array containing image data" ) ),
+						new NGBindingDescription( "filename", String.class, "Path to a webserver resource" ),
+						new NGBindingDescription( "src", String.class, "Same as using an src attribute on a regular img tag" ),
+						new NGBindingDescription( "data", byte[].class, "byte array containing image data" ) ),
 				"Displays an image. Bindings that are not part of the elements standard associations are passed on as attributes to the generated img tag." ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGRepetition.class,
 				List.of( "repetition" ),
 				List.of(
-						new NGBindingDescription( "list", "A java.util.List of objects to iterate over" ),
-						new NGBindingDescription( "item", "Takes the value of the object currently being iterated over" ),
-						new NGBindingDescription( "index", "Takes the number of the current iteration. Zero based, i.e. the first iteration is zero." ),
-						new NGBindingDescription( "count", "Can be used instead of [list] and [item] to just iterate [count] times" ) ),
+						new NGBindingDescription( "list", List.class, "A java.util.List of objects to iterate over" ),
+						new NGBindingDescription( "item", Object.class, "Takes the value of the object currently being iterated over" ),
+						new NGBindingDescription( "index", int.class, "Takes the number of the current iteration. Zero based, i.e. the first iteration is zero." ),
+						new NGBindingDescription( "count", int.class, "Can be used instead of [list] and [item] to just iterate [count] times" ) ),
 				"Iterates over items in [list], with [item] taking on the value of the object for each iteration. Or iterates [count] times. If [index] is bound, that variable will take on the current index." ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGString.class,
 				List.of( "str" ),
 				List.of(
-						new NGBindingDescription( "value", "The string's value" ),
-						new NGBindingDescription( "valueWhenEmpty", "A string to show if the string is blank or empty" ) ),
+						new NGBindingDescription( "value", Object.class, "The value to display. If not a string, toString() will be invoked on th object to render it" ),
+						new NGBindingDescription( "valueWhenEmpty", Object.class, "The value to display if [value] is null or empty (zero length string)" ) ),
 				"Renders to a string in a template. If anything other than a string gets passed to [value] it, toString() will be invoked on it to render it." ) );
 
 		return list;
