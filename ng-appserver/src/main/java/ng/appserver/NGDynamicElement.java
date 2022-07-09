@@ -4,21 +4,30 @@ import java.util.Map;
 
 import ng.appserver.elements.docs.NGDynamicElementDescription;
 
+/**
+ * Common superclass for all dynamic elements.
+ *
+ * Probably could be an interface, but implemented as an abstract class to enforce usage of the constructor.
+ */
+
 public abstract class NGDynamicElement extends NGElement {
 
 	/**
-	 * FIXME: I'm not sure what to do with the [name] parameter, added it since it's a part of the WO APIs // Hugi 2022-04-18
+	 * The constructor all dynamic elements must use. In the case of this class, it's a no-op so for sanity, we ensure we're always passing in null for all arguments
 	 */
-	public NGDynamicElement( String name, Map<String, NGAssociation> associations, NGElement template ) {}
+	public NGDynamicElement( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
+
+		if( name != null || associations != null || template != null ) {
+			throw new IllegalArgumentException( "name, associations or template was not null. This constructor should only be invoked with null parameters" );
+		}
+	}
 
 	/**
 	 * @return The API description of this element
 	 *
-	 * FIXME: I don't want to return null by default // Hugi 2022-06-12
-	 *
-	 * The description class might perhaps be better provided by an interface that can be optionally implemented by any classes that extend WOElement (including components)
+	 * FIXME: The description class might perhaps be better provided by an interface that can be optionally implemented by any classes that extend WOElement (including components)
 	 */
 	public NGDynamicElementDescription dynamicElementDescription() {
-		return null;
+		return NGDynamicElementDescription.NoDescription;
 	}
 }

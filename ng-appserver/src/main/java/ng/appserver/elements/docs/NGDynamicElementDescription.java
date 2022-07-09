@@ -24,6 +24,11 @@ import ng.appserver.templating._NGUtilities;
 
 public record NGDynamicElementDescription( Class<? extends NGDynamicElement> elementClass, List<String> aliases, List<NGBindingDescription> bindings, String text ) {
 
+	/**
+	 * Represents missing description for a dynamic element.
+	 */
+	public static NGDynamicElementDescription NoDescription = new NGDynamicElementDescription( null, null, null, null );
+
 	public record NGBindingDescription( String name, String text ) {}
 
 	/**
