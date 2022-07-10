@@ -21,7 +21,7 @@ public class NGStylesheet extends NGDynamicElement {
 	private NGAssociation _filenameAssociation;
 
 	public NGStylesheet( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( name, associations, template );
+		super( null, null, null );
 		_filenameAssociation = associations.get( "filename" );
 	}
 

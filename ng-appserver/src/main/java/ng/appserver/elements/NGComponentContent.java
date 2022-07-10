@@ -16,7 +16,7 @@ import ng.appserver.NGResponse;
 public class NGComponentContent extends NGDynamicElement {
 
 	public NGComponentContent( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( name, associations, template );
+		super( null, null, null );
 	}
 
 	@Override

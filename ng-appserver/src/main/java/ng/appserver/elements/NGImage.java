@@ -42,7 +42,7 @@ public class NGImage extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGImage( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
-		super( name, associations, template );
+		super( null, null, null );
 		_filenameAssociation = associations.get( "filename" );
 		_srcAssociation = associations.get( "src" );
 		_dataAssociation = associations.get( "data" );
