@@ -64,6 +64,9 @@ public class NGExceptionPage extends NGComponent {
 		super( aContext );
 	}
 
+	/**
+	 * @return The current date and time for display on the exception page. Useful for tracing when customers send you screenshots of exceptions.
+	 */
 	public LocalDateTime now() {
 		return LocalDateTime.now();
 	}
@@ -91,7 +94,7 @@ public class NGExceptionPage extends NGComponent {
 	/**
 	 * @return The source file where the exception originated (from the last line of the stack trace).
 	 *
-	 * FIXME: WE need to locate the correct working directory here
+	 * FIXME: We need to locate the correct working directory here
 	 */
 	private Path sourceFileContainingError() {
 		final String nameOfThrowingClass = firstLineOfTrace().packageClassPath();
