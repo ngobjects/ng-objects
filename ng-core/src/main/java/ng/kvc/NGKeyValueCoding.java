@@ -82,10 +82,15 @@ public interface NGKeyValueCoding {
 		}
 		catch( Exception e1 ) {
 			try {
-				binding = new FieldBinding( targetClass, key );
+				binding = new MethodBinding( targetClass, "get" + key.substring( 0, 1 ).toUpperCase() + key.substring( 1 ) );
 			}
-			catch( Exception e2 ) {
-				return null;
+			catch( Exception e3 ) {
+				try {
+					binding = new FieldBinding( targetClass, key );
+				}
+				catch( Exception e2 ) {
+					return null;
+				}
 			}
 		}
 
