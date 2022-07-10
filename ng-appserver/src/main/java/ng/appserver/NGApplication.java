@@ -242,35 +242,40 @@ public class NGApplication {
 	/**
 	 * @return The response generated when an exception occurs
 	 *
-	 * FIXME: We need to allow for different response types for production/development environments // Hugi 2022-04-20
+	 * FIXME: Allow for different exception responses for production/development environments // Hugi 2022-04-20
 	 */
 	public NGActionResults exceptionResponse( final Throwable throwable, final NGContext context ) {
-		NGExceptionPage nextPage = pageWithName( NGExceptionPage.class, context );
+		final NGExceptionPage nextPage = pageWithName( NGExceptionPage.class, context );
 		nextPage.setException( throwable );
 		return nextPage;
-		/*
+	}
+
+	/**
+	 * @return A  response generated when an exception occurs
+	 */
+	@Deprecated
+	private NGActionResults rawExceptionResponse( final Throwable throwable, final NGContext context ) {
 		final StringBuilder b = new StringBuilder();
 		b.append( "<style>body{ font-family: sans-serif}</style>" );
 		b.append( String.format( "<h3>An exception occurred</h3>" ) );
 		b.append( String.format( "<h1>%s</h1>", throwable.getClass().getName() ) );
 		b.append( String.format( "<h2>%s</h2>", throwable.getMessage() ) );
-		
+
 		if( throwable.getCause() != null ) {
 			b.append( String.format( "<h3>Cause: %s</h3>", throwable.getCause().getMessage() ) );
 		}
-		
+
 		for( StackTraceElement ste : throwable.getStackTrace() ) {
 			final String packageNameOnly = ste.getClassName().substring( 0, ste.getClassName().lastIndexOf( "." ) );
 			final String simpleClassNameOnly = ste.getClassName().substring( ste.getClassName().lastIndexOf( "." ) + 1 );
-		
+
 			b.append( String.format( "<span style=\"display: inline-block; min-width: 300px\">%s</span>", packageNameOnly ) );
 			b.append( String.format( "<span style=\"display: inline-block; min-width: 500px\">%s</span>", simpleClassNameOnly + "." + ste.getMethodName() + "()" ) );
 			b.append( ste.getFileName() + ":" + ste.getLineNumber() );
 			b.append( "<br>" );
 		}
-		
+
 		return new NGResponse( b.toString(), 500 );
-		*/
 	}
 
 	/**
