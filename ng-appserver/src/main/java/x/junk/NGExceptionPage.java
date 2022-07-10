@@ -1,7 +1,5 @@
 package x.junk;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -196,38 +194,16 @@ public class NGExceptionPage extends NGComponent {
 	/**
 	 * @return bundle of the class currently being iterated over in the UI (if any)
 	 */
-	public /*NSBundle*/ Object currentBundle() {
+	public Object currentBundle() {
 		return null;
-		//		return bundleForClassName( currentErrorLine.packageClassPath() );
-	}
-
-	/**
-	 * @return The bundle containing the (fully qualified) named class. Null if class is not found or not contained in a bundle.
-	 */
-	private static Object /* NSBundle */ bundleForClassName( String fullyQualifiedClassName ) {
-		return null;
-		//		Class<?> clazz;
-		//
-		//		try {
-		//			clazz = Class.forName( fullyQualifiedClassName );
-		//		}
-		//		catch( ClassNotFoundException e ) {
-		//			return null;
-		//		}
-		//
-		//		return NSBundle.bundleForClass( clazz );
 	}
 
 	/**
 	 * @return The CSS class of the current row in the stack trace table.
+	 *
+	 * FIXME: Identify bundles and return appropriate class
 	 */
 	public String currentRowClass() {
-		/*
-		if( NSBundle.mainBundle().equals( currentBundle() ) ) {
-			return "success";
-		}
-		*/
-
 		return null;
 	}
 
@@ -244,37 +220,6 @@ public class NGExceptionPage extends NGComponent {
 			_message = _exception.getMessage();
 			_typeException = _exception.getClass().getName();
 			_parseException();
-		}
-
-		private List _ignoredPackages() {
-			return Collections.emptyList();
-			/*
-			NSBundle bundle;
-			String path, content;
-			Map dic = null;
-			List<NSBundle> allBundles = new ArrayList<>( NSBundle.frameworkBundles() );
-			List<String> ignored = new ArrayList<>();
-
-			for( Enumeration enumerator = Collections.enumeration( allBundles ); enumerator.hasMoreElements(); ) {
-				bundle = (NSBundle)enumerator.nextElement();
-				path = WOApplication.application().resourceManager().pathForResourceNamed( "WOIgnoredPackage.plist", bundle.name(), null );
-				if( path != null ) {
-					content = _stringFromFileSafely( path );
-					if( content != null ) {
-						dic = (Map)NSPropertyListSerialization.propertyListFromString( content );
-						if( dic != null && dic.containsKey( "ignoredPackages" ) ) {
-							@SuppressWarnings("unchecked")
-							List<String> tmpArray = (List<String>)dic.get( "ignoredPackages" );
-							if( tmpArray != null && tmpArray.size() > 0 ) {
-								ignored.addAll( tmpArray );
-							}
-						}
-					}
-				}
-			}
-
-			return ignored;
-			*/
 		}
 
 		private void _verifyPackageForLine( WOParsedErrorLine line, List packages ) {
@@ -296,8 +241,8 @@ public class NGExceptionPage extends NGComponent {
 			StringWriter sWriter = new StringWriter();
 			PrintWriter pWriter = new PrintWriter( sWriter, false );
 			String string;
-			List lines;
-			List ignoredPackage;
+			List<String> lines;
+			List<String> ignoredPackage;
 			WOParsedErrorLine aLine;
 			String line;
 
@@ -316,11 +261,11 @@ public class NGExceptionPage extends NGComponent {
 					string = string.substring( i + 2 ); // Skip the exception type and
 														// message
 					lines = Arrays.asList( string.split( "\n" ) );
-					ignoredPackage = _ignoredPackages();
+					ignoredPackage = Collections.emptyList();
 					size = lines.size();
-					_stackTrace = new ArrayList( size );
+					_stackTrace = new ArrayList<>( size );
 					for( i = 0; i < size; i++ ) {
-						line = ((String)lines.get( i )).trim();
+						line = lines.get( i ).trim();
 						if( line.startsWith( "at " ) ) {
 							// If we don't have an open parenthesis it means that we
 							// have probably reach the latest stack trace.
@@ -336,7 +281,7 @@ public class NGExceptionPage extends NGComponent {
 				logger.error( "", e );
 			}
 			if( _stackTrace == null ) {
-				_stackTrace = new ArrayList();
+				_stackTrace = new ArrayList<>();
 			}
 		}
 
@@ -350,52 +295,6 @@ public class NGExceptionPage extends NGComponent {
 
 		public String message() {
 			return _message;
-		}
-
-		/**
-		 * Return a string from the contents of a file, returning null instead of any possible exception.
-		 */
-		private static String _stringFromFileSafely( String path ) {
-			File f = new File( path );
-
-			if( !f.exists() ) {
-				return null;
-			}
-
-			FileInputStream fis = null;
-			byte[] data = null;
-
-			int bytesRead = 0;
-
-			try {
-				int size = (int)f.length();
-				fis = new FileInputStream( f );
-				data = new byte[size];
-
-				while( bytesRead < size ) {
-					bytesRead += fis.read( data, bytesRead, size - bytesRead );
-				}
-
-			}
-			catch( java.io.IOException e ) {
-				return null;
-			}
-			finally {
-				if( fis != null ) {
-					try {
-						fis.close();
-					}
-					catch( java.io.IOException e ) {
-						logger.debug( "Exception while closing file input stream: " + e.getMessage() );
-						logger.debug( "", e );
-					}
-				}
-			}
-
-			if( bytesRead == 0 ) {
-				return null;
-			}
-			return new String( data );
 		}
 
 		/**
