@@ -10,10 +10,12 @@ public class NGForwardException extends RuntimeException {
 	 * FIXME: Arded as an experiment. getCause() is not neccessarily the right way to go here.
 	 */
 	public static Throwable _originalThrowable( Throwable exception ) {
-		if( exception.getCause() != null ) {
-			return exception.getCause();
+		Throwable result = exception;
+
+		while( result.getCause() != null ) {
+			result = result.getCause();
 		}
 
-		return exception;
+		return result;
 	}
 }
