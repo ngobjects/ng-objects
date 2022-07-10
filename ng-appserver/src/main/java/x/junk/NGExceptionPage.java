@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,28 +110,15 @@ public class NGExceptionPage extends NGComponent {
 
 	/**
 	 * @return The source file where the exception originated (from the last line of the stack trace).
+	 *
+	 * FIXME: WE need to locate the correct working directory here
 	 */
 	private Path sourceFileContainingError() {
-		return null;
-		/*
 		final String nameOfThrowingClass = firstLineOfTrace().packageClassPath();
-		final NSBundle bundle = bundleForClassName( nameOfThrowingClass );
-		
-		if( bundle == null ) {
-			return null;
-		}
-		
-		final String path;
-		
-		if( NSBundle.mainBundle().getClass().getName().contains( "NSMavenProjectBundle" ) ) { // FIXME: We should probably be referencing the real class once that exists again // Hugi 2021-05-21
-			path = bundle.bundlePath() + pathModifier + "/src/main/java/" + nameOfThrowingClass.replace( ".", "/" ) + ".java";
-		}
-		else {
-			path = bundle.bundlePath() + pathModifier + "/Sources/" + nameOfThrowingClass.replace( ".", "/" ) + ".java";
-		}
-		
+
+		final String path = "/Users/hugi/git/ng-objects/ng-appserver" + pathModifier + "/src/main/java/" + nameOfThrowingClass.replace( ".", "/" ) + ".java";
+
 		return Paths.get( path );
-		*/
 	}
 
 	/**
