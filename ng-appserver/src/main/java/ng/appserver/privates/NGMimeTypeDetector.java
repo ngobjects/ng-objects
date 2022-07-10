@@ -28,9 +28,7 @@ public class NGMimeTypeDetector {
 		final String extension = resourceName.substring( lastPeriodIndex + 1 );
 		final String mimeType = mimeTypeForExtension( extension );
 
-		// FIXME:
 		if( mimeType == null ) {
-			//			throw new IllegalArgumentException( "For some reason, our advanced algorithm has not managed to identify your resource type" );
 			logger.warn( "Unknown file type %s, returning default mimeType".formatted( extension ) );
 			return "application/octet-stream";
 		}
