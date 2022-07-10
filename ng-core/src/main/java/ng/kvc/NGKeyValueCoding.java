@@ -74,27 +74,50 @@ public interface NGKeyValueCoding {
 	 * FIXME: We're going to want to decide what to do if there's an available key, but not accessible. Do we skip to the next "type" of binding or do we throw. Essentially; is shading allowed.
 	 */
 	public static KVCBinding bindingForKey( Class<?> targetClass, String key ) {
-		KVCBinding binding;
 
-		// FIXME: This is a horrid way to walk the key tree
+		if( hasMethod( targetClass, key ) ) {
+			return new MethodBinding( targetClass, key );
+		}
+
+		final String getPrefixedKey = "get" + key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
+
+		if( hasMethod( targetClass, getPrefixedKey ) ) {
+			return new MethodBinding( targetClass, getPrefixedKey );
+		}
+
+		if( hasField( targetClass, key ) ) {
+			return new FieldBinding( targetClass, key );
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return true if targetClass responds to the methodName()
+	 */
+	private static boolean hasMethod( final Class<?> targetClass, final String methodName ) {
 		try {
-			binding = new MethodBinding( targetClass, key );
+			targetClass.getMethod( methodName );
+			return true;
 		}
-		catch( Exception e1 ) {
-			try {
-				binding = new MethodBinding( targetClass, "get" + key.substring( 0, 1 ).toUpperCase() + key.substring( 1 ) );
-			}
-			catch( Exception e3 ) {
-				try {
-					binding = new FieldBinding( targetClass, key );
-				}
-				catch( Exception e2 ) {
-					return null;
-				}
-			}
+		catch( NoSuchMethodException | SecurityException e ) {
+			// FIXME: In case of an available but not accessible method, do we skip to the next method/field or just fail?
+			return false;
 		}
+	}
 
-		return binding;
+	/**
+	 * @return true if targetClass has a field named [fieldName]
+	 */
+	private static boolean hasField( final Class<?> targetClass, final String fieldName ) {
+		try {
+			targetClass.getField( fieldName );
+			return true;
+		}
+		catch( NoSuchFieldException | SecurityException e ) {
+			// FIXME: In case of an available but not accessible field, do we skip to the next method/field or just fail?
+			return false;
+		}
 	}
 
 	public static interface KVCBinding {
