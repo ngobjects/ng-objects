@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.NGResourceRequestHandler.NGMimeTypeDetector;
+import ng.appserver.privates.NGMimeTypeDetector;
 
 public class TestNGMimeTypeDetector {
 
