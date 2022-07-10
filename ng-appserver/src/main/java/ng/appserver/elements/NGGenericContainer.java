@@ -38,15 +38,18 @@ public class NGGenericContainer extends NGDynamicGroup {
 		b.append( "<" + elementName );
 
 		_additionalAssociations.forEach( ( name, ass ) -> {
-			b.append( " " );
-			b.append( name );
-			b.append( "=" );
-			b.append( "\"" + ass.valueInComponent( context.component() ) + "\"" );
+			final Object value = ass.valueInComponent( context.component() );
+
+			if( value != null ) {
+				b.append( " " );
+				b.append( name );
+				b.append( "=" );
+				b.append( "\"" + value + "\"" );
+			}
 		} );
 
 		b.append( ">" );
 
-		System.out.println( b );
 		response.appendContentString( b.toString() );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</" + elementName + ">" );
