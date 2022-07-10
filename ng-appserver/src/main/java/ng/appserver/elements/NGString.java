@@ -3,6 +3,7 @@ package ng.appserver.elements;
 import java.util.Map;
 
 import ng.appserver.NGAssociation;
+import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
@@ -26,6 +27,10 @@ public class NGString extends NGDynamicElement {
 		super( null, null, null );
 		_valueAss = associations.get( "value" );
 		_valueWhenEmptyAss = associations.get( "valueWhenEmpty" );
+
+		if( _valueAss == null ) {
+			throw new NGBindingConfigurationException( "[value] binding is required" );
+		}
 	}
 
 	@Override
