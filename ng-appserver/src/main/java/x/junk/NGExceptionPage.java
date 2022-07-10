@@ -60,30 +60,12 @@ public class NGExceptionPage extends NGComponent {
 	 */
 	public WOParsedErrorLine currentErrorLine;
 
-	/**
-	 * A path modifier to put between bundle path and modules so that source code locations outside the
-	 * regular path can be accommodated.
-	 */
-	private String pathModifier;
-
 	public NGExceptionPage( NGContext aContext ) {
 		super( aContext );
-		pathModifier = "";
 	}
 
 	public LocalDateTime now() {
 		return LocalDateTime.now();
-	}
-
-	/**
-	 * Specifying a path fragment here will insert that between bundle path and source module path. Example
-	 * modifier: "/../.." to go two directories up. May be needed for non-standard workspace setups.
-	 *
-	 * @param modifier modifier to insert, should start with a "/"
-	 *
-	 */
-	public void setPathModifier( String modifier ) {
-		pathModifier = modifier;
 	}
 
 	/**
@@ -114,7 +96,7 @@ public class NGExceptionPage extends NGComponent {
 	private Path sourceFileContainingError() {
 		final String nameOfThrowingClass = firstLineOfTrace().packageClassPath();
 
-		final String path = "/Users/hugi/git/ng-objects/ng-appserver" + pathModifier + "/src/main/java/" + nameOfThrowingClass.replace( ".", "/" ) + ".java";
+		final String path = "/Users/hugi/git/ng-objects/ng-appserver" + "/src/main/java/" + nameOfThrowingClass.replace( ".", "/" ) + ".java";
 
 		return Paths.get( path );
 	}
