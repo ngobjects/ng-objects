@@ -73,7 +73,9 @@ public interface NGKeyValueCoding {
 	 *
 	 * FIXME: We're going to want to decide what to do if there's an available key, but not accessible. Do we skip to the next "type" of binding or do we throw. Essentially; is shading allowed.
 	 */
-	public static KVCBinding bindingForKey( Class<?> targetClass, String key ) {
+	public static KVCBinding bindingForKey( final Class<?> targetClass, final String key ) {
+		Objects.requireNonNull( targetClass );
+		Objects.requireNonNull( key );
 
 		if( hasMethod( targetClass, key ) ) {
 			return new MethodBinding( targetClass, key );
@@ -96,6 +98,9 @@ public interface NGKeyValueCoding {
 	 * @return true if targetClass responds to the methodName()
 	 */
 	private static boolean hasMethod( final Class<?> targetClass, final String methodName ) {
+		Objects.requireNonNull( targetClass );
+		Objects.requireNonNull( methodName );
+
 		try {
 			targetClass.getMethod( methodName );
 			return true;
@@ -110,6 +115,9 @@ public interface NGKeyValueCoding {
 	 * @return true if targetClass has a field named [fieldName]
 	 */
 	private static boolean hasField( final Class<?> targetClass, final String fieldName ) {
+		Objects.requireNonNull( targetClass );
+		Objects.requireNonNull( fieldName );
+
 		try {
 			targetClass.getField( fieldName );
 			return true;
