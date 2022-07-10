@@ -184,6 +184,9 @@ public interface NGKeyValueCoding {
 		}
 	}
 
+	/**
+	 * Thrown when a key can't be resolved against an object
+	 */
 	public static class UnkownKeyException extends RuntimeException {
 
 		public UnkownKeyException( String message ) {
