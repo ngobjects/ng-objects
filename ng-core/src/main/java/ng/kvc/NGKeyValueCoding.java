@@ -62,7 +62,7 @@ public interface NGKeyValueCoding {
 			final KVCBinding kvcBinding = bindingForKey( object.getClass(), key );
 
 			if( kvcBinding == null ) {
-				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass() );
+				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
 				throw new UnkownKeyException( message );
 			}
 
