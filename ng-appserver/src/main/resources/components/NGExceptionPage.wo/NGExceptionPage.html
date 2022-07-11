@@ -102,11 +102,11 @@
 					<th>Package</th>
 					<th>Bundle</th>
 				</tr>
-				<wo:repetition list="$stackTrace" item="$currentErrorLine">
+				<wo:repetition list="$stackTrace" item="$currentStackTraceElement">
 					<wo:container elementName="tr" class="$currentRowClass">
-						<td><wo:str value="$currentErrorLine.fileName" /></td>
-						<td><wo:str value="$currentErrorLine.lineNumber" /></td>
-						<td><wo:str value="$currentErrorLine.methodName" /></td>
+						<td><wo:str value="$currentStackTraceElement.fileName" /></td>
+						<td><wo:str value="$currentStackTraceElement.lineNumber" /></td>
+						<td><wo:str value="$currentStackTraceElement.methodName" /></td>
 						<td><wo:str value="$currentPackageName" /></td>
 						<td><wo:str value="$currentBundle.name" /></td>
 					</wo:container>

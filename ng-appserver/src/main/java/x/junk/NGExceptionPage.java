@@ -48,14 +48,14 @@ public class NGExceptionPage extends NGComponent {
 	/**
 	 * Line of the stack trace currently being iterated over.
 	 */
-	public StackTraceElement currentErrorLine;
+	public StackTraceElement currentStackTraceElement;
 
 	public NGExceptionPage( NGContext aContext ) {
 		super( aContext );
 	}
 
 	public String currentPackageName() {
-		return packageNameFromClassName( currentErrorLine.getClassName() );
+		return packageNameFromClassName( currentStackTraceElement.getClassName() );
 	}
 
 	public List<StackTraceElement> stackTrace() {
