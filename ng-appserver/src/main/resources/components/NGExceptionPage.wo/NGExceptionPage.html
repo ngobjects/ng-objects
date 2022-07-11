@@ -4,7 +4,6 @@
 		<meta charset="utf-8">
 		<title>An exception occurred</title>
 		<style type="text/css">
-		
 			body, table, td, th {
 				font-family: sans-serif;
 				font-size: 12px;
@@ -87,7 +86,7 @@
 	<body>
 		<div class="container">
 			<h3><wo:str value="$originalThrowable.getClass.getName" /><wo:if condition="$exception.cause"> <span style="font-size: smaller; color: gray">(<wo:str value="$exception.message" />)</span></wo:if></h3>
-			<p><wo:str value="$originalThrowable.getMessage" /> <div style="float: right"><wo:str value="$now" /></div></p>
+			<p style="font-size: 1.3rem"><wo:str value="$originalThrowable.getMessage" /> <div style="float: right"><wo:str value="$now" /></div></p>
 			<wo:if condition="$showSource">
 	<div class="filename-container"><strong><wo:str value="$firstLineOfTrace.fileName" /></strong></div>
 	<div class="src-container">
