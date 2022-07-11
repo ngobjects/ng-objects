@@ -27,7 +27,14 @@ public class NGExceptionPage extends NGComponent {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGExceptionPage.class );
 
+	/**
+	 * Number of source lines to show above the error line
+	 */
 	private static final int NUMBER_OF_LINES_BEFORE_ERROR_LINE = 7;
+
+	/**
+	 * Number of source lines to show below the error line
+	 */
 	private static final int NUMBER_OF_LINES_AFTER_ERROR_LINE = 7;
 
 	/**
@@ -54,10 +61,16 @@ public class NGExceptionPage extends NGComponent {
 		super( aContext );
 	}
 
+	/**
+	 * @return Name of current package being iterated over in the stack trace
+	 */
 	public String currentPackageName() {
 		return packageNameFromClassName( currentStackTraceElement.getClassName() );
 	}
 
+	/**
+	 * @return The stack trace as a list (just due to NGRepetition not supporting arrays quite yet // FIXME Hugi 2022-07-11
+	 */
 	public List<StackTraceElement> stackTrace() {
 		return Arrays.asList( exception().getStackTrace() );
 	}
@@ -96,15 +109,17 @@ public class NGExceptionPage extends NGComponent {
 	 */
 	private Path sourceFileContainingError() {
 		final String nameOfThrowingClass = firstLineOfTrace().getFileName();
-		String sourceFolder = "/Users/hugi/git/ng-objects/ng-core/src/main/java/";
+		final String sourceFolder = "/Users/hugi/git/ng-objects/ng-core/src/main/java/";
 		final String path = sourceFolder + packageNameFromClassName( firstLineOfTrace().getClassName() ).replace( ".", "/" ) + "/" + nameOfThrowingClass;
 		return Paths.get( path );
 	}
 
+	/**
+	 * @return the package name from a fully qualified class name
+	 */
 	private static String packageNameFromClassName( final String className ) {
 		Objects.requireNonNull( className );
 		return className.substring( 0, className.lastIndexOf( '.' ) );
-
 	}
 
 	/**
@@ -180,6 +195,8 @@ public class NGExceptionPage extends NGComponent {
 
 	/**
 	 * @return bundle of the class currently being iterated over in the UI (if any)
+	 *
+	 * FIXME: Implement once we have something resembling a bundle // Hugi 2022-07-11
 	 */
 	public Object currentBundle() {
 		return null;
@@ -188,7 +205,7 @@ public class NGExceptionPage extends NGComponent {
 	/**
 	 * @return The CSS class of the current row in the stack trace table.
 	 *
-	 * FIXME: Identify bundles and return appropriate class
+	 * FIXME: Identify bundles and return appropriate class // Hugi 2022-07-10
 	 */
 	public String currentRowClass() {
 		return null;
