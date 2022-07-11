@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+import ng.NGRuntimeException;
+
 /**
  * NGKeyValueCoding is a simplified reimplementation of NSKeyValueCoding.
  *
@@ -187,7 +189,7 @@ public interface NGKeyValueCoding {
 	/**
 	 * Thrown when a key can't be resolved against an object
 	 */
-	public static class UnkownKeyException extends RuntimeException {
+	public static class UnkownKeyException extends NGRuntimeException {
 
 		public UnkownKeyException( String message ) {
 			super( message );
