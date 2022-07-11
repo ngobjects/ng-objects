@@ -11,7 +11,7 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 /**
- * Missing [index]
+ * FIXME: Add support for arrays // Hugi 2022-07-11
  */
 
 public class NGRepetition extends NGDynamicGroup {
