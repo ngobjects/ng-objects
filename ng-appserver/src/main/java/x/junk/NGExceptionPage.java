@@ -1,6 +1,7 @@
 package x.junk;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGApplication;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
+import ng.appserver.NGForwardException;
 
 /**
  * A nicer version of WOExceptionPage.
@@ -72,7 +74,7 @@ public class NGExceptionPage extends NGComponent {
 	 * @return The stack trace as a list (just due to NGRepetition not supporting arrays quite yet // FIXME Hugi 2022-07-11
 	 */
 	public List<StackTraceElement> stackTrace() {
-		return Arrays.asList( exception().getStackTrace() );
+		return Arrays.asList( originalThrowable().getStackTrace() );
 	}
 
 	/**
@@ -86,7 +88,7 @@ public class NGExceptionPage extends NGComponent {
 	 * @return First line of the stack trace, essentially the causing line.
 	 */
 	public StackTraceElement firstLineOfTrace() {
-		StackTraceElement[] stackTrace = _exception.getStackTrace();
+		StackTraceElement[] stackTrace = originalThrowable().getStackTrace();
 
 		if( stackTrace.length == 0 ) {
 			return null;
@@ -109,7 +111,8 @@ public class NGExceptionPage extends NGComponent {
 	 */
 	private Path sourceFileContainingError() {
 		final String nameOfThrowingClass = firstLineOfTrace().getFileName();
-		final String sourceFolder = "/Users/hugi/git/ng-objects/ng-core/src/main/java/";
+		final String projectPath = projectRootForClassName( firstLineOfTrace().getClassName() );
+		final String sourceFolder = projectPath + "src/main/java/";
 		final String path = sourceFolder + packageNameFromClassName( firstLineOfTrace().getClassName() ).replace( ".", "/" ) + "/" + nameOfThrowingClass;
 		return Paths.get( path );
 	}
@@ -193,6 +196,10 @@ public class NGExceptionPage extends NGComponent {
 		_exception = value;
 	}
 
+	public Throwable originalThrowable() {
+		return NGForwardException._originalThrowable( exception() );
+	}
+
 	/**
 	 * @return bundle of the class currently being iterated over in the UI (if any)
 	 *
@@ -209,5 +216,21 @@ public class NGExceptionPage extends NGComponent {
 	 */
 	public String currentRowClass() {
 		return null;
+	}
+
+	/**
+	 * An extremely hacky method to get to our project root to locate the source file. Should really be using a bundle instead in the future.
+	 */
+	private static String projectRootForClassName( final String className ) {
+		String cn = className.replace( '.', '/' ) + ".class";
+		URL u = NGExceptionPage.class.getClassLoader().getResource( cn );
+		String filename = u.getFile().toString();
+		int targetIndex = filename.indexOf( "target" );
+
+		if( targetIndex == -1 ) {
+			return null;
+		}
+
+		return filename.substring( 0, targetIndex );
 	}
 }
