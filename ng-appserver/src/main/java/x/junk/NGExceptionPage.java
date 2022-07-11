@@ -97,10 +97,8 @@ public class NGExceptionPage extends NGComponent {
 	 * FIXME: We need to locate the correct working directory here
 	 */
 	private Path sourceFileContainingError() {
-		final String nameOfThrowingClass = firstLineOfTrace().packageClassPath();
-
-		final String path = "/Users/hugi/git/ng-objects/ng-appserver" + "/src/main/java/" + nameOfThrowingClass.replace( ".", "/" ) + ".java";
-
+		final String nameOfThrowingClass = firstLineOfTrace().fileName();
+		final String path = "/Users/hugi/git/ng-objects/ng-core/src/main/java/" + firstLineOfTrace().packageName().replace( ".", "/" ) + "/" + nameOfThrowingClass;
 		return Paths.get( path );
 	}
 
