@@ -222,10 +222,10 @@ public class NGExceptionPage extends NGComponent {
 	 * An extremely hacky method to get to our project root to locate the source file. Should really be using a bundle instead in the future.
 	 */
 	private static String projectRootForClassName( final String className ) {
-		String cn = className.replace( '.', '/' ) + ".class";
-		URL u = NGExceptionPage.class.getClassLoader().getResource( cn );
-		String filename = u.getFile().toString();
-		int targetIndex = filename.indexOf( "target" );
+		final String cn = className.replace( '.', '/' ) + ".class";
+		final URL u = NGExceptionPage.class.getClassLoader().getResource( cn );
+		final String filename = u.getFile().toString();
+		final int targetIndex = filename.indexOf( "target" );
 
 		if( targetIndex == -1 ) {
 			return null;
