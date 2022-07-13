@@ -20,9 +20,9 @@ import ng.appserver.NGContext;
 import ng.appserver.NGForwardException;
 
 /**
- * A nicer version of WOExceptionPage.
+ * Returned to the user when an exception occurs.
  *
- * When in development mode, it will show java code where exception occurred (highlighting the exact line)
+ * When in development mode, it will display the java code where exception occurred (highlighting the line containing the error)
  */
 
 public class NGExceptionPage extends NGComponent {
