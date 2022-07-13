@@ -27,8 +27,11 @@ public class TestNGKeyValueCoding {
 	}
 
 	@Test
-	public void testTakeValueForKeyMethodWithExactName() {
+	public void testTakeValueForKeyFieldWithExactName() {
 		var home = new Home();
+		NGKeyValueCoding.Utility.takeValueForKey( home, "Hraunteigur 23", "address1" );
+		assertEquals( "Hraunteigur 23", NGKeyValueCoding.Utility.valueForKey( home, "address1" ) );
+
 	}
 
 	public record Person( String name ) implements NGKeyValueCoding {

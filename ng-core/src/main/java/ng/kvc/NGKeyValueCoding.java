@@ -81,7 +81,14 @@ public interface NGKeyValueCoding {
 		}
 
 		public static void takeValueForKey( final Object object, final Object value, final String key ) {
-			// FIXME: implement
+			final KVCBinding kvcBinding = bindingForKey( object.getClass(), key );
+
+			if( kvcBinding == null ) {
+				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
+				throw new UnkownKeyException( message );
+			}
+
+			kvcBinding.setValueInObject( value, object );
 		}
 	}
 
@@ -147,6 +154,8 @@ public interface NGKeyValueCoding {
 
 	public static interface KVCBinding {
 		public Object valueInObject( final Object object );
+
+		public void setValueInObject( final Object value, final Object object );
 	}
 
 	public static class MethodBinding implements KVCBinding {
@@ -172,6 +181,11 @@ public interface NGKeyValueCoding {
 				throw new RuntimeException( e );
 			}
 		}
+
+		@Override
+		public void setValueInObject( Object value, Object object ) {
+			throw new RuntimeException( "Not implemented" );
+		}
 	}
 
 	public static class FieldBinding implements KVCBinding {
@@ -195,6 +209,17 @@ public interface NGKeyValueCoding {
 				return _field.get( object );
 			}
 			catch( SecurityException | IllegalAccessException | IllegalArgumentException e ) {
+				// FIXME: Error handling is missing entirely
+				throw new RuntimeException( e );
+			}
+		}
+
+		@Override
+		public void setValueInObject( Object value, Object object ) {
+			try {
+				_field.set( object, value );
+			}
+			catch( IllegalArgumentException | IllegalAccessException e ) {
 				// FIXME: Error handling is missing entirely
 				throw new RuntimeException( e );
 			}
