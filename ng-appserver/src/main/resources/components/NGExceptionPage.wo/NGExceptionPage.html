@@ -81,14 +81,18 @@
 			.error-line {
 				background-color: rgb(255,150,160);
 			}
+			
+			.exception-message {
+				font-size: 1.3rem
+			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
 			<h3><wo:str value="$originalThrowable.class.name" /><wo:if condition="$exception.cause"> <span style="font-size: smaller; color: gray">(<wo:str value="$exception.message" />)</span></wo:if></h3>
-			<p style="font-size: 1.3rem"><wo:str value="$originalThrowable.getMessage" /> <div style="float: right"><wo:str value="$now" /></div></p>
+			<p class="exception-message"><wo:str value="$originalThrowable.getMessage" /> <div style="float: right"><wo:str value="$now" /></div></p>
 			<wo:if condition="$showSource">
-	<div class="filename-container"><strong><wo:str value="$firstLineOfTrace.fileName" /></strong></div>
+			<div class="filename-container"><strong><wo:str value="$firstLineOfTrace.fileName" /></strong></div>
 	<div class="src-container">
 	<wo:repetition list="$lines" item="$currentSourceLine" index="$currentSourceLineIndex"> <wo:container elementName="span" class="$sourceLineClass"><span><wo:str value="$currentActualLineNumber" /></span> <wo:str value="$currentSourceLine" /></wo:container></wo:repetition>
 	</div>
