@@ -34,6 +34,17 @@ public interface NGKeyValueCoding {
 
 			return DefaultImplementation.valueForKey( object, key );
 		}
+
+		public static void takeValueForKey( final Object object, final Object value, final String key ) {
+			Objects.requireNonNull( object );
+			Objects.requireNonNull( key );
+
+			if( object instanceof NGKeyValueCoding kvcObject ) {
+				kvcObject.takeValueForKey( value, key );
+			}
+
+			DefaultImplementation.takeValueForKey( object, value, key );
+		}
 	}
 
 	public static class DefaultImplementation {
@@ -67,6 +78,10 @@ public interface NGKeyValueCoding {
 			}
 
 			return kvcBinding.valueInObject( object );
+		}
+
+		public static void takeValueForKey( final Object object, final Object value, final String key ) {
+			// FIXME: implement
 		}
 	}
 
@@ -131,7 +146,7 @@ public interface NGKeyValueCoding {
 	}
 
 	public static interface KVCBinding {
-		public Object valueInObject( Object object );
+		public Object valueInObject( final Object object );
 	}
 
 	public static class MethodBinding implements KVCBinding {
@@ -148,7 +163,7 @@ public interface NGKeyValueCoding {
 		}
 
 		@Override
-		public Object valueInObject( Object object ) {
+		public Object valueInObject( final Object object ) {
 			try {
 				return _method.invoke( object );
 			}

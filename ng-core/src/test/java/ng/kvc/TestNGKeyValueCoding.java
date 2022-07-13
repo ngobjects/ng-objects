@@ -26,6 +26,11 @@ public class TestNGKeyValueCoding {
 		assertNull( NGKeyValueCoding.DefaultImplementation.valueForKey( home, "address2" ) );
 	}
 
+	@Test
+	public void testTakeValueForKeyMethodWithExactName() {
+		var home = new Home();
+	}
+
 	public record Person( String name ) implements NGKeyValueCoding {
 
 		@Override
