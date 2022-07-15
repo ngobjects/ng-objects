@@ -11,6 +11,7 @@ import ng.appserver.NGAssociation;
 import ng.appserver.NGConstantValueAssociation;
 import ng.appserver.NGElement;
 import ng.appserver.NGKeyValueAssociation;
+import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHTMLCommentString;
 
 /**
@@ -65,7 +66,7 @@ public class NGTemplateParser {
 
 		// FIXME: This is a somewhat ugly hack for the template parser returning a null template for an empty HTML String (which is not what we want) // Hugi 2022-06-09
 		if( _htmlString.isEmpty() ) {
-			return new NGElement() {};
+			return new NGHTMLBareString( "" );
 		}
 
 		parseDeclarations();
