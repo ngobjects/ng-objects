@@ -1,3 +1,5 @@
+![](https://github.com/ngobjects/ng-objects/workflows/build/badge.svg)
+
 # ng-objects
 
 ng-objects is an open source exploration of Apple's WebObjects (WO) framework. It aims to:
