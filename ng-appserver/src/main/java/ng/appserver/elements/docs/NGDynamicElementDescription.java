@@ -64,7 +64,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 				List.of(
 						new NGBindingDescription( "condition", Object.class, "The condition to evaluate" ),
 						new NGBindingDescription( "negate", Boolean.class, "Can be set to $true to 'flip' the condition" ) ),
-				"If the binding [condition] evaluates to $false, the contained content will not be rendered (and vice versa). If the 'negate' binding is set to $true, the condition will be flipped." ) );
+				"Wraps content in a template and decides to render it based on a condition. If the binding [condition] evaluates to $false, the contained content will not be rendered (and vice versa). If the 'negate' binding is set to $true, the condition will be flipped." ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGImage.class,
