@@ -83,7 +83,14 @@ public class NGComponentDefinition {
 			// If that fails, let's go for the single file html template
 			// FIXME: this is not a good way to check for this. Check for existence of files and determine heuristics from there
 			if( htmlTemplateString.isEmpty() && wodString.isEmpty() ) {
-				htmlTemplateString = new String( NGUtils.readComponentResource( name() + ".html" ).get(), StandardCharsets.UTF_8 );
+				final Optional<byte[]> htmlTemplate = NGUtils.readComponentResource( name() + ".html" );
+
+				if( htmlTemplate.isPresent() ) {
+					htmlTemplateString = new String( htmlTemplate.get(), StandardCharsets.UTF_8 );
+				}
+				else {
+					htmlTemplateString = "";
+				}
 			}
 
 			return NGTemplateParser.parse( htmlTemplateString, wodString, Collections.emptyList() );
