@@ -37,16 +37,22 @@ public class NGResponse extends NGMessage implements NGActionResults {
 		return _status;
 	}
 
+	public void setStatus( final int status ) {
+		_status = status;
+	}
+
+	/**
+	 * @return A list of HTTP cookies that this response will set (i.e. create a set-cookie header for)
+	 */
 	public List<NGCookie> cookies() {
 		return _cookies;
 	}
 
+	/**
+	 * Add the given cookie to the response.
+	 */
 	public void addCookie( final NGCookie cookie ) {
 		_cookies.add( cookie );
-	}
-
-	public void setStatus( final int status ) {
-		_status = status;
 	}
 
 	@Override
