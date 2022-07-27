@@ -83,14 +83,22 @@
 			}
 			
 			.exception-message {
-				font-size: 1.3rem
+				font-size: 1.3rem;
+				margin-bottom: 0.5rem;
+			}
+			
+			.time {
+				float: right;
+				font-size: 13px;
+				font-weight: normal;
+				color: gray;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
-			<h3><wo:str value="$originalThrowable.class.name" /><wo:if condition="$exception.cause"> <span style="font-size: smaller; color: gray">FIXME: is it helpful to have the cause? (<wo:str value="$exception.cause" />)</span></wo:if></h3>
-			<p class="exception-message"><wo:str value="$originalThrowable.getMessage" /> <div style="float: right"><wo:str value="$now" /></div></p>
+			<h3><wo:str value="$originalThrowable.class.name" /><wo:if condition="$exception.cause"> <span style="font-size: smaller; color: gray; font-weight: normal">FIXME: is it helpful to have the cause? (<wo:str value="$exception.cause" />)</span></wo:if></h3>
+			<div class="exception-message"><wo:str value="$originalThrowable.getMessage" /> <div class="time"><wo:str value="$now" /></div></div>
 			<wo:if condition="$showSource">
 			<div class="filename-container"><strong><wo:str value="$firstLineOfTrace.fileName" /></strong></div>
 	<div class="src-container">
@@ -103,7 +111,6 @@
 					<th>Line #</th>
 					<th>Method</th>
 					<th>Package</th>
-					<th>Bundle</th>
 				</tr>
 				<wo:repetition list="$stackTrace" item="$currentStackTraceElement">
 					<wo:container elementName="tr" class="$currentRowClass">
@@ -111,11 +118,9 @@
 						<td><wo:str value="$currentStackTraceElement.lineNumber" /></td>
 						<td><wo:str value="$currentStackTraceElement.methodName" /></td>
 						<td><wo:str value="$currentPackageName" /></td>
-						<td><wo:str value="$currentBundle.name" /></td>
 					</wo:container>
 				</wo:repetition>
 			</table>
-			<div align="right"><h4 style="font-weight: normal; color: gray">The exception occurred in the application <strong><wo:str value="Name of application should be here" /></strong></h4></div>
 		</div>
 	</body>
 </html>

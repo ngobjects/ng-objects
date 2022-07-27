@@ -101,7 +101,7 @@ public class NGExceptionPage extends NGComponent {
 	 * @return true if source should be shown.
 	 */
 	public boolean showSource() {
-		return NGApplication.application().isDevelopmentMode() && sourceFileContainingError() != null && !sourceFileContainingError().toString().contains( ".jar/" );
+		return NGApplication.application().isDevelopmentMode() && sourceFileContainingError() != null && !sourceFileContainingError().toString().contains( ".jar/" ) && Files.exists( sourceFileContainingError() );
 	}
 
 	/**
