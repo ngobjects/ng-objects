@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -130,11 +131,17 @@ public class NGExceptionPage extends NGComponent {
 	public List<String> lines() {
 		final List<String> lines;
 
+		final Path sourceFileContainingError = sourceFileContainingError();
+
+		if( !Files.exists( sourceFileContainingError ) ) {
+			return Collections.emptyList();
+		}
+
 		try {
-			lines = Files.readAllLines( sourceFileContainingError() );
+			lines = Files.readAllLines( sourceFileContainingError );
 		}
 		catch( IOException e ) {
-			logger.error( "Attempt to read source code from '{}' failed", sourceFileContainingError(), e );
+			logger.error( "Attempt to read source code from '{}' failed", sourceFileContainingError, e );
 			return new ArrayList<>();
 		}
 
