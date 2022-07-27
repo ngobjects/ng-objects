@@ -89,7 +89,7 @@
 	</head>
 	<body>
 		<div class="container">
-			<h3><wo:str value="$originalThrowable.class.name" /><wo:if condition="$exception.cause"> <span style="font-size: smaller; color: gray">(<wo:str value="$exception.message" />)</span></wo:if></h3>
+			<h3><wo:str value="$originalThrowable.class.name" /><wo:if condition="$exception.cause"> <span style="font-size: smaller; color: gray">FIXME: is it helpful to have the cause? (<wo:str value="$exception.cause" />)</span></wo:if></h3>
 			<p class="exception-message"><wo:str value="$originalThrowable.getMessage" /> <div style="float: right"><wo:str value="$now" /></div></p>
 			<wo:if condition="$showSource">
 			<div class="filename-container"><strong><wo:str value="$firstLineOfTrace.fileName" /></strong></div>
