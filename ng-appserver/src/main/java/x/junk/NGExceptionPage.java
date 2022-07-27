@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGApplication;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
-import ng.appserver.NGForwardException;
 
 /**
  * Returned to the user when an exception occurs.
@@ -196,8 +195,17 @@ public class NGExceptionPage extends NGComponent {
 		_exception = value;
 	}
 
+	/**
+	 * @return The original wrapped throwable (by walking up exception.cause until we reach the top)
+	 */
 	public Throwable originalThrowable() {
-		return NGForwardException._originalThrowable( exception() );
+		Throwable result = exception();
+
+		while( result.getCause() != null ) {
+			result = result.getCause();
+		}
+
+		return result;
 	}
 
 	/**
