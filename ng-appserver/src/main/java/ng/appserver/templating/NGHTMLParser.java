@@ -45,7 +45,7 @@ public class NGHTMLParser {
 
 	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
 		_stackDict = new HashMap<>();
-		StringTokenizer templateTokenizer = new StringTokenizer( _unparsedTemplate, "<" );
+		final StringTokenizer templateTokenizer = new StringTokenizer( _unparsedTemplate, "<" );
 		boolean flag = true;
 		int parserState = STATE_OUTSIDE;
 		String token;
@@ -76,7 +76,8 @@ public class NGHTMLParser {
 						token = checkToken( token );
 					}
 
-					String tagLowerCase = token.toLowerCase();
+					final String tagLowerCase = token.toLowerCase();
+
 					if( tagLowerCase.startsWith( WEBOBJECT_START_TAG ) || tagLowerCase.startsWith( WO_COLON_START_TAG ) || tagLowerCase.startsWith( WO_START_TAG ) ) {
 						if( token.endsWith( "/" ) ) {
 							startOfWebObjectTag( token.substring( 0, token.length() - 1 ) );
@@ -170,17 +171,20 @@ public class NGHTMLParser {
 	 * @return a rewritten token if it has an inline binding or a closing tag, if it belongs to a rewritten token
 	 */
 	private String checkToken( String token ) {
+
 		if( token == null ) {
 			return token;
 		}
-		String tokenLowerCase = token.toLowerCase();
-		if( tokenLowerCase.startsWith( WEBOBJECT_START_TAG ) || tokenLowerCase.startsWith( WO_COLON_START_TAG ) || tokenLowerCase.startsWith( WO_START_TAG )
-				|| tokenLowerCase.startsWith( XML_CDATA_START_TAG ) ) {
+
+		final String tokenLowerCase = token.toLowerCase();
+
+		if( tokenLowerCase.startsWith( WEBOBJECT_START_TAG ) || tokenLowerCase.startsWith( WO_COLON_START_TAG ) || tokenLowerCase.startsWith( WO_START_TAG ) || tokenLowerCase.startsWith( XML_CDATA_START_TAG ) ) {
 			// we return immediately, if it is a webobject token or CDATA tag
 			return token;
 		}
 
-		String original = new String( token );
+		final String original = new String( token );
+
 		try {
 			String[] tokenParts = token.split( " " );
 			String tokenPart = tokenParts[0].substring( 1 );
@@ -195,6 +199,7 @@ public class NGHTMLParser {
 				if( !token.endsWith( "/" ) ) {
 					// no need to keep information for self closing tags
 					Stack<String> stack = _stackDict.get( tokenPart );
+
 					if( stack == null ) {
 						// create one and push a marker
 						stack = new Stack<>();
@@ -210,7 +215,8 @@ public class NGHTMLParser {
 			}
 			else if( !token.startsWith( "</" ) && _stackDict.containsKey( tokenPart ) ) {
 				// standard opening tag
-				Stack<String> stack = _stackDict.get( tokenPart );
+				final Stack<String> stack = _stackDict.get( tokenPart );
+
 				if( stack != null ) {
 					stack.push( tokenPart );
 					_stackDict.put( tokenPart, stack );
@@ -218,9 +224,11 @@ public class NGHTMLParser {
 			}
 			else if( token.startsWith( "</" ) ) {
 				// closing tag
-				Stack<String> stack = _stackDict.get( tokenParts[0].substring( 2 ) );
+				final Stack<String> stack = _stackDict.get( tokenParts[0].substring( 2 ) );
+
 				if( stack != null && !stack.empty() ) {
-					String stackContent = stack.pop();
+					final String stackContent = stack.pop();
+
 					if( stackContent.equals( WO_REPLACEMENT_MARKER ) ) {
 						if( logger.isDebugEnabled() ) {
 							logger.debug( "Replaced end tag for '" + tokenParts[0].substring( 2 ) + "' with 'wo' endtag" );
@@ -232,6 +240,7 @@ public class NGHTMLParser {
 		}
 		catch( Exception e ) {
 			// we print the exception and return the token unchanged
+			// FIXME: Why not just throw here? // Hugi 2022-07-29
 			e.printStackTrace();
 			return original;
 		}
