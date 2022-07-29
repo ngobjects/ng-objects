@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.appserver.routing.NGRouteTable;
+import ng.appserver.templating.NGHTMLParser;
 import ng.appserver.templating._NGUtilities;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
@@ -245,8 +246,10 @@ public class NGApplication {
 	 * FIXME: Allow for different exception responses for production/development environments // Hugi 2022-04-20
 	 */
 	public NGActionResults exceptionResponse( final Throwable throwable, final NGContext context ) {
+		NGHTMLParser parserContext = NGHTMLParser.currentParser.get();
 		final NGExceptionPage nextPage = pageWithName( NGExceptionPage.class, context );
 		nextPage.setException( throwable );
+		nextPage.setCurrentParser( parserContext );
 		return nextPage;
 	}
 

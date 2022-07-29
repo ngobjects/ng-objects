@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGApplication;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
+import ng.appserver.templating.NGHTMLParser;
 
 /**
  * Returned to the user when an exception occurs.
@@ -58,6 +59,11 @@ public class NGExceptionPage extends NGComponent {
 	 * Line of the stack trace currently being iterated over.
 	 */
 	public StackTraceElement currentStackTraceElement;
+
+	/**
+	 * FIXME: Playing around temporarily
+	 */
+	public NGHTMLParser currentParser;
 
 	public NGExceptionPage( NGContext aContext ) {
 		super( aContext );
@@ -200,6 +206,13 @@ public class NGExceptionPage extends NGComponent {
 
 	public void setException( Throwable value ) {
 		_exception = value;
+	}
+
+	/**
+	 * FIXME: Playing around temporarily
+	 */
+	public void setCurrentParser( NGHTMLParser parser ) {
+		currentParser = parser;
 	}
 
 	/**

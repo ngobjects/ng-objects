@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 
 public class NGHTMLParser {
 
-	public static ThreadLocal<Integer> parserContext = new ThreadLocal<>();
+	public static ThreadLocal<NGHTMLParser> currentParser = new ThreadLocal<>();
+	public int currentLineNumber = -1;
 
 	private static final Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
 
@@ -38,10 +39,17 @@ public class NGHTMLParser {
 	public NGHTMLParser( NGTemplateParser parserDelegate, String unparsedTemplate ) {
 		Objects.requireNonNull( parserDelegate );
 		Objects.requireNonNull( unparsedTemplate );
-
+		currentParser.set( this );
 		_parserDelegate = parserDelegate;
 		_unparsedTemplate = unparsedTemplate;
 		_contentText = new StringBuffer( 128 );
+	}
+
+	/**
+	 * FIXME: We're currently exposing the template for NGExceptionPage to show
+	 */
+	public String unparsedTemplate() {
+		return _unparsedTemplate;
 	}
 
 	/**
@@ -86,6 +94,10 @@ public class NGHTMLParser {
 				if( !templateTokenizer.hasMoreTokens() ) {
 					break;
 				}
+
+				// FIXME: Work in progress. Quite ugly.
+				// FIXME: If we use this, we need to reset the parser context at the end, so we know we're outside the state of template parsing.
+				currentLineNumber = lineNumber( templateTokenizer.currentPosition );
 
 				switch( parserState ) {
 				case STATE_OUTSIDE:
