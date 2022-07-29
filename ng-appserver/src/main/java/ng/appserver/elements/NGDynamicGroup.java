@@ -102,7 +102,8 @@ public class NGDynamicGroup extends NGDynamicElement {
 
 	private static List<NGElement> childrenFromTemplate( final NGElement template ) {
 		if( template == null ) {
-			return new ArrayList<>();
+			throw new RuntimeException( "Received a null template. So I guess this actually happens sometimes" );
+			//			return new ArrayList<>();
 		}
 
 		if( template instanceof NGDynamicGroup dg ) {
