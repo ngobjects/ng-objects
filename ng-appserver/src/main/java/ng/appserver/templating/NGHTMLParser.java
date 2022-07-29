@@ -11,9 +11,6 @@ import org.slf4j.LoggerFactory;
 
 public class NGHTMLParser {
 
-	public static ThreadLocal<NGHTMLParser> currentParser = new ThreadLocal<>();
-	public int currentLineNumber = -1;
-
 	private static final Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
 
 	private static final int STATE_OUTSIDE = 0;
@@ -39,7 +36,6 @@ public class NGHTMLParser {
 	public NGHTMLParser( NGTemplateParser parserDelegate, String unparsedTemplate ) {
 		Objects.requireNonNull( parserDelegate );
 		Objects.requireNonNull( unparsedTemplate );
-		currentParser.set( this );
 		_parserDelegate = parserDelegate;
 		_unparsedTemplate = unparsedTemplate;
 		_contentText = new StringBuffer( 128 );
@@ -50,28 +46,6 @@ public class NGHTMLParser {
 	 */
 	public String unparsedTemplate() {
 		return _unparsedTemplate;
-	}
-
-	/**
-	 * Given a position in the template, tells us what line number it is.
-	 */
-	private int lineNumber( int indexInTemplate ) {
-		String[] parts = _unparsedTemplate.split( "\n" );
-		int currentLineIndex = 0;
-		int currentPosition = 0;
-
-		for( final String part : parts ) {
-			currentLineIndex++;
-
-			currentPosition = currentPosition + part.length() + 1;
-
-			if( currentPosition >= indexInTemplate ) {
-				logger.debug( currentPosition + " : " + indexInTemplate + " : " + currentLineIndex + " : " + part );
-				return currentLineIndex;
-			}
-		}
-
-		throw new IllegalStateException( "Went beyond the template length. This should never happen. " );
 	}
 
 	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
@@ -94,10 +68,6 @@ public class NGHTMLParser {
 				if( !templateTokenizer.hasMoreTokens() ) {
 					break;
 				}
-
-				// FIXME: Work in progress. Quite ugly.
-				// FIXME: If we use this, we need to reset the parser context at the end, so we know we're outside the state of template parsing.
-				currentLineNumber = lineNumber( templateTokenizer.currentPosition );
 
 				switch( parserState ) {
 				case STATE_OUTSIDE:
@@ -336,5 +306,29 @@ public class NGHTMLParser {
 			_parserDelegate.didParseComment( _contentText.toString() );
 			_contentText.setLength( 0 );
 		}
+	}
+
+	/**
+	 * Given a position in the template, tells us what line number it is.
+	 *
+	 * FIXME: This is currently not used, but I'm leaving the method in for future use, since I really want this functionality // Hugi 2022-07-29
+	 */
+	private int lineNumber( int indexInTemplate ) {
+		String[] parts = _unparsedTemplate.split( "\n" );
+		int currentLineIndex = 0;
+		int currentPosition = 0;
+
+		for( final String part : parts ) {
+			currentLineIndex++;
+
+			currentPosition = currentPosition + part.length() + 1;
+
+			if( currentPosition >= indexInTemplate ) {
+				logger.debug( currentPosition + " : " + indexInTemplate + " : " + currentLineIndex + " : " + part );
+				return currentLineIndex;
+			}
+		}
+
+		throw new IllegalStateException( "Went beyond the template length. This should never happen. " );
 	}
 }
