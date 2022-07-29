@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Stack;
-import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,7 @@ public class NGHTMLParser {
 	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
 		_stackDict = new HashMap<>();
 
-		final StringTokenizer templateTokenizer = new StringTokenizer( _unparsedTemplate, "<" );
+		final NGStringTokenizer templateTokenizer = new NGStringTokenizer( _unparsedTemplate, "<" );
 		boolean flag = true; // Flag for what?
 		int parserState = STATE_OUTSIDE;
 		String token;
@@ -63,6 +62,7 @@ public class NGHTMLParser {
 				if( !templateTokenizer.hasMoreTokens() ) {
 					break;
 				}
+
 				switch( parserState ) {
 				case STATE_OUTSIDE:
 					if( token != null ) {
