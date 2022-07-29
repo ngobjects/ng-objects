@@ -216,15 +216,6 @@ public class NGExceptionPage extends NGComponent {
 	}
 
 	/**
-	 * @return bundle of the class currently being iterated over in the UI (if any)
-	 *
-	 * FIXME: Implement once we have something resembling a bundle // Hugi 2022-07-11
-	 */
-	public Object currentBundle() {
-		return null;
-	}
-
-	/**
 	 * @return The CSS class of the current row in the stack trace table.
 	 *
 	 * FIXME: Identify bundles and return appropriate class // Hugi 2022-07-10
