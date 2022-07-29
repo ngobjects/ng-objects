@@ -128,7 +128,7 @@ public class NGTemplateParser {
 			_currentDynamicTag.addChildElement( element );
 		}
 		catch( RuntimeException e ) {
-			throw new RuntimeException( "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.".formatted( componentName( _currentDynamicTag ), prettyDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
+			throw new RuntimeException( "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.".formatted( componentName( _currentDynamicTag ), prettyPrintDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
 		}
 	}
 
@@ -266,6 +266,7 @@ public class NGTemplateParser {
 			else {
 				throw new NGHTMLFormatException( valueBuffer + " starts with quote but does not end with one." );
 			}
+
 			if( value.startsWith( "$" ) ) {
 				value = value.substring( 1 );
 
@@ -289,44 +290,6 @@ public class NGTemplateParser {
 
 		final NGAssociation association = NGDeclarationParser._associationWithKey( value, quotedStrings );
 		bindings.put( key, association );
-	}
-
-	/**
-	 * Only used to create a pretty string for debug logging
-	 */
-	private static String prettyDeclaration( final NGDeclaration declaration ) {
-
-		if( declaration == null ) {
-			return "[none]";
-		}
-
-		final StringBuilder sb = new StringBuilder();
-		sb.append( "Component Type = " + declaration.type() );
-		sb.append( ", Bindings = { " );
-
-		final Enumeration<String> keyEnum = Collections.enumeration( declaration.associations().keySet() );
-
-		while( keyEnum.hasMoreElements() ) {
-			final String key = keyEnum.nextElement();
-			final Object assoc = declaration.associations().get( key );
-
-			if( assoc instanceof NGKeyValueAssociation ) {
-				sb.append( key + "=" + ((NGKeyValueAssociation)assoc).keyPath() );
-			}
-			else if( assoc instanceof NGConstantValueAssociation ) {
-				sb.append( key + "='" + ((NGConstantValueAssociation)assoc).valueInComponent( null ) + "'" );
-			}
-			else {
-				sb.append( key + "=" + assoc );
-			}
-			if( keyEnum.hasMoreElements() ) {
-				sb.append( ", " );
-			}
-		}
-
-		sb.append( " }" );
-
-		return sb.toString();
 	}
 
 	private static boolean isInline( final NGDynamicHTMLTag tag ) {
@@ -354,6 +317,45 @@ public class NGTemplateParser {
 		}
 
 		return name;
+	}
+
+	/**
+	 * @return A pretty string representation of an NGDeclaration for debug logging
+	 */
+	private static String prettyPrintDeclaration( final NGDeclaration declaration ) {
+
+		if( declaration == null ) {
+			return "[none]";
+		}
+
+		final StringBuilder sb = new StringBuilder();
+		sb.append( "Component Type = " + declaration.type() );
+		sb.append( ", Bindings = { " );
+
+		final Enumeration<String> keyEnum = Collections.enumeration( declaration.associations().keySet() );
+
+		while( keyEnum.hasMoreElements() ) {
+			final String key = keyEnum.nextElement();
+			final Object association = declaration.associations().get( key );
+
+			if( association instanceof NGKeyValueAssociation ) {
+				sb.append( key + "=" + ((NGKeyValueAssociation)association).keyPath() );
+			}
+			else if( association instanceof NGConstantValueAssociation ) {
+				sb.append( key + "='" + ((NGConstantValueAssociation)association).valueInComponent( null ) + "'" );
+			}
+			else {
+				sb.append( key + "=" + association );
+			}
+
+			if( keyEnum.hasMoreElements() ) {
+				sb.append( ", " );
+			}
+		}
+
+		sb.append( " }" );
+
+		return sb.toString();
 	}
 
 	/**
