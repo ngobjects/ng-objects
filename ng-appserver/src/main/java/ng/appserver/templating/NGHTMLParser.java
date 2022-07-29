@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 public class NGHTMLParser {
 
+	public static ThreadLocal<Integer> parserContext = new ThreadLocal<>();
+
 	private static final Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
 
 	private static final int STATE_OUTSIDE = 0;
@@ -84,9 +86,6 @@ public class NGHTMLParser {
 				if( !templateTokenizer.hasMoreTokens() ) {
 					break;
 				}
-
-				int lineNumber = lineNumber( templateTokenizer.currentPosition );
-				System.out.println( lineNumber );
 
 				switch( parserState ) {
 				case STATE_OUTSIDE:
@@ -272,8 +271,9 @@ public class NGHTMLParser {
 		catch( Exception e ) {
 			// we print the exception and return the token unchanged
 			// FIXME: Why not just throw here? // Hugi 2022-07-29
-			e.printStackTrace();
-			return original;
+			throw new RuntimeException( "FIXME: Why not just throw here? // Hugi 2022-07-29", e );
+			//			e.printStackTrace();
+			//			return original;
 		}
 		return token;
 	}
