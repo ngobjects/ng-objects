@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class NGHTMLParser {
 
-	private static Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
+	private static final Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
 
 	private static final int STATE_OUTSIDE = 0;
 	private static final int STATE_INSIDE_COMMENT = 3;
@@ -42,6 +42,28 @@ public class NGHTMLParser {
 		_contentText = new StringBuffer( 128 );
 	}
 
+	/**
+	 * Given a position in the template, tells us what line number it is.
+	 */
+	private int lineNumber( int indexInTemplate ) {
+		String[] parts = _unparsedTemplate.split( "\n" );
+		int currentLineIndex = 0;
+		int currentPosition = 0;
+
+		for( final String part : parts ) {
+			currentLineIndex++;
+
+			currentPosition = currentPosition + part.length() + 1;
+
+			if( currentPosition >= indexInTemplate ) {
+				logger.debug( currentPosition + " : " + indexInTemplate + " : " + currentLineIndex + " : " + part );
+				return currentLineIndex;
+			}
+		}
+
+		throw new IllegalStateException( "Went beyond the template length. This should never happen. " );
+	}
+
 	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
 		_stackDict = new HashMap<>();
 
@@ -62,6 +84,9 @@ public class NGHTMLParser {
 				if( !templateTokenizer.hasMoreTokens() ) {
 					break;
 				}
+
+				int lineNumber = lineNumber( templateTokenizer.currentPosition );
+				System.out.println( lineNumber );
 
 				switch( parserState ) {
 				case STATE_OUTSIDE:
