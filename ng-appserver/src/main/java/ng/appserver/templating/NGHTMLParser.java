@@ -41,13 +41,6 @@ public class NGHTMLParser {
 		_contentText = new StringBuffer( 128 );
 	}
 
-	/**
-	 * FIXME: We're currently exposing the template for NGExceptionPage to show
-	 */
-	public String unparsedTemplate() {
-		return _unparsedTemplate;
-	}
-
 	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
 		_stackDict = new HashMap<>();
 
