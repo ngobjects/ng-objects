@@ -45,16 +45,19 @@ public class NGHTMLParser {
 
 	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
 		_stackDict = new HashMap<>();
+
 		final StringTokenizer templateTokenizer = new StringTokenizer( _unparsedTemplate, "<" );
-		boolean flag = true;
+		boolean flag = true; // Flag for what?
 		int parserState = STATE_OUTSIDE;
 		String token;
+
 		if( _unparsedTemplate.startsWith( "<" ) || !templateTokenizer.hasMoreTokens() ) {
 			token = null;
 		}
 		else {
 			token = templateTokenizer.nextToken( "<" );
 		}
+
 		try {
 			do {
 				if( !templateTokenizer.hasMoreTokens() ) {
@@ -155,13 +158,16 @@ public class NGHTMLParser {
 			didParseText();
 			return;
 		}
+
 		if( token != null ) {
 			if( token.startsWith( ">" ) ) {
 				token = token.substring( 1 );
 			}
 			_contentText.append( token );
 		}
+
 		didParseText();
+
 		_stackDict = null;
 	}
 
