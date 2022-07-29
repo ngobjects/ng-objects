@@ -176,7 +176,7 @@ public class NGDynamicHTMLTag {
 		Class<? extends NGElement> classForTypeName = _NGUtilities.classWithName( typeName );
 
 		if( classForTypeName != null ) {
-			if( (NGComponent.class).isAssignableFrom( classForTypeName ) ) {
+			if( NGComponent.class.isAssignableFrom( classForTypeName ) ) {
 				return _componentReferenceWithName( typeName, declaration, contentTemplate, languages );
 			}
 			else {
