@@ -119,6 +119,7 @@ public class _NGUtilities {
 
 	/**
 	 * FIXME: This functionality should really be in a nicer location // Hugi 2021-11-20
+	 * FIXME: Kill an existing WO application if that's what's blocking the instance
 	 */
 	public static void stopPreviousDevelopmentInstance( int portNumber ) {
 		if( alreadyTriedStopping ) {
