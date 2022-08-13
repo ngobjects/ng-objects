@@ -303,29 +303,16 @@ public class NGApplication {
 	 * just allow for certain "prefix patterns" to mask out the WO part of the URL and hide it from the app. It might even be a useful
 	 * little feature on it's own.
 	 */
-	private static void cleanupWOURL( final NGRequest request ) {
-		String woStart = "/Apps/WebObjects/Rebelliant.woa/1";
+	private void cleanupWOURL( final NGRequest request ) {
+
+		String woStart = "/Apps/WebObjects/%s.woa/1".formatted( properties().propWOApplicationName() );
 
 		if( request.uri().startsWith( woStart ) ) {
 			request.setURI( request.uri().substring( woStart.length() ) );
 			logger.info( "Rewrote WO URI to {}", request.uri() );
 		}
 
-		woStart = "/cgi-bin/WebObjects/Rebelliant.woa";
-
-		if( request.uri().startsWith( woStart ) ) {
-			request.setURI( request.uri().substring( woStart.length() ) );
-			logger.info( "Rewrote WO URI to {}", request.uri() );
-		}
-
-		woStart = "/Apps/WebObjects/ng-website.woa/1";
-
-		if( request.uri().startsWith( woStart ) ) {
-			request.setURI( request.uri().substring( woStart.length() ) );
-			logger.info( "Rewrote WO URI to {}", request.uri() );
-		}
-
-		woStart = "/cgi-bin/WebObjects/ng-website.woa";
+		woStart = "/cgi-bin/WebObjects/%s.woa".formatted( properties().propWOApplicationName() );
 
 		if( request.uri().startsWith( woStart ) ) {
 			request.setURI( request.uri().substring( woStart.length() ) );
