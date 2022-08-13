@@ -11,6 +11,7 @@ import ng.testapp.components.ExampleComponent;
 import ng.testapp.components.FormComponent;
 import ng.testapp.components.ProgrammaticDynamicComponent;
 import ng.testapp.components.RepetitionComponent;
+import ng.testapp.components.SingleFileComponent;
 import ng.testapp.components.WrapperComponent;
 
 public class Application extends NGApplication {
@@ -50,6 +51,10 @@ public class Application extends NGApplication {
 
 		routeTable().map( "/component-form", ( request ) -> {
 			return pageWithName( FormComponent.class, request.context() );
+		} );
+
+		routeTable().map( "/smu", ( request ) -> {
+			return pageWithName( SingleFileComponent.class, request.context() );
 		} );
 
 		routeTable().map( "/form-handler", ( request ) -> {
