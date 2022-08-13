@@ -3,7 +3,6 @@ package ng.appserver;
 import java.util.Optional;
 
 import ng.appserver.privates.NGMimeTypeDetector;
-import ng.appserver.privates.NGParsedURI;
 
 /**
  * FIXME: Ideally I'd like this to work with streams, not byte arrays. In that case it just becomes the responsibility of this code to link up the file/socket streams
@@ -13,7 +12,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {
-		final Optional<String> resourceName = NGParsedURI.of( request.uri() ).getStringOptional( 1 );
+		final Optional<String> resourceName = Optional.of( resourcePathFromURI( request.uri() ) );
 
 		if( resourceName.isEmpty() ) {
 			return new NGResponse( "No resource name specified", 400 );
@@ -35,5 +34,14 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName.get() ) );
 		response.setHeader( "Content-Type", mimeType );
 		return response;
+	}
+
+	/**
+	 * FIXME: Not at all a good method for getting the resource URI
+	 *
+	 * @return The resource path from the given URI
+	 */
+	private static String resourcePathFromURI( final String uri ) {
+		return uri.substring( "/wr/".length() );
 	}
 }
