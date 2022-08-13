@@ -244,11 +244,11 @@ public class NGHTMLParser {
 		}
 		catch( Exception e ) {
 			// we print the exception and return the token unchanged
+			// return original;
 			// FIXME: Why not just throw here? // Hugi 2022-07-29
-			throw new RuntimeException( "FIXME: Why not just throw here? // Hugi 2022-07-29", e );
-			//			e.printStackTrace();
-			//			return original;
+			throw new RuntimeException( "FIXME: Why not just throw here? Let's see what it does // Hugi 2022-07-29", e );
 		}
+
 		return token;
 	}
 
