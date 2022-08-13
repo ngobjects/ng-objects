@@ -57,7 +57,7 @@ public class NGHTMLParser {
 		}
 
 		try {
-			do {
+			while( true ) {
 				if( !templateTokenizer.hasMoreTokens() ) {
 					break;
 				}
@@ -150,7 +150,6 @@ public class NGHTMLParser {
 					token = templateTokenizer.nextToken( "<" );
 				}
 			}
-			while( true );
 		}
 		catch( NoSuchElementException e ) {
 			logger.error( "No Such element dude", e );
