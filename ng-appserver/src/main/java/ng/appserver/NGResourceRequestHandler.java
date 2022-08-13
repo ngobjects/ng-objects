@@ -12,26 +12,28 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {
-		final Optional<String> resourceName = Optional.of( resourcePathFromURI( request.uri() ) );
+		final Optional<String> resourcePath = Optional.of( resourcePathFromURI( request.uri() ) );
 
-		if( resourceName.isEmpty() ) {
+		if( resourcePath.isEmpty() ) {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
-		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourceName.get() );
+		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourcePath.get() );
 
 		// FIXME: How to handle this properly? User configurable? Just always a 404 // Hugi 2021-12-06
 		if( resourceBytes.isEmpty() ) {
-			final NGResponse errorResponse = new NGResponse( "webserver resources '" + resourceName.get() + "' does not exist", 404 );
+			final NGResponse errorResponse = new NGResponse( "webserver resources '" + resourcePath.get() + "' does not exist", 404 );
 			errorResponse.setHeader( "content-type", "text/html" );
 			return errorResponse;
 		}
 
-		final String mimeType = NGMimeTypeDetector.mimeTypeForResourceName( resourceName.get() );
+		// Extract the name of the served resource to use in the filename header
+		final String resourceName = resourcePath.get().substring( resourcePath.get().lastIndexOf( "/" ) + 1 );
+		final String mimeType = NGMimeTypeDetector.mimeTypeForResourceName( resourcePath.get() );
 
 		// FIXME: Detect and set the correct response headers
 		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );
-		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName.get() ) );
+		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName ) );
 		response.setHeader( "Content-Type", mimeType );
 		return response;
 	}
