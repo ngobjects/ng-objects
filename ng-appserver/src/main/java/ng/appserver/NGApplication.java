@@ -307,6 +307,7 @@ public class NGApplication {
 
 		String woStart = "/Apps/WebObjects/%s.woa/1".formatted( properties().propWOApplicationName() );
 
+		System.out.println( "woStart" );
 		if( request.uri().startsWith( woStart ) ) {
 			request.setURI( request.uri().substring( woStart.length() ) );
 			logger.info( "Rewrote WO URI to {}", request.uri() );
