@@ -28,7 +28,7 @@ public class NGTextField extends NGDynamicElement {
 	private NGAssociation _valueAssociation;
 
 	public NGTextField( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( name, associations, template );
+		super( null, null, null );
 		_nameAssociation = associations.get( "name" );
 		_valueAssociation = associations.get( "value" );
 	}

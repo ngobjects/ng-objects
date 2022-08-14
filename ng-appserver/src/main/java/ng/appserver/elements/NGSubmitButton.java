@@ -15,7 +15,7 @@ public class NGSubmitButton extends NGDynamicElement {
 	private NGAssociation _actionAssociation;
 
 	public NGSubmitButton( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( name, associations, template );
+		super( null, null, null );
 		_actionAssociation = associations.get( "action" );
 
 		if( _actionAssociation == null ) {
