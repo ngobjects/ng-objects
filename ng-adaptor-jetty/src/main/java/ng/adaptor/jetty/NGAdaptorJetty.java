@@ -167,9 +167,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 	/**
 	 * @return the given HttpServletRequest converted to an NGRequest
-	 *
-	 * FIXME: We're not passing in the request parameters
-	 * FIXME: We need to read the request's content as well
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 
