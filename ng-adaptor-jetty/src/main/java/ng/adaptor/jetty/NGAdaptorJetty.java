@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -181,7 +182,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			is.transferTo( bos );
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e ); // FIXME: We're throwing RuntimeExceptions all over the place, we should probably be using NGForwardException, once that's structured
+			throw new UncheckedIOException( "Failed to consume the HTTP request's inputstream", e );
 		}
 
 		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
