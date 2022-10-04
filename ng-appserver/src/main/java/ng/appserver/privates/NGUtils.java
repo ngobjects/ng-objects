@@ -14,30 +14,33 @@ import org.slf4j.LoggerFactory;
 
 public class NGUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger( NGUtils.class );
-
 	/**
 	 * Name of the folder that stores application resources
 	 */
 	private static final String APP_RESOURCES_FOLDER = "app-resources";
+
+	private static ResourceSource appResourcesSource = new JavaClasspathResourceSource( APP_RESOURCES_FOLDER );
 
 	/**
 	 * Name of the folder that stores application resources
 	 */
 	private static final String WEBSERVER_RESOURCES_FOLDER = "webserver-resources";
 
+	private static ResourceSource webserverResourcesSource = new JavaClasspathResourceSource( WEBSERVER_RESOURCES_FOLDER );
+
 	/**
 	 * Name of the folder that stores component templates
 	 */
 	private static final String COMPONENTS_FOLDER = "components";
+
+	private static ResourceSource componentResourcesSource = new JavaClasspathResourceSource( COMPONENTS_FOLDER );
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readWebserverResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
-
-		return readJavaResource( resourcePath( WEBSERVER_RESOURCES_FOLDER, resourcePath ) );
+		return webserverResourcesSource.bytesforResourceWithPath( resourcePath );
 	}
 
 	/**
@@ -45,44 +48,66 @@ public class NGUtils {
 	 */
 	public static Optional<byte[]> readAppResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
-
-		return readJavaResource( resourcePath( APP_RESOURCES_FOLDER, resourcePath ) );
+		return appResourcesSource.bytesforResourceWithPath( resourcePath );
 	}
 
 	public static Optional<byte[]> readComponentResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
-
-		return readJavaResource( resourcePath( COMPONENTS_FOLDER, resourcePath ) );
+		return componentResourcesSource.bytesforResourceWithPath( resourcePath );
 	}
 
 	/**
-	 * Reads the content of the given Java resource
+	 * Represents a source of resources of any type
 	 */
-	private static Optional<byte[]> readJavaResource( final String resourcePath ) {
-		Objects.requireNonNull( resourcePath );
+	public interface ResourceSource {
+		public Optional<byte[]> bytesforResourceWithPath( String resourcePath );
+	}
 
-		logger.debug( "Reading resource from path: " + resourcePath );
+	/**
+	 * Wraps loading of resources from the classpath
+	 */
+	public static class JavaClasspathResourceSource implements ResourceSource {
 
-		try( final InputStream resourceAsStream = NGUtils.class.getResourceAsStream( resourcePath )) {
+		private static final Logger logger = LoggerFactory.getLogger( JavaClasspathResourceSource.class );
 
-			if( resourceAsStream == null ) {
-				return Optional.empty();
+		/**
+		 * Classpath prefix
+		 */
+		private String _basePath;
+
+		public JavaClasspathResourceSource( final String basePath ) {
+			Objects.requireNonNull( basePath );
+			_basePath = basePath;
+		}
+
+		@Override
+		public Optional<byte[]> bytesforResourceWithPath( String resourcePath ) {
+			Objects.requireNonNull( resourcePath );
+
+			logger.info( "Reading resource {} ", resourcePath );
+
+			resourcePath = pathWithPrefix( resourcePath );
+
+			logger.info( "Reading resourcePath {} ", resourcePath );
+
+			try( final InputStream resourceAsStream = NGUtils.class.getResourceAsStream( resourcePath )) {
+
+				if( resourceAsStream == null ) {
+					return Optional.empty();
+				}
+
+				return Optional.of( resourceAsStream.readAllBytes() );
 			}
-
-			return Optional.of( resourceAsStream.readAllBytes() );
+			catch( final IOException e ) {
+				throw new RuntimeException( e );
+			}
 		}
-		catch( final IOException e ) {
-			throw new RuntimeException( e );
+
+		/**
+		 * @return The path to the named resource
+		 */
+		private String pathWithPrefix( String resourcePath ) {
+			return "/" + _basePath + "/" + resourcePath;
 		}
-	}
-
-	/**
-	 * @return The path to the named resource
-	 */
-	private static String resourcePath( final String folderName, final String resourcePath ) {
-		Objects.requireNonNull( folderName );
-		Objects.requireNonNull( resourcePath );
-
-		return "/" + folderName + "/" + resourcePath;
 	}
 }
