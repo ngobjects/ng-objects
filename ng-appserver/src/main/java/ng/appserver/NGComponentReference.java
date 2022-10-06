@@ -13,7 +13,7 @@ public class NGComponentReference extends NGDynamicElement {
 	/**
 	 * Holds a reference to the fully qualified class name of the component we're going to render
 	 */
-	private final String _name;
+	private final String _fullyQualifiedClassName;
 
 	/**
 	 * The bindings being passed from the parent component to the component being rendered.
@@ -21,17 +21,19 @@ public class NGComponentReference extends NGDynamicElement {
 	private Map<String, NGAssociation> _associations;
 
 	/**
-	 * In the case of wrapper components, the content placed inside the component tags.
+	 * @param fullyQualifiedClassName Fully qualified componentclassname
+	 * @param associations Associations used to initialize this component
+	 * @param contentTemplate In the case of wrapper components, the template wrapped by component (between the component opening/closing tags)
 	 *
 	 * <wo:SomeComponent>[contentTemplate]</wo:SomeComponent>
 	 */
 	private final NGElement _contentTemplate;
 
-	public NGComponentReference( final String fullyQualifiedClassName, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+	public NGComponentReference( final String fullyQualifiedComponentClassName, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		super( null, null, null );
-		Objects.requireNonNull( fullyQualifiedClassName );
+		Objects.requireNonNull( fullyQualifiedComponentClassName );
 		Objects.requireNonNull( associations );
-		_name = fullyQualifiedClassName;
+		_fullyQualifiedClassName = fullyQualifiedComponentClassName;
 		_associations = associations;
 		_contentTemplate = contentTemplate;
 	}
@@ -44,7 +46,7 @@ public class NGComponentReference extends NGDynamicElement {
 
 		// Load up our component's definition
 		// FIXME: We construct a component reference from a component definition. Shouldn't we have cached the definition at that stage?
-		final NGComponentDefinition newComponent = NGApplication.application()._componentDefinition( _name, Collections.emptyList() );
+		final NGComponentDefinition newComponent = NGApplication.application()._componentDefinition( _fullyQualifiedClassName, Collections.emptyList() );
 
 		// Create an instance of the component
 		// FIXME: In this case we might want to reuse instances of the components are stateless. But stateless components are not implemented yet, so...
