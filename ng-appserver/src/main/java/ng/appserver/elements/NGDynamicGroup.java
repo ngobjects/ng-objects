@@ -1,6 +1,5 @@
 package ng.appserver.elements;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -103,17 +102,22 @@ public class NGDynamicGroup extends NGDynamicElement {
 		return _children;
 	}
 
-	private static List<NGElement> childrenFromTemplate( final NGElement template ) {
-		if( template == null ) {
+	/**
+	 * @return The list of elements represented by [template]
+	 */
+	private static List<NGElement> childrenFromTemplate( final NGElement contentTemplate ) {
+
+		// Null represents an empty container tag (i.e. no children).
+		if( contentTemplate == null ) {
 			return Collections.emptyList();
 		}
 
-		if( template instanceof NGDynamicGroup dg ) {
+		// If the contained template is another DynamicGroup, "unwrap it", i.e. just steal it's kids.
+		if( contentTemplate instanceof NGDynamicGroup dg ) {
 			return dg.children();
 		}
 
-		List<NGElement> children = new ArrayList<>();
-		children.add( template );
-		return children;
+		// If template is any other element, it's an only child.
+		return List.of( contentTemplate );
 	}
 }
