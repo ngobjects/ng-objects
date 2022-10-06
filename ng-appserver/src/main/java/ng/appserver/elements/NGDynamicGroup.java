@@ -24,10 +24,12 @@ public class NGDynamicGroup extends NGDynamicElement {
 	private final List<NGElement> _children;
 
 	/**
-	 * Construct a new Dynamic Group from a content template
+	 * Construct a new Dynamic Group from a content template.
+	 *
+	 * Note that in the case of an empty tag (i.e. <tag></tag>), contentTemplate will be null.
 	 */
-	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
-		this( name, associations, childrenFromTemplate( template ) );
+	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		this( name, associations, childrenFromTemplate( contentTemplate ) );
 	}
 
 	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final List<NGElement> children ) {
@@ -81,7 +83,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 	}
 
 	private void takeChildrenValuesFromRequest( NGRequest request, NGContext context ) {
-		if( _children != null ) { // See mention of nullyness in the declaration of _children
+		if( _children != null ) {
 			context.elementID().addBranch();
 
 			for( final NGElement child : children() ) {
