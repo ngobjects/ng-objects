@@ -148,8 +148,9 @@ public class NGDeclarationParser {
 			}
 		}
 		catch( NoSuchElementException e ) {
+			throw new RuntimeException( e );
 			// FIXME: Why are we swallowing this exception? // Hugi 2022-06-26
-			logger.debug( "Parsing failed.", e );
+			// logger.debug( "Parsing failed.", e );
 		}
 
 		return declarationWithoutCommentsBuffer.toString();
