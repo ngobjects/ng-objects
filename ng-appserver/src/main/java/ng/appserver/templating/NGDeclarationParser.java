@@ -41,7 +41,19 @@ public class NGDeclarationParser {
 		return parseDeclarationsWithoutComments( strWithoutComments );
 	}
 
-	private static String _removeOldStyleCommentsFromString( String str ) {
+	public static void main( String[] args ) {
+		System.out.println( _removeOldStyleCommentsFromString( "/*smu\nHaha*/" ) );
+	}
+
+	/**
+	 * Strips old style comments from the declaration string.
+	 * "Old style comments" start with slash-asterisk and end with asterisk-slash.
+	 *
+	 * Should be private, only friendly due to testing
+	 *
+	 * FIXME: Shouldn't we fail on an unclosed comment?
+	 */
+	static String _removeOldStyleCommentsFromString( String str ) {
 		Objects.requireNonNull( str );
 
 		final StringBuilder stringb = new StringBuilder( 100 );
