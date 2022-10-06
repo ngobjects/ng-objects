@@ -1,6 +1,7 @@
 package ng.appserver.elements;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -104,8 +105,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 
 	private static List<NGElement> childrenFromTemplate( final NGElement template ) {
 		if( template == null ) {
-			throw new RuntimeException( "Received a null template. So I guess this actually happens sometimes" );
-			//			return new ArrayList<>();
+			return Collections.emptyList();
 		}
 
 		if( template instanceof NGDynamicGroup dg ) {
