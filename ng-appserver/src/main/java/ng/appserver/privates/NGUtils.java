@@ -84,11 +84,11 @@ public class NGUtils {
 		public Optional<byte[]> bytesforResourceWithPath( String resourcePath ) {
 			Objects.requireNonNull( resourcePath );
 
-			logger.info( "Reading resource {} ", resourcePath );
+			logger.debug( "Reading resource {} ", resourcePath );
 
 			resourcePath = pathWithPrefix( resourcePath );
 
-			logger.info( "Reading resourcePath {} ", resourcePath );
+			logger.debug( "Reading resourcePath {} ", resourcePath );
 
 			try( final InputStream resourceAsStream = NGUtils.class.getResourceAsStream( resourcePath )) {
 
