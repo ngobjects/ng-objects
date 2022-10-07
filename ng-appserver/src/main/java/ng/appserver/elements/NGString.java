@@ -1,6 +1,7 @@
 package ng.appserver.elements;
 
 import java.util.Map;
+import java.util.Objects;
 
 import ng.appserver.NGAssociation;
 import ng.appserver.NGBindingConfigurationException;
@@ -77,5 +78,30 @@ public class NGString extends NGDynamicElement {
 	 */
 	private static String escapeHTML( final String string ) {
 		return string.replace( "<", "&lt;" ).replace( ">", "&gt;" );
+	}
+
+	@Override
+	public String toString() {
+		return "NGString [_valueAss=" + _valueAss + ", _escapeHTMLAss=" + _escapeHTMLAss + ", _valueWhenEmptyAss=" + _valueWhenEmptyAss + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( _escapeHTMLAss, _valueAss, _valueWhenEmptyAss );
+	}
+
+	@Override
+	public boolean equals( Object obj ) {
+		if( this == obj ) {
+			return true;
+		}
+		if( obj == null ) {
+			return false;
+		}
+		if( getClass() != obj.getClass() ) {
+			return false;
+		}
+		NGString other = (NGString)obj;
+		return Objects.equals( _escapeHTMLAss, other._escapeHTMLAss ) && Objects.equals( _valueAss, other._valueAss ) && Objects.equals( _valueWhenEmptyAss, other._valueWhenEmptyAss );
 	}
 }
