@@ -370,8 +370,9 @@ public class NGApplication {
 	 * @return The componentDefinition corresponding to the given WOComponent class.
 	 *
 	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
+	 * FIXME: This should not be static, belongs in an instance of a different class.
 	 */
-	private NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass ) {
+	private static NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass ) {
 		Objects.requireNonNull( componentClass );
 
 		return new NGComponentDefinition( componentClass );
@@ -382,8 +383,9 @@ public class NGApplication {
 	 *
 	 * FIXME: Kind of unsupported. We really only want to allow components that have a class, and in these cases we should have loaded the component's class earlier in the process.
 	 * FIXME: Languages aren't supported either yet, but I'm including the parameter while I consider what to do about it.
+	 * FIXME: This should not be static, belongs in an instance of a different class.
 	 */
-	public NGComponentDefinition _componentDefinition( final String componentName, final List<String> languages ) {
+	public static NGComponentDefinition _componentDefinition( final String componentName, final List<String> languages ) {
 		Objects.requireNonNull( componentName );
 		Objects.requireNonNull( languages );
 
@@ -391,7 +393,10 @@ public class NGApplication {
 		return _componentDefinition( componentClass );
 	}
 
-	public NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
+	/**
+	 * FIXME: This should not be static, belongs in an instance of a different class.
+	 */
+	public static NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
 		Objects.requireNonNull( name, "No name provided for dynamic element creation." );
 
 		final Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
