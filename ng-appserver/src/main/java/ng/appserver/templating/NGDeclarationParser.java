@@ -352,24 +352,30 @@ public class NGDeclarationParser {
 	}
 
 	private static Map<String, String> _rawDeclarationsWithoutComment( String declarationStr ) {
-		Map<String, String> declarations = new HashMap<>();
-		StringBuilder declarationWithoutCommentBuffer = new StringBuilder( 100 );
-		StringTokenizer tokenizer = new StringTokenizer( declarationStr, "{", true );
+		final Map<String, String> declarations = new HashMap<>();
+		final StringBuilder declarationWithoutCommentBuffer = new StringBuilder( 100 );
+		final StringTokenizer tokenizer = new StringTokenizer( declarationStr, "{", true );
+
 		try {
 			while( tokenizer.hasMoreTokens() ) {
 				String token = tokenizer.nextToken( "{" );
+
 				if( token.equals( "{" ) ) {
 					token = tokenizer.nextToken( "}" );
+
 					if( token.equals( "}" ) ) {
 						token = "";
 					}
 					else {
 						tokenizer.nextToken();
 					}
+
 					String declarationWithoutComment = declarationWithoutCommentBuffer.toString();
+
 					if( declarationWithoutComment.startsWith( ";" ) ) {
 						declarationWithoutComment = declarationWithoutComment.substring( 1 );
 					}
+
 					declarations.put( declarationWithoutComment.trim(), "{" + token + "}" );
 					declarationWithoutCommentBuffer.setLength( 0 );
 				}
@@ -381,6 +387,7 @@ public class NGDeclarationParser {
 		catch( NoSuchElementException e ) {
 			logger.debug( "Failed to parse.", e );
 		}
+
 		return declarations;
 	}
 
