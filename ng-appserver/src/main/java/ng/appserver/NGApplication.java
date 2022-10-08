@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -168,7 +169,7 @@ public class NGApplication {
 		Objects.requireNonNull( componentClass, "'componentClass' must not be null. I can't create components from nothing." );
 		Objects.requireNonNull( componentClass, "'context' must not be null. What's life without context?" );
 
-		final NGComponentDefinition definition = _componentDefinition( componentClass );
+		final NGComponentDefinition definition = _componentDefinition( componentClass, Collections.emptyList() );
 
 		if( definition == null ) {
 			throw new RuntimeException( "No such component definition: " + componentClass );
@@ -374,8 +375,9 @@ public class NGApplication {
 	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
 	 * FIXME: This should not be static, belongs in an instance of a different class.
 	 */
-	private static NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass ) {
+	private static NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass, final List<String> languages ) {
 		Objects.requireNonNull( componentClass );
+		Objects.requireNonNull( languages );
 
 		return new NGComponentDefinition( componentClass );
 	}
@@ -392,7 +394,7 @@ public class NGApplication {
 		Objects.requireNonNull( languages );
 
 		final Class<? extends NGComponent> componentClass = _NGUtilities.classWithName( componentName );
-		return _componentDefinition( componentClass );
+		return _componentDefinition( componentClass, languages );
 	}
 
 	/**
