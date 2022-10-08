@@ -397,31 +397,39 @@ public class NGApplication {
 
 	/**
 	 * FIXME: This should not be static, belongs in an instance of a different class.
+	 * FIXME: If we're going to introduce namespaces, this would be the place
 	 */
 	public static NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
 		Objects.requireNonNull( name );
 		Objects.requireNonNull( associations );
 
+		// First we locate the class of the element we're going to render.
+		// FIXME: Starting out here will not be compatible with classless components
 		final Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
 
-		NGElement elementInstance = null;
+		if( elementClass == null ) {
+			throw new IllegalArgumentException( "Element class '%s' not found".formatted( name ) );
+		}
 
-		// First we try to locate a DynamicElement class
-		if( elementClass != null && NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
+		// First we check if this is a dynmic element
+		if( NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
 			final Class<?>[] params = { String.class, Map.class, NGElement.class };
 			final Object[] arguments = { name, associations, contentTemplate };
-			elementInstance = _NGUtilities.instantiateObject( elementClass, params, arguments );
+			return _NGUtilities.instantiateObject( elementClass, params, arguments );
 		}
 
-		// If no element is found, we move on to creating a component instead
-		if( elementInstance == null ) {
+		// If it's not an element, let's move on to creating a component reference instead
+		if( NGComponent.class.isAssignableFrom( elementClass ) ) {
 			final NGComponentDefinition componentDefinition = _componentDefinition( name, languages );
 
-			if( componentDefinition != null ) {
-				elementInstance = componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
+			if( componentDefinition == null ) {
+				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
 			}
+
+			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 
-		return elementInstance;
+		// We should never end up here unless we got an incorrect/non-existent element name
+		throw new IllegalArgumentException( "I could not construct a dynamic element named '%s'".formatted( name ) );
 	}
 }
