@@ -41,10 +41,6 @@ public class NGDeclarationParser {
 		return parseDeclarationsWithoutComments( strWithoutComments );
 	}
 
-	public static void main( String[] args ) {
-		System.out.println( _removeOldStyleCommentsFromString( "/*smu\nHaha*/" ) );
-	}
-
 	/**
 	 * Strips old style comments from the declaration string.
 	 * "Old style comments" start with slash-asterisk and end with asterisk-slash.
