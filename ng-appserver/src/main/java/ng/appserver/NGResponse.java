@@ -21,6 +21,9 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 */
 	private List<NGCookie> _cookies = new ArrayList<>();
 
+	/**
+	 * Creates an empty NGResponse with status 200
+	 */
 	public NGResponse() {}
 
 	public NGResponse( final byte[] bytes, final int status ) {
