@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.privates.NGUtils;
+import ng.appserver.privates.NGResourceLoader;
 
 /**
  * Handles properties loading
@@ -66,7 +66,7 @@ public class NGProperties {
 	 * FIXME: We need to watch the properties file for changes
 	 */
 	private Map<String, String> loadDefaultProperties() {
-		final Optional<byte[]> propertyBytes = NGUtils.readAppResource( "Properties" );
+		final Optional<byte[]> propertyBytes = NGResourceLoader.readAppResource( "Properties" );
 
 		if( !propertyBytes.isPresent() ) {
 			logger.warn( "No default properties file found" );

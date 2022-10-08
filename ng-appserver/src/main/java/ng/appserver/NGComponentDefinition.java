@@ -10,7 +10,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.privates.NGUtils;
+import ng.appserver.privates.NGResourceLoader;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGHTMLFormatException;
 import ng.appserver.templating.NGTemplateParser;
@@ -83,7 +83,7 @@ public class NGComponentDefinition {
 			// If that fails, let's go for the single file html template
 			// FIXME: this is not a good way to check for this. Check for existence of files and determine heuristics from there
 			if( htmlTemplateString.isEmpty() && wodString.isEmpty() ) {
-				final Optional<byte[]> htmlTemplate = NGUtils.readComponentResource( name() + ".html" );
+				final Optional<byte[]> htmlTemplate = NGResourceLoader.readComponentResource( name() + ".html" );
 
 				if( htmlTemplate.isPresent() ) {
 					htmlTemplateString = new String( htmlTemplate.get(), StandardCharsets.UTF_8 );
@@ -125,7 +125,7 @@ public class NGComponentDefinition {
 
 		final String htmlTemplateFilename = templateName + ".wo/" + templateName + "." + extension;
 
-		final Optional<byte[]> templateBytes = NGUtils.readComponentResource( htmlTemplateFilename );
+		final Optional<byte[]> templateBytes = NGResourceLoader.readComponentResource( htmlTemplateFilename );
 
 		if( templateBytes.isEmpty() ) {
 			logger.warn( String.format( "Template file '%s.%s' not found", templateName, extension ) );

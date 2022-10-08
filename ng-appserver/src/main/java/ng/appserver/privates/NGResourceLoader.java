@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * Utilities for reading resources
  */
 
-public class NGUtils {
+public class NGResourceLoader {
 
 	/**
 	 * Name of the folder that stores application resources
@@ -90,7 +90,7 @@ public class NGUtils {
 
 			logger.debug( "Reading resourcePath {} ", resourcePath );
 
-			try( final InputStream resourceAsStream = NGUtils.class.getResourceAsStream( resourcePath )) {
+			try( final InputStream resourceAsStream = NGResourceLoader.class.getResourceAsStream( resourcePath )) {
 
 				if( resourceAsStream == null ) {
 					return Optional.empty();

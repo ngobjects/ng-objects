@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.privates.NGUtils;
+import ng.appserver.privates.NGResourceLoader;
 
 /**
  * Experimental implementation of the resource manager.
@@ -45,12 +45,12 @@ public class NGResourceManager {
 
 			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
 			if( resource == null ) {
-				resource = NGUtils.readWebserverResource( resourceName );
+				resource = NGResourceLoader.readWebserverResource( resourceName );
 				_webserverResourceCache.put( resourceName, resource );
 			}
 		}
 		else {
-			resource = NGUtils.readWebserverResource( resourceName );
+			resource = NGResourceLoader.readWebserverResource( resourceName );
 		}
 
 		return resource;

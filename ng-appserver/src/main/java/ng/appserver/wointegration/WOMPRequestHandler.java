@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.NGResponse;
-import ng.appserver.privates.NGUtils;
+import ng.appserver.privates.NGResourceLoader;
 
 /**
  * Responds to wotaskd/Monitor requests for:
@@ -45,7 +45,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 	private NGResponse statistics() {
 		logger.info( "Returning a statistics response. Those are weird..." );
 
-		final Optional<byte[]> bytes = NGUtils.readAppResource( "x-statistics-response.xml" );
+		final Optional<byte[]> bytes = NGResourceLoader.readAppResource( "x-statistics-response.xml" );
 		final byte[] b = bytes.get();
 		return new NGResponse( b, 200 );
 	}
