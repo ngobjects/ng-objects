@@ -2,6 +2,7 @@ package ng.appserver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import ng.appserver.privates.NGParsedURI;
@@ -18,14 +19,21 @@ import ng.appserver.privates.NGParsedURI;
 
 public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 
+	/**
+	 * Storage of dynamic data.
+	 *
+	 * FIXME: This is currently just a regular HashMap, so we're storing resources indefinitely if they're never "popped" (i.e. read)
+	 */
 	private static Map<String, byte[]> _cacheMap = new HashMap<>();
 
-	public static void push( final String id, final byte[] data ) {
-		_cacheMap.put( id, data );
+	// FIXME: Should we allow null resources in the cache?
+	public static void push( final String cacheKey, final byte[] data ) {
+		Objects.requireNonNull( cacheKey );
+		_cacheMap.put( cacheKey, data );
 	}
 
-	public static byte[] pop( final String id ) {
-		return _cacheMap.remove( id );
+	public static byte[] pop( final String cacheKey ) {
+		return _cacheMap.remove( cacheKey );
 	}
 
 	@Override
