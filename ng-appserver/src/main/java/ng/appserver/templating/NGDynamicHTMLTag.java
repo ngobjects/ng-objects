@@ -153,10 +153,7 @@ public class NGDynamicHTMLTag {
 	}
 
 	public NGElement dynamicElement( final Map<String, NGDeclaration> declarations, final List<String> languages ) throws NGDeclarationFormatException, ClassNotFoundException {
-		final String name = name();
-		final NGElement element = template();
-		final NGDeclaration declaration = declarations.get( name );
-		return _elementWithDeclaration( declaration, name, element, languages );
+		return _elementWithDeclaration( declarations.get( name() ), name(), template(), languages );
 	}
 
 	/**
