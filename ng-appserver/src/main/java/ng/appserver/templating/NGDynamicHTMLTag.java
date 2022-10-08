@@ -163,13 +163,13 @@ public class NGDynamicHTMLTag {
 			throw new NGDeclarationFormatException( "Declaration object for dynamic element (or component) named '%s' has no class name.".formatted( name() ) );
 		}
 
-		return _elementWithDeclaration( declaration, name(), template(), languages );
+		return _elementWithDeclaration( declaration, template(), languages );
 	}
 
 	/**
 	 * FIXME: We're kind of duplicating some functionality here from NGApplication. We're going to want to consolidate this with the functionality already found there // Hugi 2022-06-06
 	 */
-	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final String name, final NGElement contentTemplate, final List<String> languages ) throws ClassNotFoundException, NGDeclarationFormatException {
+	private static NGElement _elementWithDeclaration( final NGDeclaration declaration, final NGElement contentTemplate, final List<String> languages ) throws ClassNotFoundException {
 
 		final String typeName = declaration.type();
 
