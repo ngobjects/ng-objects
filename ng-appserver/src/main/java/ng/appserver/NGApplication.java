@@ -252,6 +252,8 @@ public class NGApplication {
 
 	/**
 	 * @return A  response generated when an exception occurs
+	 *
+	 * FIXME: I'm letting this be for now, while we mull over if we wants thing to work without components/templating // Hugi 2022-10-08
 	 */
 	@Deprecated
 	private NGActionResults rawExceptionResponse( final Throwable throwable, final NGContext context ) {
@@ -397,7 +399,8 @@ public class NGApplication {
 	 * FIXME: This should not be static, belongs in an instance of a different class.
 	 */
 	public static NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
-		Objects.requireNonNull( name, "No name provided for dynamic element creation." );
+		Objects.requireNonNull( name );
+		Objects.requireNonNull( associations );
 
 		final Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
 
