@@ -175,28 +175,27 @@ public class NGDynamicHTMLTag {
 
 		if( classForTypeName != null ) {
 			if( NGComponent.class.isAssignableFrom( classForTypeName ) ) {
-				return _componentReferenceWithName( typeName, declaration, contentTemplate, languages );
+				return _componentReferenceWithName( typeName, declaration.associations(), contentTemplate, languages );
 			}
 			else {
-				return _dynamicElementWithName( classForTypeName, declaration, contentTemplate );
+				return _dynamicElementWithName( classForTypeName, declaration.associations(), contentTemplate );
 			}
 		}
 
-		return _componentReferenceWithName( typeName, declaration, contentTemplate, languages );
+		return _componentReferenceWithName( typeName, declaration.associations(), contentTemplate, languages );
 	}
 
-	private static NGElement _componentReferenceWithName( final String componentName, final NGDeclaration declaration, final NGElement contentTemplate, final List<String> languages ) throws ClassNotFoundException {
+	private static NGElement _componentReferenceWithName( final String componentName, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) throws ClassNotFoundException {
 		final NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( componentName, languages );
 
 		if( componentDefinition == null ) {
 			throw new ClassNotFoundException( "Cannot find class or component named \'" + componentName + "\" in runtime or in a loadable bundle" );
 		}
 
-		final Map<String, NGAssociation> associations = declaration.associations();
 		return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 	}
 
-	private static NGElement _dynamicElementWithName( final Class<? extends NGElement> elementClass, final NGDeclaration declaration, final NGElement contentTemplate ) {
-		return NGApplication/*.application()*/.dynamicElementWithName( elementClass.getName(), declaration.associations(), contentTemplate, Collections.emptyList() );
+	private static NGElement _dynamicElementWithName( final Class<? extends NGElement> elementClass, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		return NGApplication/*.application()*/.dynamicElementWithName( elementClass.getName(), associations, contentTemplate, Collections.emptyList() );
 	}
 }
