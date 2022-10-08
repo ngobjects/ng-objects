@@ -404,14 +404,14 @@ public class NGApplication {
 		Objects.requireNonNull( associations );
 
 		// First we locate the class of the element we're going to render.
-		// FIXME: Starting out here will not be compatible with classless components
 		final Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
 
+		// FIXME: Starting out with this hard stop will not be compatible with classless components // Hugi 2022-10-08
 		if( elementClass == null ) {
 			throw new IllegalArgumentException( "Element class '%s' not found".formatted( name ) );
 		}
 
-		// First we check if this is a dynmic element
+		// First we check if this is a dynamic element
 		if( NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
 			final Class<?>[] params = { String.class, Map.class, NGElement.class };
 			final Object[] arguments = { name, associations, contentTemplate };
