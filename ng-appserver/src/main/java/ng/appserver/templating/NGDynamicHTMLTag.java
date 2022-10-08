@@ -1,6 +1,7 @@
 package ng.appserver.templating;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -199,6 +200,6 @@ public class NGDynamicHTMLTag {
 	}
 
 	private static NGElement _dynamicElementWithName( final Class<? extends NGElement> elementClass, final NGDeclaration declaration, final NGElement contentTemplate ) {
-		return NGApplication/*.application()*/.dynamicElementWithName( elementClass.getName(), declaration.associations(), contentTemplate, null );
+		return NGApplication/*.application()*/.dynamicElementWithName( elementClass.getName(), declaration.associations(), contentTemplate, Collections.emptyList() );
 	}
 }

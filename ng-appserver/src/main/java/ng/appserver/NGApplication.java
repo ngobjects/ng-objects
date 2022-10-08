@@ -402,6 +402,7 @@ public class NGApplication {
 	public static NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
 		Objects.requireNonNull( name );
 		Objects.requireNonNull( associations );
+		Objects.requireNonNull( languages );
 
 		// First we locate the class of the element we're going to render.
 		final Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
