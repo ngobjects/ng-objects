@@ -423,7 +423,7 @@ public class NGApplication {
 
 		// If it's not an element, let's move on to creating a component reference instead
 		if( NGComponent.class.isAssignableFrom( elementClass ) ) {
-			final NGComponentDefinition componentDefinition = _componentDefinition( name, languages );
+			final NGComponentDefinition componentDefinition = _componentDefinition( (Class<? extends NGComponent>)elementClass, languages );
 
 			if( componentDefinition == null ) {
 				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
