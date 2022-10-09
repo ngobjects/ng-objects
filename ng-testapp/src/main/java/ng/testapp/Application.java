@@ -5,7 +5,7 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
-import ng.appserver.privates.NGUtils;
+import ng.appserver.privates.NGResourceLoader;
 import ng.appserver.templating._NGUtilities;
 import ng.testapp.components.ExampleComponent;
 import ng.testapp.components.FormComponent;
@@ -32,7 +32,7 @@ public class Application extends NGApplication {
 
 		routeTable().map( "/response-image", ( request ) -> {
 			NGResponse response = new NGResponse();
-			response.setContentBytes( NGUtils.readWebserverResource( "test-image-4.jpg" ).get() );
+			response.setContentBytes( NGResourceLoader.readWebserverResource( "test-image-4.jpg" ).get() );
 			response.setHeader( "content-type", "image/jpeg" );
 			return response;
 		} );
