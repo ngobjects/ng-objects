@@ -13,8 +13,11 @@ public class NGHTMLParser {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
 
-	private static final int STATE_OUTSIDE = 0;
-	private static final int STATE_INSIDE_COMMENT = 3;
+	private enum ParserState {
+		Outside,
+		InsideComment
+	}
+
 	private static final String JS_START_TAG = "<script";
 	private static final String JS_END_TAG = "</script";
 	private static final String WO_END_TAG = "</wo";
@@ -51,7 +54,7 @@ public class NGHTMLParser {
 
 		final NGStringTokenizer templateTokenizer = new NGStringTokenizer( _unparsedTemplate, "<" );
 		boolean flag = true; // Flag for what?
-		int parserState = STATE_OUTSIDE;
+		ParserState parserState = ParserState.Outside;
 		String token;
 
 		if( _unparsedTemplate.startsWith( "<" ) || !templateTokenizer.hasMoreTokens() ) {
@@ -68,7 +71,7 @@ public class NGHTMLParser {
 				}
 
 				switch( parserState ) {
-				case STATE_OUTSIDE:
+				case Outside:
 					if( token != null ) {
 						if( token.startsWith( ">" ) ) {
 							token = token.substring( 1 );
@@ -128,7 +131,7 @@ public class NGHTMLParser {
 						}
 						else {
 							_contentText.append( '>' );
-							parserState = STATE_INSIDE_COMMENT;
+							parserState = ParserState.InsideComment;
 						}
 					}
 					else {
@@ -137,13 +140,13 @@ public class NGHTMLParser {
 					}
 					break;
 
-				case STATE_INSIDE_COMMENT:
+				case InsideComment:
 					token = templateTokenizer.nextToken( ">" );
 					_contentText.append( token );
 					_contentText.append( '>' );
 					if( token.endsWith( "--" ) ) {
 						didParseComment();
-						parserState = STATE_OUTSIDE;
+						parserState = ParserState.Outside;
 					}
 					break;
 
@@ -151,7 +154,7 @@ public class NGHTMLParser {
 					break;
 				}
 				token = null;
-				if( parserState == STATE_OUTSIDE ) {
+				if( parserState == ParserState.Outside ) {
 					token = templateTokenizer.nextToken( "<" );
 				}
 			}
