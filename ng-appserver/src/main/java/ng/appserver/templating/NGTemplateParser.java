@@ -128,7 +128,8 @@ public class NGTemplateParser {
 			_currentDynamicTag.addChildElement( element );
 		}
 		catch( RuntimeException e ) { // FIXME: Catching RuntimeException feels super weird // Hugi 2022-10-07
-			throw new RuntimeException( "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.".formatted( componentName( _currentDynamicTag ), prettyPrintDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
+			final String templ = "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.";
+			throw new RuntimeException( templ.formatted( componentName( _currentDynamicTag ), prettyPrintDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
 		}
 	}
 
