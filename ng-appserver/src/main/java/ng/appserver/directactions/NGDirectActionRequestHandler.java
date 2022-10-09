@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGForwardException;
 import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.NGResponse;
@@ -42,7 +41,7 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 			return actionResults.generateResponse();
 		}
 		catch( ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
-			throw new NGForwardException( e );
+			throw new RuntimeException( e );
 		}
 	}
 }
