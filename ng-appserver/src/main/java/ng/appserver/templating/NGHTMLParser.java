@@ -35,7 +35,7 @@ public class NGHTMLParser {
 
 	private final NGTemplateParser _parserDelegate;
 	private final String _unparsedTemplate;
-	private final StringBuffer _contentText;
+	private final StringBuilder _contentText;
 	private Map<String, Stack<String>> _stackDict;
 
 	public NGHTMLParser( NGTemplateParser parserDelegate, String unparsedTemplate ) {
@@ -43,7 +43,7 @@ public class NGHTMLParser {
 		Objects.requireNonNull( unparsedTemplate );
 		_parserDelegate = parserDelegate;
 		_unparsedTemplate = unparsedTemplate;
-		_contentText = new StringBuffer( 128 );
+		_contentText = new StringBuilder( 128 );
 	}
 
 	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {

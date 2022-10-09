@@ -144,12 +144,12 @@ public class NGTemplateParser {
 
 	private NGDeclaration parseInlineBindings( final String tag, final int colonIndex ) throws NGHTMLFormatException {
 
-		final StringBuffer keyBuffer = new StringBuffer();
-		final StringBuffer valueBuffer = new StringBuffer();
-		final StringBuffer elementTypeBuffer = new StringBuffer();
+		final StringBuilder keyBuffer = new StringBuilder();
+		final StringBuilder valueBuffer = new StringBuilder();
+		final StringBuilder elementTypeBuffer = new StringBuilder();
 		final Map<String, NGAssociation> associations = new HashMap<>();
 
-		StringBuffer currentBuffer = elementTypeBuffer;
+		StringBuilder currentBuffer = elementTypeBuffer;
 		boolean changeBuffers = false;
 		boolean inQuote = false;
 		int length = tag.length();
@@ -248,7 +248,7 @@ public class NGTemplateParser {
 		return declaration;
 	}
 
-	private static void parseInlineAssociation( final StringBuffer keyBuffer, final StringBuffer valueBuffer, final Map<String, NGAssociation> bindings ) throws NGHTMLFormatException {
+	private static void parseInlineAssociation( final StringBuilder keyBuffer, final StringBuilder valueBuffer, final Map<String, NGAssociation> bindings ) throws NGHTMLFormatException {
 		Objects.requireNonNull( keyBuffer );
 		Objects.requireNonNull( valueBuffer );
 		Objects.requireNonNull( bindings );
