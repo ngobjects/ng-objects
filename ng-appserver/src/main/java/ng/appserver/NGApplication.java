@@ -156,10 +156,14 @@ public class NGApplication {
 	}
 
 	/**
-	 * Return the named component, where [componentName] can be ither the component's simple class name or full class name.
+	 * @return the named component, where [componentName] can be either the component's simple class name or full class name.
 	 */
 	public NGComponent pageWithName( final String componentName, final NGContext context ) {
-		return pageWithName( _NGUtilities.classWithName( componentName ), context );
+		Objects.requireNonNull( componentName, "'componentName' must not be null. I can't create components from nothing." );
+		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
+
+		final NGComponentDefinition definition = _componentDefinition( componentName, Collections.emptyList() );
+		return pageWithName( definition, context );
 	}
 
 	/**
@@ -167,15 +171,19 @@ public class NGApplication {
 	 */
 	public <E extends NGComponent> E pageWithName( final Class<E> componentClass, final NGContext context ) {
 		Objects.requireNonNull( componentClass, "'componentClass' must not be null. I can't create components from nothing." );
-		Objects.requireNonNull( componentClass, "'context' must not be null. What's life without context?" );
+		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
 
 		final NGComponentDefinition definition = _componentDefinition( componentClass, Collections.emptyList() );
+		return (E)pageWithName( definition, context );
+	}
+
+	private NGComponent pageWithName( final NGComponentDefinition definition, final NGContext context ) {
 
 		if( definition == null ) {
-			throw new RuntimeException( "No such component definition: " + componentClass );
+			throw new RuntimeException( "No such component definition: " + definition );
 		}
 
-		E componentInstance = (E)definition.componentInstanceInContext( context );
+		NGComponent componentInstance = definition.componentInstanceInContext( context );
 
 		// FIXME: I'm not sure we should be setting the context's page here. But it works for us for now // Hugi 2022-06-25
 		context.setPage( componentInstance );
