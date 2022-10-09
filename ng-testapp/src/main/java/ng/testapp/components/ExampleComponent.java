@@ -5,7 +5,7 @@ import java.util.List;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
-import ng.appserver.privates.NGUtils;
+import ng.appserver.privates.NGResourceLoader;
 
 public class ExampleComponent extends NGComponent {
 
@@ -44,6 +44,6 @@ public class ExampleComponent extends NGComponent {
 	}
 
 	public byte[] testImage3Data() {
-		return NGUtils.readAppResource( "test-image-3.jpg" ).get();
+		return NGResourceLoader.readAppResource( "test-image-3.jpg" ).get();
 	}
 }

@@ -17,7 +17,7 @@ import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
-import ng.appserver.privates.NGUtils;
+import ng.appserver.privates.NGResourceLoader;
 
 public class ProgrammaticDynamicComponent extends NGComponent {
 
@@ -91,7 +91,7 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 		g.children().add( hyperlink );
 
 		final Map<String, NGAssociation> image4Ass = new HashMap<>();
-		image4Ass.put( "data", new NGConstantValueAssociation( NGUtils.readWebserverResource( "test-image-4.jpg" ).get() ) );
+		image4Ass.put( "data", new NGConstantValueAssociation( NGResourceLoader.readWebserverResource( "test-image-4.jpg" ).get() ) );
 		image4Ass.put( "width", new NGConstantValueAssociation( 300 ) );
 		hyperlink.children().add( new NGImage( "wat?", image4Ass, null ) );
 
