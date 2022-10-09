@@ -270,7 +270,7 @@ public class NGHTMLParser {
 	}
 
 	private void didParseText() {
-		logger.debug( "Parsed Text (" + _contentText.length() + ") : " + _contentText );
+		logger.debug( "Parsed Text ({}) : {}", _contentText.length(), _contentText );
 
 		if( _contentText.length() > 0 ) {
 			_parserDelegate.didParseText( _contentText.toString() );
@@ -279,7 +279,7 @@ public class NGHTMLParser {
 	}
 
 	private void didParseOpeningWebObjectTag() throws NGHTMLFormatException {
-		logger.debug( "Parsed Opening WebObject (" + _contentText.length() + ") : " + _contentText );
+		logger.debug( "Parsed Opening WebObject ({}) : {}", _contentText.length(), _contentText );
 
 		if( _contentText.length() > 0 ) {
 			_parserDelegate.didParseOpeningWebObjectTag( _contentText.toString() );
@@ -288,7 +288,7 @@ public class NGHTMLParser {
 	}
 
 	private void didParseClosingWebObjectTag() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
-		logger.debug( "Parsed Closing WebObject (" + _contentText.length() + ") : " + _contentText );
+		logger.debug( "Parsed Closing WebObject ({}) : {}", _contentText.length(), _contentText );
 
 		if( _contentText.length() > 0 ) {
 			_parserDelegate.didParseClosingWebObjectTag( _contentText.toString() );
@@ -297,7 +297,7 @@ public class NGHTMLParser {
 	}
 
 	private void didParseComment() {
-		logger.debug( "Parsed Comment (" + _contentText.length() + ") : " + _contentText );
+		logger.debug( "Parsed Comment ({}) : {}", _contentText.length(), _contentText );
 
 		if( _contentText.length() > 0 ) {
 			_parserDelegate.didParseComment( _contentText.toString() );
