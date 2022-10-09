@@ -1,5 +1,7 @@
 package ng.appserver;
 
+import java.util.Objects;
+
 import ng.kvc.NGKeyValueCodingAdditions;
 
 public class NGKeyValueAssociation extends NGAssociation {
@@ -11,12 +13,14 @@ public class NGKeyValueAssociation extends NGAssociation {
 	}
 
 	@Override
-	public Object valueInComponent( final NGComponent aComponent ) {
-		return NGKeyValueCodingAdditions.Utility.valueForKeyPath( aComponent, keyPath() );
+	public Object valueInComponent( final NGComponent component ) {
+		Objects.requireNonNull( component );
+		return NGKeyValueCodingAdditions.Utility.valueForKeyPath( component, keyPath() );
 	}
 
 	@Override
 	public void setValue( Object value, NGComponent component ) {
+		Objects.requireNonNull( component );
 		NGKeyValueCodingAdditions.Utility.takeValueForKeyPath( component, value, _keyPath );
 	}
 
