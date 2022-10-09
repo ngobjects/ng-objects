@@ -401,8 +401,7 @@ public class NGApplication {
 		Objects.requireNonNull( componentName );
 		Objects.requireNonNull( languages );
 
-		final Class<? extends NGComponent> componentClass = _NGUtilities.classWithName( componentName );
-		return _componentDefinition( componentClass, languages );
+		return new NGComponentDefinition( componentName );
 	}
 
 	/**
@@ -415,11 +414,17 @@ public class NGApplication {
 		Objects.requireNonNull( languages );
 
 		// First we locate the class of the element we're going to render.
-		final Class<? extends NGElement> elementClass = _NGUtilities.classWithName( name );
+		final Class<? extends NGElement> elementClass = _NGUtilities.classWithNameNullIfNotFound( name );
 
-		// FIXME: Starting out with this hard stop will not be compatible with classless components // Hugi 2022-10-08
+		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
-			throw new IllegalArgumentException( "Element class '%s' not found".formatted( name ) );
+			final NGComponentDefinition componentDefinition = _componentDefinition( name, languages );
+
+			if( componentDefinition == null ) {
+				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
+			}
+
+			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 
 		// First we check if this is a dynamic element

@@ -13,7 +13,7 @@ public class NGComponentReference extends NGDynamicElement {
 	/**
 	 * Holds a reference to the fully qualified class name of the component we're going to render
 	 */
-	private final String _fullyQualifiedClassName;
+	private final String _componentName;
 
 	/**
 	 * The bindings being passed from the parent component to the component being rendered.
@@ -29,11 +29,11 @@ public class NGComponentReference extends NGDynamicElement {
 	 */
 	private final NGElement _contentTemplate;
 
-	public NGComponentReference( final String fullyQualifiedComponentClassName, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+	public NGComponentReference( final String componentName, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		super( null, null, null );
-		Objects.requireNonNull( fullyQualifiedComponentClassName );
+		Objects.requireNonNull( componentName );
 		Objects.requireNonNull( associations );
-		_fullyQualifiedClassName = fullyQualifiedComponentClassName;
+		_componentName = componentName;
 		_associations = associations;
 		_contentTemplate = contentTemplate;
 	}
@@ -46,7 +46,7 @@ public class NGComponentReference extends NGDynamicElement {
 
 		// Load up our component's definition
 		// FIXME: We construct a component reference from a component definition. Shouldn't we have cached the definition at that stage?
-		final NGComponentDefinition newComponent = NGApplication.application()._componentDefinition( _fullyQualifiedClassName, Collections.emptyList() );
+		final NGComponentDefinition newComponent = NGApplication.application()._componentDefinition( _componentName, Collections.emptyList() );
 
 		// Create an instance of the component
 		// FIXME: In this case we might want to reuse instances of the components are stateless. But stateless components are not implemented yet, so...

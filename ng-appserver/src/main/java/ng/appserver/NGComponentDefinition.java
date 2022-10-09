@@ -14,6 +14,7 @@ import ng.appserver.privates.NGResourceLoader;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGHTMLFormatException;
 import ng.appserver.templating.NGTemplateParser;
+import ng.appserver.templating._NGUtilities;
 
 public class NGComponentDefinition {
 
@@ -25,6 +26,14 @@ public class NGComponentDefinition {
 	private final Class<? extends NGComponent> _componentClass;
 
 	/**
+	 * The canonical name of the component definition.
+	 *
+	 * - In the case of class-based components, this will be the component's fully qualified class name
+	 * - In the case of classless component, this will be the template's filename (excluding the file's suffix)
+	 */
+	private final String _name;
+
+	/**
 	 * Construct a new component definition based on the given class.
 	 *
 	 * FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
@@ -32,21 +41,32 @@ public class NGComponentDefinition {
 	public NGComponentDefinition( final Class<? extends NGComponent> componentClass ) {
 		Objects.requireNonNull( componentClass );
 		_componentClass = componentClass;
+		_name = _componentClass.getSimpleName();
+	}
+
+	/**
+	 * Construct a new component definition based on the given class.
+	 *
+	 * FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
+	 */
+	public NGComponentDefinition( final String componentName ) {
+		Objects.requireNonNull( componentName );
+		Class<? extends NGComponent> clazz = _NGUtilities.classWithNameNullIfNotFound( componentName );
+
+		if( clazz == null ) {
+			clazz = NGComponent.class;
+		}
+
+		_componentClass = clazz;
+		_name = componentName;
 	}
 
 	/**
 	 * The cached name of this component definition. Corresponds to the component class's simpleName
 	 */
 	private String name() {
-		return _componentClass.getSimpleName();
+		return _name;
 	};
-
-	/**
-	 * The fully qualified class name of this component definition.
-	 */
-	private String className() {
-		return _componentClass.getName();
-	}
 
 	/**
 	 * @return A new component of the given class in the given context
@@ -68,7 +88,7 @@ public class NGComponentDefinition {
 	 * @return A new component reference to insert into a template being rendered
 	 */
 	public NGComponentReference componentReferenceWithAssociations( final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		return new NGComponentReference( className(), associations, contentTemplate );
+		return new NGComponentReference( name(), associations, contentTemplate );
 	}
 
 	/**

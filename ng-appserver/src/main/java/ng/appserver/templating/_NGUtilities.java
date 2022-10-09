@@ -97,6 +97,18 @@ public class _NGUtilities {
 	}
 
 	/**
+	 * FIXME: This is horrible
+	 */
+	public static Class classWithNameNullIfNotFound( String classNameToSearchFor ) {
+		try {
+			return classWithName( classNameToSearchFor );
+		}
+		catch( RuntimeException e ) {
+			return null;
+		}
+	}
+
+	/**
 	 * Maps tag names to their dynamic element names
 	 *
 	 * FIXME: Definitely not the final home of this functionality // Hugi 2022-04-23
