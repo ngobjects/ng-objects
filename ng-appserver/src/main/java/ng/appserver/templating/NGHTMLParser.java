@@ -26,22 +26,30 @@ public class NGHTMLParser {
 	private static final String WEBOBJECT_START_TAG = "<webobject";
 	private static final String WO_COLON_END_TAG = "</wo:";
 	private static final String WO_COLON_START_TAG = "<wo:";
+	private static final String XML_CDATA_START_TAG = "<![CDATA[";
 
 	/**
 	 * This is only used for tags that are "dynamified" when _parseStandardTags is set to true.
 	 * This value will get prepended to the tag, NGTemplateParser will then look for it and use it as a hint that it needs to crete an NGGenericContainer element for it with it's bindings.
 	 */
 	public static final String WO_REPLACEMENT_MARKER = "__REPL__";
-	private static final String XML_CDATA_START_TAG = "<![CDATA[";
 
+	/**
+	 * Indicates that we want to parse the attributes of "standard tags", i.e. non dynamic tags for dynamic bindings
+	 * This isn't really a feature I want to support
+	 */
 	private static final boolean _parseStandardTags = false;
+
+	/**
+	 * Only used by the "dynamification of standard tags" feature
+	 */
+	private Map<String, Stack<String>> _stackDict;
 
 	private final NGTemplateParser _parserDelegate;
 	private final String _unparsedTemplate;
 	private final StringBuilder _contentText;
-	private Map<String, Stack<String>> _stackDict;
 
-	public NGHTMLParser( NGTemplateParser parserDelegate, String unparsedTemplate ) {
+	public NGHTMLParser( final NGTemplateParser parserDelegate, final String unparsedTemplate ) {
 		Objects.requireNonNull( parserDelegate );
 		Objects.requireNonNull( unparsedTemplate );
 		_parserDelegate = parserDelegate;
