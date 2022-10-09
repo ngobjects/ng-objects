@@ -53,7 +53,11 @@ public class Application extends NGApplication {
 			return pageWithName( FormComponent.class, request.context() );
 		} );
 
-		routeTable().map( "/smu", ( request ) -> {
+		routeTable().map( "/single-file-classless", ( request ) -> {
+			return pageWithName( "SingleFileClasslessComponent", request.context() );
+		} );
+
+		routeTable().map( "/single-file", ( request ) -> {
 			return pageWithName( SingleFileComponent.class, request.context() );
 		} );
 
