@@ -83,7 +83,7 @@ public class NGHTMLParser {
 
 					// parses non wo: tags for dynamic bindings
 					if( _parseStandardTags ) {
-						token = checkToken( token );
+						token = checkStandardTagForInlineBindings( token );
 					}
 
 					final String tagLowerCase = token.toLowerCase();
@@ -178,11 +178,14 @@ public class NGHTMLParser {
 	}
 
 	/**
-	 * Checks the current token for dynamic inline bindings
+	 * This method is invoked to parse dynamic bindings in standard tags.
 	 *
-	 * @return a rewritten token if it has an inline binding or a closing tag, if it belongs to a rewritten token
+	 * FIXME: In the original Wonder version, this would catch any exception that happened and return the original token.
+	 * I think we should rather try to fix the exceptions as they occur (that is, if we decide to actually support this feature)
+	 *
+	 * @return A rewritten token if it has an inline binding or a closing tag, if it belongs to a rewritten token
 	 */
-	private String checkToken( String token ) {
+	private String checkStandardTagForInlineBindings( String token ) {
 
 		if( token == null ) {
 			return token;
