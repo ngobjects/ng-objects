@@ -198,66 +198,56 @@ public class NGHTMLParser {
 			return token;
 		}
 
-		final String original = new String( token );
+		String[] tokenParts = token.split( " " );
+		String tokenPart = tokenParts[0].substring( 1 );
 
-		try {
-			String[] tokenParts = token.split( " " );
-			String tokenPart = tokenParts[0].substring( 1 );
-
-			if( (token.indexOf( "\"$" ) != -1 || token.indexOf( "\"~" ) != -1) && token.startsWith( "<" ) ) {
-				// we assume a dynamic tag
-				token = token.replaceAll( tokenParts[0], "<wo:" + WO_REPLACEMENT_MARKER + tokenPart );
-				if( logger.isDebugEnabled() ) {
-					logger.debug( "Rewritten <" + tokenPart + " ...> tag to <wo:" + tokenPart + " ...>" );
-				}
-
-				if( !token.endsWith( "/" ) ) {
-					// no need to keep information for self closing tags
-					Stack<String> stack = _stackDict.get( tokenPart );
-
-					if( stack == null ) {
-						// create one and push a marker
-						stack = new Stack<>();
-						stack.push( WO_REPLACEMENT_MARKER );
-						_stackDict.put( tokenPart, stack );
-					}
-					else {
-						// just push a marker
-						stack.push( WO_REPLACEMENT_MARKER );
-						_stackDict.put( tokenPart, stack );
-					}
-				}
+		if( (token.indexOf( "\"$" ) != -1 || token.indexOf( "\"~" ) != -1) && token.startsWith( "<" ) ) {
+			// we assume a dynamic tag
+			token = token.replaceAll( tokenParts[0], "<wo:" + WO_REPLACEMENT_MARKER + tokenPart );
+			if( logger.isDebugEnabled() ) {
+				logger.debug( "Rewritten <" + tokenPart + " ...> tag to <wo:" + tokenPart + " ...>" );
 			}
-			else if( !token.startsWith( "</" ) && _stackDict.containsKey( tokenPart ) ) {
-				// standard opening tag
-				final Stack<String> stack = _stackDict.get( tokenPart );
 
-				if( stack != null ) {
-					stack.push( tokenPart );
+			if( !token.endsWith( "/" ) ) {
+				// no need to keep information for self closing tags
+				Stack<String> stack = _stackDict.get( tokenPart );
+
+				if( stack == null ) {
+					// create one and push a marker
+					stack = new Stack<>();
+					stack.push( WO_REPLACEMENT_MARKER );
+					_stackDict.put( tokenPart, stack );
+				}
+				else {
+					// just push a marker
+					stack.push( WO_REPLACEMENT_MARKER );
 					_stackDict.put( tokenPart, stack );
 				}
 			}
-			else if( token.startsWith( "</" ) ) {
-				// closing tag
-				final Stack<String> stack = _stackDict.get( tokenParts[0].substring( 2 ) );
+		}
+		else if( !token.startsWith( "</" ) && _stackDict.containsKey( tokenPart ) ) {
+			// standard opening tag
+			final Stack<String> stack = _stackDict.get( tokenPart );
 
-				if( stack != null && !stack.empty() ) {
-					final String stackContent = stack.pop();
-
-					if( stackContent.equals( WO_REPLACEMENT_MARKER ) ) {
-						if( logger.isDebugEnabled() ) {
-							logger.debug( "Replaced end tag for '" + tokenParts[0].substring( 2 ) + "' with 'wo' endtag" );
-						}
-						token = "</wo";
-					}
-				}
+			if( stack != null ) {
+				stack.push( tokenPart );
+				_stackDict.put( tokenPart, stack );
 			}
 		}
-		catch( Exception e ) {
-			// we print the exception and return the token unchanged
-			// return original;
-			// FIXME: Why not just throw here? // Hugi 2022-07-29
-			throw new RuntimeException( "FIXME: Why not just throw here? Let's see what it does // Hugi 2022-07-29", e );
+		else if( token.startsWith( "</" ) ) {
+			// closing tag
+			final Stack<String> stack = _stackDict.get( tokenParts[0].substring( 2 ) );
+
+			if( stack != null && !stack.empty() ) {
+				final String stackContent = stack.pop();
+
+				if( stackContent.equals( WO_REPLACEMENT_MARKER ) ) {
+					if( logger.isDebugEnabled() ) {
+						logger.debug( "Replaced end tag for '" + tokenParts[0].substring( 2 ) + "' with 'wo' endtag" );
+					}
+					token = "</wo";
+				}
+			}
 		}
 
 		return token;
