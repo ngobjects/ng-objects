@@ -393,7 +393,6 @@ public class NGApplication {
 	/**
 	 * @return The componentDefinition corresponding to the named WOComponent
 	 *
-	 * FIXME: Kind of unsupported. We really only want to allow components that have a class, and in these cases we should have loaded the component's class earlier in the process.
 	 * FIXME: Languages aren't supported either yet, but I'm including the parameter while I consider what to do about it.
 	 * FIXME: This should not be static, belongs in an instance of a different class.
 	 */
