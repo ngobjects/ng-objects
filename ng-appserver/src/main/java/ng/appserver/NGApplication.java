@@ -279,20 +279,20 @@ public class NGApplication {
 	private NGActionResults rawExceptionResponse( final Throwable throwable, final NGContext context ) {
 		final StringBuilder b = new StringBuilder();
 		b.append( "<style>body{ font-family: sans-serif}</style>" );
-		b.append( String.format( "<h3>An exception occurred</h3>" ) );
-		b.append( String.format( "<h1>%s</h1>", throwable.getClass().getName() ) );
-		b.append( String.format( "<h2>%s</h2>", throwable.getMessage() ) );
+		b.append( "<h3>An exception occurred</h3>" );
+		b.append( "<h1>%s</h1>".formatted( throwable.getClass().getName() ) );
+		b.append( "<h2>%s</h2>".formatted( throwable.getMessage() ) );
 
 		if( throwable.getCause() != null ) {
-			b.append( String.format( "<h3>Cause: %s</h3>", throwable.getCause().getMessage() ) );
+			b.append( "<h3>Cause: %s</h3>".formatted( throwable.getCause().getMessage() ) );
 		}
 
 		for( StackTraceElement ste : throwable.getStackTrace() ) {
 			final String packageNameOnly = ste.getClassName().substring( 0, ste.getClassName().lastIndexOf( "." ) );
 			final String simpleClassNameOnly = ste.getClassName().substring( ste.getClassName().lastIndexOf( "." ) + 1 );
 
-			b.append( String.format( "<span style=\"display: inline-block; min-width: 300px\">%s</span>", packageNameOnly ) );
-			b.append( String.format( "<span style=\"display: inline-block; min-width: 500px\">%s</span>", simpleClassNameOnly + "." + ste.getMethodName() + "()" ) );
+			b.append( "<span style=\"display: inline-block; min-width: 300px\">%s</span>".formatted( packageNameOnly ) );
+			b.append( "<span style=\"display: inline-block; min-width: 500px\">%s</span>".formatted( simpleClassNameOnly + "." + ste.getMethodName() + "()" ) );
 			b.append( ste.getFileName() + ":" + ste.getLineNumber() );
 			b.append( "<br>" );
 		}
