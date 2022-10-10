@@ -88,8 +88,15 @@ public class _NGUtilities {
 
 		// If the class isn't found by simple name, let's try constructing from a fully qualified class name.
 		try {
-			logger.warn( "Did not find class '{}'. Trying Class.forName()", classNameToSearchFor );
+			logger.debug( "Did not find class '{}'. Trying Class.forName()", classNameToSearchFor );
 			return Class.forName( classNameToSearchFor );
+		}
+		catch( ClassNotFoundException e ) {}
+
+		// FIXME: Finally, and this is horrible, we're going to look for a component class inside the same package as the application class // Hugi 2022-10-10
+		try {
+			final String className = NGApplication.application().getClass().getPackageName() + "." + classNameToSearchFor;
+			return Class.forName( className );
 		}
 		catch( ClassNotFoundException e ) {}
 
