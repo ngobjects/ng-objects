@@ -156,7 +156,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * @return the named component, where [componentName] can be either the component's simple class name or full class name.
+	 * @return The named component, where [componentName] can be either the component's simple class name or full class name.
 	 */
 	public NGComponent pageWithName( final String componentName, final NGContext context ) {
 		Objects.requireNonNull( componentName, "'componentName' must not be null. I can't create components from nothing." );
@@ -177,19 +177,31 @@ public class NGApplication {
 		return (E)pageWithName( definition, context );
 	}
 
-	private NGComponent pageWithName( final NGComponentDefinition definition, final NGContext context ) {
+	/**
+	 * @return A new instance of [componentDefinition] in the given [context]
+	 */
+	private NGComponent pageWithName( final NGComponentDefinition componentDefinition, final NGContext context ) {
 
-		if( definition == null ) {
-			throw new RuntimeException( "No such component definition: " + definition );
+		// FIXME: componentDefinition will probably never be null // Hugi 2022-10-10
+		if( componentDefinition == null ) {
+			throw new RuntimeException( "No such component definition: " + componentDefinition );
 		}
 
-		NGComponent componentInstance = definition.componentInstanceInContext( context );
+		final NGComponent componentInstance = componentDefinition.componentInstanceInContext( context );
 
+		// Allow the context to keep track of the actual page
 		context.setPage( componentInstance );
+
+		// Let the context know that this is the component we're currently rendering
+		context.setCurrentComponent( componentInstance );
 
 		return componentInstance;
 	}
 
+	/**
+	 * @return The global NGApplication instance.
+	 * I really do not want a global instance in the future, but I'm keeping it around for now as it's comforting while working with familiar patterns.
+	 */
 	@Deprecated
 	public static NGApplication application() {
 		return _application;
@@ -418,6 +430,7 @@ public class NGApplication {
 		if( elementClass == null ) {
 			final NGComponentDefinition componentDefinition = _componentDefinition( name, languages );
 
+			// FIXME: componentDefinition will probably never be null // Hugi 2022-10-10
 			if( componentDefinition == null ) {
 				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
 			}
@@ -436,6 +449,7 @@ public class NGApplication {
 		if( NGComponent.class.isAssignableFrom( elementClass ) ) {
 			final NGComponentDefinition componentDefinition = _componentDefinition( (Class<? extends NGComponent>)elementClass, languages );
 
+			// FIXME: componentDefinition will probably never be null // Hugi 2022-10-10
 			if( componentDefinition == null ) {
 				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
 			}
