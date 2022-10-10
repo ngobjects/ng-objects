@@ -185,7 +185,6 @@ public class NGApplication {
 
 		NGComponent componentInstance = definition.componentInstanceInContext( context );
 
-		// FIXME: I'm not sure we should be setting the context's page here. But it works for us for now // Hugi 2022-06-25
 		context.setPage( componentInstance );
 
 		return componentInstance;
