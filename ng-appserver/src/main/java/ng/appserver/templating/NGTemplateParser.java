@@ -300,20 +300,23 @@ public class NGTemplateParser {
 		return name != null && name.startsWith( "_" ) && name.length() > 1 && name.indexOf( '_', 1 ) != -1;
 	}
 
+	/**
+	 * @return This goofiness reparses back out inline binding names
+	 */
 	private static String componentName( final NGDynamicHTMLTag tag ) {
 		Objects.requireNonNull( tag );
 
 		String name = tag.name();
 
-		// This goofiness reparses back out inline binding names
 		if( name == null ) {
-			name = "[none]";
+			return "[none]";
 		}
-		else if( isInline( tag ) ) {
+
+		if( isInline( tag ) ) {
 			int secondUnderscoreIndex = name.indexOf( '_', 1 );
 
 			if( secondUnderscoreIndex != -1 ) {
-				name = name.substring( 1, secondUnderscoreIndex );
+				return name.substring( 1, secondUnderscoreIndex );
 			}
 		}
 
@@ -339,6 +342,7 @@ public class NGTemplateParser {
 			final String key = keyEnum.nextElement();
 			final NGAssociation association = declaration.associations().get( key );
 
+			// FIXME: Replace with some yummy pattern matching once that's out of preview // Hugi 2022-10-10
 			if( association instanceof NGKeyValueAssociation ass ) {
 				sb.append( key + "=" + ass.keyPath() );
 			}
