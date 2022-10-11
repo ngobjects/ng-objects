@@ -337,13 +337,13 @@ public class NGTemplateParser {
 
 		while( keyEnum.hasMoreElements() ) {
 			final String key = keyEnum.nextElement();
-			final Object association = declaration.associations().get( key );
+			final NGAssociation association = declaration.associations().get( key );
 
-			if( association instanceof NGKeyValueAssociation ) {
-				sb.append( key + "=" + ((NGKeyValueAssociation)association).keyPath() );
+			if( association instanceof NGKeyValueAssociation ass ) {
+				sb.append( key + "=" + ass.keyPath() );
 			}
-			else if( association instanceof NGConstantValueAssociation ) {
-				sb.append( key + "='" + ((NGConstantValueAssociation)association).valueInComponent( null ) + "'" );
+			else if( association instanceof NGConstantValueAssociation ass ) {
+				sb.append( key + "='" + ass.valueInComponent( null ) + "'" );
 			}
 			else {
 				sb.append( key + "=" + association );
