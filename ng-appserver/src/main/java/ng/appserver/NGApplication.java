@@ -20,7 +20,7 @@ import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating._NGUtilities;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
-import x.junk.NGExceptionPage;
+import x.junk.NGExceptionPageDevelopment;
 
 public class NGApplication {
 
@@ -265,7 +265,7 @@ public class NGApplication {
 	 * FIXME: Allow for different exception responses for production/development environments // Hugi 2022-04-20
 	 */
 	public NGActionResults exceptionResponse( final Throwable throwable, final NGContext context ) {
-		final NGExceptionPage nextPage = pageWithName( NGExceptionPage.class, context );
+		final NGExceptionPageDevelopment nextPage = pageWithName( NGExceptionPageDevelopment.class, context );
 		nextPage.setException( throwable );
 		return nextPage;
 	}

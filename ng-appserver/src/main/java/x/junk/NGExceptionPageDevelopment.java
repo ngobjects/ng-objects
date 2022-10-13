@@ -25,9 +25,9 @@ import ng.appserver.NGContext;
  * When in development mode, it will display the java code where exception occurred (highlighting the line containing the error)
  */
 
-public class NGExceptionPage extends NGComponent {
+public class NGExceptionPageDevelopment extends NGComponent {
 
-	private static final Logger logger = LoggerFactory.getLogger( NGExceptionPage.class );
+	private static final Logger logger = LoggerFactory.getLogger( NGExceptionPageDevelopment.class );
 
 	/**
 	 * Number of source lines to show above the error line
@@ -59,7 +59,7 @@ public class NGExceptionPage extends NGComponent {
 	 */
 	public StackTraceElement currentStackTraceElement;
 
-	public NGExceptionPage( NGContext aContext ) {
+	public NGExceptionPageDevelopment( NGContext aContext ) {
 		super( aContext );
 	}
 
@@ -229,7 +229,7 @@ public class NGExceptionPage extends NGComponent {
 	 */
 	private static String projectRootForClassName( final String className ) {
 		final String cn = className.replace( '.', '/' ) + ".class";
-		final URL u = NGExceptionPage.class.getClassLoader().getResource( cn );
+		final URL u = NGExceptionPageDevelopment.class.getClassLoader().getResource( cn );
 		final String filename = u.getFile().toString();
 		final int targetIndex = filename.indexOf( "target" );
 
