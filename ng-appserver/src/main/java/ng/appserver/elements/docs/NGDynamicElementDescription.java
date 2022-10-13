@@ -10,6 +10,7 @@ import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGForm;
 import ng.appserver.elements.NGGenericContainer;
+import ng.appserver.elements.NGGenericElement;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGJavaScript;
@@ -88,6 +89,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 
 		list.add( createEmptyDescription( NGForm.class ) );
 		list.add( createEmptyDescription( NGGenericContainer.class ) );
+		list.add( createEmptyDescription( NGGenericElement.class ) );
 		list.add( createEmptyDescription( NGHyperlink.class ) );
 
 		list.add( new NGDynamicElementDescription(
