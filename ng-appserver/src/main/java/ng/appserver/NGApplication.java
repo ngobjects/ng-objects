@@ -20,6 +20,7 @@ import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating._NGUtilities;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
+import x.junk.NGExceptionPage;
 import x.junk.NGExceptionPageDevelopment;
 
 public class NGApplication {
@@ -237,7 +238,6 @@ public class NGApplication {
 				return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
 			}
 
-			// FIXME: We might want to look into a little more exception handling // Hugi 2022-04-18
 			final NGResponse response = requestHandler.handleRequest( request );
 
 			if( response == null ) {
@@ -247,6 +247,7 @@ public class NGApplication {
 			return response;
 		}
 		catch( Throwable throwable ) {
+			// FIXME: Generate a uniqueID for the exception that occurred and show it to the user (for tracing/debugging) // Hugi 2022-10-13
 			handleException( throwable );
 			return exceptionResponse( throwable, request.context() ).generateResponse();
 		}
@@ -261,11 +262,19 @@ public class NGApplication {
 
 	/**
 	 * @return The response generated when an exception occurs
-	 *
-	 * FIXME: Allow for different exception responses for production/development environments // Hugi 2022-04-20
 	 */
 	public NGActionResults exceptionResponse( final Throwable throwable, final NGContext context ) {
-		final NGExceptionPageDevelopment nextPage = pageWithName( NGExceptionPageDevelopment.class, context );
+
+		// FIXME: Link up the production exception page // Hugi 2022-04-20
+		boolean isDevelopmentMode = true; // isDevelopmentMode();
+
+		if( isDevelopmentMode ) {
+			final NGExceptionPageDevelopment nextPage = pageWithName( NGExceptionPageDevelopment.class, context );
+			nextPage.setException( throwable );
+			return nextPage;
+		}
+
+		final NGExceptionPage nextPage = pageWithName( NGExceptionPage.class, context );
 		nextPage.setException( throwable );
 		return nextPage;
 	}

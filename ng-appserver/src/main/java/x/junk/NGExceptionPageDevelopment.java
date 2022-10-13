@@ -20,9 +20,9 @@ import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 
 /**
- * Returned to the user when an exception occurs.
+ * Exception page displayed in development mode.
  *
- * When in development mode, it will display the java code where exception occurred (highlighting the line containing the error)
+ * Displays the java code where exception occurred (highlighting the line containing the error)
  */
 
 public class NGExceptionPageDevelopment extends NGComponent {
