@@ -225,7 +225,8 @@ public class NGTemplateParser {
 		if( shortcutType != null ) {
 			elementType = shortcutType;
 		}
-		else if( elementType.startsWith( NGHTMLParser.WO_REPLACEMENT_MARKER ) ) {
+
+		if( elementType.startsWith( NGHTMLParser.WO_REPLACEMENT_MARKER ) ) {
 			// Acts only on tags, where we have "dynamified" inside the tag parser
 			// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
 			// as the elementName binding
