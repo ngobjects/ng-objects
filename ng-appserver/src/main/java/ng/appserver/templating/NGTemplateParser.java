@@ -11,6 +11,7 @@ import ng.appserver.NGAssociation;
 import ng.appserver.NGConstantValueAssociation;
 import ng.appserver.NGElement;
 import ng.appserver.NGKeyValueAssociation;
+import ng.appserver.elements.NGGenericContainer;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHTMLCommentString;
 
@@ -232,7 +233,7 @@ public class NGTemplateParser {
 			// as the elementName binding
 			elementType = elementType.replaceAll( NGHTMLParser.WO_REPLACEMENT_MARKER, "" );
 			associations.put( "elementName", NGAssociationFactory.associationWithValue( elementType ) );
-			elementType = "NGGenericContainer"; // FIXME: This element name might change // Hugi 2022-04-27
+			elementType = NGGenericContainer.class.getSimpleName();
 		}
 
 		String elementName;
