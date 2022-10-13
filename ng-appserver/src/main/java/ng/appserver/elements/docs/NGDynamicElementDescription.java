@@ -5,11 +5,19 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import ng.appserver.NGDynamicElement;
+import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGDynamicGroup;
+import ng.appserver.elements.NGForm;
+import ng.appserver.elements.NGGenericContainer;
+import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
+import ng.appserver.elements.NGJavaScript;
 import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
+import ng.appserver.elements.NGStylesheet;
+import ng.appserver.elements.NGSubmitButton;
+import ng.appserver.elements.NGTextField;
 import ng.appserver.elements.docs.NGDynamicElementDescription.NGBindingDescription;
 import ng.appserver.templating._NGUtilities;
 
@@ -29,6 +37,16 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 	 */
 	public static NGDynamicElementDescription NoDescription = new NGDynamicElementDescription( null, null, null, null );
 
+	/**
+	 * FIXME: We should be using Collections.emptyList() but KVC has a problem with it. Look into later // Hugi 2022-10-13
+	 */
+	public static NGDynamicElementDescription createEmptyDescription( Class<? extends NGDynamicElement> elementClass ) {
+		return new NGDynamicElementDescription( elementClass, new ArrayList<>(), new ArrayList<>(), "Documentation forthcoming" );
+	}
+
+	/**
+	 * Describes a binding
+	 */
 	public record NGBindingDescription( String name, Class<?> bindingClass, String text ) {}
 
 	/**
@@ -58,6 +76,8 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 	public static List<NGDynamicElementDescription> all() {
 		final ArrayList<NGDynamicElementDescription> list = new ArrayList<>();
 
+		list.add( createEmptyDescription( NGComponentContent.class ) );
+
 		list.add( new NGDynamicElementDescription(
 				NGConditional.class,
 				List.of( "if" ),
@@ -65,6 +85,10 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 						new NGBindingDescription( "condition", Object.class, "The condition to evaluate" ),
 						new NGBindingDescription( "negate", Boolean.class, "Can be set to $true to 'flip' the condition" ) ),
 				"Wraps content in a template and decides to render it based on a condition. If the binding [condition] evaluates to $false, the contained content will not be rendered (and vice versa). If the 'negate' binding is set to $true, the condition will be flipped." ) );
+
+		list.add( createEmptyDescription( NGForm.class ) );
+		list.add( createEmptyDescription( NGGenericContainer.class ) );
+		list.add( createEmptyDescription( NGHyperlink.class ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGImage.class,
@@ -74,6 +98,8 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 						new NGBindingDescription( "src", String.class, "Same as using an src attribute on a regular img tag" ),
 						new NGBindingDescription( "data", byte[].class, "byte array containing image data" ) ),
 				"Displays an image. Bindings that are not part of the elements standard associations are passed on as attributes to the generated img tag." ) );
+
+		list.add( createEmptyDescription( NGJavaScript.class ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGRepetition.class,
@@ -93,6 +119,10 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 						new NGBindingDescription( "escapeHTML", Object.class, "Indicates if you want to convert reserved HTML characters to entity values for display (currently &lt; and &gt;). Defaults to true" ), // FIXME: Update docs when we've figured out other elements to escape
 						new NGBindingDescription( "valueWhenEmpty", Object.class, "The value to display if [value] is null or empty (zero length string)" ) ),
 				"Renders to a string in a template. If anything other than a string gets passed to [value] it, toString() will be invoked on it to render it." ) );
+
+		list.add( createEmptyDescription( NGStylesheet.class ) );
+		list.add( createEmptyDescription( NGSubmitButton.class ) );
+		list.add( createEmptyDescription( NGTextField.class ) );
 
 		return list;
 	}
