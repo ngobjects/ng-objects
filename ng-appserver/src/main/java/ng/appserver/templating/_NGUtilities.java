@@ -17,6 +17,7 @@ import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGForm;
 import ng.appserver.elements.NGGenericContainer;
+import ng.appserver.elements.NGGenericElement;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGJavaScript;
@@ -51,6 +52,7 @@ public class _NGUtilities {
 		addClass( NGForm.class, "form" );
 		addClass( NGString.class, "str" );
 		addClass( NGGenericContainer.class, "container" );
+		addClass( NGGenericElement.class, "element" );
 		addClass( NGImage.class, "img" );
 		addClass( NGHyperlink.class, "link" );
 		addClass( NGJavaScript.class, "script" );
