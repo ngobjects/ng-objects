@@ -115,8 +115,10 @@ public interface NGKeyValueCoding {
 			return new MethodBinding( method );
 		}
 
-		if( hasField( object.getClass(), key ) ) {
-			return new FieldBinding( object.getClass(), key );
+		Field field = field( object, key );
+
+		if( field != null ) {
+			return new FieldBinding( field );
 		}
 
 		return null;
@@ -174,17 +176,15 @@ public interface NGKeyValueCoding {
 	/**
 	 * @return true if targetClass has a field named [fieldName]
 	 */
-	private static boolean hasField( final Class<?> targetClass, final String fieldName ) {
-		Objects.requireNonNull( targetClass );
+	private static Field field( final Object object, final String fieldName ) {
+		Objects.requireNonNull( object );
 		Objects.requireNonNull( fieldName );
 
 		try {
-			targetClass.getField( fieldName );
-			return true;
+			return object.getClass().getField( fieldName );
 		}
 		catch( NoSuchFieldException | SecurityException e ) {
-			// FIXME: In case of an available but not accessible field, do we skip to the next method/field or just fail?
-			return false;
+			return null;
 		}
 	}
 
@@ -224,15 +224,8 @@ public interface NGKeyValueCoding {
 
 		private final Field _field;
 
-		public FieldBinding( Class<?> targetClass, String key ) {
-			try {
-				_field = targetClass.getField( key );
-			}
-			catch( SecurityException | NoSuchFieldException e ) {
-				// FIXME: Error handling is missing entirely
-				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, targetClass );
-				throw new RuntimeException( message, e );
-			}
+		public FieldBinding( Field field ) {
+			_field = field;
 		}
 
 		@Override
