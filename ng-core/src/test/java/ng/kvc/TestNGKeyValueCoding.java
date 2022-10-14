@@ -1,10 +1,12 @@
 package ng.kvc;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +17,8 @@ public class TestNGKeyValueCoding {
 		assertEquals( 0, NGKeyValueCoding.Utility.valueForKey( new ArrayList<>(), "size" ) );
 
 		assertEquals( 0, NGKeyValueCoding.Utility.valueForKey( Collections.emptyList(), "size" ) );
+		assertEquals( 1, NGKeyValueCoding.Utility.valueForKey( List.of( "Hello" ), "size" ) );
+		assertTrue( (boolean)NGKeyValueCoding.Utility.valueForKey( List.of(), "isEmpty" ) );
 	}
 
 	@Test
