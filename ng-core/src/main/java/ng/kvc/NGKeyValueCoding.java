@@ -74,7 +74,7 @@ public interface NGKeyValueCoding {
 
 			if( kvcBinding == null ) {
 				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
-				throw new UnkownKeyException( message );
+				throw new UnknownKeyException( message );
 			}
 
 			return kvcBinding.valueInObject( object );
@@ -85,7 +85,7 @@ public interface NGKeyValueCoding {
 
 			if( kvcBinding == null ) {
 				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
-				throw new UnkownKeyException( message );
+				throw new UnknownKeyException( message );
 			}
 
 			kvcBinding.setValueInObject( value, object );
@@ -254,9 +254,9 @@ public interface NGKeyValueCoding {
 	/**
 	 * Thrown when a key can't be resolved against an object
 	 */
-	public static class UnkownKeyException extends NGRuntimeException {
+	public static class UnknownKeyException extends NGRuntimeException {
 
-		public UnkownKeyException( String message ) {
+		public UnknownKeyException( String message ) {
 			super( message );
 		}
 	}

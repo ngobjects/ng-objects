@@ -41,7 +41,7 @@ public class TestNGKeyValueCoding {
 
 	@Test
 	public void testThrowsOnUnknownKey() {
-		assertThrows( NGKeyValueCoding.UnkownKeyException.class, () -> {
+		assertThrows( NGKeyValueCoding.UnknownKeyException.class, () -> {
 			NGKeyValueCoding.Utility.valueForKey( new PlainOldRecord( "Hehe" ), "hehe" );
 		} );
 	}
