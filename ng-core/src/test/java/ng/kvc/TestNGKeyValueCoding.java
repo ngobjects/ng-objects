@@ -3,9 +3,19 @@ package ng.kvc;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
 
 public class TestNGKeyValueCoding {
+
+	@Test
+	public void testValueForKeyOnCollectionsEmptyList() {
+		assertEquals( 0, NGKeyValueCoding.Utility.valueForKey( new ArrayList<>(), "size" ) );
+
+		assertEquals( 0, NGKeyValueCoding.Utility.valueForKey( Collections.emptyList(), "size" ) );
+	}
 
 	@Test
 	public void testValueForKeyMethodWithExactName() {

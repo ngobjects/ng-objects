@@ -70,7 +70,7 @@ public interface NGKeyValueCoding {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( key );
 
-			final KVCBinding kvcBinding = bindingForKey( object.getClass(), key );
+			final KVCBinding kvcBinding = bindingForKey( object, key );
 
 			if( kvcBinding == null ) {
 				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
@@ -81,7 +81,7 @@ public interface NGKeyValueCoding {
 		}
 
 		public static void takeValueForKey( final Object object, final Object value, final String key ) {
-			final KVCBinding kvcBinding = bindingForKey( object.getClass(), key );
+			final KVCBinding kvcBinding = bindingForKey( object, key );
 
 			if( kvcBinding == null ) {
 				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
@@ -97,11 +97,11 @@ public interface NGKeyValueCoding {
 	 *
 	 * FIXME: We're going to want to decide what to do if there's an available key, but not accessible. Do we skip to the next "type" of binding or do we throw. Essentially; is shading allowed.
 	 */
-	public static KVCBinding bindingForKey( final Class<?> targetClass, final String key ) {
-		Objects.requireNonNull( targetClass );
+	public static KVCBinding bindingForKey( final Object object, final String key ) {
+		Objects.requireNonNull( object );
 		Objects.requireNonNull( key );
 
-		Method method = method( targetClass, key );
+		Method method = method( object, key );
 
 		if( method != null ) {
 			return new MethodBinding( method );
@@ -109,14 +109,14 @@ public interface NGKeyValueCoding {
 
 		final String getPrefixedKey = "get" + key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
 
-		method = method( targetClass, getPrefixedKey );
+		method = method( object, getPrefixedKey );
 
 		if( method != null ) {
 			return new MethodBinding( method );
 		}
 
-		if( hasField( targetClass, key ) ) {
-			return new FieldBinding( targetClass, key );
+		if( hasField( object.getClass(), key ) ) {
+			return new FieldBinding( object.getClass(), key );
 		}
 
 		return null;
@@ -127,16 +127,48 @@ public interface NGKeyValueCoding {
 	 *
 	 * Returns null if the method is not found.
 	 */
-	private static Method method( final Class<?> targetClass, final String methodName ) {
-		Objects.requireNonNull( targetClass );
-		Objects.requireNonNull( methodName );
+	private static Method method( final Object object, final String key ) {
+		Objects.requireNonNull( object );
+		Objects.requireNonNull( key );
+
+		Class<?> classToUseForLocatingMethod = object.getClass();
 
 		try {
-			return targetClass.getMethod( methodName );
+			while( classToUseForLocatingMethod != null ) {
+				Method classMethod = classToUseForLocatingMethod.getMethod( key );
+
+				if( classMethod.canAccess( object ) ) {
+					// This is the happy path, where we'll immediately end up in 99% of cases
+					return classMethod;
+				}
+
+				// Here come the dragons...
+
+				// The class doesn't have an accessible method definition. What about the interfaces?
+				for( Class<?> interfaceClass : classToUseForLocatingMethod.getInterfaces() ) {
+					try {
+						final Method interfaceMethod = interfaceClass.getMethod( key );
+
+						if( interfaceMethod.canAccess( object ) ) {
+							return interfaceMethod;
+						}
+					}
+					catch( Exception interfaceException ) {
+						// Failure to locate methods in interfaces are to be expected. If no interfaces contain the method, we've already failed anyway.
+					}
+				}
+
+				// Now let's try the whole thing again for the superclass
+				classToUseForLocatingMethod = classToUseForLocatingMethod.getSuperclass();
+			}
 		}
-		catch( NoSuchMethodException | SecurityException e ) {
+		catch( NoSuchMethodException | SecurityException methodException ) {
+			// If the method doesn't exist on the original class we're dead whatever we do regardless of accessibility, so just throw immediately
 			return null;
 		}
+
+		// FIXME: Don't throw
+		return null;
 	}
 
 	/**
