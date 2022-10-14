@@ -2,6 +2,7 @@ package ng.kvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -36,6 +37,13 @@ public class TestNGKeyValueCoding {
 		PlainOldRecord person = new PlainOldRecord( "Hugi" );
 		assertEquals( person.name(), NGKeyValueCoding.Utility.valueForKey( person, "prefixedAccessor" ) );
 		assertEquals( person.getClass(), NGKeyValueCoding.Utility.valueForKey( person, "class" ) );
+	}
+
+	@Test
+	public void testThrowsOnUnknownKey() {
+		assertThrows( NGKeyValueCoding.UnkownKeyException.class, () -> {
+			NGKeyValueCoding.Utility.valueForKey( new PlainOldRecord( "Hehe" ), "hehe" );
+		} );
 	}
 
 	@Test
