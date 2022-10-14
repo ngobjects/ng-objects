@@ -101,14 +101,18 @@ public interface NGKeyValueCoding {
 		Objects.requireNonNull( targetClass );
 		Objects.requireNonNull( key );
 
-		if( hasMethod( targetClass, key ) ) {
-			return new MethodBinding( targetClass, key );
+		Method method = method( targetClass, key );
+
+		if( method != null ) {
+			return new MethodBinding( method );
 		}
 
 		final String getPrefixedKey = "get" + key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
 
-		if( hasMethod( targetClass, getPrefixedKey ) ) {
-			return new MethodBinding( targetClass, getPrefixedKey );
+		method = method( targetClass, getPrefixedKey );
+
+		if( method != null ) {
+			return new MethodBinding( method );
 		}
 
 		if( hasField( targetClass, key ) ) {
@@ -120,18 +124,18 @@ public interface NGKeyValueCoding {
 
 	/**
 	 * @return true if targetClass responds to the methodName()
+	 *
+	 * Returns null if the method is not found.
 	 */
-	private static boolean hasMethod( final Class<?> targetClass, final String methodName ) {
+	private static Method method( final Class<?> targetClass, final String methodName ) {
 		Objects.requireNonNull( targetClass );
 		Objects.requireNonNull( methodName );
 
 		try {
-			targetClass.getMethod( methodName );
-			return true;
+			return targetClass.getMethod( methodName );
 		}
 		catch( NoSuchMethodException | SecurityException e ) {
-			// FIXME: In case of an available but not accessible method, do we skip to the next method/field or just fail?
-			return false;
+			return null;
 		}
 	}
 
@@ -162,13 +166,9 @@ public interface NGKeyValueCoding {
 
 		private final Method _method;
 
-		public MethodBinding( Class<?> targetClass, String key ) {
-			try {
-				_method = targetClass.getMethod( key, new Class[] {} );
-			}
-			catch( NoSuchMethodException | SecurityException e ) {
-				throw new RuntimeException( e );
-			}
+		public MethodBinding( Method method ) {
+			_method = method;
+
 		}
 
 		@Override
