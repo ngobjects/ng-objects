@@ -14,6 +14,9 @@ import ng.NGRuntimeException;
  * FIXME: Decide if we're going to go all the way and do validation as well
  * FIXME: We should be marking bindings for directionality (read only/set only etc)
  * FIXME: We should be using cached MethodHandles for improved performance
+ * FIXME: We might want to do the same gymnastics with fields as methods in case of private fields getting passed down to private inner classes
+ * FIXME: Error handling
+ * FIXME: Why check for the underscore fields before the fully matching field names? We're basically just doing that to keep compatibility with NSKVC // Hugi 2022-01-02
  */
 
 public interface NGKeyValueCoding {
@@ -62,9 +65,6 @@ public interface NGKeyValueCoding {
 		 * 8. Field "_isSmu"
 		 * 9. Field "smu"
 		 * 10. Field "isSmu"
-		 *
-		 * FIXME: Error handling // Hugi 2022-01-02
-		 * FIXME: Why check for the underscore fields before the fully matching field names? // Hugi 2022-01-02
 		 */
 		public static Object valueForKey( final Object object, final String key ) {
 			Objects.requireNonNull( object );
