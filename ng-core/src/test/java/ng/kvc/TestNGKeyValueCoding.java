@@ -23,12 +23,19 @@ public class TestNGKeyValueCoding {
 
 	@Test
 	public void testValueForKeyMethodWithExactName() {
-		Person person = new Person( "Hugi" );
+		RecordThatImplementsValueForKey person = new RecordThatImplementsValueForKey( "Hugi" );
 
 		assertEquals( "interfaceValue", NGKeyValueCoding.Utility.valueForKey( person, "getClass" ) );
 		assertEquals( "Hugi", NGKeyValueCoding.DefaultImplementation.valueForKey( person, "name" ) );
-		assertEquals( Person.class, NGKeyValueCoding.DefaultImplementation.valueForKey( person, "getClass" ) );
+		assertEquals( RecordThatImplementsValueForKey.class, NGKeyValueCoding.DefaultImplementation.valueForKey( person, "getClass" ) );
 		assertNull( NGKeyValueCoding.DefaultImplementation.valueForKey( person, "returnsNull" ) );
+	}
+
+	@Test
+	public void testValueForKeyMethodWithGetPrefix() {
+		PlainOldRecord person = new PlainOldRecord( "Hugi" );
+		assertEquals( person.name(), NGKeyValueCoding.Utility.valueForKey( person, "prefixedAccessor" ) );
+		assertEquals( person.getClass(), NGKeyValueCoding.Utility.valueForKey( person, "class" ) );
 	}
 
 	@Test
@@ -48,7 +55,7 @@ public class TestNGKeyValueCoding {
 
 	}
 
-	public record Person( String name ) implements NGKeyValueCoding {
+	public record RecordThatImplementsValueForKey( String name ) implements NGKeyValueCoding {
 
 		@Override
 		public Object valueForKey( String key ) {
@@ -62,6 +69,14 @@ public class TestNGKeyValueCoding {
 		@Override
 		public void takeValueForKey( Object value, String key ) {
 			// FIXME: Implement
+		}
+
+	}
+
+	public record PlainOldRecord( String name ) {
+
+		public String getPrefixedAccessor() {
+			return name();
 		}
 	}
 
