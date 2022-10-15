@@ -49,6 +49,20 @@ public class NGRequest extends NGMessage {
 	 */
 	private Map<String, List<String>> _cookieValues;
 
+	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] contentBytes ) {
+		Objects.requireNonNull( method );
+		Objects.requireNonNull( uri );
+		Objects.requireNonNull( httpVersion );
+		Objects.requireNonNull( headers );
+		Objects.requireNonNull( contentBytes );
+
+		setMethod( method );
+		setURI( uri );
+		setHttpVersion( httpVersion );
+		setHeaders( headers );
+		setContentBytes( contentBytes );
+	}
+
 	public Map<String, List<String>> formValues() {
 		return _formValues;
 	}
@@ -74,20 +88,6 @@ public class NGRequest extends NGMessage {
 
 	public void setMethod( final String method ) {
 		_method = method;
-	}
-
-	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] contentBytes ) {
-		Objects.requireNonNull( method );
-		Objects.requireNonNull( uri );
-		Objects.requireNonNull( httpVersion );
-		Objects.requireNonNull( headers );
-		Objects.requireNonNull( contentBytes );
-
-		setMethod( method );
-		setURI( uri );
-		setHttpVersion( httpVersion );
-		setHeaders( headers );
-		setContentBytes( contentBytes );
 	}
 
 	/**
