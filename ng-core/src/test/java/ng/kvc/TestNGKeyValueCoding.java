@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +44,13 @@ public class TestNGKeyValueCoding {
 	public void testThrowsOnUnknownKey() {
 		assertThrows( NGKeyValueCoding.UnknownKeyException.class, () -> {
 			NGKeyValueCoding.Utility.valueForKey( new PlainOldRecord( "Hehe" ), "hehe" );
+		} );
+	}
+
+	@Test
+	public void testThrowsExceptionFromTarget() {
+		assertThrows( NoSuchElementException.class, () -> {
+			NGKeyValueCoding.Utility.valueForKey( List.of().iterator(), "next" );
 		} );
 	}
 
