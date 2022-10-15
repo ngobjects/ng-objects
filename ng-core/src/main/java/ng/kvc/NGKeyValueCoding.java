@@ -208,9 +208,18 @@ public interface NGKeyValueCoding {
 			try {
 				return _method.invoke( object );
 			}
-			catch( SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
+			catch( SecurityException | IllegalAccessException | IllegalArgumentException e1 ) {
 				// FIXME: Error handling is missing entirely
-				throw new RuntimeException( e );
+				throw new RuntimeException( e1 );
+			}
+			catch( InvocationTargetException e2 ) {
+				// If the InvocationTargetException wraps a RuntimeException, just rethrow it. We're not adding any valuable information at the moment.
+				if( e2.getTargetException() instanceof RuntimeException r ) {
+					throw r;
+				}
+
+				// If it's not a RuntimeException, wrap and throw
+				throw new RuntimeException( e2 );
 			}
 		}
 
