@@ -20,12 +20,12 @@ public class NGRequest extends NGMessage {
 	private static final String SESSION_ID_COOKIE_NAME = "wosid";
 
 	/**
-	 * FIXME: Make sure we're initializing this correctly during the request's lifecycle
+	 * The request's context
 	 */
 	private NGContext _context;
 
 	/**
-	 * FIXME: Shouldn't this really be an enum, or do we need to support arbitrary methods?
+	 * The requests's method
 	 */
 	private String _method;
 
@@ -40,10 +40,13 @@ public class NGRequest extends NGMessage {
 	private NGParsedURI _parsedURI;
 
 	/**
-	 * FIXME: Do we want to store this? Does parsing happen at the adaptor level or here?
+	 * The request's form values (a.k.a. query parameters)
 	 */
 	private Map<String, List<String>> _formValues;
 
+	/**
+	 * Values of cookies
+	 */
 	private Map<String, List<String>> _cookieValues;
 
 	public Map<String, List<String>> formValues() {
