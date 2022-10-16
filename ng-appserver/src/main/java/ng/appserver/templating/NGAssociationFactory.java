@@ -1,6 +1,7 @@
 package ng.appserver.templating;
 
 import ng.appserver.NGAssociation;
+import ng.appserver.NGBindingAssociation;
 import ng.appserver.NGConstantValueAssociation;
 import ng.appserver.NGKeyValueAssociation;
 
@@ -13,7 +14,7 @@ public class NGAssociationFactory {
 	public static NGAssociation associationWithKeyPath( String keyPath ) {
 
 		if( keyPath.charAt( 0 ) == '^' ) {
-			throw new RuntimeException( "Binding name associations are not supported" );
+			return new NGBindingAssociation( keyPath.substring( 1 ) );
 		}
 
 		if( keyPathIsReadOnly( keyPath ) ) {
