@@ -26,6 +26,8 @@ import ng.appserver.NGResponse;
 
 public class NGRouteTable {
 
+	private String _name;
+
 	/**
 	 * A list of all routes mapped by this table
 	 */
@@ -48,6 +50,18 @@ public class NGRouteTable {
 		}
 
 		return null;
+	}
+
+	public NGRouteTable() {
+		this( "Untitled route table" );
+	}
+
+	public NGRouteTable( final String name ) {
+		_name = name;
+	}
+
+	public String name() {
+		return _name;
 	}
 
 	/**

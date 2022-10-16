@@ -95,10 +95,10 @@ public class NGApplication {
 		_sessionStore = new NGServerSessionStore();
 
 		// The first table in the list is the "user route table"
-		_routeTables.add( new NGRouteTable() );
+		_routeTables.add( new NGRouteTable( "User routes" ) );
 
 		// Then we add the "system route table"
-		final NGRouteTable systemRoutes = new NGRouteTable();
+		final NGRouteTable systemRoutes = new NGRouteTable( "System routes" );
 		systemRoutes.map( "/wo/", new NGComponentRequestHandler() );
 		systemRoutes.map( "/wr/", new NGResourceRequestHandler() );
 		systemRoutes.map( "/wd/", new NGResourceRequestHandlerDynamic() );
@@ -174,6 +174,7 @@ public class NGApplication {
 			final NGRequestHandler handler = routeTable.handlerForURL( url );
 
 			if( handler != null ) {
+				logger.info( "Matched URL '{}' with route '{}' from table '{}'", url, "FIXME", routeTable.name() );
 				return handler;
 			}
 		}
