@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class NGApplication {
 	 * In the old WO world, this would have been called "requestHandlers".
 	 * Since we want to have more dynamic route resolution, it makes sense to move that to a separate object.
 	 */
-	private NGRouteTable _routeTable = new NGRouteTable();
+	private List<NGRouteTable> _routeTables = new ArrayList<>();
 
 	/**
 	 * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
@@ -71,16 +72,10 @@ public class NGApplication {
 		try {
 			_application = applicationClass.getDeclaredConstructor().newInstance();
 
-			_application._resourceManager = new NGResourceManager();
-			_application._sessionStore = new NGServerSessionStore();
+			// FIXME: This is just plain wrong. We want properties to be accessible during application initialization. Here we're loading properties after construction
 			_application._properties = properties;
 
-			_application._routeTable.map( "/wo/", new NGComponentRequestHandler() );
-			_application._routeTable.map( "/wr/", new NGResourceRequestHandler() );
-			_application._routeTable.map( "/wd/", new NGResourceRequestHandlerDynamic() );
-			_application._routeTable.map( "/wa/", new NGDirectActionRequestHandler() );
-			_application._routeTable.map( "/womp/", new WOMPRequestHandler() );
-
+			// FIXME: We also might want to be more explicit about this
 			_application.start();
 		}
 		catch( final Exception e ) {
@@ -93,6 +88,23 @@ public class NGApplication {
 		}
 
 		logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
+	}
+
+	public NGApplication() {
+		_resourceManager = new NGResourceManager();
+		_sessionStore = new NGServerSessionStore();
+
+		// The first table in the list is the "user route table"
+		_routeTables.add( new NGRouteTable() );
+
+		// Then we add the "system route table"
+		final NGRouteTable systemRoutes = new NGRouteTable();
+		systemRoutes.map( "/wo/", new NGComponentRequestHandler() );
+		systemRoutes.map( "/wr/", new NGResourceRequestHandler() );
+		systemRoutes.map( "/wd/", new NGResourceRequestHandlerDynamic() );
+		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
+		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
+		_routeTables.add( systemRoutes );
 	}
 
 	/**
@@ -145,8 +157,28 @@ public class NGApplication {
 		return _properties;
 	}
 
+	/**
+	 * @return The default route table.
+	 */
 	public NGRouteTable routeTable() {
-		return _routeTable;
+		return _routeTables.get( 0 );
+	}
+
+	/**
+	 * @return a request handler for the given route, by searching all route tables
+	 *
+	 * FIXME: This belongs in a routing related class // Hugi 2022-10-16
+	 */
+	public NGRequestHandler handlerForURL( String url ) {
+		for( NGRouteTable routeTable : _routeTables ) {
+			final NGRequestHandler handler = routeTable.handlerForURL( url );
+
+			if( handler != null ) {
+				return handler;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -232,7 +264,7 @@ public class NGApplication {
 				return defaultResponse( request ).generateResponse();
 			}
 
-			final NGRequestHandler requestHandler = _routeTable.handlerForURL( request.uri() );
+			final NGRequestHandler requestHandler = handlerForURL( request.uri() );
 
 			if( requestHandler == null ) {
 				return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
