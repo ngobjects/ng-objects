@@ -31,6 +31,7 @@ public class NGApplication {
 	/**
 	 * FIXME: This is a global NGApplication object. We don't want a global NGApplication object // Hugi 2021-12-29
 	 */
+	@Deprecated
 	private static NGApplication _application;
 
 	private NGProperties _properties;
