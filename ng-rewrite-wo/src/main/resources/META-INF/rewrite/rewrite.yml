@@ -1,0 +1,60 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: is.rebbi.ngobjectizer
+recipeList:
+#  - org.openrewrite.maven.AddDependency:
+#      groupId: is.rebbi
+#      artifactId: ng-objects
+#      version: 1.0.0-SNAPSHOT
+
+# First we go through the raw WO types
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.WOApplication
+      newFullyQualifiedTypeName: ng.appserver.NGApplication
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.WOSession
+      newFullyQualifiedTypeName: ng.appserver.NGSession
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.WODirectAction
+      newFullyQualifiedTypeName: ng.appserver.directactions.NGDirectAction
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.WORequestHandler
+      newFullyQualifiedTypeName: ng.appserver.NGRequestHandler
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.WOActionResults
+      newFullyQualifiedTypeName: ng.appserver.NGActionResults
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.WOContext
+      newFullyQualifiedTypeName: ng.appserver.NGContext
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.WORequest
+      newFullyQualifiedTypeName: ng.appserver.NGRequest
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.WOResponse
+      newFullyQualifiedTypeName: ng.appserver.NGResponse
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.WOComponent
+      newFullyQualifiedTypeName: ng.appserver.NGComponent
+
+# Then we go through the Project Wonder extended types
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: er.extensions.appserver.ERXApplication
+      newFullyQualifiedTypeName: ng.appserver.NGApplication
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: er.extensions.appserver.ERXSession
+      newFullyQualifiedTypeName: ng.appserver.NGApplication
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: er.extensions.appserver.ERXDirectAction
+      newFullyQualifiedTypeName: ng.appserver.directactions.NGDirectAction
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.webobjects.appserver.ERXWOContext
+      newFullyQualifiedTypeName: ng.appserver.NGContext
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: er.extensions.appserver.ERXResponse
+      newFullyQualifiedTypeName: ng.appserver.NGResponse
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: er.extensions.appserver.ERXRequest
+      newFullyQualifiedTypeName: ng.appserver.NGRequest
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: er.extensions.components.ERXComponent
+      newFullyQualifiedTypeName: ng.appserver.NGComponent
