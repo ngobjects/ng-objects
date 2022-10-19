@@ -235,11 +235,22 @@ public class NGApplication {
 
 	/**
 	 * @return The global NGApplication instance.
-	 * I really do not want a global instance in the future, but I'm keeping it around for now as it's comforting while working with familiar patterns.
+	 *
+	 * FIXME: I really do not want a global instance in the future, but I'm keeping it around for now as it's comforting while working with familiar patterns. // Hugi 2022-10-19
 	 */
 	@Deprecated
 	public static NGApplication application() {
 		return _application;
+	}
+
+	/**
+	 * @return true if we want to enable caches
+	 *
+	 * FIXME: This is not here to stay. It's just nice to have a single location to refer to for now, rather than always using isDevelopmentMode() // Hugi 2022-10-19
+	 */
+	@Deprecated
+	public boolean cachingEnabled() {
+		return application().isDevelopmentMode();
 	}
 
 	public NGResourceManager resourceManager() {
