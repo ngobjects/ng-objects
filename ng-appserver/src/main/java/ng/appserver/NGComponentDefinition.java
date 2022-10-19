@@ -64,7 +64,7 @@ public class NGComponentDefinition {
 	 *  FIXME: Temp caching implementation
 	 */
 	private static boolean _shouldUseComponentCache() {
-		return !NGApplication.application().isDevelopmentMode();
+		return !NGApplication.application().cachingEnabled();
 	}
 
 	/**
