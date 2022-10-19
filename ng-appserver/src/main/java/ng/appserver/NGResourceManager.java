@@ -29,18 +29,18 @@ public class NGResourceManager {
 	 * Specifies if we want to use the resources cache.
 	 * FIXME: Current implementation is for testing only
 	 */
-	private boolean useCache() {
-		return !NGApplication.application().properties().isDevelopmentMode();
+	private boolean _cachingEnabled() {
+		return !NGApplication.application().cachingEnabled();
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
 
-		logger.debug( "Loading resource named {}. Caching: {}", resourceName, useCache() );
+		logger.debug( "Loading resource named {}. Caching: {}", resourceName, _cachingEnabled() );
 
 		Optional<byte[]> resource;
 
-		if( useCache() ) {
+		if( _cachingEnabled() ) {
 			resource = _webserverResourceCache.get( resourceName );
 
 			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry

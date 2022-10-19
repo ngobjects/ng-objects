@@ -63,7 +63,7 @@ public class NGComponentDefinition {
 	/**
 	 *  FIXME: Temp caching implementation
 	 */
-	private static boolean _shouldUseComponentCache() {
+	private static boolean _cachingEnabled() {
 		return !NGApplication.application().cachingEnabled();
 	}
 
@@ -94,7 +94,7 @@ public class NGComponentDefinition {
 			componentName = componentClass.getSimpleName();
 		}
 
-		if( _shouldUseComponentCache() ) {
+		if( _cachingEnabled() ) {
 			NGComponentDefinition cached = _cachedComponentDefinition( componentName );
 
 			if( cached != null ) {
@@ -112,7 +112,7 @@ public class NGComponentDefinition {
 
 		final NGComponentDefinition newComponentDefinition = new NGComponentDefinition( componentName, componentClass );
 
-		if( _shouldUseComponentCache() ) {
+		if( _cachingEnabled() ) {
 			_componentDefinitionCache.put( componentName, newComponentDefinition );
 		}
 
