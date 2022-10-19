@@ -36,6 +36,11 @@ public class NGComponentDefinition {
 	private static Map<String, NGComponentDefinition> _componentDefinitionCache = new HashMap<>();
 
 	/**
+	 * Stores the parsed template if caching is enabled
+	 */
+	private NGElement _cachedTemplate;
+
+	/**
 	 * The canonical name of the component definition.
 	 *
 	 * - In the case of class-based components, this will be the component's fully qualified class name
@@ -155,6 +160,18 @@ public class NGComponentDefinition {
 	 * @return The parsed template for this component
 	 */
 	public NGElement template() {
+		if( _cachingEnabled() ) {
+			if( _cachedTemplate == null ) {
+				_cachedTemplate = _loadTemplate();
+			}
+
+			return _cachedTemplate;
+		}
+
+		return _loadTemplate();
+	}
+
+	private NGElement _loadTemplate() {
 		try {
 			// Let's try first for the traditional template
 			String htmlTemplateString = loadHTMLTemplateString( name() );
