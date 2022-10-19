@@ -45,7 +45,6 @@ public class NGComponentReference extends NGDynamicElement {
 		final NGComponent previousComponent = context.component();
 
 		// Load up our component's definition
-		// FIXME: We construct a component reference from a component definition. Shouldn't we have cached the definition at that stage?
 		final NGComponentDefinition newComponent = NGApplication.application()._componentDefinition( _componentName, Collections.emptyList() );
 
 		// Obtain an instance of the component
