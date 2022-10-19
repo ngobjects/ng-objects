@@ -16,6 +16,10 @@ import ng.appserver.templating.NGHTMLFormatException;
 import ng.appserver.templating.NGTemplateParser;
 import ng.appserver.templating._NGUtilities;
 
+/**
+ * FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
+ */
+
 public class NGComponentDefinition {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGComponentDefinition.class );
@@ -33,23 +37,17 @@ public class NGComponentDefinition {
 	 */
 	private final String _name;
 
-	/**
-	 * Construct a new component definition based on the given class.
-	 *
-	 * FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
-	 */
-	public NGComponentDefinition( final Class<? extends NGComponent> componentClass ) {
+	private NGComponentDefinition( final String componentName, final Class<? extends NGComponent> componentClass ) {
+		Objects.requireNonNull( componentName );
 		Objects.requireNonNull( componentClass );
 		_componentClass = componentClass;
 		_name = _componentClass.getSimpleName();
 	}
 
 	/**
-	 * Construct a new component definition based on the given class.
-	 *
-	 * FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
+	 * @return The component definition for the given class.
 	 */
-	public NGComponentDefinition( final String componentName ) {
+	public static NGComponentDefinition get( final String componentName ) {
 		Objects.requireNonNull( componentName );
 		Class<? extends NGComponent> clazz = _NGUtilities.classWithNameNullIfNotFound( componentName );
 
@@ -57,16 +55,22 @@ public class NGComponentDefinition {
 			clazz = NGComponent.class;
 		}
 
-		_componentClass = clazz;
-		_name = componentName;
+		return new NGComponentDefinition( componentName, clazz );
 	}
 
 	/**
-	 * The cached name of this component definition. Corresponds to the component class's simpleName
+	 * @return The component definition for the given name.
+	 */
+	public static NGComponentDefinition get( final Class<? extends NGComponent> componentClass ) {
+		return new NGComponentDefinition( componentClass.getSimpleName(), componentClass );
+	}
+
+	/**
+	 * @return The name of the component definition. For class-based component, this will correspond to the component class's simpleName
 	 */
 	private String name() {
 		return _name;
-	};
+	}
 
 	/**
 	 * @return A new component of the given class in the given context

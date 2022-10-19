@@ -441,7 +441,7 @@ public class NGApplication {
 		Objects.requireNonNull( componentClass );
 		Objects.requireNonNull( languages );
 
-		return new NGComponentDefinition( componentClass );
+		return NGComponentDefinition.get( componentClass );
 	}
 
 	/**
@@ -454,7 +454,7 @@ public class NGApplication {
 		Objects.requireNonNull( componentName );
 		Objects.requireNonNull( languages );
 
-		return new NGComponentDefinition( componentName );
+		return NGComponentDefinition.get( componentName );
 	}
 
 	/**
