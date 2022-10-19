@@ -3,6 +3,7 @@ package ng.appserver;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +31,11 @@ public class NGComponentDefinition {
 	private final Class<? extends NGComponent> _componentClass;
 
 	/**
+	 * FIXME: This is a temporary component definition cache, just to get us started // Hugi 2022-10-19
+	 */
+	private static Map<String, NGComponentDefinition> _componentDefinitionCache = new HashMap<>();
+
+	/**
 	 * The canonical name of the component definition.
 	 *
 	 * - In the case of class-based components, this will be the component's fully qualified class name
@@ -45,24 +51,72 @@ public class NGComponentDefinition {
 	}
 
 	/**
+	 * @return The cached component with the given name
+	 *
+	 * FIXME: Temp caching implementation
+	 */
+	private static NGComponentDefinition _cachedComponentDefinition( final String componentName ) {
+		Objects.requireNonNull( componentName );
+		return _componentDefinitionCache.get( componentName );
+	}
+
+	/**
+	 *  FIXME: Temp caching implementation
+	 */
+	private static boolean _shouldUseComponentCache() {
+		return !NGApplication.application().isDevelopmentMode();
+	}
+
+	/**
 	 * @return The component definition for the given class.
 	 */
 	public static NGComponentDefinition get( final String componentName ) {
 		Objects.requireNonNull( componentName );
-		Class<? extends NGComponent> clazz = _NGUtilities.classWithNameNullIfNotFound( componentName );
-
-		if( clazz == null ) {
-			clazz = NGComponent.class;
-		}
-
-		return new NGComponentDefinition( componentName, clazz );
+		return get( componentName, null );
 	}
 
 	/**
 	 * @return The component definition for the given name.
 	 */
 	public static NGComponentDefinition get( final Class<? extends NGComponent> componentClass ) {
-		return new NGComponentDefinition( componentClass.getSimpleName(), componentClass );
+		Objects.requireNonNull( componentClass );
+		return get( null, componentClass );
+	}
+
+	private static NGComponentDefinition get( String componentName, Class<? extends NGComponent> componentClass ) {
+
+		// You must pass in either a name or a class
+		if( componentName == null && componentClass == null ) {
+			throw new IllegalArgumentException( "You must specify either componentName or componentClass" );
+		}
+
+		if( componentName == null ) {
+			componentName = componentClass.getSimpleName();
+		}
+
+		if( _shouldUseComponentCache() ) {
+			NGComponentDefinition cached = _cachedComponentDefinition( componentName );
+
+			if( cached != null ) {
+				return cached;
+			}
+		}
+
+		if( componentClass == null ) {
+			componentClass = _NGUtilities.classWithNameNullIfNotFound( componentName );
+
+			if( componentClass == null ) {
+				componentClass = NGComponent.class;
+			}
+		}
+
+		final NGComponentDefinition newComponentDefinition = new NGComponentDefinition( componentName, componentClass );
+
+		if( _shouldUseComponentCache() ) {
+			_componentDefinitionCache.put( componentName, newComponentDefinition );
+		}
+
+		return newComponentDefinition;
 	}
 
 	/**
