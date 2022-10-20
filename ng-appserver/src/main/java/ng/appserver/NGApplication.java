@@ -113,7 +113,7 @@ public class NGApplication {
 	 */
 	private void start() {
 		try {
-			createAdaptor().start();
+			createAdaptor().start( this );
 		}
 		catch( final Exception e ) {
 			throw new RuntimeException( e );
@@ -187,7 +187,8 @@ public class NGApplication {
 	 * FIXME: I'm not quite sure what to do about this variable. Belongs here or someplace else?
 	 */
 	public boolean isDevelopmentMode() {
-		return _properties.isDevelopmentMode();
+		return false;
+		//		return _properties.isDevelopmentMode();
 	}
 
 	/**
@@ -267,7 +268,7 @@ public class NGApplication {
 
 	public NGResponse dispatchRequest( final NGRequest request ) {
 
-		logger.info( "Handling URI: " + request.uri() );
+		//		logger.info( "Handling URI: " + request.uri() );
 
 		try {
 			cleanupWOURL( request );

@@ -40,7 +40,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 	private static final String CRLF = "\r\n";
 
 	@Override
-	public void start() {
+	public void start( NGApplication application ) {
 		// FIXME: Properties should be loaded from NGProperties eventually, put here as a placeholder for now... // Hugi 2021-12-29
 		final int port = 1200;
 		final int workerThreadCount = 4;
@@ -52,14 +52,14 @@ public class NGAdaptorRaw extends NGAdaptor {
 				while( true ) {
 					final Socket clientSocket = serverSocket.accept();
 					//					clientSocket.setTcpNoDelay( true ); // We're not totally sure if we want to disable Nagle's algorithm.
-					es.execute( new WorkerThread( clientSocket ) );
+					es.execute( new WorkerThread( clientSocket, application ) );
 				}
 			}
 			catch( final Exception e ) {
-				if( NGApplication.application().properties().isDevelopmentMode() && e instanceof BindException ) {
+				if( application.properties().isDevelopmentMode() && e instanceof BindException ) {
 					logger.info( "Our port seems to be in use and we're in development mode. Let's try murdering the bastard that's blocking us" );
 					_NGUtilities.stopPreviousDevelopmentInstance( port );
-					start();
+					start( application );
 				}
 				else {
 					// FIXME: Handle this a bit more gracefully perhaps? // Hugi 2021-11-20
@@ -73,16 +73,20 @@ public class NGAdaptorRaw extends NGAdaptor {
 	public static class WorkerThread implements Runnable {
 
 		private final Socket _clientSocket;
+		private final NGApplication _application;
 
-		public WorkerThread( final Socket clientSocket ) {
+		public WorkerThread( final Socket clientSocket, final NGApplication application ) {
+			Objects.requireNonNull( clientSocket );
+			Objects.requireNonNull( application );
 			_clientSocket = clientSocket;
+			_application = application;
 		}
 
 		@Override
 		public void run() {
 			try {
 				final NGRequest request = requestFromInputStream( _clientSocket.getInputStream() );
-				final NGResponse response = NGApplication.application().dispatchRequest( request );
+				final NGResponse response = _application.dispatchRequest( request );
 
 				writeResponseToStream( response, _clientSocket.getOutputStream() );
 

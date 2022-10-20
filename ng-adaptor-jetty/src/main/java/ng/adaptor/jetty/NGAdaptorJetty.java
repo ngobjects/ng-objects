@@ -13,11 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,12 +50,12 @@ public class NGAdaptorJetty extends NGAdaptor {
 	private Server server;
 
 	@Override
-	public void start() {
+	public void start( NGApplication application ) {
 		final int minThreads = 8;
 		final int maxThreads = 32;
 		final int idleTimeout = 2000; // Specified in milliseconds
 
-		Integer port = NGApplication.application().properties().propWOPort(); // FIXME: Ugly way to get the port number
+		Integer port = application.properties().propWOPort(); // FIXME: Ugly way to get the port number
 
 		if( port == null ) {
 			logger.warn( "port property is not set, defaulting to port {}", DEFAULT_PORT_NUMBER );
@@ -70,16 +72,18 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final ServletHandler servletHandler = new ServletHandler();
 		server.setHandler( servletHandler );
 
-		servletHandler.addServletWithMapping( NGServlet.class, "/" );
+		ServletHolder holder = new ServletHolder();
+		holder.setServlet( new NGServlet( application ) );
+		servletHandler.addServletWithMapping( holder, "/" );
 
 		try {
 			server.start();
 		}
 		catch( final Exception e ) {
-			if( NGApplication.application().properties().isDevelopmentMode() && e instanceof IOException && e.getCause() instanceof BindException ) {
+			if( application.properties().isDevelopmentMode() && e instanceof IOException && e.getCause() instanceof BindException ) {
 				logger.info( "Our port seems to be in use and we're in development mode. Let's try murdering the bastard that's blocking us" );
 				_NGUtilities.stopPreviousDevelopmentInstance( port );
-				start();
+				start( application );
 			}
 			else {
 				// FIXME: Handle this a bit more gracefully perhaps? // Hugi 2021-11-20
@@ -95,6 +99,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 	public static class NGServlet extends HttpServlet {
 
+		private NGApplication _application;
+
+		public NGServlet( NGApplication application ) {
+			Objects.requireNonNull( application );
+			_application = application;
+		}
+
 		@Override
 		protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 			doRequest( request, response );
@@ -109,7 +120,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			// This is where the application logic will perform it's actual work
 			final NGRequest woRequest = servletRequestToNGRequest( servletRequest );
-			final NGResponse ngResponse = NGApplication.application().dispatchRequest( woRequest );
+			final NGResponse ngResponse = _application.dispatchRequest( woRequest );
 
 			servletResponse.setStatus( ngResponse.status() );
 
