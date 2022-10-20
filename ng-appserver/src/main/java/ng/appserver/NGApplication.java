@@ -251,7 +251,7 @@ public class NGApplication {
 	 */
 	@Deprecated
 	public boolean cachingEnabled() {
-		return application().isDevelopmentMode();
+		return isDevelopmentMode();
 	}
 
 	public NGResourceManager resourceManager() {
