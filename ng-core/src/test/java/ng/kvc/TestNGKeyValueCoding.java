@@ -1,6 +1,7 @@
 package ng.kvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,6 +39,14 @@ public class TestNGKeyValueCoding {
 		PlainOldRecord person = new PlainOldRecord( "Hugi" );
 		assertEquals( person.name(), NGKeyValueCoding.Utility.valueForKey( person, "prefixedAccessor" ) );
 		assertEquals( person.getClass(), NGKeyValueCoding.Utility.valueForKey( person, "class" ) );
+	}
+
+	@Test
+	public void testValueForKeyMethodWithIsPrefix() {
+		PlainOldRecord person = new PlainOldRecord( "Hugi" );
+		assertTrue( (boolean)NGKeyValueCoding.Utility.valueForKey( person, "prefixedBoolean" ) );
+		assertEquals( "Hugi", NGKeyValueCoding.Utility.valueForKey( person, "prefixedString" ) );
+		assertFalse( (boolean)NGKeyValueCoding.Utility.valueForKey( person.getClass(), "synthetic" ) );
 	}
 
 	@Test
@@ -92,6 +101,14 @@ public class TestNGKeyValueCoding {
 	public record PlainOldRecord( String name ) {
 
 		public String getPrefixedAccessor() {
+			return name();
+		}
+
+		public boolean isPrefixedBoolean() {
+			return true;
+		}
+
+		public String isPrefixedString() {
 			return name();
 		}
 	}
