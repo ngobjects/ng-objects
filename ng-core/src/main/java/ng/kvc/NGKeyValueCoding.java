@@ -101,15 +101,26 @@ public interface NGKeyValueCoding {
 		Objects.requireNonNull( object );
 		Objects.requireNonNull( key );
 
+		// First we try for just the key
 		Method method = method( object, key );
 
 		if( method != null ) {
 			return new MethodBinding( method );
 		}
 
+		// Now we try the old bean-style getMethod()
 		final String getPrefixedKey = "get" + key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
 
 		method = method( object, getPrefixedKey );
+
+		if( method != null ) {
+			return new MethodBinding( method );
+		}
+
+		// Then we go for the bean-style isMethod() for booleans
+		final String isPrefixedKey = "is" + key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
+
+		method = method( object, isPrefixedKey );
 
 		if( method != null ) {
 			return new MethodBinding( method );
