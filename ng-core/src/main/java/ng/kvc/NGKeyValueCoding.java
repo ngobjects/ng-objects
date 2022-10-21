@@ -186,6 +186,7 @@ public interface NGKeyValueCoding {
 				// Here come the dragons...
 
 				// The class doesn't have an accessible method definition. What about the interfaces?
+				// FIXME: We're missing a check on"parent interfaces", i.e. interfaces of interfaces // Hugi 2022-10-21
 				for( Class<?> interfaceClass : currentClass.getInterfaces() ) {
 					try {
 						final Method interfaceMethod = interfaceClass.getMethod( key );
