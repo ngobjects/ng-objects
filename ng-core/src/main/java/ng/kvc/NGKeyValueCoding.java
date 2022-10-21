@@ -108,19 +108,21 @@ public interface NGKeyValueCoding {
 			return new MethodBinding( method );
 		}
 
-		// Now we try the old bean-style getMethod()
-		final String getPrefixedKey = "get" + key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
+		final String keyCapitalized = key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
 
-		method = method( object, getPrefixedKey );
+		// Now we try the old bean-style getMethod()
+		final String name1 = "get" + keyCapitalized;
+
+		method = method( object, name1 );
 
 		if( method != null ) {
 			return new MethodBinding( method );
 		}
 
 		// Then we go for the bean-style isMethod() for booleans
-		final String isPrefixedKey = "is" + key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
+		final String name2 = "is" + keyCapitalized;
 
-		method = method( object, isPrefixedKey );
+		method = method( object, name2 );
 
 		if( method != null ) {
 			return new MethodBinding( method );
