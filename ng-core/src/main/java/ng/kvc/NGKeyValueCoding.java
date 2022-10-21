@@ -179,6 +179,7 @@ public interface NGKeyValueCoding {
 				final Method classMethod = currentClass.getMethod( key );
 
 				if( classMethod.canAccess( object ) ) {
+					// Method exists and is accessible on the object's class
 					// This is the happy path, where we'll immediately end up in 99% of cases
 					return classMethod;
 				}
@@ -186,7 +187,7 @@ public interface NGKeyValueCoding {
 				// Here come the dragons...
 
 				// The class doesn't have an accessible method definition. What about the interfaces?
-				// FIXME: We're missing a check on"parent interfaces", i.e. interfaces of interfaces // Hugi 2022-10-21
+				// FIXME: We're missing a check on "parent interfaces", i.e. interfaces that these interfaces inherit from // Hugi 2022-10-21
 				for( Class<?> interfaceClass : currentClass.getInterfaces() ) {
 					try {
 						final Method interfaceMethod = interfaceClass.getMethod( key );
@@ -195,7 +196,7 @@ public interface NGKeyValueCoding {
 							return interfaceMethod;
 						}
 					}
-					catch( Exception interfaceException ) {
+					catch( NoSuchMethodException interfaceException ) {
 						// Failure to locate methods in interfaces are to be expected. If no interfaces contain the method, we've already failed anyway.
 					}
 				}
@@ -207,7 +208,7 @@ public interface NGKeyValueCoding {
 			// The method exists, but no accessible implementation was found. Tough luck.
 			return null;
 		}
-		catch( NoSuchMethodException | SecurityException methodException ) {
+		catch( NoSuchMethodException methodException ) {
 			// We'll end up here immediately if the method doesn't exist on the first try.
 			// If the method doesn't exist on the original class we're dead whatever we do regardless of accessibility, so just return immediately
 			return null;
