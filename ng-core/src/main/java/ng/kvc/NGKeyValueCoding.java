@@ -17,6 +17,19 @@ import ng.NGRuntimeException;
  * FIXME: We might want to do the same gymnastics with fields as methods in case of private fields getting passed down to private inner classes
  * FIXME: Error handling
  * FIXME: Why check for the underscore fields before the fully matching field names? We're basically just doing that to keep compatibility with NSKVC // Hugi 2022-01-02
+ * FIXME: Implement the correct method/field lookup ordering:
+ * FIXME: We're going to want to decide what to do if there's an available key, but not accessible. Do we skip to the next "type" of binding or do we throw. Essentially; is shading allowed.
+ *
+ * 1. Method "getSmu"
+ * 2. Method "smu"
+ * 3. Method "isSmu"
+ * 4. Method "_getSmu"
+ * 5. Method "_smu"
+ * 6. Method "_isSmu"
+ * 7. Field "_smu"
+ * 8. Field "_isSmu"
+ * 9. Field "smu"
+ * 10. Field "isSmu"
  */
 
 public interface NGKeyValueCoding {
@@ -52,20 +65,6 @@ public interface NGKeyValueCoding {
 
 	public static class DefaultImplementation {
 
-		/**
-		 * FIXME: Implement the correct method/field lookup ordering:
-		 *
-		 * 1. Method "getSmu"
-		 * 2. Method "smu"
-		 * 3. Method "isSmu"
-		 * 4. Method "_getSmu"
-		 * 5. Method "_smu"
-		 * 6. Method "_isSmu"
-		 * 7. Field "_smu"
-		 * 8. Field "_isSmu"
-		 * 9. Field "smu"
-		 * 10. Field "isSmu"
-		 */
 		public static Object valueForKey( final Object object, final String key ) {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( key );
@@ -96,7 +95,6 @@ public interface NGKeyValueCoding {
 	 * @return A KVC binding for the given class and key.
 	 *
 	 * FIXME: We're not following KVC conventions here, we're returning the non-prefixed method first. Consider // Hugi 2022-10-21
-	 * FIXME: We're going to want to decide what to do if there's an available key, but not accessible. Do we skip to the next "type" of binding or do we throw. Essentially; is shading allowed.
 	 */
 	public static KVCBinding bindingForKey( final Object object, final String key ) {
 		Objects.requireNonNull( object );
@@ -174,11 +172,11 @@ public interface NGKeyValueCoding {
 		Objects.requireNonNull( object );
 		Objects.requireNonNull( key );
 
-		Class<?> classToUseForLocatingMethod = object.getClass();
+		Class<?> currentClass = object.getClass();
 
 		try {
-			while( classToUseForLocatingMethod != null ) {
-				Method classMethod = classToUseForLocatingMethod.getMethod( key );
+			while( currentClass != null ) {
+				final Method classMethod = currentClass.getMethod( key );
 
 				if( classMethod.canAccess( object ) ) {
 					// This is the happy path, where we'll immediately end up in 99% of cases
@@ -188,7 +186,7 @@ public interface NGKeyValueCoding {
 				// Here come the dragons...
 
 				// The class doesn't have an accessible method definition. What about the interfaces?
-				for( Class<?> interfaceClass : classToUseForLocatingMethod.getInterfaces() ) {
+				for( Class<?> interfaceClass : currentClass.getInterfaces() ) {
 					try {
 						final Method interfaceMethod = interfaceClass.getMethod( key );
 
@@ -202,16 +200,17 @@ public interface NGKeyValueCoding {
 				}
 
 				// Now let's try the whole thing again for the superclass
-				classToUseForLocatingMethod = classToUseForLocatingMethod.getSuperclass();
+				currentClass = currentClass.getSuperclass();
 			}
-		}
-		catch( NoSuchMethodException | SecurityException methodException ) {
-			// If the method doesn't exist on the original class we're dead whatever we do regardless of accessibility, so just throw immediately
+
+			// The method exists, but no accessible implementation was found. Tough luck.
 			return null;
 		}
-
-		// FIXME: Don't throw
-		return null;
+		catch( NoSuchMethodException | SecurityException methodException ) {
+			// We'll end up here immediately if the method doesn't exist on the first try.
+			// If the method doesn't exist on the original class we're dead whatever we do regardless of accessibility, so just return immediately
+			return null;
+		}
 	}
 
 	/**
