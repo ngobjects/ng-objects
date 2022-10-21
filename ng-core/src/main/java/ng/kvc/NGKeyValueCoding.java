@@ -95,6 +95,7 @@ public interface NGKeyValueCoding {
 	/**
 	 * @return A KVC binding for the given class and key.
 	 *
+	 * FIXME: We're not following KVC conventions here, we're returning the non-prefixed method first. Consider // Hugi 2022-10-21
 	 * FIXME: We're going to want to decide what to do if there's an available key, but not accessible. Do we skip to the next "type" of binding or do we throw. Essentially; is shading allowed.
 	 */
 	public static KVCBinding bindingForKey( final Object object, final String key ) {
@@ -123,6 +124,33 @@ public interface NGKeyValueCoding {
 		final String name2 = "is" + keyCapitalized;
 
 		method = method( object, name2 );
+
+		if( method != null ) {
+			return new MethodBinding( method );
+		}
+
+		// _getMethod() (get-prefixed, prefixed with an underscore)
+		final String name3 = "_get" + keyCapitalized;
+
+		method = method( object, name3 );
+
+		if( method != null ) {
+			return new MethodBinding( method );
+		}
+
+		// _method() (prefixed with an underscore)
+		final String name4 = "_" + key;
+
+		method = method( object, name4 );
+
+		if( method != null ) {
+			return new MethodBinding( method );
+		}
+
+		// _isMethod() (is-prefixed, prefixed with an underscore)
+		final String name5 = "_is" + key;
+
+		method = method( object, name5 );
 
 		if( method != null ) {
 			return new MethodBinding( method );
