@@ -95,7 +95,6 @@ public class TestNGKeyValueCoding {
 		public void takeValueForKey( Object value, String key ) {
 			// FIXME: Implement
 		}
-
 	}
 
 	public record PlainOldRecord( String name ) {
