@@ -34,10 +34,25 @@ public class NGApplication {
 	@Deprecated
 	private static NGApplication _application;
 
+	/**
+	 * The application's properties
+	 *
+	 * FIXME: While having properties is useful, we should be wondering if they should be public or only for internal use // Hugi 2022-10-22
+	 */
 	private NGProperties _properties;
 
+	/**
+	 * Session storage and coordination
+	 *
+	 * FIXME: A question of if this is a part of the application. In the case of stateful actions, it's likely that it'll have to be // Hugi 2022-10-22
+	 */
 	private NGSessionStore _sessionStore;
 
+	/**
+	 * Resource loading, caching and management
+	 *
+	 * FIXME: A question of if this is a part of the application or if resource loading is a separate "thing" // Hugi 2022-10-22
+	 */
 	private NGResourceManager _resourceManager;
 
 	/**
