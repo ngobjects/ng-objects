@@ -57,7 +57,7 @@ public class NGApplication {
 		properties.putAll( NGProperties.propertiesFromArgsString( args ) );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
-		initLogging( properties.propWOOutputPath() );
+		redirectOutputToFilesIfOutputPathSet( properties.propWOOutputPath() );
 
 		if( properties.isDevelopmentMode() ) {
 			logger.info( "========================================" );
@@ -93,6 +93,9 @@ public class NGApplication {
 		logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 	}
 
+	/**
+	 * Construct an application with no properties (and no property loading)
+	 */
 	public NGApplication() {
 		_resourceManager = new NGResourceManager();
 		_sessionStore = new NGServerSessionStore();
@@ -413,7 +416,7 @@ public class NGApplication {
 	 * If a file exists at the given path, it is renamed by adding the current date to it's name.
 	 * Pretty much the same way WOOutputPath is handled in WO.
 	 */
-	private static void initLogging( final String outputPath ) {
+	private static void redirectOutputToFilesIfOutputPathSet( final String outputPath ) {
 		if( outputPath != null ) {
 			// Archive the older logFile if it exists
 			final File outputFile = new File( outputPath );
