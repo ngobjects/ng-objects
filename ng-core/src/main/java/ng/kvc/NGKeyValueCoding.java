@@ -94,14 +94,16 @@ public interface NGKeyValueCoding {
 	/**
 	 * @return A KVC binding for the given class and key.
 	 *
-	 * FIXME: We're not following KVC conventions here, we're returning the non-prefixed method first. Consider // Hugi 2022-10-21
+	 * FIXME: KVC in WebObjects follows a slightly different method ordering. Our ordering is different in the way that we try for the exact key name first, for both methods and fields. In other terms, our lookup order is the same. Consider if this is the correct approach // Hugi 2022-10-22
 	 */
 	public static KVCBinding bindingForKey( final Object object, final String key ) {
 		Objects.requireNonNull( object );
 		Objects.requireNonNull( key );
 
+		Method method;
+
 		// First we try for just the key
-		Method method = method( object, key );
+		method = method( object, key );
 
 		if( method != null ) {
 			return new MethodBinding( method );
