@@ -112,45 +112,35 @@ public interface NGKeyValueCoding {
 		final String keyCapitalized = key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
 
 		// Now we try the old bean-style getMethod()
-		final String name1 = "get" + keyCapitalized;
-
-		method = method( object, name1 );
+		method = method( object, "get" + keyCapitalized );
 
 		if( method != null ) {
 			return new MethodBinding( method );
 		}
 
 		// Then we go for the bean-style isMethod() for booleans
-		final String name2 = "is" + keyCapitalized;
-
-		method = method( object, name2 );
+		method = method( object, "is" + keyCapitalized );
 
 		if( method != null ) {
 			return new MethodBinding( method );
 		}
 
 		// _getMethod() (get-prefixed, prefixed with an underscore)
-		final String name3 = "_get" + keyCapitalized;
-
-		method = method( object, name3 );
+		method = method( object, "_get" + keyCapitalized );
 
 		if( method != null ) {
 			return new MethodBinding( method );
 		}
 
 		// _method() (prefixed with an underscore)
-		final String name4 = "_" + key;
-
-		method = method( object, name4 );
+		method = method( object, "_" + key );
 
 		if( method != null ) {
 			return new MethodBinding( method );
 		}
 
 		// _isMethod() (is-prefixed, prefixed with an underscore)
-		final String name5 = "_is" + key;
-
-		method = method( object, name5 );
+		method = method( object, "_is" + key );
 
 		if( method != null ) {
 			return new MethodBinding( method );
