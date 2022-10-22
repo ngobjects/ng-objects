@@ -34,16 +34,23 @@ public class NGProperties {
 	 */
 	private final Map<String, String> _allProperties;
 
-	public NGProperties( final String[] args ) {
+	public NGProperties() {
 		_allProperties = new ConcurrentHashMap<>();
-		_allProperties.putAll( loadDefaultProperties() );
-		_allProperties.putAll( loadPropertiesFromArgsString( args ) );
+	}
+
+	/**
+	 * FIXME: Don't like the name. We're going to have to overhaul this API
+	 */
+	public void putAll( Map<String, String> properties ) {
+		_allProperties.putAll( properties );
 	}
 
 	/**
 	 * @return Properties passed to the main method as a Map
+	 *
+	 * FIXME: I feel this method doesn't belong here
 	 */
-	private static Map<String, String> loadPropertiesFromArgsString( final String[] args ) {
+	public static Map<String, String> propertiesFromArgsString( final String[] args ) {
 		final Map<String, String> m = new HashMap<>();
 
 		for( int i = 0; i < args.length; i = i + 2 ) {
@@ -64,8 +71,9 @@ public class NGProperties {
 	 * @return The default properties as a map (loaded from the default Properties file)
 	 *
 	 * FIXME: We need to watch the properties file for changes
+	 * FIXME: I feel this method doesn't belong here
 	 */
-	private Map<String, String> loadDefaultProperties() {
+	public static Map<String, String> loadDefaultProperties() {
 		final Optional<byte[]> propertyBytes = NGResourceLoader.readAppResource( "Properties" );
 
 		if( !propertyBytes.isPresent() ) {

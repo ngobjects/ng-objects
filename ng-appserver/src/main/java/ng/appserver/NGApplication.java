@@ -52,7 +52,9 @@ public class NGApplication {
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		final long startTime = System.currentTimeMillis();
 
-		final NGProperties properties = new NGProperties( args );
+		final NGProperties properties = new NGProperties();
+		properties.putAll( NGProperties.loadDefaultProperties() );
+		properties.putAll( NGProperties.propertiesFromArgsString( args ) );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		initLogging( properties.propWOOutputPath() );
