@@ -156,11 +156,15 @@ public interface NGKeyValueCoding {
 			return new MethodBinding( method );
 		}
 
+		// First we try for just the key
+
 		Field field = field( object, key );
 
 		if( field != null ) {
 			return new FieldBinding( field );
 		}
+
+		// Then check for the field with an underscore in front (_key)
 
 		return null;
 	}
