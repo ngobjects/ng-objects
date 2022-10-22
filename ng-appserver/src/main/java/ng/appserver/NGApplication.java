@@ -50,13 +50,13 @@ public class NGApplication {
 	 * FIXME: Temporary placeholder method while we continue to figure out the eprfect initialization process // Hugi 2022-10-22
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
-		_application = runAndReturn( args, applicationClass );
+		runAndReturn( args, applicationClass );
 	}
 
 	/**
 	 * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
 	 */
-	public static NGApplication runAndReturn( final String[] args, final Class<? extends NGApplication> applicationClass ) {
+	public static <E extends NGApplication> E runAndReturn( final String[] args, final Class<E> applicationClass ) {
 		final long startTime = System.currentTimeMillis();
 
 		final NGProperties properties = new NGProperties();
@@ -95,7 +95,11 @@ public class NGApplication {
 			}
 
 			logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
-			return application;
+
+			// FIXME: Assigning that unwanted global application...
+			_application = application;
+
+			return (E)application;
 		}
 		catch( final Exception e ) {
 			// FIXME: we're going to want to identify certain error conditions an respond to them with an explanation // Hugi 2022-10-22
