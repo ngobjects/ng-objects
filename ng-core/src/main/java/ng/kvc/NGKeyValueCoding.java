@@ -146,15 +146,35 @@ public interface NGKeyValueCoding {
 			return new MethodBinding( method );
 		}
 
-		// First we try for just the key
+		Field field;
 
-		Field field = field( object, key );
+		// First we try for just the key ("key")
+		field = field( object, key );
 
 		if( field != null ) {
 			return new FieldBinding( field );
 		}
 
-		// Then check for the field with an underscore in front (_key)
+		// Then check for the field with an underscore in front ("_key")
+		field = field( object, "_" + key );
+
+		if( field != null ) {
+			return new FieldBinding( field );
+		}
+
+		// Then check for the field prefixed with "is" and an underscore ("_isKey") // FIXME: Why check for this first, rather than just "isKey" without the underscore? // Hugi 2022-10-22
+		field = field( object, "_is" + keyCapitalized );
+
+		if( field != null ) {
+			return new FieldBinding( field );
+		}
+
+		// Finally check for the field prefixed with "is" ("isKey")
+		field = field( object, "is" + keyCapitalized );
+
+		if( field != null ) {
+			return new FieldBinding( field );
+		}
 
 		return null;
 	}
