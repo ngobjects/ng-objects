@@ -47,9 +47,16 @@ public class NGApplication {
 	private List<NGRouteTable> _routeTables = new ArrayList<>();
 
 	/**
-	 * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
+	 * FIXME: Temporary placeholder method while we continue to figure out the eprfect initialization process // Hugi 2022-10-22
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
+		_application = runAndReturn( args, applicationClass );
+	}
+
+	/**
+	 * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
+	 */
+	public static NGApplication runAndReturn( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		final long startTime = System.currentTimeMillis();
 
 		final NGProperties properties = new NGProperties();
@@ -72,25 +79,32 @@ public class NGApplication {
 
 		logger.info( "===== Properties =====\n" + properties._propertiesMapAsString() );
 
+		NGApplication application = null;
+
 		try {
-			_application = applicationClass.getDeclaredConstructor().newInstance();
+			application = applicationClass.getDeclaredConstructor().newInstance();
 
 			// FIXME: This is just plain wrong. We want properties to be accessible during application initialization. Here we're loading properties after construction
-			_application._properties = properties;
+			application._properties = properties;
 
 			// FIXME: We also might want to be more explicit about this
-			_application.start();
+			application.start();
+
+			if( properties.propWOLifebeatEnabled() ) {
+				NGDefaultLifeBeatThread.start( application._properties );
+			}
+
+			logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
+			return application;
 		}
 		catch( final Exception e ) {
+			// FIXME: we're going to want to identify certain error conditions an respond to them with an explanation // Hugi 2022-10-22
 			e.printStackTrace();
 			System.exit( -1 );
-		}
 
-		if( properties.propWOLifebeatEnabled() ) {
-			NGDefaultLifeBeatThread.start( _application._properties );
+			// Essentially a dead return, just to satisfy the java compiler (which doesn't seem aware that it was just violently stabbed to death using System.exit())
+			return null;
 		}
-
-		logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 	}
 
 	/**
