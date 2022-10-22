@@ -1,5 +1,7 @@
 package ng.appserver;
 
+import java.util.Objects;
+
 public class NGContext {
 
 	/**
@@ -69,6 +71,8 @@ public class NGContext {
 	private boolean _isInForm;
 
 	public NGContext( final NGRequest request ) {
+		Objects.requireNonNull( request );
+
 		_request = request;
 		request.setContext( this );
 
