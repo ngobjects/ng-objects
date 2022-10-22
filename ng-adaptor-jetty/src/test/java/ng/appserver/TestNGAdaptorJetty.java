@@ -16,7 +16,7 @@ public class TestNGAdaptorJetty {
 
 	@Test
 	public void testRequestHandling() throws IOException, InterruptedException {
-		NGApplication.run( new String[0], SmuApplication.class );
+		SmuApplication application = NGApplication.runAndReturn( new String[0], SmuApplication.class );
 
 		final HttpClient client = HttpClient
 				.newBuilder()
@@ -38,7 +38,7 @@ public class TestNGAdaptorJetty {
 		assertEquals( "Oh look, a 404 response!", response.body() );
 
 		// Check the request values as seen by the application class
-		final NGRequest lsr = ((SmuApplication)NGApplication.application()).lastServedRequest;
+		final NGRequest lsr = application.lastServedRequest;
 		assertEquals( "GET", lsr.method() );
 		assertEquals( "/first/second", lsr.uri() );
 		assertEquals( List.of( "someRequestHeaderValue1", "someRequestHeaderValue2" ), lsr.headers().get( "someRequestHeader" ) );
