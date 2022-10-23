@@ -73,7 +73,7 @@ public class NGResourceLoader {
 		/**
 		 * Classpath prefix
 		 */
-		private String _basePath;
+		private final String _basePath;
 
 		public JavaClasspathResourceSource( final String basePath ) {
 			Objects.requireNonNull( basePath );
