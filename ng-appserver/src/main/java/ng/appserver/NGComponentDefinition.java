@@ -144,7 +144,7 @@ public class NGComponentDefinition {
 			newComponentInstance._componentDefinition = this; // FIXME: Feel like this is ugly as all hell, the _componentDefinition variable should not be exposed
 			return newComponentInstance;
 		}
-		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
+		catch( InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e ) {
 			throw new RuntimeException( e );
 		}
 	}
