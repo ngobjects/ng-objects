@@ -510,6 +510,13 @@ public class NGApplication {
 	/**
 	 * FIXME: This should not be static, belongs in an instance of a different class.
 	 * FIXME: If we're going to introduce namespaces, this would be the place
+	 *
+	 * @param name The name identifying what element we're getting
+	 * @param associations Associations used to bind the generated element to it's parent
+	 * @param contentTemplate The content wrapped by the element (if a container element)
+	 * @param languages A list of languages you'd prefer, in order of most preferred to least preferred
+	 *
+	 * @return An instance of the named dynamic element. This can be a classless component (in which case it's the template name), a simple class name or a full class name
 	 */
 	public static NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
 		Objects.requireNonNull( name );
