@@ -2,6 +2,8 @@ package ng.appserver.privates;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -108,6 +110,44 @@ public class NGResourceLoader {
 		 */
 		private String pathWithPrefix( String resourcePath ) {
 			return "/" + _basePath + "/" + resourcePath;
+		}
+	}
+
+	/**
+	 * Wraps loading of resources from a
+	 */
+	public static class FileSystemDirectoryResourceSource implements ResourceSource {
+
+		private static final Logger logger = LoggerFactory.getLogger( FileSystemDirectoryResourceSource.class );
+
+		/**
+		 * The directory we're going to locate resources in
+		 */
+		private final Path _basePath;
+
+		public FileSystemDirectoryResourceSource( final Path basePath ) {
+			Objects.requireNonNull( basePath );
+			_basePath = basePath;
+		}
+
+		@Override
+		public Optional<byte[]> bytesforResourceWithPath( String resourcePath ) {
+			Objects.requireNonNull( resourcePath );
+
+			logger.debug( "Reading resource {} ", resourcePath );
+
+			try {
+				final byte[] bytes = Files.readAllBytes( _basePath.resolve( resourcePath ) );
+
+				if( bytes == null ) {
+					return Optional.empty();
+				}
+
+				return Optional.of( bytes );
+			}
+			catch( IOException e1 ) {
+				throw new RuntimeException( e1 );
+			}
 		}
 	}
 }
