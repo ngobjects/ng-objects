@@ -155,7 +155,7 @@ public class NGComponent extends NGElement implements NGActionResults {
 	}
 
 	/**
-	 * FIXME: We probably want to cache the template, just a question of if we do it here or elsewhere // Hugi 2022-04-18
+	 * @return the template (which is stored by the component definition)
 	 */
 	public NGElement template() {
 		return _componentDefinition.template();
