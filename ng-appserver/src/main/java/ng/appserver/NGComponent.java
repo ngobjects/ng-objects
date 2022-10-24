@@ -8,7 +8,7 @@ import java.util.Objects;
  * FIXME: Templating really belongs in a separate project, right?
  */
 
-public class NGComponent extends NGElement implements NGActionResults {
+public class NGComponent implements NGElement, NGActionResults {
 
 	private final NGContext _context;
 

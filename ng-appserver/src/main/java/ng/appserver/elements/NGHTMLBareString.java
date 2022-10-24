@@ -8,7 +8,7 @@ import ng.appserver.NGResponse;
  * Represents a plain, non-dynamic HTML string
  */
 
-public class NGHTMLBareString extends NGElement {
+public class NGHTMLBareString implements NGElement {
 
 	private final String _string;
 

@@ -13,7 +13,7 @@ import ng.appserver.elements.docs.NGDynamicElementDescription;
  * Probably could be an interface, but implemented as an abstract class to enforce usage of the constructor.
  */
 
-public abstract class NGDynamicElement extends NGElement {
+public abstract class NGDynamicElement implements NGElement {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGDynamicElement.class );
 
