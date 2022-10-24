@@ -1,6 +1,7 @@
 package ng.appserver.templating;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication;
+import ng.appserver.NGAssociation;
 import ng.appserver.NGElement;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
@@ -125,12 +127,18 @@ public class NGElementUtils {
 		return _shortcutToClassMap;
 	}
 
-	public static <E> E instantiateObject( Class<E> objectClass, Class[] parameterTypes, Object[] parameters ) {
+	/**
+	 * @return A new NGDynamicElement constructed using the given parameters
+	 */
+	public static <E extends NGElement> E createElement( final Class<E> elementClass, final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		final Class<?>[] parameterTypes = { String.class, Map.class, NGElement.class };
+		final Object[] parameters = { name, associations, contentTemplate };
+
 		try {
-			Constructor<E> constructor = objectClass.getDeclaredConstructor( parameterTypes );
+			final Constructor<E> constructor = elementClass.getDeclaredConstructor( parameterTypes );
 			return constructor.newInstance( parameters );
 		}
-		catch( Throwable e ) {
+		catch( NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
 			throw new RuntimeException( e );
 		}
 	}

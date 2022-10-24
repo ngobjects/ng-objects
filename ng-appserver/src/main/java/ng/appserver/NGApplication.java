@@ -540,9 +540,7 @@ public class NGApplication {
 
 		// First we check if this is a dynamic element
 		if( NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
-			final Class<?>[] params = { String.class, Map.class, NGElement.class };
-			final Object[] arguments = { name, associations, contentTemplate };
-			return NGElementUtils.instantiateObject( elementClass, params, arguments );
+			return NGElementUtils.createElement( elementClass, name, associations, contentTemplate );
 		}
 
 		// If it's not an element, let's move on to creating a component reference instead
