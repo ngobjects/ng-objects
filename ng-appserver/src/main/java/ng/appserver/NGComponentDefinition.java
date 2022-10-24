@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.privates.NGResourceLoader;
 import ng.appserver.templating.NGDeclarationFormatException;
+import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.NGHTMLFormatException;
 import ng.appserver.templating.NGTemplateParser;
-import ng.appserver.templating.NGElementUtils;
 
 /**
  * FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
@@ -88,7 +88,15 @@ public class NGComponentDefinition {
 		return get( null, componentClass );
 	}
 
+	/**
+	 * @return a component definition by either name OR class (never both)
+	 */
 	private static NGComponentDefinition get( String componentName, Class<? extends NGComponent> componentClass ) {
+
+		// You're not allowed to pass in both componentName and componentClass
+		if( componentName != null && componentClass != null ) {
+			throw new IllegalArgumentException( "You can't specify both componentName and componentClass, just either one" );
+		}
 
 		// You must pass in either a name or a class
 		if( componentName == null && componentClass == null ) {
