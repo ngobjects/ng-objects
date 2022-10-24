@@ -26,7 +26,7 @@ import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
-import ng.appserver.templating._NGUtilities;
+import ng.appserver.templating.NGElementUtils;
 
 /**
  * This is an extremely experimental adaptor that evolves with the framework to support only the exact HTTP features required by it.
@@ -58,7 +58,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 			catch( final Exception e ) {
 				if( application.properties().isDevelopmentMode() && e instanceof BindException ) {
 					logger.info( "Our port seems to be in use and we're in development mode. Let's try murdering the bastard that's blocking us" );
-					_NGUtilities.stopPreviousDevelopmentInstance( port );
+					NGElementUtils.stopPreviousDevelopmentInstance( port );
 					start( application );
 				}
 				else {

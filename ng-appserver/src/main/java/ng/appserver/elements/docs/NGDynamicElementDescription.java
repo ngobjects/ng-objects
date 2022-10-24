@@ -20,7 +20,7 @@ import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGSubmitButton;
 import ng.appserver.elements.NGTextField;
 import ng.appserver.elements.docs.NGDynamicElementDescription.NGBindingDescription;
-import ng.appserver.templating._NGUtilities;
+import ng.appserver.templating.NGElementUtils;
 
 /**
  * Provides a description of a dynamic element, particularly what it's bindings are and how they work.
@@ -65,7 +65,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 	public List<String> aliases() {
 		final List<String> result = new ArrayList<>();
 
-		for( Entry<String, String> entry : _NGUtilities.tagShortcutMap().entrySet() ) {
+		for( Entry<String, String> entry : NGElementUtils.tagShortcutMap().entrySet() ) {
 			if( entry.getValue().equals( elementClass().getSimpleName() ) ) {
 				result.add( entry.getKey() );
 			}

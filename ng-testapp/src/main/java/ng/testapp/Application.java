@@ -6,7 +6,7 @@ import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGResourceLoader;
-import ng.appserver.templating._NGUtilities;
+import ng.appserver.templating.NGElementUtils;
 import ng.testapp.components.ExampleComponent;
 import ng.testapp.components.FormComponent;
 import ng.testapp.components.ProgrammaticDynamicComponent;
@@ -21,8 +21,8 @@ public class Application extends NGApplication {
 	}
 
 	public Application() {
-		_NGUtilities.addClass( WrapperComponent.class );
-		_NGUtilities.addClass( RepetitionComponent.class );
+		NGElementUtils.addClass( WrapperComponent.class );
+		NGElementUtils.addClass( RepetitionComponent.class );
 
 		routeTable().map( "/response-plain", ( request ) -> {
 			NGResponse response = new NGResponse( "Oh look, a response!", 200 );

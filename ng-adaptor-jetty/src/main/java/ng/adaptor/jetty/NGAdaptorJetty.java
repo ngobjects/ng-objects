@@ -34,7 +34,7 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
-import ng.appserver.templating._NGUtilities;
+import ng.appserver.templating.NGElementUtils;
 
 public class NGAdaptorJetty extends NGAdaptor {
 
@@ -82,7 +82,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		catch( final Exception e ) {
 			if( application.properties().isDevelopmentMode() && e instanceof IOException && e.getCause() instanceof BindException ) {
 				logger.info( "Our port seems to be in use and we're in development mode. Let's try murdering the bastard that's blocking us" );
-				_NGUtilities.stopPreviousDevelopmentInstance( port );
+				NGElementUtils.stopPreviousDevelopmentInstance( port );
 				start( application );
 			}
 			else {

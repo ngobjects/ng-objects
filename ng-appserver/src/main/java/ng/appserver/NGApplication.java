@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.appserver.routing.NGRouteTable;
-import ng.appserver.templating._NGUtilities;
+import ng.appserver.templating.NGElementUtils;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 import x.junk.NGExceptionPage;
@@ -524,7 +524,7 @@ public class NGApplication {
 		Objects.requireNonNull( languages );
 
 		// First we locate the class of the element we're going to render.
-		final Class<? extends NGElement> elementClass = _NGUtilities.classWithNameNullIfNotFound( name );
+		final Class<? extends NGElement> elementClass = NGElementUtils.classWithNameNullIfNotFound( name );
 
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
@@ -542,7 +542,7 @@ public class NGApplication {
 		if( NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
 			final Class<?>[] params = { String.class, Map.class, NGElement.class };
 			final Object[] arguments = { name, associations, contentTemplate };
-			return _NGUtilities.instantiateObject( elementClass, params, arguments );
+			return NGElementUtils.instantiateObject( elementClass, params, arguments );
 		}
 
 		// If it's not an element, let's move on to creating a component reference instead

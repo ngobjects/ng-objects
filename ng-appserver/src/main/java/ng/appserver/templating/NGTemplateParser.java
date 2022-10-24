@@ -221,7 +221,7 @@ public class NGTemplateParser {
 		}
 
 		String elementType = elementTypeBuffer.toString();
-		final String shortcutType = _NGUtilities.tagShortcutMap().get( elementType );
+		final String shortcutType = NGElementUtils.tagShortcutMap().get( elementType );
 
 		if( shortcutType != null ) {
 			elementType = shortcutType;

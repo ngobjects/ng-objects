@@ -32,9 +32,9 @@ import x.junk.TestComponent;
  * An abomination of a class that serves as a repository for temporary hacky stuff
  */
 
-public class _NGUtilities {
+public class NGElementUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger( _NGUtilities.class );
+	private static final Logger logger = LoggerFactory.getLogger( NGElementUtils.class );
 
 	/**
 	 * Classes registered to be searchable by classWithName()

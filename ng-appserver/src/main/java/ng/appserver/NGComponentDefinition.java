@@ -15,7 +15,7 @@ import ng.appserver.privates.NGResourceLoader;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGHTMLFormatException;
 import ng.appserver.templating.NGTemplateParser;
-import ng.appserver.templating._NGUtilities;
+import ng.appserver.templating.NGElementUtils;
 
 /**
  * FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
@@ -108,7 +108,7 @@ public class NGComponentDefinition {
 		}
 
 		if( componentClass == null ) {
-			componentClass = _NGUtilities.classWithNameNullIfNotFound( componentName );
+			componentClass = NGElementUtils.classWithNameNullIfNotFound( componentName );
 
 			if( componentClass == null ) {
 				componentClass = NGComponent.class;
