@@ -31,7 +31,7 @@ public abstract class NGMessage {
 	/**
 	 * The content of this message
 	 */
-	byte[] _contentBytes = new byte[] {};
+	private byte[] _contentBytes = new byte[] {};
 
 	/**
 	 * @return The HTTP version of this message
