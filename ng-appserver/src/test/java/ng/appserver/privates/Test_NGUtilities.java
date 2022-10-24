@@ -7,28 +7,26 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.templating.NGElementUtils;
-
 public class Test_NGUtilities {
 
 	@Test
 	public void isTruthy() {
-		assertFalse( NGElementUtils.isTruthy( null ) );
+		assertFalse( _NGUtilities.isTruthy( null ) );
 
-		assertFalse( NGElementUtils.isTruthy( false ) );
-		assertTrue( NGElementUtils.isTruthy( true ) );
+		assertFalse( _NGUtilities.isTruthy( false ) );
+		assertTrue( _NGUtilities.isTruthy( true ) );
 
-		assertFalse( NGElementUtils.isTruthy( Boolean.FALSE ) );
-		assertTrue( NGElementUtils.isTruthy( Boolean.TRUE ) );
+		assertFalse( _NGUtilities.isTruthy( Boolean.FALSE ) );
+		assertTrue( _NGUtilities.isTruthy( Boolean.TRUE ) );
 
-		assertFalse( NGElementUtils.isTruthy( 0 ) );
-		assertTrue( NGElementUtils.isTruthy( 0.1 ) );
-		assertTrue( NGElementUtils.isTruthy( 2 ) );
+		assertFalse( _NGUtilities.isTruthy( 0 ) );
+		assertTrue( _NGUtilities.isTruthy( 0.1 ) );
+		assertTrue( _NGUtilities.isTruthy( 2 ) );
 
-		assertFalse( NGElementUtils.isTruthy( BigDecimal.ZERO ) );
-		assertTrue( NGElementUtils.isTruthy( new BigDecimal( "2.5" ) ) );
+		assertFalse( _NGUtilities.isTruthy( BigDecimal.ZERO ) );
+		assertTrue( _NGUtilities.isTruthy( new BigDecimal( "2.5" ) ) );
 
-		assertTrue( NGElementUtils.isTruthy( "haha" ) );
-		assertTrue( NGElementUtils.isTruthy( new Object() ) );
+		assertTrue( _NGUtilities.isTruthy( "haha" ) );
+		assertTrue( _NGUtilities.isTruthy( new Object() ) );
 	}
 }
