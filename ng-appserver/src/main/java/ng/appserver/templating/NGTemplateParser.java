@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import ng.appserver.NGAssociation;
+import ng.appserver.NGAssociationFactory;
 import ng.appserver.NGConstantValueAssociation;
 import ng.appserver.NGElement;
 import ng.appserver.NGKeyValueAssociation;

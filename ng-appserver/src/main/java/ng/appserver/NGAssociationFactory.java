@@ -1,9 +1,4 @@
-package ng.appserver.templating;
-
-import ng.appserver.NGAssociation;
-import ng.appserver.NGBindingAssociation;
-import ng.appserver.NGConstantValueAssociation;
-import ng.appserver.NGKeyValueAssociation;
+package ng.appserver;
 
 public class NGAssociationFactory {
 

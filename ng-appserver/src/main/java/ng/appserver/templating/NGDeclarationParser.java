@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGAssociation;
+import ng.appserver.NGAssociationFactory;
 import ng.appserver.NGConstantValueAssociation;
 
 public class NGDeclarationParser {
