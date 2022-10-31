@@ -180,9 +180,7 @@ public interface NGKeyValueCoding {
 	}
 
 	/**
-	 * @return true if targetClass responds to the methodName()
-	 *
-	 * Returns null if the method is not found.
+	 * @return The (exactly) named method if the class responds to it, null if not.
 	 */
 	private static Method method( final Object object, final String key ) {
 		Objects.requireNonNull( object );
@@ -232,7 +230,7 @@ public interface NGKeyValueCoding {
 	}
 
 	/**
-	 * @return true if targetClass has a field named [fieldName]
+	 * @return The (exactly) named field if the class responds to it, null if not.
 	 */
 	private static Field field( final Object object, final String fieldName ) {
 		Objects.requireNonNull( object );
