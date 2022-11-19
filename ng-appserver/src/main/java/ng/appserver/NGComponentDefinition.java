@@ -55,7 +55,7 @@ public class NGComponentDefinition {
 		Objects.requireNonNull( componentName );
 		Objects.requireNonNull( componentClass );
 		_componentClass = componentClass;
-		_name = _componentClass.getSimpleName();
+		_name = componentName;
 	}
 
 	/**
