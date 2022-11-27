@@ -225,8 +225,7 @@ public class NGApplication {
 	 * FIXME: I'm not quite sure what to do about this variable. Belongs here or someplace else?
 	 */
 	public boolean isDevelopmentMode() {
-		return false;
-		//		return _properties.isDevelopmentMode();
+		return _properties.isDevelopmentMode();
 	}
 
 	/**
