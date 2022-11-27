@@ -72,7 +72,7 @@ public class NGComponentDefinition {
 	 *  FIXME: Temp caching implementation
 	 */
 	private static boolean _cachingEnabled() {
-		return !NGApplication.application().cachingEnabled();
+		return NGApplication.application().cachingEnabled();
 	}
 
 	/**
