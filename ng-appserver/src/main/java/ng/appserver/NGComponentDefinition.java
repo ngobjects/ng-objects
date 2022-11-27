@@ -182,6 +182,11 @@ public class NGComponentDefinition {
 		return _loadTemplate();
 	}
 
+	/**
+	 * FIXME: We should try loading the old style HTML-template first. If that succeeds, load the wod file.
+	 * Then, if loading of the old style template loading fails, we check for a new style HTML-file instead.
+	 * Finally, log a warning if nothing is found (or even hard fail with an exception)
+	 */
 	private NGElement _loadTemplate() {
 		try {
 			// Let's try first for the traditional template
@@ -196,9 +201,11 @@ public class NGComponentDefinition {
 				if( htmlTemplate.isPresent() ) {
 					htmlTemplateString = new String( htmlTemplate.get(), StandardCharsets.UTF_8 );
 				}
-				else {
-					htmlTemplateString = "";
-				}
+			}
+
+			// FIXME: I feel like we should be throwing an exception in this case // Hugi 2022-11-27
+			if( htmlTemplateString.isEmpty() ) {
+				logger.warn( "Component template '%s' not found".formatted( name() ) );
 			}
 
 			return NGTemplateParser.parse( htmlTemplateString, wodString, Collections.emptyList() );
@@ -236,7 +243,6 @@ public class NGComponentDefinition {
 		final Optional<byte[]> templateBytes = NGResourceLoader.readComponentResource( htmlTemplateFilename );
 
 		if( templateBytes.isEmpty() ) {
-			logger.warn( String.format( "Template file '%s.%s' not found", templateName, extension ) );
 			return "";
 		}
 
