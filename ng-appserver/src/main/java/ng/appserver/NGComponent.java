@@ -1,7 +1,10 @@
 package ng.appserver;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+
+import ng.kvc.NGKeyValueCoding;
 
 /**
  * FIXME: Should we allow creation of components without a context?
@@ -50,6 +53,24 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	public boolean isSynchronized() {
 		return true;
+	}
+
+	/**
+	 * Invoked before each of the three R-R phases in NGComponent.
+	 * Iterates through all the component's bindings, pulls values from the parent component and sets them using KVC
+	 */
+	public void pullBindingValuesfromParent() {
+		if( isSynchronized() ) {
+			for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
+				final String bindingName = binding.getKey();
+				final NGAssociation association = binding.getValue();
+				NGKeyValueCoding.DefaultImplementation.takeValueForKey( this, association.valueInComponent( parent() ), bindingName );
+			}
+		}
+	}
+
+	public void pushBindingValuesToParent() {
+		// FIXME: Implement
 	}
 
 	public NGContext context() {
