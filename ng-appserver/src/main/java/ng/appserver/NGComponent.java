@@ -45,6 +45,13 @@ public class NGComponent implements NGElement, NGActionResults {
 		_context = context;
 	}
 
+	/**
+	 * @return true if this component should push/pull values to/from it's parent
+	 */
+	public boolean isSynchronized() {
+		return true;
+	}
+
 	public NGContext context() {
 		return _context;
 	}
