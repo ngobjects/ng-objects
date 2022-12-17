@@ -63,10 +63,10 @@ public class NGComponent implements NGElement, NGActionResults {
 			return null;
 		}
 
-		// The associations
+		// Access our associations and fetch the value based on the binding name
 		final NGAssociation association = _associations.get( bindingName );
 
-		// A null association means it's not bound, so we're going to return null.
+		// A null association means it's not bound, so we're going to return null
 		if( association == null ) {
 			return null;
 		}
