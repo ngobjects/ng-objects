@@ -2,8 +2,11 @@ package ng.appserver.privates;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -92,16 +95,49 @@ public class NGResourceLoader {
 
 			logger.debug( "Reading resourcePath {} ", resourcePath );
 
-			try( final InputStream resourceAsStream = NGResourceLoader.class.getResourceAsStream( resourcePath )) {
+			URL resourceURL = null;
 
+			try {
+				// Our default functionality uses a preceding slash a-la loading a resource by name from the class. ClassLoader doesn't want the preceding slash.
+				final String resourcePathForClassLoader = resourcePath.substring( 1 );
+
+				// We're using this method to locate resources, in case there's more than one resource on the classpath with the same name
+				final Enumeration<URL> resources = NGResourceLoader.class.getClassLoader().getResources( resourcePathForClassLoader );
+
+				// We iterate through the resources and pick the first one to return. Then we log a warning if there are more resources with the same name.
+				while( resources.hasMoreElements() ) {
+					final URL currentURL = resources.nextElement();
+
+					if( resourceURL == null ) {
+						resourceURL = currentURL;
+					}
+					else {
+						logger.warn( "Duplicate resource found for path '{}'. I'm using '{}' and ignoring '{}'", resourcePath, resourceURL, currentURL );
+					}
+				}
+			}
+			catch( IOException ioException ) {
+				throw new UncheckedIOException( ioException );
+			}
+
+			// If we didn't find the resource, warn the user
+			if( resourceURL == null ) {
+				logger.warn( "Unable to locate resource {}", resourcePath );
+				return Optional.empty();
+			}
+
+			try( final InputStream resourceAsStream = resourceURL.openStream()) {
+
+				// I don't see this happening, but better check for it and warn about it
 				if( resourceAsStream == null ) {
+					logger.warn( "Unable to obtain input stream from {}", resourcePath );
 					return Optional.empty();
 				}
 
 				return Optional.of( resourceAsStream.readAllBytes() );
 			}
-			catch( final IOException e ) {
-				throw new RuntimeException( e );
+			catch( final IOException ioException ) {
+				throw new UncheckedIOException( ioException );
 			}
 		}
 
