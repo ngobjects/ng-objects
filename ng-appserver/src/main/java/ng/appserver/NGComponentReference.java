@@ -48,6 +48,7 @@ public class NGComponentReference extends NGDynamicElement {
 		final NGComponentDefinition newComponent = NGApplication.application()._componentDefinition( _componentName, Collections.emptyList() );
 
 		// Obtain an instance of the component
+		// FIXME: This isn't any good. If we've rendered this page before, we need to find the previous instance of the component // Hugi 2022-12-17
 		final NGComponent newComponentInstance = newComponent.componentInstanceInContext( context );
 
 		newComponentInstance.setParent( previousComponent );
