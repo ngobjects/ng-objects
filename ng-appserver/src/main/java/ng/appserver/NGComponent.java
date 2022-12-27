@@ -52,8 +52,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * @return true if this component should push/pull values to/from it's parent
 	 */
 	public boolean isSynchronized() {
-		// FIXME: This is going to have to remain unimplemented until we've actually implemented value setting in NGKeyValueCoding // Hugi 2022-12-17
-		return false;
+		return true;
 	}
 
 	/**
