@@ -190,9 +190,6 @@ public interface NGKeyValueCoding {
 		// Now we try the old bean-style getMethod()
 		method = writeMethod( object, "set" + keyCapitalized );
 
-		System.out.println( object.getClass() );
-		System.out.println( "set" + keyCapitalized );
-		System.out.println( "method: " + method );
 		if( method != null ) {
 			return new MethodWriteBinding( method );
 		}
@@ -213,7 +210,7 @@ public interface NGKeyValueCoding {
 	 * FIXME: Only look for methods that "return" Void // Hugi 2022-12-27
 	 */
 	private static Method writeMethod( final Object object, final String key ) {
-		return method( object, key, Object.class );
+		return method( object, key, String.class );
 	}
 
 	/**
