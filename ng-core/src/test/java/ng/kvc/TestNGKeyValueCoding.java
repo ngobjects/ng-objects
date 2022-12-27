@@ -80,6 +80,13 @@ public class TestNGKeyValueCoding {
 
 	}
 
+	@Test
+	public void testTakeValueForKeyMethodWithSetPrefixOnly() {
+		var home = new Home();
+		NGKeyValueCoding.Utility.takeValueForKey( home, "Hraunteigur 23", "address2Method" );
+		assertEquals( "Hraunteigur 23", NGKeyValueCoding.Utility.valueForKey( home, "address2" ) );
+	}
+
 	public record RecordThatImplementsValueForKey( String name ) implements NGKeyValueCoding {
 
 		@Override
@@ -115,5 +122,9 @@ public class TestNGKeyValueCoding {
 	public static class Home {
 		public String address1;
 		public String address2;
+
+		public void setAddress2Method( String value ) {
+			address2 = value;
+		}
 	}
 }
