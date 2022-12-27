@@ -38,9 +38,7 @@ public class NGComponentReference extends NGDynamicElement {
 		_contentTemplate = contentTemplate;
 	}
 
-	@Override
-	public void appendToResponse( final NGResponse response, final NGContext context ) {
-
+	private void beforeComponent( final NGContext context ) {
 		// Let's take hold of component that's being rendered, before we hand control to the new component
 		final NGComponent previousComponent = context.component();
 
@@ -63,10 +61,20 @@ public class NGComponentReference extends NGDynamicElement {
 		// Set the component in the context
 		context.setCurrentComponent( newComponentInstance );
 
-		newComponentInstance.appendToResponse( response, context );
+	}
+
+	private void afterComponent( final NGContext context ) {
 
 		// Return control to the previous component
-		context.setCurrentComponent( previousComponent );
+		// FIXME: I'm not sure this will work. What about stateless components? // Hugi 2022-12-27
+		context.setCurrentComponent( context.component().parent() );
+	}
+
+	@Override
+	public void appendToResponse( final NGResponse response, final NGContext context ) {
+		beforeComponent( context );
+		context.component().appendToResponse( response, context );
+		afterComponent( context );
 	}
 
 	/**
