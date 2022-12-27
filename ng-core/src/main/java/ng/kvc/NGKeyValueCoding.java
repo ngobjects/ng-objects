@@ -69,7 +69,7 @@ public interface NGKeyValueCoding {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( key );
 
-			final KVCBinding kvcBinding = bindingForKey( object, key );
+			final KVCReadBinding kvcBinding = readBindingForKey( object, key );
 
 			if( kvcBinding == null ) {
 				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
@@ -80,7 +80,7 @@ public interface NGKeyValueCoding {
 		}
 
 		public static void takeValueForKey( final Object object, final Object value, final String key ) {
-			final KVCBinding kvcBinding = bindingForKey( object, key );
+			final KVCWriteBinding kvcBinding = null; // readBindingForKey( object, key );
 
 			if( kvcBinding == null ) {
 				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
@@ -96,7 +96,7 @@ public interface NGKeyValueCoding {
 	 *
 	 * FIXME: KVC in WebObjects follows a slightly different method ordering. Our ordering is different in the way that we try for the exact key name first, for both methods and fields. In other terms, our lookup order is the same. Consider if this is the correct approach // Hugi 2022-10-22
 	 */
-	public static KVCBinding bindingForKey( final Object object, final String key ) {
+	private static KVCReadBinding readBindingForKey( final Object object, final String key ) {
 		Objects.requireNonNull( object );
 		Objects.requireNonNull( key );
 
@@ -106,7 +106,7 @@ public interface NGKeyValueCoding {
 		method = method( object, key );
 
 		if( method != null ) {
-			return new MethodBinding( method );
+			return new MethodReadBinding( method );
 		}
 
 		final String keyCapitalized = key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
@@ -115,35 +115,35 @@ public interface NGKeyValueCoding {
 		method = method( object, "get" + keyCapitalized );
 
 		if( method != null ) {
-			return new MethodBinding( method );
+			return new MethodReadBinding( method );
 		}
 
 		// Then we go for the bean-style isMethod() for booleans
 		method = method( object, "is" + keyCapitalized );
 
 		if( method != null ) {
-			return new MethodBinding( method );
+			return new MethodReadBinding( method );
 		}
 
 		// _getMethod() (get-prefixed, prefixed with an underscore)
 		method = method( object, "_get" + keyCapitalized );
 
 		if( method != null ) {
-			return new MethodBinding( method );
+			return new MethodReadBinding( method );
 		}
 
 		// _method() (prefixed with an underscore)
 		method = method( object, "_" + key );
 
 		if( method != null ) {
-			return new MethodBinding( method );
+			return new MethodReadBinding( method );
 		}
 
 		// _isMethod() (is-prefixed, prefixed with an underscore)
 		method = method( object, "_is" + key );
 
 		if( method != null ) {
-			return new MethodBinding( method );
+			return new MethodReadBinding( method );
 		}
 
 		Field field;
@@ -244,19 +244,21 @@ public interface NGKeyValueCoding {
 		}
 	}
 
-	public static interface KVCBinding {
+	public static interface KVCReadBinding {
 		public Object valueInObject( final Object object );
 
+	}
+
+	public static interface KVCWriteBinding {
 		public void setValueInObject( final Object value, final Object object );
 	}
 
-	public static class MethodBinding implements KVCBinding {
+	public static class MethodReadBinding implements KVCReadBinding {
 
 		private final Method _method;
 
-		public MethodBinding( Method method ) {
+		public MethodReadBinding( Method method ) {
 			_method = method;
-
 		}
 
 		@Override
@@ -264,28 +266,56 @@ public interface NGKeyValueCoding {
 			try {
 				return _method.invoke( object );
 			}
-			catch( SecurityException | IllegalAccessException | IllegalArgumentException e1 ) {
+			catch( SecurityException | IllegalAccessException | IllegalArgumentException e ) {
 				// FIXME: Error handling is missing entirely
-				throw new RuntimeException( e1 );
+				throw new RuntimeException( e );
 			}
-			catch( InvocationTargetException e2 ) {
+			catch( InvocationTargetException e ) {
 				// If the InvocationTargetException wraps a RuntimeException, just rethrow it. We're not adding any valuable information at the moment.
-				if( e2.getTargetException() instanceof RuntimeException r ) {
+				if( e.getTargetException() instanceof RuntimeException r ) {
 					throw r;
 				}
 
 				// If it's not a RuntimeException, wrap and throw
-				throw new RuntimeException( e2 );
+				throw new RuntimeException( e );
 			}
+		}
+
+	}
+
+	public static class MethodWriteBinding implements KVCWriteBinding {
+
+		private final Method _method;
+
+		public MethodWriteBinding( Method method ) {
+			_method = method;
 		}
 
 		@Override
 		public void setValueInObject( Object value, Object object ) {
-			throw new RuntimeException( "Not implemented" );
+			try {
+				_method.invoke( object, value );
+			}
+			catch( IllegalAccessException e ) {
+				// FIXME: Error handling is missing entirely
+				throw new RuntimeException( e );
+			}
+			catch( IllegalArgumentException e ) {
+				// FIXME: Error handling is missing entirely
+				throw new RuntimeException( e );
+			}
+			catch( InvocationTargetException e ) {
+				// FIXME: Error handling is missing entirely
+				throw new RuntimeException( e );
+			}
 		}
+
 	}
 
-	public static class FieldBinding implements KVCBinding {
+	/**
+	 * FIXME: We should really implement separate read/write bindings for Fields for more fine grained control // Hugi 2022-12-27
+	 */
+	public static class FieldBinding implements KVCWriteBinding, KVCReadBinding {
 
 		private final Field _field;
 
