@@ -20,6 +20,8 @@ import ng.NGRuntimeException;
  * FIXME: Implement the correct method/field lookup ordering:
  * FIXME: We're going to want to decide what to do if there's an available key, but not accessible. Do we skip to the next "type" of binding or do we throw. Essentially; is shading allowed.
  *
+ * Lookup order when searching for a readable binding:
+ *
  * 1. Method "getSmu"
  * 2. Method "smu"
  * 3. Method "isSmu"
@@ -30,6 +32,12 @@ import ng.NGRuntimeException;
  * 8. Field "_isSmu"
  * 9. Field "smu"
  * 10. Field "isSmu"
+ *
+ * Lookup order when searching for a writable binding: // FIXME: Incomplete // Hugi 2022-12-27
+ *
+ * 1. Method "setSmu"
+ * 2. Field "smu"
+ * ...
  */
 
 public interface NGKeyValueCoding {
