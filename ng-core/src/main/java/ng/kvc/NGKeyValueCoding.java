@@ -209,8 +209,11 @@ public interface NGKeyValueCoding {
 		return null;
 	}
 
+	/**
+	 * FIXME: Only look for methods that "return" Void // Hugi 2022-12-27
+	 */
 	private static Method writeMethod( final Object object, final String key ) {
-		return method( object, key, String.class );
+		return method( object, key, Object.class );
 	}
 
 	/**
