@@ -208,9 +208,19 @@ public interface NGKeyValueCoding {
 
 	/**
 	 * FIXME: Only look for methods that "return" Void // Hugi 2022-12-27
+	 * FIXME: Getting the write method is going to require some much more complicated semantics, similar to what we're doing for readMethod // Hugi 2022-12-27
+	 * FIXME: We might want to look at the class of the value we're setting, so we can support overloading. Not sure we even want to do that though... // Hugi 2022-12-27
 	 */
 	private static Method writeMethod( final Object object, final String key ) {
-		return method( object, key, String.class );
+		for( Method method : object.getClass().getMethods() ) {
+			if( method.getName().equals( key ) ) {
+				if( method.getParameterCount() == 1 ) {
+					return method;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/**
