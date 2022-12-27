@@ -51,8 +51,17 @@ public class NGComponent implements NGElement, NGActionResults {
 	/**
 	 * @return true if this component should push/pull values to/from it's parent
 	 */
+	private boolean synchronizesVariablesWithBindings() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * FIXME: Delete this method. *sigh* The new name felt so good to begin with...
+	 */
+	@Deprecated
 	public boolean isSynchronized() {
-		return true;
+		return synchronizesVariablesWithBindings();
 	}
 
 	/**
