@@ -51,16 +51,8 @@ public class NGComponent implements NGElement, NGActionResults {
 	/**
 	 * @return true if this component should push/pull values to/from it's parent
 	 */
-	private boolean synchronizesVariablesWithBindings() {
+	public boolean synchronizesVariablesWithBindings() {
 		return true;
-	}
-
-	/**
-	 * FIXME: Delete this method. *sigh* The new name felt so good to begin with...
-	 */
-	@Deprecated
-	public boolean isSynchronized() {
-		return synchronizesVariablesWithBindings();
 	}
 
 	/**
@@ -101,9 +93,9 @@ public class NGComponent implements NGElement, NGActionResults {
 	public Object valueForBinding( String bindingName ) {
 
 		// FIXME: Not a fan of nulls
-		if( _associations == null ) {
-			return null;
-		}
+		//		if( _associations == null ) {
+		//			return null;
+		//		}
 
 		// Access our associations and fetch the value based on the binding name
 		final NGAssociation association = _associations.get( bindingName );

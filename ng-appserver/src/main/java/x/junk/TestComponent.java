@@ -16,4 +16,9 @@ public class TestComponent extends NGComponent {
 	public String someString() {
 		return (String)valueForBinding( "someString" );
 	}
+
+	@Override
+	public boolean synchronizesVariablesWithBindings() {
+		return false;
+	}
 }
