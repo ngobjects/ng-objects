@@ -52,8 +52,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * @return true if this component should push/pull values to/from it's parent
 	 */
 	private boolean synchronizesVariablesWithBindings() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -69,7 +68,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * Iterates through all the component's bindings, pulls values from the parent component and sets them using KVC
 	 */
 	public void pullBindingValuesfromParent() {
-		if( isSynchronized() ) {
+		if( synchronizesVariablesWithBindings() ) {
 			for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
 				final String bindingName = binding.getKey();
 				final NGAssociation association = binding.getValue();
@@ -79,7 +78,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	public void pushBindingValuesToParent() {
-		if( isSynchronized() ) {
+		if( synchronizesVariablesWithBindings() ) {
 			for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
 				final String bindingName = binding.getKey();
 				final NGAssociation association = binding.getValue();
