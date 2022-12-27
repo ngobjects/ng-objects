@@ -80,7 +80,7 @@ public interface NGKeyValueCoding {
 		}
 
 		public static void takeValueForKey( final Object object, final Object value, final String key ) {
-			final KVCWriteBinding kvcBinding = null; // readBindingForKey( object, key );
+			final KVCWriteBinding kvcBinding = writeBindingForKey( object, key );
 
 			if( kvcBinding == null ) {
 				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
@@ -103,7 +103,7 @@ public interface NGKeyValueCoding {
 		Method method;
 
 		// First we try for just the key
-		method = method( object, key );
+		method = readMethod( object, key );
 
 		if( method != null ) {
 			return new MethodReadBinding( method );
@@ -112,35 +112,35 @@ public interface NGKeyValueCoding {
 		final String keyCapitalized = key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
 
 		// Now we try the old bean-style getMethod()
-		method = method( object, "get" + keyCapitalized );
+		method = readMethod( object, "get" + keyCapitalized );
 
 		if( method != null ) {
 			return new MethodReadBinding( method );
 		}
 
 		// Then we go for the bean-style isMethod() for booleans
-		method = method( object, "is" + keyCapitalized );
+		method = readMethod( object, "is" + keyCapitalized );
 
 		if( method != null ) {
 			return new MethodReadBinding( method );
 		}
 
 		// _getMethod() (get-prefixed, prefixed with an underscore)
-		method = method( object, "_get" + keyCapitalized );
+		method = readMethod( object, "_get" + keyCapitalized );
 
 		if( method != null ) {
 			return new MethodReadBinding( method );
 		}
 
 		// _method() (prefixed with an underscore)
-		method = method( object, "_" + key );
+		method = readMethod( object, "_" + key );
 
 		if( method != null ) {
 			return new MethodReadBinding( method );
 		}
 
 		// _isMethod() (is-prefixed, prefixed with an underscore)
-		method = method( object, "_is" + key );
+		method = readMethod( object, "_is" + key );
 
 		if( method != null ) {
 			return new MethodReadBinding( method );
@@ -180,9 +180,52 @@ public interface NGKeyValueCoding {
 	}
 
 	/**
+	 * FIXME: The list of methods/field names to lookup is not complete // Hugi 2022-12-27
+	 */
+	private static KVCWriteBinding writeBindingForKey( final Object object, final String key ) {
+		Method method;
+
+		final String keyCapitalized = key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
+
+		// Now we try the old bean-style getMethod()
+		method = writeMethod( object, "set" + keyCapitalized );
+
+		System.out.println( object.getClass() );
+		System.out.println( "set" + keyCapitalized );
+		System.out.println( "method: " + method );
+		if( method != null ) {
+			return new MethodWriteBinding( method );
+		}
+
+		Field field;
+
+		// First we try for just the key ("key")
+		field = field( object, key );
+
+		if( field != null ) {
+			return new FieldBinding( field );
+		}
+
+		return null;
+	}
+
+	private static Method writeMethod( final Object object, final String key ) {
+		return method( object, key, String.class );
+	}
+
+	/**
+	 * @return The named method, accepting no parameters
+	 *
+	 * // FIXME: Are we checking the method's return type? I.e. does it actually return something? If not, do so // Hugi 2022-12-27
+	 */
+	private static Method readMethod( final Object object, final String key ) {
+		return method( object, key );
+	}
+
+	/**
 	 * @return The (exactly) named method if the class responds to it, null if not.
 	 */
-	private static Method method( final Object object, final String key ) {
+	private static Method method( final Object object, final String key, Class<?>... signature ) {
 		Objects.requireNonNull( object );
 		Objects.requireNonNull( key );
 
@@ -190,7 +233,7 @@ public interface NGKeyValueCoding {
 
 		try {
 			while( currentClass != null ) {
-				final Method classMethod = currentClass.getMethod( key );
+				final Method classMethod = currentClass.getMethod( key, signature );
 
 				if( classMethod.canAccess( object ) ) {
 					// Method exists and is accessible on the object's class
@@ -204,7 +247,7 @@ public interface NGKeyValueCoding {
 				// FIXME: We're missing a check on "parent interfaces", i.e. interfaces that these interfaces inherit from // Hugi 2022-10-21
 				for( Class<?> interfaceClass : currentClass.getInterfaces() ) {
 					try {
-						final Method interfaceMethod = interfaceClass.getMethod( key );
+						final Method interfaceMethod = interfaceClass.getMethod( key, signature );
 
 						if( interfaceMethod.canAccess( object ) ) {
 							return interfaceMethod;
