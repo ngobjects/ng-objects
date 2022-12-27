@@ -70,7 +70,13 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	public void pushBindingValuesToParent() {
-		// FIXME: Implement
+		if( isSynchronized() ) {
+			for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
+				final String bindingName = binding.getKey();
+				final NGAssociation association = binding.getValue();
+				association.setValue( NGKeyValueCoding.DefaultImplementation.valueForKey( this, bindingName ), parent() );
+			}
+		}
 	}
 
 	public NGContext context() {
