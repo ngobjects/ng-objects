@@ -222,6 +222,8 @@ public class NGTemplateParser {
 		}
 
 		String elementType = elementTypeBuffer.toString();
+
+		// FIXME: This type of "tag shortcutting" should not be performed by the parser, but is instead performed when the dynamic element is constructed. Leaving in the code for a bit while we make up our minds for a design // Hugi 2022-12-28
 		final String shortcutType = NGElementUtils.tagShortcutMap().get( elementType );
 
 		if( shortcutType != null ) {
