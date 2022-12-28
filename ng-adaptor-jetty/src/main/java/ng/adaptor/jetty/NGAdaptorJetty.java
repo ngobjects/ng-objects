@@ -156,13 +156,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 			servletCookie.setPath( ngCookie.path() );
 		}
 
-		if( ngCookie.isHttpOnly() ) {
-			servletCookie.setHttpOnly( ngCookie.isHttpOnly() );
-		}
-
-		if( ngCookie.isSecure() ) {
-			servletCookie.setSecure( ngCookie.isSecure() );
-		}
+		servletCookie.setHttpOnly( ngCookie.isHttpOnly() );
+		servletCookie.setSecure( ngCookie.isSecure() );
 
 		if( ngCookie.comment() != null ) {
 			servletCookie.setComment( ngCookie.comment() );
