@@ -322,6 +322,7 @@ public class NGDeclarationParser {
 
 	private static boolean isNumeric( String string ) {
 		int length = string.length();
+
 		if( length == 0 ) {
 			return false;
 		}
@@ -329,6 +330,7 @@ public class NGDeclarationParser {
 		boolean dot = false;
 		int i = 0;
 		char character = string.charAt( 0 );
+
 		if( (character == '-') || (character == '+') ) {
 			i = 1;
 		}
@@ -339,6 +341,7 @@ public class NGDeclarationParser {
 
 		while( i < length ) {
 			character = string.charAt( i++ );
+
 			if( character == '.' ) {
 				if( dot ) {
 					return false;
@@ -349,6 +352,7 @@ public class NGDeclarationParser {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
