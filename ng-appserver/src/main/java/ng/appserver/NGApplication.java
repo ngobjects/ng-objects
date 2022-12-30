@@ -268,6 +268,10 @@ public class NGApplication {
 		// Let the context know that this is the component we're currently rendering
 		context.setCurrentComponent( componentInstance );
 
+		// FIXME: This is horrible, but we're using it for experimentation
+		// At least the idea is that here we're catching the elementID of the element that invoked the action and trying to save under that key
+		NGComponentRequestHandler.savePage( context.contextID() + "." + context.request().context().senderID(), componentInstance );
+
 		return componentInstance;
 	}
 
