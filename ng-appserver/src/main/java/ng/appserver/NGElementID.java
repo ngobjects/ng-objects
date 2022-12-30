@@ -2,7 +2,6 @@ package ng.appserver;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Represents an elementID.
@@ -32,7 +31,12 @@ public class NGElementID {
 
 	@Override
 	public boolean equals( Object obj ) {
-		return Objects.equals( this, obj );
+
+		if( obj instanceof NGElementID ng ) {
+			return elements.equals( ng.elements );
+		}
+
+		return false;
 	}
 
 	@Override
