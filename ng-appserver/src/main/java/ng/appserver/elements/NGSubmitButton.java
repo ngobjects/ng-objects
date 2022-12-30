@@ -10,6 +10,10 @@ import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
+/**
+ * FIXME: This is clearly an element that needs to pass on it's standard HTML attributes (such as "value") // Hugi 2022-12-30
+ */
+
 public class NGSubmitButton extends NGDynamicElement {
 
 	private NGAssociation _actionAssociation;
