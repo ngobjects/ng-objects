@@ -42,12 +42,22 @@ public class NGComponentReference extends NGDynamicElement {
 		// Let's take hold of component that's being rendered, before we hand control to the new component
 		final NGComponent previousComponent = context.component();
 
-		// Load up our component's definition
-		final NGComponentDefinition newComponent = NGApplication.application()._componentDefinition( _componentName, Collections.emptyList() );
+		NGComponent newComponentInstance = null;
 
-		// Obtain an instance of the component
-		// FIXME: This isn't any good. If we've rendered this page before, we need to find the previous instance of the component // Hugi 2022-12-17
-		final NGComponent newComponentInstance = newComponent.componentInstanceInContext( context );
+		// We start by checking if the parent component has an already constructed and stored component instance for us
+		if( previousComponent != null ) {
+			newComponentInstance = previousComponent.getChild( context.elementID() );
+		}
+
+		// If no instance was obtained, we need to create the component
+		if( newComponentInstance == null ) {
+			// Load up our component's definition
+			final NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( _componentName, Collections.emptyList() );
+
+			// ...and obtain an instance of the component
+			newComponentInstance = componentDefinition.componentInstanceInContext( context );
+			previousComponent.addChild( context.elementID(), newComponentInstance );
+		}
 
 		newComponentInstance.setParent( previousComponent );
 		newComponentInstance.setAssociations( _associations );
@@ -60,7 +70,6 @@ public class NGComponentReference extends NGDynamicElement {
 
 		// Set the component in the context
 		context.setCurrentComponent( newComponentInstance );
-
 	}
 
 	private void afterComponent( final NGContext context ) {
