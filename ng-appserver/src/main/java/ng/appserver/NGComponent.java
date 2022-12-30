@@ -32,6 +32,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 *
 	 * FIXME: Should we be initializing this here? // Hugi 2022-12-30
 	 * FIXME: Could this initialization pose a potential race condition? // Hugi 2022-12-30
+	 * FIXME: Should we use a string rather than the elementID class for the key? // Hugi 2022-12-30
 	 */
 	private Map<NGElementID, NGComponent> _children = new HashMap<>();
 
@@ -62,6 +63,22 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	public boolean synchronizesVariablesWithBindings() {
 		return true;
+	}
+
+	/**
+	 * Add the given child component with the given elementID
+	 */
+	public void addChild( NGElementID elementID, NGComponent child ) {
+		_children.put( elementID, child );
+	}
+
+	/**
+	 * @return The child with the given elementID. Null if none
+	 *
+	 * FIXME: Null? Really? // Hugi 2022-12-30
+	 */
+	public NGComponent getChild( NGElementID elementID ) {
+		return _children.get( elementID );
 	}
 
 	/**
