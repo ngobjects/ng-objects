@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -25,6 +26,14 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * Stores a reference to the component's parent component
 	 */
 	private NGComponent _parent;
+
+	/**
+	 * Map of this component's children
+	 *
+	 * FIXME: Should we be initializing this here? // Hugi 2022-12-30
+	 * FIXME: Could this initialization pose a potential race condition? // Hugi 2022-12-30
+	 */
+	private Map<NGElementID, NGComponent> _children = new HashMap<>();
 
 	/**
 	 * Store a reference to the associations
