@@ -76,6 +76,7 @@ public class NGComponentReference extends NGDynamicElement {
 
 		// Return control to the previous component
 		// FIXME: I'm not sure this will work. What about stateless components? // Hugi 2022-12-27
+
 		context.setCurrentComponent( context.component().parent() );
 	}
 
@@ -105,7 +106,7 @@ public class NGComponentReference extends NGDynamicElement {
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 		beforeComponent( context );
-		NGActionResults result = super.invokeAction( request, context );
+		NGActionResults result = context.component().invokeAction( request, context );
 		afterComponent( context );
 		return result;
 	}
