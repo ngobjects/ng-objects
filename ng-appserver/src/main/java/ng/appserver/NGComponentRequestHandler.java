@@ -19,24 +19,29 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 
 		final String pageKey = request.context().originatingContext().contextID() + "." + request.context().senderID();
 
-		logger.debug( "pageKey: " + pageKey );
+		logger.debug( "Our pageKey is: " + pageKey );
 
 		// Now let's try to restore the page from the cache
 		NGComponent page = restorePageFromCache( pageKey );
 
 		if( page == null ) {
-			logger.debug( "No page found, generating new page" );
+			logger.debug( "Page '{}' not found in cache, generating", pageKey );
 			// If no page was found, we're going to have to generate it
 			page = request.context().originatingContext().page();
 			savePage( pageKey, page );
 			//			throw new IllegalArgumentException( "No page is stored for the key: " + pageKey + ". Stored pages are: " + _pageCache );
 		}
 		else {
-			logger.debug( "Page found in cache" );
+			logger.debug( "Page '{}' found in cache", pageKey );
 		}
 
-		System.out.println( "Current page is: " + page );
+		//		request.context().setPage( page );
+		//		request.context().page().awakeInContext( request.context() );
+
 		page.takeValuesFromRequest( request, request.context() );
+
+		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", request.context().senderID(), request.context().contextID(), page );
+
 		final NGActionResults actionResults = page.invokeAction( request, request.context() );
 
 		if( actionResults == null ) {
