@@ -17,7 +17,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		logger.debug( "request.originalContext: " + request.context().originatingContext() );
 		logger.debug( "pageCache: " + _pageCache );
 
-		final String pageKey = request.context().originatingContext().contextID() + "." + request.context().senderID();
+		final String pageKey = pageCacheKey( request.context() );
 
 		logger.debug( "Our pageKey is: " + pageKey );
 
@@ -50,6 +50,10 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 
 		return actionResults.generateResponse();
+	}
+
+	public static String pageCacheKey( NGContext context ) {
+		return context.originatingContext().contextID() + "." + context.senderID();
 	}
 
 	/**
