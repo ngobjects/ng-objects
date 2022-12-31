@@ -84,14 +84,16 @@ public class NGHyperlink extends NGDynamicGroup {
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 
-		logger.debug( "invokeAction() : current contextID is: " + context.contextID() );
-		logger.debug( "invokeAction() : current elementID is: " + context.elementID() );
-		logger.debug( "invokeAction() : current senderID is: " + context.senderID() );
-		logger.debug( "invokeAction() : current component is: " + context.component() );
-
 		if( context.elementID().toString().equals( context.senderID() ) ) {
+			logger.debug( "invokeAction() : current contextID is: " + context.contextID() );
+			logger.debug( "invokeAction() : current elementID is: " + context.elementID() );
+			logger.debug( "invokeAction() : current senderID is: " + context.senderID() );
+			logger.debug( "invokeAction() : current component is: " + context.component() );
+
 			if( _actionAssociation != null ) {
-				return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
+				NGActionResults result = (NGActionResults)_actionAssociation.valueInComponent( context.component() );
+				logger.debug( "Action result is: " + result );
+				return result;
 			}
 
 			/**
