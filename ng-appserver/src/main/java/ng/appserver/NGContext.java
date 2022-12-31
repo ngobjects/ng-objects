@@ -45,13 +45,6 @@ public class NGContext {
 	private NGElementID _elementID = new NGElementID();
 
 	/**
-	 * The ID of the context that initiated the request In the case of component actions, this will be used to restore the page we're working in.
-	 *
-	 * FIXME: Should be in the request instead? Or somehow handled by not storing this within the context?
-	 */
-	private String _requestContextID;
-
-	/**
 	 * FIXME: Testing. Should not be public
 	 */
 	public NGContext _originalContext;
@@ -88,7 +81,7 @@ public class NGContext {
 			final String componentPart = request.parsedURI().getString( 1 );
 
 			// The _requestContextID is the first part of the request handler path
-			_requestContextID = componentPart.split( "\\." )[0];
+			final String _requestContextID = componentPart.split( "\\." )[0];
 
 			// That context is currently stored in the session's context array (which will just keep on incrementing infinitely)
 			_originalContext = session().contexts.get( Integer.parseInt( _requestContextID ) );
@@ -154,14 +147,6 @@ public class NGContext {
 
 	public void setElementID( NGElementID value ) {
 		_elementID = value;
-	}
-
-	public String requestContextID() {
-		return _requestContextID;
-	}
-
-	public void setRequestContextID( String value ) {
-		_requestContextID = value;
 	}
 
 	public String senderID() {
