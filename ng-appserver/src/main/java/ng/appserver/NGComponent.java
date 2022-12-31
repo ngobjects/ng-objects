@@ -14,7 +14,10 @@ import ng.kvc.NGKeyValueCoding;
 
 public class NGComponent implements NGElement, NGActionResults {
 
-	private final NGContext _context;
+	/**
+	 * The page's context
+	 */
+	private NGContext _context;
 
 	/**
 	 * FIXME: Shouldn't this really be final and initialized during component construction? // Hugi 2022-01-16
@@ -56,6 +59,26 @@ public class NGComponent implements NGElement, NGActionResults {
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
 		_context = context;
+	}
+
+	/**
+	 * FIXME: Working on component actions, exposing this meanwhile. We have to  move the page to a new context when it's restored from the cache
+	 */
+	private void setContext( NGContext newContext ) {
+		_context = newContext;
+	}
+
+	/**
+	 * FIXME: I'm keeping in line with familiar names from WO here. We don't have any concept of "awake()" though. Although that's starting to look good...
+	 *
+	 * Sets the context for this component and it's children
+	 */
+	public void awakeInContext( NGContext newContext ) {
+		setContext( newContext );
+
+		for( NGComponent child : _children.values() ) {
+			child.setContext( newContext );
+		}
 	}
 
 	/**
