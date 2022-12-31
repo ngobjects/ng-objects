@@ -13,29 +13,29 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
 		// at this point, this point, the request's context is a freshly created one
-		NGContext c = request.context();
-		logger.debug( "uri: " + request.uri() );
-		logger.debug( "context: {} // page: {}", c.contextID(), c.page() );
-		logger.debug( "originating context: {} // page: {}", c._originalContext.contextID(), c._originalContext.page() );
+		logger.debug( "request.context: " + request.context() );
+		logger.debug( "request.originalContext: " + request.context().originatingContext() );
+		logger.debug( "pageCache: " + _pageCache );
 
-		final String pageKey = request.context()._originalContext.contextID() + "." + request.context().senderID();
-		System.out.println( "pageCache: " + _pageCache );
-		System.out.println( "pageKey: " + pageKey );
+		final String pageKey = request.context().originatingContext().contextID() + "." + request.context().senderID();
+
+		logger.debug( "pageKey: " + pageKey );
 
 		// Now let's try to restore the page from the cache
 		NGComponent page = restorePageFromCache( pageKey );
 
 		if( page == null ) {
-			System.out.println( "No page found, generating new page" );
+			logger.debug( "No page found, generating new page" );
 			// If no page was found, we're going to have to generate it
-			page = request.context()._originalContext.page();
+			page = request.context().originatingContext().page();
 			savePage( pageKey, page );
 			//			throw new IllegalArgumentException( "No page is stored for the key: " + pageKey + ". Stored pages are: " + _pageCache );
 		}
 		else {
-			System.out.println( "Page found in cache" );
+			logger.debug( "Page found in cache" );
 		}
 
+		System.out.println( "Current page is: " + page );
 		page.takeValuesFromRequest( request, request.context() );
 		final NGActionResults actionResults = page.invokeAction( request, request.context() );
 
