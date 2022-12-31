@@ -153,10 +153,6 @@ public class NGContext {
 		return _senderID;
 	}
 
-	public void setSenderID( String value ) {
-		_senderID = value;
-	}
-
 	public boolean isInForm() {
 		return _isInForm;
 	}
