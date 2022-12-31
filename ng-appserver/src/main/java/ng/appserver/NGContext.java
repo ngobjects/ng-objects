@@ -160,4 +160,9 @@ public class NGContext {
 	public void setIsInForm( boolean value ) {
 		_isInForm = value;
 	}
+
+	@Override
+	public String toString() {
+		return "NGContext [_request=" + _request + ", _response=" + _response + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originalContext=" + _originalContext + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
+	}
 }
