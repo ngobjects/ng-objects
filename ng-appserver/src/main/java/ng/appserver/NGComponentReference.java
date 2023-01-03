@@ -21,14 +21,17 @@ public class NGComponentReference extends NGDynamicElement {
 	private Map<String, NGAssociation> _associations;
 
 	/**
+	 * In the case of wrapper components, the template wrapped by component (between the component opening/closing tags). If any.
+	 */
+	private final NGElement _contentTemplate;
+
+	/**
 	 * @param fullyQualifiedClassName Fully qualified componentclassname
 	 * @param associations Associations used to initialize this component
 	 * @param contentTemplate In the case of wrapper components, the template wrapped by component (between the component opening/closing tags)
 	 *
 	 * <wo:SomeComponent>[contentTemplate]</wo:SomeComponent>
 	 */
-	private final NGElement _contentTemplate;
-
 	public NGComponentReference( final String componentName, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		super( null, null, null );
 		Objects.requireNonNull( componentName );
