@@ -63,13 +63,15 @@ public class NGDynamicGroup extends NGDynamicElement {
 	private NGActionResults invokeChildrenAction( NGRequest request, NGContext context ) {
 		NGActionResults actionResults = null;
 
-		// Iterate through the children UNTIL WE HAVE AN ACTUAL RESULT
-		if( _children != null && actionResults == null ) { // See mention of nullyness in the declaration of _children
+		// Iterate through the children
+		if( _children != null ) { // See mention of nullyness in the declaration of _children
 			context.elementID().addBranch();
 
 			for( final NGElement child : children() ) {
-				actionResults = child.invokeAction( request, context );
-				context.elementID().increment();
+				if( actionResults == null ) { // FIXME: Not an ideal location to check this
+					actionResults = child.invokeAction( request, context );
+					context.elementID().increment();
+				}
 			}
 
 			context.elementID().removeBranch();
