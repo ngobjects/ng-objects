@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ng.kvc.NGKeyValueCoding;
 
 /**
@@ -13,6 +16,8 @@ import ng.kvc.NGKeyValueCoding;
  */
 
 public class NGComponent implements NGElement, NGActionResults {
+
+	private static final Logger logger = LoggerFactory.getLogger( NGComponent.class );
 
 	/**
 	 * The page's context
@@ -206,9 +211,16 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	@Override
 	public NGResponse generateResponse() {
+		logger.debug( "Invoked {}.generateResponse()", getClass() );
 		final NGResponse response = new NGResponse();
 		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding
+
+		context().setPage( this );
+		context().setCurrentComponent( this );
+
 		appendToResponse( response, context() );
+		NGComponentRequestHandler.savePage( context().contextID(), this );
+
 		return response;
 	}
 
