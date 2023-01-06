@@ -15,8 +15,8 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// at this point, this point, the request's context is a freshly created one
 		final NGContext context = request.context();
 
-		logger.debug( "request.context: " + context );
-		logger.debug( "request.originatingContext: " + context.originatingContext() );
+		//		logger.debug( "request.context: " + context );
+		//		logger.debug( "request.originatingContext: " + context.originatingContext() );
 		logger.debug( "pageCache: " + _pageCache );
 
 		final String pageKey = pageCacheKey( context.originatingContext().contextID(), context.senderID().toString() );
@@ -24,41 +24,58 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		logger.debug( "Our pageKey is: " + pageKey );
 
 		// Now let's try to restore the page from the cache
-		NGComponent page = restorePageFromCache( pageKey );
+		final NGComponent originalPage = restorePageFromCache( pageKey );
 
-		if( page == null ) {
+		if( originalPage == null ) {
 			throw new IllegalStateException( "No page found in cache" );
 		}
 
-		logger.info( "Page restored from cache is: " + page.getClass() );
-
-		//		if( page == null ) {
-		//			logger.debug( "Page '{}' not found in cache, generating", pageKey );
-		//			// If no page was found, we're going to have to generate it
-		//			page = context.originatingContext().page();
-		//			savePage( pageKey, page );
-		//		}
-		//		else {
-		//			logger.debug( "Page '{}' found in cache", pageKey );
-		//		}
+		logger.info( "Page restored from cache is: " + originalPage.getClass() );
 
 		// At this point, we must know what page we're working with.
-		context.setPage( page );
-		context.setCurrentComponent( page );
-		//		context.page().awakeInContext( request.context() );
+		context.setPage( originalPage );
+		context.setCurrentComponent( originalPage );
+		context.page().awakeInContext( request.context() );
 
-		page.takeValuesFromRequest( request, context );
+		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", context.originatingContext().contextID(), originalPage );
+		originalPage.takeValuesFromRequest( request, context );
 
-		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), context.originatingContext().contextID(), page );
+		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), context.originatingContext().contextID(), originalPage );
 
-		final NGActionResults actionResults = page.invokeAction( request, context );
+		// This is what we got from invoking the action on the original page.
+		final NGActionResults actionInvocationResults = originalPage.invokeAction( request, context );
 
-		if( actionResults == null ) {
+		logger.debug( "Action invocation returned {}", actionInvocationResults );
+
+		// And this is what we're going to eventually return.
+		NGResponse response; // FIXME: Don't initialize to null.
+
+		// If action results are null, we're returning the same page
+		if( actionInvocationResults == null ) {
 			logger.debug( "Action method returned null, invoking generateResponse on the original page" );
-			return page.generateResponse();
+			//			savePage( context.contextID(), originalPage );
+			response = originalPage.generateResponse();
+		}
+		else if( actionInvocationResults instanceof NGComponent newPage ) {
+			context.setPage( newPage );
+			context.setCurrentComponent( newPage );
+			newPage.awakeInContext( context );
+
+			// Since we've switched pages, we need to save this page in the current context
+			//			savePage( context.contextID(), ngc );
+
+			response = newPage.generateResponse();
+		}
+		else {
+			// FIXME: The return of an action might not be a WOComponent, handle that
+			throw new IllegalStateException( "You returned something that's not a page. We don't support that yet" );
 		}
 
-		return actionResults.generateResponse();
+		if( response == null ) {
+			throw new IllegalStateException( "Response is null, there's something we haven't handled yet" );
+		}
+
+		return response;
 	}
 
 	public static String pageCacheKey( String contextID, String senderID ) {
@@ -84,7 +101,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 	public static Map<String, NGComponent> _pageCache = new HashMap<>();
 
 	public static void savePage( String key, NGComponent component ) {
-		logger.debug( "Saving page ing cache with key: " + key );
+		logger.debug( "Saving page {} in cache with key {} ", component.getClass(), key );
 		_pageCache.put( key, component );
 	}
 
