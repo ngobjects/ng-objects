@@ -214,27 +214,17 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
-		final NGComponent previouslyCurrentComponent = context.component();
-		context.setCurrentComponent( this );
 		template().takeValuesFromRequest( request, context );
-		context.setCurrentComponent( previouslyCurrentComponent );
 	}
 
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
-		final NGComponent previouslyCurrentComponent = context.component();
-		context.setCurrentComponent( this );
-		NGActionResults actionResults = template().invokeAction( request, context );
-		context.setCurrentComponent( previouslyCurrentComponent );
-		return actionResults;
+		return template().invokeAction( request, context );
 	}
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		final NGComponent previouslyCurrentComponent = context.component();
-		context.setCurrentComponent( this );
 		template().appendToResponse( response, context );
-		context.setCurrentComponent( previouslyCurrentComponent );
 	}
 
 	/**
