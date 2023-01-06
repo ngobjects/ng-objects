@@ -13,11 +13,13 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
 		// at this point, this point, the request's context is a freshly created one
-		logger.debug( "request.context: " + request.context() );
-		logger.debug( "request.originatingContext: " + request.context().originatingContext() );
+		final NGContext context = request.context();
+
+		logger.debug( "request.context: " + context );
+		logger.debug( "request.originatingContext: " + context.originatingContext() );
 		logger.debug( "pageCache: " + _pageCache );
 
-		final String pageKey = request.context().originatingContext().contextID() + "." + request.context().senderID();
+		final String pageKey = pageCacheKey( context.originatingContext().contextID(), context.senderID().toString() );
 
 		logger.debug( "Our pageKey is: " + pageKey );
 
@@ -27,22 +29,23 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		if( page == null ) {
 			logger.debug( "Page '{}' not found in cache, generating", pageKey );
 			// If no page was found, we're going to have to generate it
-			page = request.context().originatingContext().page();
+			page = context.originatingContext().page();
 			savePage( pageKey, page );
 		}
 		else {
 			logger.debug( "Page '{}' found in cache", pageKey );
 		}
 
-		//		request.context().setPage( page );
-		//		request.context().setCurrentComponent( page );
+		// At this point, we must know what page we're working with.
+		context.setPage( page );
+		request.context().setCurrentComponent( page );
 		//		request.context().page().awakeInContext( request.context() );
 
-		page.takeValuesFromRequest( request, request.context() );
+		page.takeValuesFromRequest( request, context );
 
-		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", request.context().senderID(), request.context().originatingContext().contextID(), page );
+		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), context.originatingContext().contextID(), page );
 
-		final NGActionResults actionResults = page.invokeAction( request, request.context() );
+		final NGActionResults actionResults = page.invokeAction( request, context );
 
 		if( actionResults == null ) {
 			logger.debug( "Action method returned null, invoking generateResponse on the original page" );
@@ -55,9 +58,9 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 	public static String pageCacheKey( String contextID, String senderID ) {
 		String key = contextID;
 
-		if( senderID != null ) {
-			key = key + "." + senderID;
-		}
+		//		if( senderID != null ) {
+		//			key = key + "." + senderID;
+		//		}
 
 		return key;
 	}
