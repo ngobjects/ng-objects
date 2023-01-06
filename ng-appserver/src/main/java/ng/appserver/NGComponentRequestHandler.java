@@ -27,19 +27,25 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		NGComponent page = restorePageFromCache( pageKey );
 
 		if( page == null ) {
-			logger.debug( "Page '{}' not found in cache, generating", pageKey );
-			// If no page was found, we're going to have to generate it
-			page = context.originatingContext().page();
-			savePage( pageKey, page );
+			throw new IllegalStateException( "No page found in cache" );
 		}
-		else {
-			logger.debug( "Page '{}' found in cache", pageKey );
-		}
+
+		logger.info( "Page restored from cache is: " + page.getClass() );
+
+		//		if( page == null ) {
+		//			logger.debug( "Page '{}' not found in cache, generating", pageKey );
+		//			// If no page was found, we're going to have to generate it
+		//			page = context.originatingContext().page();
+		//			savePage( pageKey, page );
+		//		}
+		//		else {
+		//			logger.debug( "Page '{}' found in cache", pageKey );
+		//		}
 
 		// At this point, we must know what page we're working with.
 		context.setPage( page );
-		request.context().setCurrentComponent( page );
-		//		request.context().page().awakeInContext( request.context() );
+		context.setCurrentComponent( page );
+		//		context.page().awakeInContext( request.context() );
 
 		page.takeValuesFromRequest( request, context );
 
