@@ -270,7 +270,7 @@ public class NGApplication {
 
 		// FIXME: This is horrible, but we're using it for experimentation
 		// At least the idea is that here we're catching the elementID of the element that invoked the action and trying to save under that key
-		// NGComponentRequestHandler.savePage( NGComponentRequestHandler.pageCacheKey( context.contextID(), null ), componentInstance );
+		NGComponentRequestHandler.savePage( NGComponentRequestHandler.pageCacheKey( context.contextID(), null ), componentInstance );
 
 		return componentInstance;
 	}
