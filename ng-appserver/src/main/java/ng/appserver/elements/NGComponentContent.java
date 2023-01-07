@@ -11,10 +11,6 @@ import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
-/**
- * FIXME: We need to handle the cases of invokeAction and takeValuesFromRequest here as well // Hugi 2022-06-10
- */
-
 public class NGComponentContent extends NGDynamicElement {
 
 	public NGComponentContent( String name, Map<String, NGAssociation> associations, NGElement template ) {
