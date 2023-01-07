@@ -121,7 +121,7 @@ public class NGContext {
 	}
 
 	/**
-	 * The page level component
+	 * @return The page level component
 	 */
 	public NGComponent page() {
 		return _page;
@@ -132,13 +132,15 @@ public class NGContext {
 	}
 
 	/**
-	 * ID of the element currently being rendered by the context.
+	 * @return ID of the element currently being rendered by the context.
 	 */
 	public String contextID() {
 		return _contextID;
 	}
 
 	/**
+	 * @return The ID of the "original context", i.e. the context from which the request that created this context was initiated
+	 *
 	 * FIXME: This can probably be removed from here and just moved to NGComponentRequestHandler
 	 */
 	public String _originatingContextID() {
@@ -146,12 +148,15 @@ public class NGContext {
 	}
 
 	/**
-	 * ID of the element currently being rendered by the context.
+	 * @return ID of the element currently being rendered by the context.
 	 */
 	public NGElementID elementID() {
 		return _elementID;
 	}
 
+	/**
+	 * @return ID of the element being targeted by a component action
+	 */
 	public String senderID() {
 		return _senderID;
 	}
