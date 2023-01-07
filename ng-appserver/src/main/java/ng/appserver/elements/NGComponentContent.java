@@ -2,11 +2,13 @@ package ng.appserver.elements;
 
 import java.util.Map;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
+import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 /**
@@ -21,8 +23,6 @@ public class NGComponentContent extends NGDynamicElement {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		super.appendToResponse( response, context );
-
 		final NGComponent component = context.component();
 
 		// FIXME: We also need to append the content of the component itself
@@ -31,5 +31,31 @@ public class NGComponentContent extends NGDynamicElement {
 			component.contentElement().appendToResponse( response, context );
 			context.setCurrentComponent( component );
 		}
+	}
+
+	@Override
+	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
+		final NGComponent component = context.component();
+
+		if( component.contentElement() != null ) {
+			context.setCurrentComponent( component.parent() );
+			component.contentElement().takeValuesFromRequest( request, context );
+			context.setCurrentComponent( component );
+		}
+	}
+
+	@Override
+	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+		NGActionResults actionResults = null;
+
+		final NGComponent component = context.component();
+
+		if( component.contentElement() != null ) {
+			context.setCurrentComponent( component.parent() );
+			actionResults = component.contentElement().invokeAction( request, context );
+			context.setCurrentComponent( component );
+		}
+
+		return actionResults;
 	}
 }
