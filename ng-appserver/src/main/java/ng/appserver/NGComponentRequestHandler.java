@@ -63,8 +63,8 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			response = newPage.generateResponse();
 		}
 		else {
-			// FIXME: The return of an action might not be a WOComponent, handle that
-			throw new IllegalStateException( "You returned something that's not a page. We don't support that yet" );
+			// If this is not a WOComponent, we don't need to take any special action and just invoke generateResponse() on the action's results
+			response = actionInvocationResults.generateResponse();
 		}
 
 		if( response == null ) {
