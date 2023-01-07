@@ -47,7 +47,7 @@ public class NGContext {
 	/**
 	 * FIXME: Testing. Should not be public
 	 */
-	public String _originatingContextID;
+	private String _originatingContextID;
 
 	/**
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
