@@ -1,7 +1,6 @@
 package ng.appserver.elements;
 
 import java.util.Map;
-import java.util.Objects;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
@@ -10,6 +9,7 @@ import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 
 /**
  * FIXME: This is clearly an element that needs to pass on it's standard HTML attributes (such as "value") // Hugi 2022-12-30
@@ -30,7 +30,7 @@ public class NGSubmitButton extends NGDynamicElement {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		final String htmlString = createElementStringWithAttributes( "input", Map.of( "type", "submit", "name", context.elementID().toString() ), true );
+		final String htmlString = NGHTMLUtilities.createElementStringWithAttributes( "input", Map.of( "type", "submit", "name", context.elementID().toString() ), true );
 		response.appendContentString( htmlString );
 	}
 
@@ -41,31 +41,5 @@ public class NGSubmitButton extends NGDynamicElement {
 		}
 
 		return super.invokeAction( request, context );
-	}
-
-	private static String createElementStringWithAttributes( final String elementName, final Map<String, String> attributes, boolean close ) {
-		Objects.requireNonNull( elementName );
-		Objects.requireNonNull( attributes );
-		StringBuilder b = new StringBuilder();
-
-		b.append( "<" );
-		b.append( elementName );
-
-		attributes.forEach( ( name, value ) -> {
-			if( value != null ) {
-				b.append( " " );
-				b.append( name );
-				b.append( "=" );
-				b.append( "\"" + value + "\"" );
-			}
-		} );
-
-		if( close ) {
-			b.append( "/" );
-		}
-
-		b.append( ">" );
-
-		return b.toString();
 	}
 }
