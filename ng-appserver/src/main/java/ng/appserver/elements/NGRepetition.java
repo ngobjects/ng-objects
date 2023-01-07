@@ -56,17 +56,21 @@ public class NGRepetition extends NGDynamicGroup {
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 		context.elementID().addBranch();
 
-		NGActionResults result = null;
+		NGActionResults actionResults = null;
 
-		for( Object object : (List<?>)_listAssociation.valueInComponent( context.component() ) ) {
-			context.elementID().increment();
+		final List<?> list = (List<?>)_listAssociation.valueInComponent( context.component() );
+		final int count = list.size();
+
+		for( int i = 0; i < count && actionResults == null; ++i ) {
+			context.elementID().increment(); // FIXME: Better to increment afterwards? // Hugi 2023-01-07
+			final Object object = list.get( i );
 			_itemAssociation.setValue( object, context.component() );
-			result = super.invokeAction( request, context );
+			actionResults = super.invokeAction( request, context );
 		}
 
 		context.elementID().removeBranch();
 
-		return result;
+		return actionResults;
 	}
 
 	@Override
