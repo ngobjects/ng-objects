@@ -219,7 +219,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		context().setCurrentComponent( this );
 
 		appendToResponse( response, context() );
-		NGComponentRequestHandler.savePage( context().contextID(), this );
+		context().session().savePage( context().contextID(), this );
 
 		return response;
 	}

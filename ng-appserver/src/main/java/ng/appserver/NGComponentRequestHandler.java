@@ -1,8 +1,5 @@
 package ng.appserver;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +12,19 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// At this point, this point, the request's context is a freshly created one
 		final NGContext context = request.context();
 
+		if( context == null ) {
+			throw new IllegalStateException( "The request's context is null. This should never happen" );
+		}
+
+		// We need to use the session to gain access to the page cache
+		final NGSession session = context.session();
+
+		if( session == null ) {
+			throw new IllegalStateException( "The context's session is null. That should never happen" );
+		}
+
 		// Now let's try to restore the page from the cache
-		final NGComponent originalPage = restorePageFromCache( context._originatingContextID() );
+		final NGComponent originalPage = session.restorePageFromCache( context._originatingContextID() );
 
 		if( originalPage == null ) {
 			throw new IllegalStateException( "No page found in cache" );
@@ -64,27 +72,5 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 
 		return response;
-	}
-
-	/**
-	 * FIXME: OK, this is horrible, but we're going to start out with out pageCache here. This belongs in the session, really.
-	 *
-	 * The page cache is going to have to keep track of
-	 *
-	 *  1. The originating context ID
-	 *  2. The elementID the page originates from (for example, the click of a link)
-	 *
-	 *  So, let's just for now store the page as an accumulation of the entire string after the request handler key
-	 */
-	public static Map<String, NGComponent> _pageCache = new HashMap<>();
-
-	public static void savePage( String contextID, NGComponent component ) {
-		logger.debug( "Saving page {} in cache with contextID {} ", component.getClass(), contextID );
-		_pageCache.put( contextID, component );
-	}
-
-	public static NGComponent restorePageFromCache( String contextID ) {
-		logger.debug( "Restoring page from cache with contextID: " + contextID );
-		return _pageCache.get( contextID );
 	}
 }
