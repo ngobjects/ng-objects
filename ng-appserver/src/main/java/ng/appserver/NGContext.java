@@ -99,12 +99,31 @@ public class NGContext {
 		return _response;
 	}
 
+	/**
+	 * @return This context's session, creating a session if none is present.
+	 */
 	public NGSession session() {
 		if( _session == null && _request._extractSessionID() != null ) {
 			_session = NGApplication.application().sessionStore().checkoutSessionWithID( _request._extractSessionID() );
 		}
 
 		return _session;
+	}
+
+	/**
+	 * @return This context's session, or null if no session is present.
+	 *
+	 * FIXME: This currently really only checks if session() has been invoked. We probably need to do a little deeper checking than this // Hugi 2023-01-07
+	 */
+	public NGSession existingSession() {
+		return _session;
+	}
+
+	/**
+	 * @return True if this context has an existing session
+	 */
+	public boolean hasSession() {
+		return existingSession() != null;
 	}
 
 	/**
