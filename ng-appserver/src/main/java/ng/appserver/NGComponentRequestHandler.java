@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
  * The basics:
  *
  * - URLs for "stateful requests" contain only numbers, separated by a period (eg. 3.4.12.5)
- * - The first component/number is the "contextID". In simplistic terms, this identifies an instance of a page/NGComponent
- * - The remaining components are the "senderID". It identifies a method that was invoked on the page/NGComponent instance by e.g. clicking a link or submitting a form
- * - The stateful pages are stored in the user's session, basically a Map that maps contextIDs to page instances
+ * - The first number is the "contextID". In simplistic terms, this identifies an instance of a page/NGComponent (e.g. '3')
+ * - The remaining numbers comprise the "senderID". It identifies a method invoked on the page/NGComponent instance, usually by clicking a link or submitting a form (e.g. '4.12.5')
+ * - The stateful pages are stored in the user's session, basically a Map that maps contextIDs to page instances.
  */
 
 public class NGComponentRequestHandler extends NGRequestHandler {
