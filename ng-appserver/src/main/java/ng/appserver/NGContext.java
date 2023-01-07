@@ -71,6 +71,8 @@ public class NGContext {
 
 		// FIXME: Horrible session and context caching implementation just for testing purposes
 
+		// FIXME: We're currently creating a session alongside every context. This is horrid // Hugi 2023-01-07
+
 		// Our contextID is just the next free slot in the session's context array
 		_contextID = String.valueOf( session().contexts.size() );
 
