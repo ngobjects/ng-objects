@@ -152,10 +152,6 @@ public class NGContext {
 		return _elementID;
 	}
 
-	public void setElementID( NGElementID value ) {
-		_elementID = value;
-	}
-
 	public String senderID() {
 		return _senderID;
 	}
