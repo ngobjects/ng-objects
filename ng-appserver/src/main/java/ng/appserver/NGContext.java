@@ -47,7 +47,7 @@ public class NGContext {
 	/**
 	 * FIXME: Testing. Should not be public
 	 */
-	public NGContext _originatingContext;
+	public String _originatingContextID;
 
 	/**
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
@@ -84,7 +84,7 @@ public class NGContext {
 			final String _requestContextID = componentPart.split( "\\." )[0];
 
 			// That context is currently stored in the session's context array (which will just keep on incrementing infinitely)
-			_originatingContext = session().contexts.get( Integer.parseInt( _requestContextID ) );
+			_originatingContextID = _requestContextID;
 
 			// And finally, the sending element ID is all the integers after the first one.
 			_senderID = componentPart.substring( _requestContextID.length() + 1 );
@@ -139,10 +139,10 @@ public class NGContext {
 	}
 
 	/**
-	 * FIXME: I don't think this belongs here
+	 * FIXME: This can probably be removed from here and just moved to NGComponentRequestHandler
 	 */
-	public NGContext originatingContext() {
-		return _originatingContext;
+	public String _originatingContextID() {
+		return _originatingContextID;
 	}
 
 	/**
@@ -170,6 +170,6 @@ public class NGContext {
 
 	@Override
 	public String toString() {
-		return "NGContext [_request=" + _request + ", _response=" + _response + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originatingContext=" + _originatingContext + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
+		return "NGContext [_request=" + _request + ", _response=" + _response + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
 	}
 }

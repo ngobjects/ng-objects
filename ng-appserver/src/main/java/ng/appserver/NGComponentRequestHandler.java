@@ -16,7 +16,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		final NGContext context = request.context();
 
 		// Now let's try to restore the page from the cache
-		final NGComponent originalPage = restorePageFromCache( context.originatingContext().contextID() );
+		final NGComponent originalPage = restorePageFromCache( context._originatingContextID() );
 
 		if( originalPage == null ) {
 			throw new IllegalStateException( "No page found in cache" );
@@ -29,11 +29,11 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		context.setCurrentComponent( originalPage );
 		context.page().awakeInContext( request.context() );
 
-		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", context.originatingContext().contextID(), originalPage );
+		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", context._originatingContextID(), originalPage );
 		// FIXME: We can probably save a few cycles by only performing takeValuesFromRequest if there are, you know, actual values in the request to take // Hugi 2023-01-07
 		originalPage.takeValuesFromRequest( request, context );
 
-		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), context.originatingContext().contextID(), originalPage );
+		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), context._originatingContextID(), originalPage );
 
 		// We now invoke the action on the original page instance
 		final NGActionResults actionInvocationResults = originalPage.invokeAction( request, context );
