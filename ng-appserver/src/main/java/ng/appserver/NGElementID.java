@@ -5,6 +5,8 @@ import java.util.List;
 
 /**
  * Represents an elementID.
+ *
+ * FIXME: This class is a dead ringer for some optimization. It's used _a lot_ during rendering and integers in a list are not really performant // Hugi 2023-01-07
  */
 
 public class NGElementID {
