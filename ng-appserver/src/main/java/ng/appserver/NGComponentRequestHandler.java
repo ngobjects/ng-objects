@@ -1,5 +1,7 @@
 package ng.appserver;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,10 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
+
+		// CHECKME: Request validation may affect performance, but it's nice to have during the development phase // Hugi 2023-01-08
+		validateRequest( request );
+
 		// At this point, this point, the request's context is a freshly created one
 		final NGContext context = request.context();
 
@@ -91,5 +97,42 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 
 		return response;
+	}
+
+	/**
+	 * Validates the request. @throws a RuntimeException if an invalid value is encountered
+	 *
+	 * FIXME: We should only be checking for iso-lati1 numerals (Character.isDigits includes multiple scripts)
+	 */
+	private static void validateRequest( NGRequest request ) {
+		Objects.requireNonNull( request );
+
+		if( request.parsedURI().length() != 2 ) {
+			throw new IllegalArgumentException( "Component requests always contain only two path elements, the request handler key, and the identifier" );
+		}
+
+		final String identifier = request.parsedURI().getString( 1 );
+
+		// Ensure the URL contains at least one period
+		if( !identifier.contains( "." ) ) {
+			throw new IllegalArgumentException( "The identifier contains no periods" );
+		}
+
+		// Ensure the URL starts with a numeric
+		if( !Character.isDigit( identifier.charAt( 0 ) ) ) {
+			throw new IllegalArgumentException( "The identifier must start with a digit" );
+		}
+
+		// Ensure the URL starts with a numeric
+		if( !Character.isDigit( identifier.charAt( identifier.length() - 1 ) ) ) {
+			throw new IllegalArgumentException( "The identifier must end with a digit" );
+		}
+
+		// Ensure the identifier contains only digits and periods
+		for( char c : identifier.toCharArray() ) {
+			if( !Character.isDigit( c ) && !(c == '.') ) {
+				throw new IllegalArgumentException( "Illegal character '%s' in identifier '%s'".formatted( c, identifier ) );
+			}
+		}
 	}
 }
