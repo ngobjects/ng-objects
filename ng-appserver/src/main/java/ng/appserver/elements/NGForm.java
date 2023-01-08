@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import ng.appserver.NGActionResults;
@@ -8,6 +9,7 @@ import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 
 /**
  * FIXME: Implement
@@ -25,7 +27,15 @@ public class NGForm extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		response.appendContentString( String.format( "<form method=\"POST\" action=\"%s\">", context.componentActionURL() ) );
+		final Map<String, String> attributes = new HashMap<>();
+
+		attributes.put( "method", "POST" );
+
+		if( _actionAssociation != null ) {
+			attributes.put( "action", context.componentActionURL() );
+		}
+
+		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "form", attributes, false ) );
 		context.setIsInForm( true );
 		appendChildrenToResponse( response, context );
 		context.setIsInForm( false );
