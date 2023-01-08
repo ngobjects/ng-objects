@@ -59,6 +59,12 @@ public class NGRepetition extends NGDynamicGroup {
 		NGActionResults actionResults = null;
 
 		final List<?> list = (List<?>)_listAssociation.valueInComponent( context.component() );
+
+		// FIXME: Should we be lenient and handle null as an empty list? // Hugi 2023-01-08
+		if( list == null ) {
+			throw new IllegalArgumentException( "NGRepetition: [list] binding evaluates to null" );
+		}
+
 		final int count = list.size();
 
 		for( int i = 0; i < count && actionResults == null; ++i ) {
