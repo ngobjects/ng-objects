@@ -195,6 +195,16 @@ public class NGContext {
 		_isInForm = value;
 	}
 
+	/**
+	 * @return The URL for invoking the action in the current context
+	 *
+	 * FIXME: This method is a symptom of component actions leaking into generic code, doesn't really belong // Hugi 2023-01-08
+	 * FIXME: Make nice instead of ugly // Hugi 2023-01-08
+	 */
+	public String componentActionURL() {
+		return "/wo/" + contextID() + "." + elementID();
+	}
+
 	@Override
 	public String toString() {
 		return "NGContext [_request=" + _request + ", _response=" + _response + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
