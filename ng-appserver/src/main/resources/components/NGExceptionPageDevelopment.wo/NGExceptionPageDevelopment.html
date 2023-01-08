@@ -97,7 +97,7 @@
 	</head>
 	<body>
 		<div class="container">
-			<h3><wo:str value="$originalThrowable.class.name" /><wo:if condition="$exception.cause"> <span style="font-size: smaller; color: gray; font-weight: normal">FIXME: is it helpful to have the cause? (<wo:str value="$exception.cause" />)</span></wo:if></h3>
+			<h3><wo:str value="$originalThrowable.class.name" /></h3>
 			<div class="exception-message"><wo:str value="$originalThrowable.getMessage" /> <div class="time"><wo:str value="$now" /></div></div>
 			<wo:if condition="$showSource">
 			<div class="filename-container"><strong><wo:str value="$firstLineOfTrace.fileName" /></strong></div>
