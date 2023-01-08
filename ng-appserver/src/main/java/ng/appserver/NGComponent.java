@@ -74,6 +74,15 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
+	 * @return The current session
+	 *
+	 * FIXME: Type safety (for our own session class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
+	 */
+	public NGSession session() {
+		return context().session();
+	}
+
+	/**
 	 * FIXME: I'm keeping in line with familiar names from WO here. We don't have any concept of "awake()" though. Although that's starting to look good...
 	 *
 	 * Sets the context for this component and it's children
