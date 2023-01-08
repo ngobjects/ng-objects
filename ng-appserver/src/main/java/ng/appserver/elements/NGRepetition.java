@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -58,11 +59,11 @@ public class NGRepetition extends NGDynamicGroup {
 
 		NGActionResults actionResults = null;
 
-		final List<?> list = (List<?>)_listAssociation.valueInComponent( context.component() );
+		List<?> list = (List<?>)_listAssociation.valueInComponent( context.component() );
 
 		// FIXME: Should we be lenient and handle null as an empty list? // Hugi 2023-01-08
 		if( list == null ) {
-			throw new IllegalArgumentException( "NGRepetition: [list] binding evaluates to null" );
+			list = Collections.emptyList();
 		}
 
 		final int count = list.size();
