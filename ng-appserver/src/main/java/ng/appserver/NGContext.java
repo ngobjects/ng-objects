@@ -103,8 +103,16 @@ public class NGContext {
 	 * @return This context's session, creating a session if none is present.
 	 */
 	public NGSession session() {
-		if( _session == null && _request._extractSessionID() != null ) {
-			_session = NGApplication.application().sessionStore().checkoutSessionWithID( _request._extractSessionID() );
+		if( _session == null ) {
+			// OK, we have no session. First, let's see if the request has some session information, so we can restore an existing session
+			if( _request._extractSessionID() != null ) {
+				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _request._extractSessionID() );
+			}
+			else {
+				// FIXME: We'll never hit this codepath, since we have a hardcoded sessionID
+				//				_session = NGSession.createSession();
+				throw new IllegalStateException( "Not implemented" );
+			}
 		}
 
 		return _session;
