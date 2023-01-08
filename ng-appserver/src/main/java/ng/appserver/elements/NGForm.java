@@ -25,8 +25,7 @@ public class NGForm extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		String actionURL = "/wo/" + context.contextID() + "." + context.elementID();
-		response.appendContentString( String.format( "<form method=\"POST\" action=\"%s\">", actionURL ) );
+		response.appendContentString( String.format( "<form method=\"POST\" action=\"%s\">", context.componentActionURL() ) );
 		context.setIsInForm( true );
 		appendChildrenToResponse( response, context );
 		context.setIsInForm( false );
