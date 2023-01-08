@@ -39,6 +39,9 @@ public class NGHTMLUtilities {
 
 		return string
 				.replace( "<", "&lt;" )
-				.replace( ">", "&gt;" );
+				.replace( ">", "&gt;" )
+				.replace( "&", "&amp;" )
+				.replace( "\"", "&quot;" )
+				.replace( "'", "&#39;" );
 	}
 }
