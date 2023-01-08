@@ -9,10 +9,10 @@ public class NGHTMLUtilities {
 		Objects.requireNonNull( elementName );
 		Objects.requireNonNull( attributes );
 		StringBuilder b = new StringBuilder();
-	
+
 		b.append( "<" );
 		b.append( elementName );
-	
+
 		attributes.forEach( ( name, value ) -> {
 			if( value != null ) {
 				b.append( " " );
@@ -21,14 +21,24 @@ public class NGHTMLUtilities {
 				b.append( "\"" + value + "\"" );
 			}
 		} );
-	
+
 		if( close ) {
 			b.append( "/" );
 		}
-	
+
 		b.append( ">" );
-	
+
 		return b.toString();
 	}
 
+	/**
+	 * @return The string with HTML values escaped
+	 */
+	public static String escapeHTML( final String string ) {
+		Objects.requireNonNull( string );
+
+		return string
+				.replace( "<", "&lt;" )
+				.replace( ">", "&gt;" );
+	}
 }

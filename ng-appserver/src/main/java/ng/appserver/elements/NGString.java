@@ -9,6 +9,7 @@ import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 
 public class NGString extends NGDynamicElement {
 
@@ -65,19 +66,10 @@ public class NGString extends NGDynamicElement {
 		}
 
 		if( escapeHTML == true ) {
-			result = escapeHTML( result );
+			result = NGHTMLUtilities.escapeHTML( result );
 		}
 
 		response.appendContentString( result );
-	}
-
-	/**
-	 * @return The string with HTML values escaped
-	 *
-	 * FIXME: Go over this and add the missing values such as ampersands, quotes etc.
-	 */
-	private static String escapeHTML( final String string ) {
-		return string.replace( "<", "&lt;" ).replace( ">", "&gt;" );
 	}
 
 	@Override
