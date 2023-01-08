@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import ng.appserver.NGActionResults;
@@ -18,6 +19,7 @@ import ng.appserver.privates.NGHTMLUtilities;
 public class NGSubmitButton extends NGDynamicElement {
 
 	private NGAssociation _actionAssociation;
+	private NGAssociation _valueAssociation; // FIXME: This should just be passed through with other "generic" HTML attributes
 
 	public NGSubmitButton( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
@@ -26,11 +28,21 @@ public class NGSubmitButton extends NGDynamicElement {
 		if( _actionAssociation == null ) {
 			throw new IllegalArgumentException( "'action' is a required binding" );
 		}
+
+		_valueAssociation = associations.get( "value" );
 	}
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		final String htmlString = NGHTMLUtilities.createElementStringWithAttributes( "input", Map.of( "type", "submit", "name", context.elementID().toString() ), true );
+		final Map<String, String> attributes = new HashMap<>();
+		attributes.put( "type", "submit" );
+		attributes.put( "name", context.elementID().toString() );
+
+		if( _valueAssociation != null ) {
+			attributes.put( "value", (String)_valueAssociation.valueInComponent( context.component() ) );
+		}
+
+		final String htmlString = NGHTMLUtilities.createElementStringWithAttributes( "input", attributes, true );
 		response.appendContentString( htmlString );
 	}
 
