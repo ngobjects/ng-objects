@@ -14,7 +14,7 @@ public class NGCookie {
 	private String _path;
 	private String _domain;
 	private String _comment;
-	private int _maxAge;
+	private Integer _maxAge;
 	private boolean _isSecure;
 	private boolean _isHttpOnly;
 
@@ -79,11 +79,11 @@ public class NGCookie {
 		_isHttpOnly = isHttpOnly;
 	}
 
-	public int maxAge() {
+	public Integer maxAge() {
 		return _maxAge;
 	}
 
-	public void setMaxAge( int maxAge ) {
+	public void setMaxAge( Integer maxAge ) {
 		_maxAge = maxAge;
 	}
 }
