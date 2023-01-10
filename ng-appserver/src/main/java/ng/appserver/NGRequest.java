@@ -222,4 +222,9 @@ public class NGRequest extends NGMessage {
 
 		return _parsedURI;
 	}
+
+	@Override
+	public String toString() {
+		return "NGRequest [_context=" + _context + ", _method=" + _method + ", _uri=" + _uri + ", _parsedURI=" + _parsedURI + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _sessionID=" + _sessionID + ", _session=" + _session + "]";
+	}
 }
