@@ -163,10 +163,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 			servletCookie.setComment( ngCookie.comment() );
 		}
 
-		// FIXME: We need to look into some date/time arithmetics for this
-		// if( ngCookie.maxAge() != null ) {
-		// 	 servletCookie.setMaxAge( ngCookie.maxAge() );
-		// }
+		if( ngCookie.maxAge() != null ) {
+			servletCookie.setMaxAge( ngCookie.maxAge() );
+		}
 
 		return servletCookie;
 	}
