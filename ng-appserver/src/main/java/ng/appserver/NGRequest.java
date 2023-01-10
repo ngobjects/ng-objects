@@ -52,7 +52,9 @@ public class NGRequest extends NGMessage {
 	/**
 	 * FIXME: This is intended as a temporary placeholder. WIP.
 	 */
-	public String _sessionID;
+	private String _sessionID;
+
+	private NGSession _session;
 
 	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] contentBytes ) {
 		Objects.requireNonNull( method );
@@ -95,6 +97,9 @@ public class NGRequest extends NGMessage {
 		_method = method;
 	}
 
+	/**
+	 * FIXME: WIP
+	 */
 	public String _sessionID() {
 		if( _extractSessionID() != null ) {
 			return _extractSessionID();
@@ -104,10 +109,51 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
+	 * FIXME: WIP
+	 */
+	public void setSessionID( String sessionID ) {
+		_sessionID = sessionID;
+	}
+
+	/**
 	 * @return An ID for an existing sessionID, if one was submitted by the client, null if the client submitted no session ID
 	 */
 	public String _extractSessionID() {
 		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
+	}
+
+	/**
+	 * @return This context's session, creating a session if none is present.
+	 */
+	public NGSession session() {
+		if( _session == null ) {
+			// OK, we have no session. First, let's see if the request has some session information, so we can restore an existing session
+			if( _extractSessionID() != null ) {
+				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _extractSessionID() );
+			}
+			else {
+				_session = NGSession.createSession();
+				setSessionID( _session.sessionID() );
+			}
+		}
+
+		return _session;
+	}
+
+	/**
+	 * @return This context's session, or null if no session is present.
+	 *
+	 * FIXME: This currently really only checks if session() has been invoked. We probably need to do a little deeper checking than this // Hugi 2023-01-07
+	 */
+	public NGSession existingSession() {
+		return _session;
+	}
+
+	/**
+	 * @return True if this context has an existing session
+	 */
+	public boolean hasSession() {
+		return existingSession() != null;
 	}
 
 	public Map<String, List<String>> cookieValues() {
