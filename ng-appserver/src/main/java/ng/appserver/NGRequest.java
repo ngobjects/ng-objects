@@ -17,7 +17,7 @@ public class NGRequest extends NGMessage {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGRequest.class );
 
-	private static final String SESSION_ID_COOKIE_NAME = "wosid";
+	public static final String SESSION_ID_COOKIE_NAME = "wosid";
 
 	/**
 	 * The request's context
