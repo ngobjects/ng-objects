@@ -308,29 +308,36 @@ public class NGApplication {
 	}
 
 	public NGResponse dispatchRequest( final NGRequest request ) {
-
 		//		logger.info( "Handling URI: " + request.uri() );
 
 		try {
 			cleanupWOURL( request );
 
+			final NGResponse response;
+
 			// FIXME: Handle the case of no default request handler gracefully // Hugi 2021-12-29
 			if( request.parsedURI().length() == 0 ) {
-				return defaultResponse( request ).generateResponse();
+				response = defaultResponse( request ).generateResponse();
+			}
+			else {
+				final NGRequestHandler requestHandler = handlerForURL( request.uri() );
+
+				if( requestHandler == null ) {
+					return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
+				}
+
+				response = requestHandler.handleRequest( request );
+
+				if( response == null ) {
+					throw new NullPointerException( String.format( "'%s' returned a null response. That's just rude.", requestHandler.getClass().getName() ) );
+				}
 			}
 
-			final NGRequestHandler requestHandler = handlerForURL( request.uri() );
+			// FIXME: Doesn't feel like the place to set the session ID in the response, but let's do it anyway :D // Hugi 2023-01-10
+			final NGCookie sessionCookie = new NGCookie( "someCookie", "hoho" );
+			sessionCookie.setMaxAge( 600 );
 
-			if( requestHandler == null ) {
-				return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
-			}
-
-			final NGResponse response = requestHandler.handleRequest( request );
-
-			if( response == null ) {
-				throw new NullPointerException( String.format( "'%s' returned a null response. That's just rude.", requestHandler.getClass().getName() ) );
-			}
-
+			response.addCookie( sessionCookie );
 			return response;
 		}
 		catch( Throwable throwable ) {
