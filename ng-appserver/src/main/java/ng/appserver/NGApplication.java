@@ -308,7 +308,6 @@ public class NGApplication {
 	}
 
 	public NGResponse dispatchRequest( final NGRequest request ) {
-		//		logger.info( "Handling URI: " + request.uri() );
 
 		try {
 			cleanupWOURL( request );
