@@ -26,12 +26,12 @@ public class NGSession {
 	/**
 	 * A unique identifier for this session
 	 */
-	final String _sessionID;
+	private final String _sessionID;
 
 	/**
 	 * The birthdate of this session, as provided by System.currentTimeMillis()
 	 */
-	final long _birthDate;
+	private final long _birthDate;
 
 	/**
 	 * FIXME: OK, this is horrible, but we're going to start out with out pageCache here. This belongs in the session, really.
@@ -58,6 +58,10 @@ public class NGSession {
 		_birthDate = birthDate;
 	}
 
+	public String sessionID() {
+		return _sessionID;
+	}
+	
 	/**
 	 * FIXME: This is horrid and does not belong here // Hugi 2022-06-25
 	 */
