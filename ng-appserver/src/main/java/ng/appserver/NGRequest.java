@@ -49,6 +49,11 @@ public class NGRequest extends NGMessage {
 	 */
 	private Map<String, List<String>> _cookieValues;
 
+	/**
+	 * FIXME: This is intended as a temporary placeholder. WIP.
+	 */
+	public String _sessionID;
+
 	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] contentBytes ) {
 		Objects.requireNonNull( method );
 		Objects.requireNonNull( uri );
@@ -90,12 +95,18 @@ public class NGRequest extends NGMessage {
 		_method = method;
 	}
 
+	public String _sessionID() {
+		if( _extractSessionID() != null ) {
+			return _extractSessionID();
+		}
+
+		return _sessionID;
+	}
+
 	/**
 	 * @return An ID for an existing sessionID, if one was submitted by the client, null if the client submitted no session ID
 	 */
 	public String _extractSessionID() {
-		//		logger.warn( "Returning fake session ID" );
-		//		return "fake-session-id";
 		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
 	}
 
@@ -123,6 +134,11 @@ public class NGRequest extends NGMessage {
 	 */
 	public String cookieValueForKey( final String key ) {
 		List<String> values = cookieValuesForKey( key );
+
+		// FIXME: Ugh... (vomit) // Hugi 2023-01-10
+		if( values == null ) {
+			return null;
+		}
 
 		if( values.size() == 0 ) {
 			return null;
