@@ -332,8 +332,16 @@ public class NGApplication {
 				}
 			}
 
+			// OK, let's start exercising our session powers.
+			String sessionID = request._extractSessionID();
+
+			if( sessionID == null ) {
+				// We need to get the newly generated session ID here (if present)
+				sessionID = "nosession";
+			}
+
 			// FIXME: Doesn't feel like the place to set the session ID in the response, but let's do it anyway :D // Hugi 2023-01-10
-			final NGCookie sessionCookie = new NGCookie( "someCookie", "hoho" );
+			final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
 			sessionCookie.setMaxAge( 600 );
 
 			response.addCookie( sessionCookie );

@@ -91,12 +91,12 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
-	 *
+	 * @return An ID for an existing sessionID, if one was submitted by the client, null if the client submitted no session ID
 	 */
 	public String _extractSessionID() {
-		logger.warn( "Returning fake session ID" );
-		return "fake-session-id";
-		//		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
+		//		logger.warn( "Returning fake session ID" );
+		//		return "fake-session-id";
+		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
 	}
 
 	public Map<String, List<String>> cookieValues() {
