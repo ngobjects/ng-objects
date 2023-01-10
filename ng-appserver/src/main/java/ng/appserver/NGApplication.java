@@ -338,6 +338,7 @@ public class NGApplication {
 			if( sessionID != null ) {
 				final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
 				sessionCookie.setMaxAge( 600 );
+				sessionCookie.setPath( "/" );
 				response.addCookie( sessionCookie );
 			}
 
