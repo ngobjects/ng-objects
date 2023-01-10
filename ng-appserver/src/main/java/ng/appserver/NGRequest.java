@@ -101,17 +101,17 @@ public class NGRequest extends NGMessage {
 	 * FIXME: WIP
 	 */
 	public String _sessionID() {
-		if( _extractSessionID() != null ) {
-			return _extractSessionID();
+		if( _sessionID != null ) {
+			return _sessionID;
 		}
 
-		return _sessionID;
+		return _extractSessionID();
 	}
 
 	/**
 	 * FIXME: WIP
 	 */
-	public void setSessionID( String sessionID ) {
+	public void _setSessionID( String sessionID ) {
 		_sessionID = sessionID;
 	}
 
@@ -130,10 +130,20 @@ public class NGRequest extends NGMessage {
 			// OK, we have no session. First, let's see if the request has some session information, so we can restore an existing session
 			if( _extractSessionID() != null ) {
 				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _extractSessionID() );
+
+				// No session found, we enter the emergency phase
+				if( _session == null ) {
+					logger.warn( "No session found with id '{}' creating new session", _extractSessionID() );
+					// FIXME: We need to handle the case of a non-existent session better // Hugi 2023-01-10
+					_session = NGSession.createSession();
+					_setSessionID( _session.sessionID() );
+					NGApplication.application().sessionStore().storeSession( _session );
+				}
 			}
 			else {
 				_session = NGSession.createSession();
-				setSessionID( _session.sessionID() );
+				_setSessionID( _session.sessionID() );
+				NGApplication.application().sessionStore().storeSession( _session );
 			}
 		}
 
