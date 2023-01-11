@@ -11,8 +11,10 @@ public class NGContext {
 
 	/**
 	 * The response that will be constructed and/or  will be returned by this context.
+	 *
+	 * FIXME: Currently not used. Disabled until we decide what to do with it // Hugi 2023-01-11
 	 */
-	private NGResponse _response;
+	//	private NGResponse _response;
 
 	/**
 	 * The component currently being processed by this context
@@ -90,9 +92,12 @@ public class NGContext {
 		return _request;
 	}
 
-	public NGResponse response() {
-		return _response;
-	}
+	/**
+	 * FIXME: Currently not used. Disabled until we decide what to do with it // Hugi 2023-01-11
+	 */
+	//	public NGResponse response() {
+	//		return _response;
+	//	}
 
 	/**
 	 * @return This context's session, creating a session if none is present.
@@ -196,6 +201,6 @@ public class NGContext {
 
 	@Override
 	public String toString() {
-		return "NGContext [_request=" + _request + ", _response=" + _response + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
+		return "NGContext [_request=" + _request + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
 	}
 }
