@@ -28,10 +28,6 @@ public class NGDirectAction {
 		return context().request();
 	}
 
-	public NGResponse response() {
-		return context().response();
-	}
-
 	public <E extends NGComponent> E pageWithName( final Class<E> componentClass ) {
 		return NGApplication.application().pageWithName( componentClass, context() );
 	}
