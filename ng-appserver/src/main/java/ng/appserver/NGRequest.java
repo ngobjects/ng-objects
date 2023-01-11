@@ -133,11 +133,12 @@ public class NGRequest extends NGMessage {
 
 				// No session found, we enter the emergency phase
 				if( _session == null ) {
-					logger.warn( "No session found with id '{}' creating new session", _extractSessionID() );
+					logger.warn( "No session found with id '{}'", _extractSessionID() );
+					throw new NGSessionRestorationException( this );
 					// FIXME: We need to handle the case of a non-existent session better // Hugi 2023-01-10
-					_session = NGSession.createSession();
-					_setSessionID( _session.sessionID() );
-					NGApplication.application().sessionStore().storeSession( _session );
+					//					_session = NGSession.createSession();
+					//					_setSessionID( _session.sessionID() );
+					//					NGApplication.application().sessionStore().storeSession( _session );
 				}
 			}
 			else {
@@ -201,7 +202,7 @@ public class NGRequest extends NGMessage {
 		}
 
 		if( values.size() > 1 ) {
-			throw new IllegalArgumentException( "There are more than one cookie named " + key );
+			throw new IllegalArgumentException( "There's more than one cookie with the name '%s'".formatted( key ) );
 		}
 
 		return values.get( 0 );

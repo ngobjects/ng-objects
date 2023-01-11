@@ -1,6 +1,7 @@
 package ng.appserver;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +31,15 @@ public class NGSession {
 
 	/**
 	 * The birthdate of this session, as provided by System.currentTimeMillis()
+	 *
+	 * FIXME: Use an Instant instead? // Hugi 2023-01-11
 	 */
 	private final long _birthDate;
+
+	/**
+	 * FIXME: Use seconds instead?
+	 */
+	private long _timeOutInMilliseconds;
 
 	/**
 	 * FIXME: OK, this is horrible, but we're going to start out with out pageCache here. This belongs in the session, really.
@@ -56,12 +64,21 @@ public class NGSession {
 	private NGSession( final String sessionID, long birthDate ) {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
+		_timeOutInMilliseconds = 60 * 60 * 1000; // Default timeout of one hour
 	}
 
 	public String sessionID() {
 		return _sessionID;
 	}
-	
+
+	public Instant birthDate() {
+		return Instant.ofEpochMilli( _birthDate );
+	}
+
+	public long timeoutInMilliseconds() {
+		return _timeOutInMilliseconds;
+	}
+
 	/**
 	 * FIXME: This is horrid and does not belong here // Hugi 2022-06-25
 	 */

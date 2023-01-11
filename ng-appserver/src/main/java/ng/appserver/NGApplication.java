@@ -337,12 +337,16 @@ public class NGApplication {
 
 			if( sessionID != null ) {
 				final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
-				sessionCookie.setMaxAge( 600 );
+				sessionCookie.setMaxAge( (int)request.session().timeoutInMilliseconds() / 1000 ); // FIXME: Optimally, we wouldn't access the session object just to get the timeout value // Hugi 2023-01-11
 				sessionCookie.setPath( "/" );
+				//				sessionCookie.setDomain( sessionID ) // FIXME: Implement
 				response.addCookie( sessionCookie );
 			}
 
 			return response;
+		}
+		catch( NGSessionRestorationException e ) {
+			return handleSessionRestorationException( e ).generateResponse();
 		}
 		catch( Throwable throwable ) {
 			// FIXME: Generate a uniqueID for the exception that occurred and show it to the user (for tracing/debugging) // Hugi 2022-10-13
@@ -356,6 +360,15 @@ public class NGApplication {
 	 */
 	protected void handleException( Throwable throwable ) {
 		throwable.printStackTrace();
+	}
+
+	/**
+	 * @return The page to return to the user when a session restoration error occurs.
+	 *
+	 * FIXME: Should this maybe just be an optional branch in the generic exception handling? // Hugi 2023-01-11
+	 */
+	protected NGActionResults handleSessionRestorationException( final NGSessionRestorationException exception ) {
+		return new NGResponse( "Session expired", 200 );
 	}
 
 	/**
