@@ -23,6 +23,7 @@ import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 import x.junk.NGExceptionPage;
 import x.junk.NGExceptionPageDevelopment;
+import x.junk.NGSessionTimeoutPage;
 
 public class NGApplication {
 
@@ -143,6 +144,15 @@ public class NGApplication {
 		systemRoutes.map( "/wd/", new NGResourceRequestHandlerDynamic() );
 		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
+		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
+			final NGResponse response = new NGResponse( "Session cookie reset", 200 );
+			final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, "ded" );
+			sessionCookie.setMaxAge( 0 );
+			sessionCookie.setPath( "/" );
+			//				sessionCookie.setDomain( sessionID ) // FIXME: Implement
+			response.addCookie( sessionCookie );
+			return response;
+		} );
 		_routeTables.add( systemRoutes );
 	}
 
@@ -336,16 +346,22 @@ public class NGApplication {
 			final String sessionID = request._sessionID();
 
 			if( sessionID != null ) {
-				final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
-				sessionCookie.setMaxAge( (int)request.session().timeoutInMilliseconds() / 1000 ); // FIXME: Optimally, we wouldn't access the session object just to get the timeout value // Hugi 2023-01-11
-				sessionCookie.setPath( "/" );
-				//				sessionCookie.setDomain( sessionID ) // FIXME: Implement
-				response.addCookie( sessionCookie );
+				if( request.existingSession() != null ) { // FIXME: Yuck // Hugi 2023-01-11
+					final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
+					sessionCookie.setMaxAge( (int)request.existingSession().timeoutInMilliseconds() / 1000 ); // FIXME: Optimally, we wouldn't access the session object just to get the timeout value // Hugi 2023-01-11
+					sessionCookie.setPath( "/" );
+					//				sessionCookie.setDomain( sessionID ) // FIXME: Implement
+					response.addCookie( sessionCookie );
+				}
 			}
 
 			return response;
 		}
 		catch( NGSessionRestorationException e ) {
+			// FIXME: Some debugging logic for good measure // Hugi 2023-01-11
+			System.out.println( "====== START Session restoration error location =====" );
+			e.printStackTrace(); // FIXME
+			System.out.println( "====== END Session restoration error location =====" );
 			return handleSessionRestorationException( e ).generateResponse();
 		}
 		catch( Throwable throwable ) {
@@ -370,7 +386,10 @@ public class NGApplication {
 	 * FIXME: Should this maybe just be an optional branch in the generic exception handling? // Hugi 2023-01-11
 	 */
 	protected NGActionResults handleSessionRestorationException( final NGSessionRestorationException exception ) {
-		return new NGResponse( "Session expired", 200 );
+		//		return new NGResponse( "Session expired", 200 ); // FIXME: A raw, non-component baesed error might still be a good idea? // Hugi 2023-01-11
+		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context withing a dead session feels weird // Hugi 2023-01-11
+		nextPage.setException( exception );
+		return nextPage;
 	}
 
 	/**
