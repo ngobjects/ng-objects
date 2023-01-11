@@ -102,6 +102,7 @@ public class NGContext {
 	/**
 	 * @return This context's session, creating a session if none is present.
 	 */
+	@Deprecated
 	public NGSession session() {
 		return request().session();
 	}
@@ -111,6 +112,7 @@ public class NGContext {
 	 *
 	 * FIXME: This currently really only checks if session() has been invoked. We probably need to do a little deeper checking than this // Hugi 2023-01-07
 	 */
+	@Deprecated
 	public NGSession existingSession() {
 		return request().existingSession();
 	}
@@ -118,6 +120,7 @@ public class NGContext {
 	/**
 	 * @return True if this context has an existing session
 	 */
+	@Deprecated
 	public boolean hasSession() {
 		return request().hasSession();
 	}
