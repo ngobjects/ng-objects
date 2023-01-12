@@ -1,6 +1,8 @@
 package ng.appserver;
 
-public interface NGElement {
+import com.webobjects.appserver.WOElement;
+
+public interface NGElement extends WOElement {
 
 	public default void takeValuesFromRequest( NGRequest request, NGContext context ) {}
 
