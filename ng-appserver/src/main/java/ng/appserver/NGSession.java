@@ -20,11 +20,6 @@ public class NGSession {
 	private static final Logger logger = LoggerFactory.getLogger( NGSession.class );
 
 	/**
-	 * FIXME: This is not the way we're going to store/cache contexts. Just for testing
-	 */
-	public List<NGContext> contexts = new ArrayList<>();
-
-	/**
 	 * A unique identifier for this session
 	 */
 	private final String _sessionID;
@@ -48,6 +43,16 @@ public class NGSession {
 	private long _timeOutInMilliseconds;
 
 	/**
+	 * Boolean set by terminate() to indicate that this session should be terminated, regardless of it's timeut
+	 */
+	private boolean _manuallyTerminated = false;
+
+	/**
+	 * FIXME: This is not the way we're going to store/cache contexts. Just for testing
+	 */
+	public final List<NGContext> contexts = new ArrayList<>();
+
+	/**
 	 * The page cache is going to have to keep track of
 	 *
 	 *  1. The originating context ID
@@ -58,11 +63,6 @@ public class NGSession {
 	 * FIXME: While a session would usually only be working with one page at a time, this might have to be looked into WRT concurrency? // Hugi 2023-01-21
 	 */
 	private Map<String, NGComponent> _pageCache = new HashMap<>();
-
-	/**
-	 * Boolean set by terminate() to indicate that this session should be terminated, regardless of it's timeut
-	 */
-	private boolean _manuallyTerminated = false;
 
 	public NGSession() {
 		this( UUID.randomUUID().toString() );
