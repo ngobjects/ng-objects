@@ -2,9 +2,7 @@ package ng.appserver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -51,7 +49,7 @@ public class NGSession {
 	 * FIXME: This is not the way we're going to store/cache contexts. Just for testing
 	 * FIXME: I don't think we actually need this? Isn't the page cache really the only thing we need for context storage?
 	 */
-	public final List<NGContext> contexts = new ArrayList<>();
+	//	public final List<NGContext> contexts = new ArrayList<>();
 
 	/**
 	 * Holds our context ID
@@ -59,7 +57,7 @@ public class NGSession {
 	 * FIXME: Only public while we're testing this implementation // Hugi 2023-01-21
 	 * FIXME: At what point do we reset the counter? // Hugi 2023-01-21
 	 */
-	//	public int currentContextID = 0;
+	public int currentContextID = 0;
 
 	/**
 	 * The page cache is going to have to keep track of
@@ -88,9 +86,10 @@ public class NGSession {
 		_timeOutInMilliseconds = 60 * 60 * 1000; // FIXME: Default timeout of one hour. Should be set, probably somewhere in NGApplication (and/or using a property)
 	}
 
-	//	public int getContextIDAndIncrement() {
-	//		return ++currentContextID;
-	//	}
+	public int getContextIDAndIncrement() {
+		int contextID = currentContextID++;
+		return contextID;
+	}
 
 	public String sessionID() {
 		return _sessionID;
