@@ -87,11 +87,17 @@ public class NGSession {
 		_timeOutInMilliseconds = defaultTimeoutInMilliseconds();
 	}
 
+	/**
+	 * @return The current contextID, incrementing our context counter for next invocation. Used by NGContext to get a unique context ID.
+	 */
 	public int getContextIDAndIncrement() {
 		int contextID = currentContextID++;
 		return contextID;
 	}
 
+	/**
+	 * @return This session's ID (stored in a cookie on the client browser to identify the session)
+	 */
 	public String sessionID() {
 		return _sessionID;
 	}
