@@ -43,7 +43,7 @@ public class NGSession {
 	private long _lastTouchedDate;
 
 	/**
-	 * FIXME: Use seconds instead? Millisecond sessions might be something of an overreach // Hugi 2023-01-21
+	 * FIXME: Use seconds instead? Millisecond sessions might be something of an overreach. Duration could also be nice. // Hugi 2023-01-21
 	 */
 	private long _timeOutInMilliseconds;
 
@@ -54,6 +54,8 @@ public class NGSession {
 	 *  2. The elementID the page originates from (for example, the click of a link)
 	 *
 	 *  So, let's just for now store the page as an accumulation of the entire string after the request handler key
+	 *
+	 * FIXME: While a session would usually only be working with one page at a time, this might have to be looked into WRT concurrency? // Hugi 2023-01-21
 	 */
 	private Map<String, NGComponent> _pageCache = new HashMap<>();
 
