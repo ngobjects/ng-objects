@@ -33,8 +33,14 @@ public class NGSession {
 	 * The birthdate of this session, as provided by System.currentTimeMillis()
 	 *
 	 * FIXME: Use an Instant instead? // Hugi 2023-01-11
+	 * FIXME: Calling an instant a "date" is not nice // Hugi 2023-01-21
 	 */
 	private final long _birthDate;
+
+	/**
+	 * The last date at which this session was touched
+	 */
+	private long _lastTouchedDate;
 
 	/**
 	 * FIXME: Use seconds instead? Millisecond sessions might be something of an overreach // Hugi 2023-01-21
@@ -53,6 +59,11 @@ public class NGSession {
 	 */
 	public Map<String, NGComponent> _pageCache = new HashMap<>();
 
+	/**
+	 * Boolean set by terminate() to indicate that this session should be terminated, regardless of it's timeut
+	 */
+	private boolean _manuallyTerminated = false;
+
 	public NGSession() {
 		this( UUID.randomUUID().toString() );
 	}
@@ -64,7 +75,8 @@ public class NGSession {
 	private NGSession( final String sessionID, long birthDate ) {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
-		_timeOutInMilliseconds = 60 * 60 * 1000; // Default timeout of one hour
+		_lastTouchedDate = birthDate;
+		_timeOutInMilliseconds = 60 * 60 * 1000; // FIXME: Default timeout of one hour. Should be set, probably somewhere in NGApplication (and/or using a property)
 	}
 
 	public String sessionID() {
@@ -81,8 +93,51 @@ public class NGSession {
 		return Instant.ofEpochMilli( _birthDate );
 	}
 
+	/**
+	 * @return The last date at which this session was touched
+	 */
+	public Instant lastTouchedDate() {
+		return Instant.ofEpochMilli( _lastTouchedDate );
+	}
+
+	/**
+	 * "Touches" the session, indicating that it has been used (and thus prolonging it's life)
+	 */
+	public void touch() {
+
+	}
+
+	/**
+	 * @return The session's timeout in milliseconds, i.e. the time the session will live after last being touched.
+	 *
+	 * FIXME: Are we sure we want milliseconds? A java.time.Duration feels like it would be excellent here // Hugi 2023-01-21
+	 */
 	public long timeoutInMilliseconds() {
 		return _timeOutInMilliseconds;
+	}
+
+	/**
+	 * @return true if the session has timed out (and is thus due to be harvested/erased
+	 */
+	private boolean isTimedOut() {
+		return lastTouchedDate().plusMillis( timeoutInMilliseconds() ).isAfter( Instant.now() );
+	}
+
+	/**
+	 * @return true if this session should be harvested/terminated by session storage. This essentially means the session has timed out, or has been manually terminated
+	 */
+	public boolean shouldTerminate() {
+		return _manuallyTerminated || isTimedOut();
+	}
+
+	/**
+	 * Terminates the session and removes it from it's storage.
+	 *
+	 * FIXME: We need to notify the session's storage that the session has been terminated // Hugi 2023-01-21
+	 * FIXME: Should this method trigger the deletion of the session cookie as well? // Hugi 2023-01-21
+	 */
+	public void terminate() {
+		_manuallyTerminated = true;
 	}
 
 	/**
