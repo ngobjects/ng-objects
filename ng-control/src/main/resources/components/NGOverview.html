@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Control center</title>
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<h2>Smu</h2>
+		<table>
+			<wo:repetition list="$sessions" item="$currentSession">
+				<tr>
+					<td><wo:str value="$currentSession.birthDate" /></td>
+				</tr>
+			</wo:repetition>
+		</table>
+	</body>
+</html>
