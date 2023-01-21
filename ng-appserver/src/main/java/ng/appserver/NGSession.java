@@ -84,8 +84,7 @@ public class NGSession {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
 		_lastTouchedDate = birthDate;
-		//		_timeOutInMilliseconds = 60 * 60 * 1000; // FIXME: Default timeout of one hour. Should be set, probably somewhere in NGApplication (and/or using a property)
-		_timeOutInMilliseconds = Duration.ofMinutes( 1 ).toMillis(); // FIXME: Default timeout of one hour. Should be set, probably somewhere in NGApplication (and/or using a property)
+		_timeOutInMilliseconds = defaultTimeoutInMilliseconds();
 	}
 
 	public int getContextIDAndIncrement() {
@@ -128,6 +127,15 @@ public class NGSession {
 	 */
 	public long timeoutInMilliseconds() {
 		return _timeOutInMilliseconds;
+	}
+
+	/**
+	 * @return The default timeout for a session
+	 *
+	 * FIXME: Default timeout of one hour. Should be configurable by the user,, probably in NGApplication (and/or using a property) // Hugi 2023-01-21
+	 */
+	private static long defaultTimeoutInMilliseconds() {
+		return Duration.ofMinutes( 60 ).toMillis();
 	}
 
 	/**
