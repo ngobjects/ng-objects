@@ -1,6 +1,7 @@
 package ng.appserver;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class NGSession {
 	 * FIXME: Only public while we're testing this implementation // Hugi 2023-01-21
 	 * FIXME: At what point do we reset the counter? // Hugi 2023-01-21
 	 */
-	public int currentContextID = 0;
+	private int currentContextID = 0;
 
 	/**
 	 * The page cache is going to have to keep track of
@@ -83,7 +84,8 @@ public class NGSession {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
 		_lastTouchedDate = birthDate;
-		_timeOutInMilliseconds = 60 * 60 * 1000; // FIXME: Default timeout of one hour. Should be set, probably somewhere in NGApplication (and/or using a property)
+		//		_timeOutInMilliseconds = 60 * 60 * 1000; // FIXME: Default timeout of one hour. Should be set, probably somewhere in NGApplication (and/or using a property)
+		_timeOutInMilliseconds = Duration.ofMinutes( 1 ).toMillis(); // FIXME: Default timeout of one hour. Should be set, probably somewhere in NGApplication (and/or using a property)
 	}
 
 	public int getContextIDAndIncrement() {
