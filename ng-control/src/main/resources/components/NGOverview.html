@@ -10,6 +10,9 @@
 			<wo:repetition list="$sessions" item="$currentSession">
 				<tr>
 					<td><wo:str value="$currentSession.birthDate" /></td>
+					<td><wo:str value="$currentSession.timeoutInMilliseconds" /></td>
+					<td><wo:str value="$currentSession.lastTouchedDate" /></td>
+					<td><wo:str value="$currentSession.shouldTerminate" /></td>
 				</tr>
 			</wo:repetition>
 		</table>
