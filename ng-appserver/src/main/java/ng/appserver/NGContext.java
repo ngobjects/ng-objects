@@ -69,10 +69,10 @@ public class NGContext {
 		// FIXME: We're currently creating a session alongside every context. This is horrid // Hugi 2023-01-07
 
 		// Our contextID is just the next free slot in the session's context array
-		//		_contextID = String.valueOf( session().contexts.size() );
+		_contextID = String.valueOf( session().contexts.size() );
 
 		// Store our context with the session
-		//		session().contexts.add( this );
+		session().contexts.add( this );
 
 		if( request.uri().contains( "/wo/" ) ) {
 			final String componentPart = request.parsedURI().getString( 1 );
@@ -161,9 +161,9 @@ public class NGContext {
 	 * FIXME: Why isn't the contextID an integer? Keeping it a string for now for WO code compaitibility // Hugi 2023-01-21
 	 */
 	public String contextID() {
-		if( _contextID == null ) {
-			_contextID = String.valueOf( session().getContextIDAndIncrement() );
-		}
+		//		if( _contextID == null ) {
+		//			_contextID = String.valueOf( session().getContextIDAndIncrement() );
+		//		}
 
 		return _contextID;
 	}
