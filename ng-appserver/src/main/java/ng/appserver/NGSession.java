@@ -37,7 +37,7 @@ public class NGSession {
 	private final long _birthDate;
 
 	/**
-	 * FIXME: Use seconds instead?
+	 * FIXME: Use seconds instead? Millisecond sessions might be something of an overreach // Hugi 2023-01-21
 	 */
 	private long _timeOutInMilliseconds;
 
@@ -71,6 +71,12 @@ public class NGSession {
 		return _sessionID;
 	}
 
+	/**
+	 * @return The time at which this session was created
+	 *
+	 * FIXME: Are we surewe want this as an instant? // Hugi 2023-01-21
+	 * FIXME: Don't really like the name, which implements a "date", while it's really an instant // Hugi 2023-01-21
+	 */
 	public Instant birthDate() {
 		return Instant.ofEpochMilli( _birthDate );
 	}
