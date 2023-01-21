@@ -134,7 +134,7 @@ public class NGSession {
 	 * @return true if the session has timed out (and is thus due to be harvested/erased
 	 */
 	private boolean isTimedOut() {
-		return lastTouchedDate().plusMillis( timeoutInMilliseconds() ).isAfter( Instant.now() );
+		return lastTouchedDate().plusMillis( timeoutInMilliseconds() ).isBefore( Instant.now() );
 	}
 
 	/**

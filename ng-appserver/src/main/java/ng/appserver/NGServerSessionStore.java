@@ -26,7 +26,7 @@ public class NGServerSessionStore extends NGSessionStore {
 		final TimerTask sessionKillerTask = new TimerTask() {
 			@Override
 			public void run() {
-				logger.info( "Harvesting dead sessions" );
+				logger.info( "Harvesting dead sessions" ); // FIXME: This logging is a little muchm just here for the development stage // Hugi 2023-01-21
 
 				// FIXME: This is, of course, horribly inefficient // Hugi 2023-01-21
 				for( NGSession session : sessions() ) {
@@ -38,7 +38,7 @@ public class NGServerSessionStore extends NGSessionStore {
 		};
 
 		final Timer timer = new Timer( "Sessionkiller" );
-		timer.schedule( sessionKillerTask, 1000, 1000 ); // FIXME: execution times might need to be tuned a little // Hugi 2023-01-21
+		timer.schedule( sessionKillerTask, 5000, 5000 ); // FIXME: execution times might need to be tuned a little // Hugi 2023-01-21
 	}
 
 	@Override
