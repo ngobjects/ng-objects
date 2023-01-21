@@ -38,9 +38,9 @@ public class NGHTMLUtilities {
 		Objects.requireNonNull( string );
 
 		return string
+				.replace( "&", "&amp;" )
 				.replace( "<", "&lt;" )
 				.replace( ">", "&gt;" )
-				.replace( "&", "&amp;" )
 				.replace( "\"", "&quot;" )
 				.replace( "'", "&#39;" );
 	}
