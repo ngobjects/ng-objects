@@ -69,6 +69,7 @@ public class NGSession {
 	 *  So, let's just for now store the page as an accumulation of the entire string after the request handler key
 	 *
 	 * FIXME: While a session would usually only be working with one page at a time, this might have to be looked into WRT concurrency? // Hugi 2023-01-21
+	 * FIXME: We're currently storing every page forever. The size of the cache needs to be limited // Hugi 2023-01-21
 	 */
 	private Map<String, NGComponent> _pageCache = new HashMap<>();
 
