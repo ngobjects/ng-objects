@@ -48,8 +48,6 @@ public class NGSession {
 	private long _timeOutInMilliseconds;
 
 	/**
-	 * FIXME: OK, this is horrible, but we're going to start out with out pageCache here. This belongs in the session, really.
-	 *
 	 * The page cache is going to have to keep track of
 	 *
 	 *  1. The originating context ID
@@ -57,7 +55,7 @@ public class NGSession {
 	 *
 	 *  So, let's just for now store the page as an accumulation of the entire string after the request handler key
 	 */
-	public Map<String, NGComponent> _pageCache = new HashMap<>();
+	private Map<String, NGComponent> _pageCache = new HashMap<>();
 
 	/**
 	 * Boolean set by terminate() to indicate that this session should be terminated, regardless of it's timeut
