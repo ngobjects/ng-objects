@@ -26,20 +26,19 @@ public class NGSession {
 	/**
 	 * The birthdate of this session, as provided by System.currentTimeMillis()
 	 *
-	 * FIXME: Use an Instant instead? // Hugi 2023-01-11
 	 * FIXME: Calling an instant a "date" is not nice // Hugi 2023-01-21
 	 */
-	private final long _birthDate;
+	private final Instant _birthDate;
 
 	/**
 	 * The last date at which this session was touched
 	 */
-	private long _lastTouchedDate;
+	private Instant _lastTouchedDate;
 
 	/**
-	 * FIXME: Use seconds instead? Millisecond sessions might be something of an overreach. Duration could also be nice. // Hugi 2023-01-21
+	 * The session's timeout
 	 */
-	private long _timeOutInMilliseconds;
+	private Duration _timeOut;
 
 	/**
 	 * Boolean set by terminate() to indicate that this session should be terminated, regardless of it's timeout
@@ -72,14 +71,14 @@ public class NGSession {
 	}
 
 	private NGSession( final String sessionID ) {
-		this( sessionID, System.currentTimeMillis() );
+		this( sessionID, Instant.now() );
 	}
 
-	private NGSession( final String sessionID, long birthDate ) {
+	private NGSession( final String sessionID, final Instant birthDate ) {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
 		_lastTouchedDate = birthDate;
-		_timeOutInMilliseconds = defaultTimeoutInMilliseconds();
+		_timeOut = defaultTimeoutInMilliseconds();
 	}
 
 	/**
@@ -100,50 +99,49 @@ public class NGSession {
 	/**
 	 * @return The time at which this session was created
 	 *
-	 * FIXME: Are we surewe want this as an instant? // Hugi 2023-01-21
-	 * FIXME: Don't really like the name, which implements a "date", while it's really an instant // Hugi 2023-01-21
+	 * FIXME: Don't like the 'date' part of the name since it's an instant // Hugi 2023-01-22
 	 */
 	public Instant birthDate() {
-		return Instant.ofEpochMilli( _birthDate );
+		return _birthDate;
 	}
 
 	/**
 	 * @return The last date at which this session was touched
+	 *
+	 * FIXME: Don't like the 'date' part of the name since it's an instant // Hugi 2023-01-22
 	 */
 	public Instant lastTouchedDate() {
-		return Instant.ofEpochMilli( _lastTouchedDate );
+		return _lastTouchedDate;
 	}
 
 	/**
 	 * "Touches" the session, indicating that it has been used (and thus prolonging it's life)
 	 */
 	public void touch() {
-
+		throw new RuntimeException( "Not implemented" );
 	}
 
 	/**
 	 * @return The session's timeout in milliseconds, i.e. the time the session will live after last being touched.
-	 *
-	 * FIXME: Are we sure we want milliseconds? A java.time.Duration feels like it would be excellent here // Hugi 2023-01-21
 	 */
-	public long timeoutInMilliseconds() {
-		return _timeOutInMilliseconds;
+	public Duration timeoutInMilliseconds() {
+		return _timeOut;
 	}
 
 	/**
 	 * @return The default timeout for a session
 	 *
-	 * FIXME: Default timeout of one hour. Should be configurable by the user,, probably in NGApplication (and/or using a property) // Hugi 2023-01-21
+	 * FIXME: Default timeout of one hour. Should be configurable by the user, probably in NGApplication (and/or using a property) // Hugi 2023-01-21
 	 */
-	private static long defaultTimeoutInMilliseconds() {
-		return Duration.ofMinutes( 60 ).toMillis();
+	private static Duration defaultTimeoutInMilliseconds() {
+		return Duration.ofMinutes( 60 );
 	}
 
 	/**
 	 * @return true if the session has timed out (and is thus due to be harvested/erased
 	 */
 	private boolean isTimedOut() {
-		return lastTouchedDate().plusMillis( timeoutInMilliseconds() ).isBefore( Instant.now() );
+		return lastTouchedDate().plus( timeoutInMilliseconds() ).isBefore( Instant.now() );
 	}
 
 	/**
