@@ -132,13 +132,10 @@ public class NGRequest extends NGMessage {
 				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _extractSessionID() );
 
 				// No session found, we enter the emergency phase
+				// FIXME: We need to handle the case of a non-existent session better // Hugi 2023-01-10
 				if( _session == null ) {
 					logger.warn( "No session found with id '{}'", _extractSessionID() );
 					throw new NGSessionRestorationException( this );
-					// FIXME: We need to handle the case of a non-existent session better // Hugi 2023-01-10
-					//					_session = NGSession.createSession();
-					//					_setSessionID( _session.sessionID() );
-					//					NGApplication.application().sessionStore().storeSession( _session );
 				}
 			}
 			else {
