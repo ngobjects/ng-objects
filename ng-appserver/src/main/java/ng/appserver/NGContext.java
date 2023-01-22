@@ -40,7 +40,7 @@ public class NGContext {
 	private NGElementID _elementID = new NGElementID();
 
 	/**
-	 * FIXME: Testing. Should not be public
+	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
 	 */
 	private String _originatingContextID;
 
@@ -64,27 +64,15 @@ public class NGContext {
 		_request = request;
 		request.setContext( this );
 
-		// FIXME: Horrible session and context caching implementation just for testing purposes
-
-		// FIXME: We're currently creating a session alongside every context. This is horrid // Hugi 2023-01-07
-
-		// Our contextID is just the next free slot in the session's context array
-		//		_contextID = String.valueOf( session().contexts.size() );
-
-		// Store our context with the session
-		//		session().contexts.add( this );
-
+		// FIXME: This is not exactly a beautiful way to check if we're handling a component request // Hugi 2023-01-22
 		if( request.uri().contains( "/wo/" ) ) {
 			final String componentPart = request.parsedURI().getString( 1 );
 
-			// The _requestContextID is the first part of the request handler path
-			final String _requestContextID = componentPart.split( "\\." )[0];
+			// The _originatingContextID is the first part of the request handler path
+			_originatingContextID = componentPart.split( "\\." )[0];
 
-			// That context is currently stored in the session's context array (which will just keep on incrementing infinitely)
-			_originatingContextID = _requestContextID;
-
-			// And finally, the sending element ID is all the integers after the first one.
-			_senderID = componentPart.substring( _requestContextID.length() + 1 );
+			// The sending element ID consists of all the integers after the first one.
+			_senderID = componentPart.substring( _originatingContextID.length() + 1 );
 		}
 	}
 
