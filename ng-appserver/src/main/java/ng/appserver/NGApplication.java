@@ -348,7 +348,7 @@ public class NGApplication {
 			if( sessionID != null ) {
 				if( request.existingSession() != null ) { // FIXME: Yuck // Hugi 2023-01-11
 					final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
-					sessionCookie.setMaxAge( (int)request.existingSession().timeoutInMilliseconds().toSeconds() ); // FIXME: Optimally, we wouldn't access the session object just to get the timeout value // Hugi 2023-01-11
+					sessionCookie.setMaxAge( (int)request.existingSession().timeOut().toSeconds() ); // FIXME: Optimally, we wouldn't access the session object just to get the timeout value // Hugi 2023-01-11
 					sessionCookie.setPath( "/" );
 					//				sessionCookie.setDomain( sessionID ) // FIXME: Implement
 					response.addCookie( sessionCookie );

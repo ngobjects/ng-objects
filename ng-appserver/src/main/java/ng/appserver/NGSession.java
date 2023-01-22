@@ -78,7 +78,7 @@ public class NGSession {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
 		_lastTouchedDate = birthDate;
-		_timeOut = defaultTimeoutInMilliseconds();
+		_timeOut = defaultTimeOut();
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class NGSession {
 	/**
 	 * @return The session's timeout in milliseconds, i.e. the time the session will live after last being touched.
 	 */
-	public Duration timeoutInMilliseconds() {
+	public Duration timeOut() {
 		return _timeOut;
 	}
 
@@ -133,7 +133,7 @@ public class NGSession {
 	 *
 	 * FIXME: Default timeout of one hour. Should be configurable by the user, probably in NGApplication (and/or using a property) // Hugi 2023-01-21
 	 */
-	private static Duration defaultTimeoutInMilliseconds() {
+	private static Duration defaultTimeOut() {
 		return Duration.ofMinutes( 60 );
 	}
 
@@ -141,7 +141,7 @@ public class NGSession {
 	 * @return true if the session has timed out (and is thus due to be harvested/erased
 	 */
 	private boolean isTimedOut() {
-		return lastTouchedDate().plus( timeoutInMilliseconds() ).isBefore( Instant.now() );
+		return lastTouchedDate().plus( timeOut() ).isBefore( Instant.now() );
 	}
 
 	/**
