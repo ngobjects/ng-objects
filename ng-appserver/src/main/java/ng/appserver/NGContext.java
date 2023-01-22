@@ -159,6 +159,7 @@ public class NGContext {
 	 *
 	 * FIXME: Take note of concurrency issues for lazy initialization // Hugi 2023-01-21
 	 * FIXME: Why isn't the contextID an integer? Keeping it a string for now for WO code compaitibility // Hugi 2023-01-21
+	 * FIXME: Should we check for an existing session before creating a contextID? Perhaps just always return zero for a session-less contextID? // Hugi 2023-01-21
 	 */
 	public String contextID() {
 		if( _contextID == null ) {
