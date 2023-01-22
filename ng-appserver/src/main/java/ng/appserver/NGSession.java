@@ -117,7 +117,7 @@ public class NGSession {
 	 * "Touches" the session, indicating that it has been used (and thus prolonging it's life)
 	 */
 	public void touch() {
-		throw new RuntimeException( "Not implemented" );
+		_lastTouchedDate = Instant.now();
 	}
 
 	/**
