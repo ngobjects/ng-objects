@@ -48,7 +48,6 @@ public class NGSession {
 	/**
 	 * Holds our context ID
 	 *
-	 * FIXME: Only public while we're testing this implementation // Hugi 2023-01-21
 	 * FIXME: At what point do we reset the counter? // Hugi 2023-01-21
 	 */
 	private int currentContextID = 0;
