@@ -42,15 +42,9 @@ public class NGSession {
 	private long _timeOutInMilliseconds;
 
 	/**
-	 * Boolean set by terminate() to indicate that this session should be terminated, regardless of it's timeut
+	 * Boolean set by terminate() to indicate that this session should be terminated, regardless of it's timeout
 	 */
 	private boolean _manuallyTerminated = false;
-
-	/**
-	 * FIXME: This is not the way we're going to store/cache contexts. Just for testing
-	 * FIXME: I don't think we actually need this? Isn't the page cache really the only thing we need for context storage?
-	 */
-	//	public final List<NGContext> contexts = new ArrayList<>();
 
 	/**
 	 * Holds our context ID
