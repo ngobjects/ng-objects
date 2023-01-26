@@ -23,11 +23,6 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	private List<NGCookie> _cookies = new ArrayList<>();
 
 	/**
-	 * Creates an empty NGResponse with status 200
-	 */
-	public NGResponse() {}
-
-	/**
 	 * Data to be streamed to the client
 	 *
 	 * FIXME: Don't expose the field // Hugi 2023-01-26
@@ -40,6 +35,11 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 * FIXME: Don't expose the field // Hugi 2023-01-26
 	 */
 	public long contentInputStreamLength;
+
+	/**
+	 * Creates an empty NGResponse with status 200
+	 */
+	public NGResponse() {}
 
 	public NGResponse( final byte[] bytes, final int status ) {
 		setContentBytes( bytes );
