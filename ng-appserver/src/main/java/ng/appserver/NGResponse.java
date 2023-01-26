@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,20 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 * Creates an empty NGResponse with status 200
 	 */
 	public NGResponse() {}
+
+	/**
+	 * Data to be streamed to the client
+	 *
+	 * FIXME: Don't expose the field // Hugi 2023-01-26
+	 */
+	public InputStream contentInputStream;
+
+	/**
+	 * Length of the stream to be streamed to the client
+	 *
+	 * FIXME: Don't expose the field // Hugi 2023-01-26
+	 */
+	public long contentInputStreamLength;
 
 	public NGResponse( final byte[] bytes, final int status ) {
 		setContentBytes( bytes );
