@@ -124,10 +124,14 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			servletResponse.setStatus( ngResponse.status() );
 
-			final long contentLength; // FIXME: SHould be setting the content length to zero
+			// FIXME: Thoughts on content-length:
+			// - Should we always be setting the content length to zero?
+			// - Should we complain if a content stream has been set, but contentInputStreamLength not?
+			// Hugi 2023-01-26
+			final long contentLength;
 
 			if( ngResponse.contentInputStream != null ) {
-				// If an inputstream is present, use the value that's been specified in NGResponse
+				// If an inputstream is present, use the stream's manually specified length value
 				contentLength = ngResponse.contentInputStreamLength;
 			}
 			else {
@@ -152,15 +156,15 @@ public class NGAdaptorJetty extends NGAdaptor {
 				// FIXME: We're using an exposed stream variable here at the moment, not very nice // Hugi 2023-01-26
 				if( ngResponse.contentInputStream != null ) {
 					// FIXME: We should probably be doing some buffering // Hugi 2023-01-26
-					ngResponse.contentInputStream.transferTo( out );
-					ngResponse.contentInputStream.close(); // FIXME: Should we definitely be closing here? // Hugi 2023-01-26
+					try( final InputStream inputStream = ngResponse.contentInputStream) {
+						inputStream.transferTo( out );
+					}
 				}
 				else {
 					out.write( ngResponse.contentBytes() );
 				}
 			}
 		}
-
 	}
 
 	private static Cookie ngCookieToServletCookie( final NGCookie ngCookie ) {
