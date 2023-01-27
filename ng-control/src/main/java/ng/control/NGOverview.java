@@ -2,6 +2,7 @@ package ng.control;
 
 import java.util.List;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
@@ -20,6 +21,11 @@ public class NGOverview extends NGComponent {
 	}
 
 	public boolean isMySession() {
-		return currentSession.equals( context().existingSession() );
+		return currentSession.equals( context().session() );
+	}
+
+	public NGActionResults terminate() {
+		currentSession.terminate();
+		return null;
 	}
 }
