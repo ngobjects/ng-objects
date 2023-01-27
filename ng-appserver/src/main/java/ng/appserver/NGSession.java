@@ -53,12 +53,7 @@ public class NGSession {
 	private int currentContextID = 0;
 
 	/**
-	 * The page cache is going to have to keep track of
-	 *
-	 *  1. The originating context ID
-	 *  2. The elementID the page originates from (for example, the click of a link)
-	 *
-	 *  So, let's just for now store the page as an accumulation of the entire string after the request handler key
+	 * In the case of component actions, stores the currently active page instance by contextID.
 	 *
 	 * FIXME: While a session would usually only be working with one page at a time, this might have to be looked into WRT concurrency? // Hugi 2023-01-21
 	 * FIXME: We're currently storing every page forever. The size of the cache needs to be limited // Hugi 2023-01-21
