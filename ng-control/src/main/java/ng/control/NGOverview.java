@@ -18,4 +18,8 @@ public class NGOverview extends NGComponent {
 	public List<NGSession> sessions() {
 		return NGApplication.application().sessionStore().sessions();
 	}
+
+	public boolean isMySession() {
+		return currentSession.equals( context().existingSession() );
+	}
 }
