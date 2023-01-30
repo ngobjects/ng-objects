@@ -65,7 +65,24 @@ public class NGResourceLoader {
 	 * Represents a source of resources of any type
 	 */
 	public interface ResourceSource {
-		public Optional<byte[]> bytesforResourceWithPath( String resourcePath );
+
+		public default Optional<byte[]> bytesforResourceWithPath( String resourcePath ) {
+			final Optional<InputStream> iso = inputStreamForResourceWithPath( resourcePath );
+
+			if( iso.isEmpty() ) {
+				return Optional.empty();
+			}
+
+			try( InputStream is = iso.get()) {
+				return Optional.of( is.readAllBytes() );
+			}
+			catch( IOException e ) {
+				throw new UncheckedIOException( e );
+			}
+		}
+
+		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath );
+
 	}
 
 	/**
@@ -86,7 +103,7 @@ public class NGResourceLoader {
 		}
 
 		@Override
-		public Optional<byte[]> bytesforResourceWithPath( String resourcePath ) {
+		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath ) {
 			Objects.requireNonNull( resourcePath );
 
 			logger.debug( "Reading resource {} ", resourcePath );
@@ -126,15 +143,16 @@ public class NGResourceLoader {
 				return Optional.empty();
 			}
 
-			try( final InputStream resourceAsStream = resourceURL.openStream()) {
+			try {
+				final InputStream resourceAsStream = resourceURL.openStream();
 
-				// I don't see this happening, but better check for it and warn about it
+				// FIXME: I don't see this happening, but better check for it and warn about it. Find out of openStream() can actually return null // Hugi 2023-01-30
 				if( resourceAsStream == null ) {
-					logger.warn( "Unable to obtain input stream from {}", resourcePath );
+					logger.warn( "Received null input stream from {}", resourcePath );
 					return Optional.empty();
 				}
 
-				return Optional.of( resourceAsStream.readAllBytes() );
+				return Optional.of( resourceAsStream );
 			}
 			catch( final IOException ioException ) {
 				throw new UncheckedIOException( ioException );
@@ -167,7 +185,7 @@ public class NGResourceLoader {
 		}
 
 		@Override
-		public Optional<byte[]> bytesforResourceWithPath( String resourcePath ) {
+		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath ) {
 			Objects.requireNonNull( resourcePath );
 
 			logger.debug( "Reading resource {} ", resourcePath );
@@ -179,7 +197,8 @@ public class NGResourceLoader {
 					return Optional.empty();
 				}
 
-				return Optional.of( bytes );
+				//				return Optional.of( bytes );
+				throw new RuntimeException( "Not implemented" );
 			}
 			catch( IOException e1 ) {
 				throw new RuntimeException( e1 );
