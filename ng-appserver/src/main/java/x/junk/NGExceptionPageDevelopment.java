@@ -101,7 +101,27 @@ public class NGExceptionPageDevelopment extends NGComponent {
 	 * @return true if source should be shown.
 	 */
 	public boolean showSource() {
-		return NGApplication.application().isDevelopmentMode() && sourceFileContainingError() != null && !sourceFileContainingError().toString().contains( ".jar/" ) && Files.exists( sourceFileContainingError() );
+
+		// We only show the source file if we're in development mode (exposing code to production users is generally considered bad practice)
+		if( !NGApplication.application().isDevelopmentMode() ) {
+			return false;
+		}
+
+		// FIXME: Why are we checking for this again? It's our own method that never returns null // Hugi 2023-01-30
+		if( sourceFileContainingError() == null ) {
+			return false;
+		}
+
+		// If the source is inside a JAR file
+		// FIXME: Extract the sources from source-containing jar-files? // Hugi 2023-01-30
+		// FIXME: Can't we check for this a little earlier in the process? I.e. before constructing the source file's path? // Hugi 2023-01-30
+		if( !sourceFileContainingError().toString().contains( ".jar/" ) ) {
+			return false;
+		}
+
+		// Finally, don't display the file if it doesn't exist
+		// FIXME: Why wouldn't the file exist? Can we check for different conditions earlier // Hugi 2023-01-30
+		return Files.exists( sourceFileContainingError() );
 	}
 
 	/**
