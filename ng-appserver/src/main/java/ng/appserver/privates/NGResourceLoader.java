@@ -45,7 +45,7 @@ public class NGResourceLoader {
 	 */
 	public static Optional<byte[]> readWebserverResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
-		return webserverResourcesSource.bytesforResourceWithPath( resourcePath );
+		return webserverResourcesSource.bytesForResourceWithPath( resourcePath );
 	}
 
 	/**
@@ -53,12 +53,12 @@ public class NGResourceLoader {
 	 */
 	public static Optional<byte[]> readAppResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
-		return appResourcesSource.bytesforResourceWithPath( resourcePath );
+		return appResourcesSource.bytesForResourceWithPath( resourcePath );
 	}
 
 	public static Optional<byte[]> readComponentResource( final String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
-		return componentResourcesSource.bytesforResourceWithPath( resourcePath );
+		return componentResourcesSource.bytesForResourceWithPath( resourcePath );
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class NGResourceLoader {
 	 */
 	public interface ResourceSource {
 
-		public default Optional<byte[]> bytesforResourceWithPath( String resourcePath ) {
+		public default Optional<byte[]> bytesForResourceWithPath( String resourcePath ) {
 			final Optional<InputStream> iso = inputStreamForResourceWithPath( resourcePath );
 
 			if( iso.isEmpty() ) {
