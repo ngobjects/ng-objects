@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -59,12 +60,7 @@ public class NGRepetition extends NGDynamicGroup {
 
 		NGActionResults actionResults = null;
 
-		List<?> list = (List<?>)_listAssociation.valueInComponent( context.component() );
-
-		// FIXME: Should we be lenient and handle null as an empty list? // Hugi 2023-01-08
-		if( list == null ) {
-			list = Collections.emptyList();
-		}
+		final List<?> list = list( context );
 
 		final int count = list.size();
 
@@ -101,7 +97,7 @@ public class NGRepetition extends NGDynamicGroup {
 		}
 
 		if( _listAssociation != null ) {
-			final List<?> list = (List<?>)_listAssociation.valueInComponent( context.component() );
+			final List<?> list = list( context );
 
 			int i = 0;
 
@@ -121,5 +117,27 @@ public class NGRepetition extends NGDynamicGroup {
 		}
 
 		context.elementID().removeBranch();
+	}
+
+	/**
+	 * @return The value passed to the list association coerced to a List (if possible/supported)
+	 */
+	private List<?> list( final NGContext context ) {
+		final Object listAssociationValue = _listAssociation.valueInComponent( context.component() );
+
+		// FIXME: Are we sure we want to be lenient and handle null as the empty list? // Hugi 2023-01-08
+		if( listAssociationValue == null ) {
+			return Collections.emptyList();
+		}
+
+		if( listAssociationValue instanceof List<?> cast ) {
+			return cast;
+		}
+
+		if( listAssociationValue instanceof Object[] cast ) {
+			return Arrays.asList( cast );
+		}
+
+		throw new IllegalArgumentException( "NGRepetition only accepts java.util.List and java Arrays. You sent me a %s".formatted( listAssociationValue.getClass() ) );
 	}
 }
