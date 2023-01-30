@@ -112,7 +112,7 @@
 					<th>Method</th>
 					<th>Package</th>
 				</tr>
-				<wo:repetition list="$stackTrace" item="$currentStackTraceElement">
+				<wo:repetition list="$originalThrowable.stackTrace" item="$currentStackTraceElement">
 					<wo:container elementName="tr" class="$currentRowClass">
 						<td><wo:str value="$currentStackTraceElement.fileName" /></td>
 						<td><wo:str value="$currentStackTraceElement.lineNumber" /></td>

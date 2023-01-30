@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -68,13 +67,6 @@ public class NGExceptionPageDevelopment extends NGComponent {
 	 */
 	public String currentPackageName() {
 		return packageNameFromClassName( currentStackTraceElement.getClassName() );
-	}
-
-	/**
-	 * @return The stack trace as a list (just due to NGRepetition not supporting arrays quite yet // FIXME Hugi 2022-07-11
-	 */
-	public List<StackTraceElement> stackTrace() {
-		return Arrays.asList( originalThrowable().getStackTrace() );
 	}
 
 	/**
