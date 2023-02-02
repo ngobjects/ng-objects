@@ -46,4 +46,9 @@ public class ExampleComponent extends NGComponent {
 	public byte[] testImage3Data() {
 		return NGResourceLoader.readAppResource( "test-image-3.jpg" ).get();
 	}
+
+	public NGActionResults testAction() {
+		System.out.println( "Field value is: " + valueForTheTestTextField );
+		return null;
+	}
 }
