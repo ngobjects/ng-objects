@@ -139,6 +139,7 @@ public class NGResourceLoader {
 
 			// If we didn't find the resource, warn the user
 			if( resourceURL == null ) {
+				// FIXME: This is probably not a WARN-sitation. We're polluting the logs // Hugi 2023-02-02
 				logger.warn( "Unable to locate resource {}", resourcePath );
 				return Optional.empty();
 			}
