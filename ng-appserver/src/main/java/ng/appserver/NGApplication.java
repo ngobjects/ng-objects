@@ -145,7 +145,7 @@ public class NGApplication {
 		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
 		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
-			final NGResponse response = new NGResponse( "Session cookie reset", 200 );
+			final NGResponse response = new NGResponse( "<p>Session cookie reset</p><p><a href=\"/\">Re-enter</a></p>", 200 );
 			final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, "ded" );
 			sessionCookie.setMaxAge( 0 );
 			sessionCookie.setPath( "/" );
