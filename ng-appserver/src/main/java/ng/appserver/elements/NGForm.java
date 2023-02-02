@@ -52,6 +52,9 @@ public class NGForm extends NGDynamicGroup {
 			if( _actionAssociation != null ) {
 				return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 			}
+			else {
+				return super.invokeAction( request, context );
+			}
 		}
 
 		return null;
