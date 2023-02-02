@@ -48,7 +48,14 @@ public class NGSubmitButton extends NGDynamicElement {
 
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
-		if( context.elementID().toString().equals( context.senderID() ) ) {
+		// FIXME: // Hugi 2023-02-02
+		// This would be our regular way of checking for a senderID. HOWEVER....
+		// if( context.elementID().toString().equals( context.senderID() ) ) {
+
+		// So. The button is not actually the submitter, but rather the containing form.
+		// The pressed submit button's name will be in the query parameter dictionary.
+		// I have a feeling this is going to cause us grief with regard to state management, i.e. a single form can now result in different results. Exciting.
+		if( request.formValues().get( context.elementID().toString() ) != null ) {
 			return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 		}
 

@@ -31,9 +31,9 @@ public class NGForm extends NGDynamicGroup {
 
 		attributes.put( "method", "POST" );
 
-		if( _actionAssociation != null ) {
-			attributes.put( "action", context.componentActionURL() );
-		}
+		// We append the action association, even if there's no action bound.
+		// This is due to forms with multiple submit buttons, see invokeAction() for further documentation
+		attributes.put( "action", context.componentActionURL() );
 
 		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "form", attributes, false ) );
 		context.setIsInForm( true );
@@ -45,6 +45,10 @@ public class NGForm extends NGDynamicGroup {
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 		if( context.elementID().toString().equals( context.senderID() ) ) {
+
+			// We only invoke the action association if the action binding is actually bound.
+			// This is because the form might contain several submit buttons, in which case the actual action to invoke is the action of the button pressed
+			// FIXME: Having a bound action in a form which has a submit button, also with a bound action, should be an error condition // Hugi 2023-02-02
 			if( _actionAssociation != null ) {
 				return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 			}
