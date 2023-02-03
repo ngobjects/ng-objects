@@ -93,6 +93,8 @@ public class NGComponentDefinition {
 
 	/**
 	 * @return a component definition by either name OR class (never both)
+	 *
+	 * FIXME: We should be failing here if the componentDefinition has neither a class nor a template (Since that's a non-existant component) // Hugi 2023-02-03
 	 */
 	private static NGComponentDefinition get( String componentName, Class<? extends NGComponent> componentClass ) {
 
