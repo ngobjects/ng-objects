@@ -12,8 +12,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 
 /**
- * FIXME: Implement
- * FIXME: The form's method should default to POST (once we can handle POST requests)
+ * An HTML form
  */
 
 public class NGForm extends NGDynamicGroup {
