@@ -130,9 +130,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 			// Hugi 2023-01-26
 			final long contentLength;
 
-			if( ngResponse.contentInputStream != null ) {
+			if( ngResponse.contentInputStream() != null ) {
 				// If an inputstream is present, use the stream's manually specified length value
-				contentLength = ngResponse.contentInputStreamLength;
+				contentLength = ngResponse.contentInputStreamLength();
 			}
 			else {
 				// Otherwise we go for the length of the response's contained data/bytes.
@@ -152,11 +152,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 			}
 
 			try( final OutputStream out = servletResponse.getOutputStream()) {
-
-				// FIXME: We're using an exposed stream variable here at the moment, not very nice // Hugi 2023-01-26
-				if( ngResponse.contentInputStream != null ) {
-					// FIXME: We should probably be doing some buffering // Hugi 2023-01-26
-					try( final InputStream inputStream = ngResponse.contentInputStream) {
+				if( ngResponse.contentInputStream() != null ) {
+					try( final InputStream inputStream = ngResponse.contentInputStream()) {
+						// FIXME: We should probably be doing some buffering // Hugi 2023-01-26
 						inputStream.transferTo( out );
 					}
 				}

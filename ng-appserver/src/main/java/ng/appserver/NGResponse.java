@@ -24,17 +24,13 @@ public class NGResponse extends NGMessage implements NGActionResults {
 
 	/**
 	 * Data to be streamed to the client
-	 *
-	 * FIXME: Don't expose the field // Hugi 2023-01-26
 	 */
-	public InputStream contentInputStream;
+	private InputStream _contentInputStream;
 
 	/**
 	 * Length of the stream to be streamed to the client
-	 *
-	 * FIXME: Don't expose the field // Hugi 2023-01-26
 	 */
-	public long contentInputStreamLength;
+	private long _contentInputStreamLength;
 
 	/**
 	 * Creates an empty NGResponse with status 200
@@ -71,6 +67,22 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 */
 	public void addCookie( final NGCookie cookie ) {
 		_cookies.add( cookie );
+	}
+
+	public InputStream contentInputStream() {
+		return _contentInputStream;
+	}
+
+	public void setContentInputStream( InputStream value ) {
+		_contentInputStream = value;
+	}
+
+	public long contentInputStreamLength() {
+		return _contentInputStreamLength;
+	}
+
+	public void setContentInputStreamLength( long value ) {
+		_contentInputStreamLength = value;
 	}
 
 	@Override
