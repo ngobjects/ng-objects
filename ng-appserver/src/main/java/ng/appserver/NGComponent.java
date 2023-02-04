@@ -91,7 +91,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		setContext( newContext );
 
 		for( NGComponent child : _children.values() ) {
-			child.setContext( newContext );
+			child.awakeInContext( newContext );
 		}
 	}
 
