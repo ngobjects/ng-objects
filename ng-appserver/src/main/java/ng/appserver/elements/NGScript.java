@@ -18,14 +18,14 @@ import ng.appserver.NGResponse;
 
 public class NGScript extends NGDynamicElement {
 
-	private NGAssociation _srcAssociation;
+	private NGAssociation _filenameAssociation;
 
 	public NGScript( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
-		_srcAssociation = associations.get( "src" );
+		_filenameAssociation = associations.get( "filename" );
 
-		if( _srcAssociation == null ) {
-			throw new IllegalArgumentException( "'src' is a required binding" );
+		if( _filenameAssociation == null ) {
+			throw new IllegalArgumentException( "'filename' is a required binding" );
 		}
 	}
 
@@ -34,7 +34,7 @@ public class NGScript extends NGDynamicElement {
 		Objects.requireNonNull( response );
 		Objects.requireNonNull( context );
 		final NGComponent component = context.component();
-		final String filename = (String)_srcAssociation.valueInComponent( component );
+		final String filename = (String)_filenameAssociation.valueInComponent( component );
 		final Optional<String> relativeURL = NGApplication.application().resourceManager().urlForWebserverResourceNamed( filename );
 		String urlString;
 
