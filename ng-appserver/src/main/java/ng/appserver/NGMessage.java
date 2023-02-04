@@ -10,10 +10,6 @@ import java.util.TreeMap;
 
 /**
  * Parent class of NGResponse/NGRequest
- *
- * Currently this just stores a byte array for the content.
- * We probably want to change that to eventually be a stream as well.
- * Or even a string, to prevent constant conversion between types when serving string responses.
  */
 
 public abstract class NGMessage {
@@ -30,6 +26,8 @@ public abstract class NGMessage {
 
 	/**
 	 * The content of this message
+	 *
+	 * FIXME: Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming) // Hugi 2023-02-04
 	 */
 	private byte[] _contentBytes = new byte[] {};
 
@@ -107,12 +105,12 @@ public abstract class NGMessage {
 		setContentString( contentString().concat( stringToAppend ) );
 	}
 
-	public void setContentBytes( final byte[] contentBytes ) {
-		_contentBytes = contentBytes;
-	}
-
 	public byte[] contentBytes() {
 		return _contentBytes;
+	}
+
+	public void setContentBytes( final byte[] contentBytes ) {
+		_contentBytes = contentBytes;
 	}
 
 	/**
