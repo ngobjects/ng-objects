@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default session store
- *
- * FIXME: Implement session timeouts
  */
 
 public class NGServerSessionStore extends NGSessionStore {
