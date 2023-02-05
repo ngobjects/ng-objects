@@ -1,6 +1,5 @@
 package ng.appserver;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
@@ -153,18 +152,6 @@ public class NGSession {
 	 */
 	public void terminate() {
 		_manuallyTerminated = true;
-	}
-
-	/**
-	 * FIXME: This is horrid and does not belong here // Hugi 2022-06-25
-	 */
-	public static NGSession createSession() {
-		try {
-			return NGApplication.application()._sessionClass().getConstructor().newInstance();
-		}
-		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
-			throw new RuntimeException( e );
-		}
 	}
 
 	public void savePage( String contextID, NGComponent component ) {

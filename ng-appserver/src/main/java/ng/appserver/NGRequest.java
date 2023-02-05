@@ -139,7 +139,7 @@ public class NGRequest extends NGMessage {
 				}
 			}
 			else {
-				_session = NGSession.createSession();
+				_session = NGApplication.application().createSessionForRequest( this );
 				_setSessionID( _session.sessionID() );
 				NGApplication.application().sessionStore().storeSession( _session );
 			}

@@ -379,6 +379,21 @@ public class NGApplication {
 	}
 
 	/**
+	 * @return A newly created session for the given NGRequest
+	 *
+	 * If you need to catch some info about the user, and do something like, for example, automatically log in a user based on a cookie value, this would be just the place.
+	 */
+	public NGSession createSessionForRequest( NGRequest request ) {
+		try {
+			return _sessionClass().getConstructor().newInstance();
+		}
+		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
+			// FIXME: I can't just keep on throwing RuntimeException everywhere // Hugi 2023-02-05
+			throw new RuntimeException( e );
+		}
+	}
+
+	/**
 	 * If the application fails to restore a session during request handling, this method will be invoked to generate a response for the user
 	 *
 	 * @return The page to return to the user when a session restoration error occurs.
