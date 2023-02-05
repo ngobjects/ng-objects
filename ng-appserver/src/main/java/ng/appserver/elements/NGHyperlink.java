@@ -47,14 +47,14 @@ public class NGHyperlink extends NGDynamicGroup {
 
 		String href = null;
 
+		// An href-binding gest passed directly to the link.
+		// FIXME: honestly, it should just be passed along with any other plain-vanilla binding, since it doesn't get any special treatment // Hugi 2023-02-05
 		if( _hrefAssociation != null ) {
 			href = (String)_hrefAssociation.valueInComponent( context.component() );
 		}
 
-		// FIXME: Work in progress
 		if( _actionAssociation != null || _pageNameAssociation != null ) {
-			final String senderID = context.contextID() + "." + context.elementID().toString();
-			href = "/wo/" + senderID;
+			href = context.componentActionURL();
 		}
 
 		if( href == null ) {
