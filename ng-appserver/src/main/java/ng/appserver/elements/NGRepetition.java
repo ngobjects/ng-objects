@@ -121,7 +121,6 @@ public class NGRepetition extends NGDynamicGroup {
 	private List<?> list( final NGContext context ) {
 		final Object listAssociationValue = _listAssociation.valueInComponent( context.component() );
 
-		// FIXME: Are we sure we want to be lenient and handle null as the empty list? // Hugi 2023-01-08
 		if( listAssociationValue == null ) {
 			return Collections.emptyList();
 		}
