@@ -50,11 +50,6 @@ public class NGTextField extends NGDynamicElement {
 	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
 
-		if( !context.isInForm() ) {
-			// FIXME: This warning should be suppressable (or not present, just here for testing). There are excellent reasons to have a textfield outside of a form
-			logger.warn( "Warning, you're rendering an NGTextField outside of a form" );
-		}
-
 		String name;
 
 		if( _nameAssociation != null ) {
