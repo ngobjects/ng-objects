@@ -221,11 +221,12 @@ public class NGComponent implements NGElement, NGActionResults {
 	@Override
 	public NGResponse generateResponse() {
 		logger.debug( "Invoked {}.generateResponse()", getClass() );
-		final NGResponse response = new NGResponse();
-		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding
 
 		context().setPage( this );
 		context().setCurrentComponent( this );
+
+		final NGResponse response = new NGResponse();
+		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding
 
 		appendToResponse( response, context() );
 
