@@ -20,8 +20,6 @@ public class NGString extends NGDynamicElement {
 
 	/**
 	 * Indicates if we want to escape HTML values. Defaults to true
-	 *
-	 * FIXME: Keeping the WO defaults. Should we perhaps default to false? PRobably not. Keeping the speculation around though // Hugi 2022-07-29
 	 */
 	private NGAssociation _escapeHTMLAss;
 
