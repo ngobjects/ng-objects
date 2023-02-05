@@ -57,8 +57,11 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		context.page().awakeInContext( request.context() );
 
 		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", context._originatingContextID(), originalPage );
+
 		// FIXME: We can probably save a few cycles by only performing takeValuesFromRequest if there are, you know, actual values in the request to take // Hugi 2023-01-07
-		originalPage.takeValuesFromRequest( request, context );
+		if( !request.formValues().isEmpty() ) { // FIXME: This condition feels about right, but we might need to revisit when it comes to Ajax // Hugi 2023-02-05
+			originalPage.takeValuesFromRequest( request, context );
+		}
 
 		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), context._originatingContextID(), originalPage );
 
