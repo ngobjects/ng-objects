@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 
 public class NGTextField extends NGDynamicElement {
 
@@ -44,7 +46,7 @@ public class NGTextField extends NGDynamicElement {
 	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
 
-		String name;
+		final String name;
 
 		if( _nameAssociation != null ) {
 			name = (String)_nameAssociation.valueInComponent( context.component() );
@@ -53,27 +55,26 @@ public class NGTextField extends NGDynamicElement {
 			name = nameFromCurrentElementId( context );
 		}
 
-		String value = "";
+		final String value = (String)_valueAssociation.valueInComponent( context.component() ); // FIXME: This value might need to be converted/formatted
 
-		if( _valueAssociation != null ) { // FIXME: _valueAssociation should actually not be allowed to be null
-			value = (String)_valueAssociation.valueInComponent( context.component() ); // FIXME: This value might need to be converted/formatted
+		final Map<String, String> attributes = new HashMap<>();
+
+		attributes.put( "type", "text" );
+
+		if( name != null ) {
+			attributes.put( "name", name );
 		}
 
-		// FIXME: Not sure if we should be setting the empty string here or making some other special accommodation for null
-		if( value == null ) {
-			value = "";
+		if( value != null ) {
+			attributes.put( "value", value );
 		}
 
-		// FIXME: Using String.format for convenience. We probably want to change that later for performance reasons // Hugi 2022-06-05
-		// FIXME: Omit empty tags
-		final String tagString = String.format( "<input type=\"text\" name=\"%s\" value=\"%s\" />", name, value );
+		final String tagString = NGHTMLUtilities.createElementStringWithAttributes( "input", attributes, true );
 		response.appendContentString( tagString );
 	}
 
 	/**
 	 * @return A unique name for this text field, based on the WOContext's elementId
-	 *
-	 * FIXME: Implement
 	 */
 	private String nameFromCurrentElementId( final NGContext context ) {
 		return context.elementID().toString();
