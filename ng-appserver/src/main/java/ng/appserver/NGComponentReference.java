@@ -83,9 +83,6 @@ public class NGComponentReference extends NGDynamicElement {
 		context.setCurrentComponent( context.component().parent() );
 	}
 
-	/**
-	 * FIXME: Verify implementation // Hugi 2022-12-27
-	 */
 	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
 		beforeComponent( context );
@@ -93,9 +90,6 @@ public class NGComponentReference extends NGDynamicElement {
 		afterComponent( context );
 	}
 
-	/**
-	 * FIXME: Verify implementation // Hugi 2022-12-27
-	 */
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
 		beforeComponent( context );
@@ -103,9 +97,6 @@ public class NGComponentReference extends NGDynamicElement {
 		afterComponent( context );
 	}
 
-	/**
-	 * FIXME: Verify implementation // Hugi 2022-12-27
-	 */
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 		beforeComponent( context );
