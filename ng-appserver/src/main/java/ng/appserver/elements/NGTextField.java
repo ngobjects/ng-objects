@@ -3,9 +3,6 @@ package ng.appserver.elements;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
@@ -14,8 +11,6 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 public class NGTextField extends NGDynamicElement {
-
-	private static final Logger logger = LoggerFactory.getLogger( NGTextField.class );
 
 	/**
 	 * 'name' attribute of the text field. If not specified, will be populated using the elementID
@@ -42,7 +37,6 @@ public class NGTextField extends NGDynamicElement {
 
 		if( valuesFromRequest != null ) { // FIXME: Should formValues return an empty list or null if not present? // Hugi 2022-06-08
 			String valueFromRequest = valuesFromRequest.get( 0 );
-			logger.info( "We're going for it! We're setting that value to: " + valueFromRequest );
 			_valueAssociation.setValue( valueFromRequest, context.component() );
 		}
 	}
