@@ -1,10 +1,7 @@
 package ng.appserver;
 
 /**
- * Wraps a cookie
- *
- * // FIXME: We need to decide how to handle timeouts // Hugi 2022-01-01
- * // FIXME: Determine sensible defaults on cookie construction // Hugi 2022-01-01
+ * A cookie. Yum!
  */
 
 public class NGCookie {
@@ -15,6 +12,11 @@ public class NGCookie {
 	private String _domain;
 	private String _comment;
 	private Integer _maxAge;
+
+	/**
+	 * Strict,Lax,None
+	 */
+	private String _sameSite;
 	private boolean _isSecure;
 	private boolean _isHttpOnly;
 
@@ -85,5 +87,13 @@ public class NGCookie {
 
 	public void setMaxAge( Integer maxAge ) {
 		_maxAge = maxAge;
+	}
+
+	public String sameSite() {
+		return _sameSite;
+	}
+
+	public void setSameSite( String value ) {
+		_sameSite = value;
 	}
 }
