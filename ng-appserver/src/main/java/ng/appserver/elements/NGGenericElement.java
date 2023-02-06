@@ -25,7 +25,7 @@ public class NGGenericElement extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGGenericElement( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( name, associations, template );
+		super( null, null, null );
 		_additionalAssociations = new HashMap<>( associations );
 
 		elementNameAssociation = _additionalAssociations.remove( "elementName" );
