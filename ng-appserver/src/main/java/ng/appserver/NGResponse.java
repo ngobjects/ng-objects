@@ -3,6 +3,7 @@ package ng.appserver;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * FIXME: Need to decide what to do about responses of different types. // Hugi 2022-06-05
@@ -66,6 +67,7 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	 * Add the given cookie to the response.
 	 */
 	public void addCookie( final NGCookie cookie ) {
+		Objects.requireNonNull( cookie );
 		_cookies.add( cookie );
 	}
 
