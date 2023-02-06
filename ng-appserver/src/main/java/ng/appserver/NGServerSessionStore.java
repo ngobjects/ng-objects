@@ -21,15 +21,22 @@ public class NGServerSessionStore extends NGSessionStore {
 	final Map<String, NGSession> _sessions = new ConcurrentHashMap<>();
 
 	public NGServerSessionStore() {
+		startExpiredSessionReaperThread();
+	}
+
+	/**
+	 * Initialize a thread that will remove expired sessions
+	 */
+	private void startExpiredSessionReaperThread() {
 		final TimerTask sessionKillerTask = new TimerTask() {
 			@Override
 			public void run() {
-				logger.debug( "Harvesting dead sessions" ); // FIXME: This logging is a little much, just here for the development stage // Hugi 2023-01-21
 
 				// FIXME: This is, of course, horribly inefficient // Hugi 2023-01-21
-				for( NGSession session : sessions() ) {
+				for( final NGSession session : sessions() ) {
 					if( session.shouldTerminate() ) {
 						_sessions.remove( session.sessionID() );
+						logger.debug( "Terminated session with ID {}", session.sessionID() );
 					}
 				}
 			}
