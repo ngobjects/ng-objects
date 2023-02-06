@@ -78,6 +78,8 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * Add the given child component with the given elementID
 	 */
 	public void addChild( NGElementID elementID, NGComponent child ) {
+		Objects.requireNonNull( elementID );
+		Objects.requireNonNull( child );
 		_children.put( elementID, child );
 	}
 
@@ -87,6 +89,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * FIXME: Null? Really? // Hugi 2022-12-30
 	 */
 	public NGComponent getChild( NGElementID elementID ) {
+		Objects.requireNonNull( elementID );
 		return _children.get( elementID );
 	}
 
