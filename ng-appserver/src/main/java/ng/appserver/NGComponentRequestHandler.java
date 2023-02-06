@@ -104,8 +104,6 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 
 	/**
 	 * Validates the request. @throws a RuntimeException if an invalid value is encountered
-	 *
-	 * FIXME: We should only be checking for iso-lati1 numerals (Character.isDigits includes multiple scripts)
 	 */
 	private static void validateRequest( NGRequest request ) {
 		Objects.requireNonNull( request );
