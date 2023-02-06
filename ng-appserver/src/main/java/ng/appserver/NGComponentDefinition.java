@@ -154,7 +154,7 @@ public class NGComponentDefinition {
 
 		try {
 			final NGComponent newComponentInstance = _componentClass.getConstructor( NGContext.class ).newInstance( context );
-			newComponentInstance._componentDefinition = this; // FIXME: Feel like this is ugly as all hell, the _componentDefinition variable should not be exposed
+			newComponentInstance._setComponentDefinition( this ); // FIXME: Feel like this is ugly as all hell, the _componentDefinition variable should not be exposed
 			return newComponentInstance;
 		}
 		catch( InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e ) {

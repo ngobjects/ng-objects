@@ -25,9 +25,8 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * FIXME: Shouldn't this really be final and initialized during component construction? // Hugi 2022-01-16
-	 * FIXME: This should definitely not be public
 	 */
-	public NGComponentDefinition _componentDefinition;
+	private NGComponentDefinition _componentDefinition;
 
 	/**
 	 * Stores a reference to the component's parent component
@@ -236,5 +235,13 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	public NGElement template() {
 		return _componentDefinition.template();
+	}
+
+	/**
+	 * Sets the component definition for this component instance. See comment on variable, regarding if this method should be private.
+	 */
+	public void _setComponentDefinition( final NGComponentDefinition componentDefinition ) {
+		Objects.requireNonNull( componentDefinition );
+		_componentDefinition = componentDefinition;
 	}
 }
