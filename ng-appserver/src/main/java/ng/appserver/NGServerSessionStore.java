@@ -28,7 +28,7 @@ public class NGServerSessionStore extends NGSessionStore {
 	 * Initialize a thread that will remove expired sessions
 	 */
 	private void startExpiredSessionReaperThread() {
-		final TimerTask sessionKillerTask = new TimerTask() {
+		final TimerTask sessionReaperTask = new TimerTask() {
 			@Override
 			public void run() {
 
@@ -42,8 +42,8 @@ public class NGServerSessionStore extends NGSessionStore {
 			}
 		};
 
-		final Timer timer = new Timer( "Sessionkiller" );
-		timer.schedule( sessionKillerTask, 5000, 5000 ); // FIXME: execution times might need to be tuned a little // Hugi 2023-01-21
+		final Timer timer = new Timer( "SessionReaper", true );
+		timer.schedule( sessionReaperTask, 5000, 5000 ); // FIXME: execution times might need to be tuned a little // Hugi 2023-01-21
 	}
 
 	@Override
