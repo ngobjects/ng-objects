@@ -46,7 +46,10 @@ public class NGComponent implements NGElement, NGActionResults {
 	private Map<String, NGAssociation> _associations;
 
 	/**
-	 * Reference to the template contained within the element
+	 * Reference to the template wrapped by this component (i.e. subcomponent(s) or dynamic element(s))
+	 *
+	 * As in:
+	 * <ThisComponent>[_contentElement]</ThisComponent>
 	 */
 	private NGElement _contentElement;
 
