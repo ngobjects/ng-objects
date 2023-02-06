@@ -11,8 +11,7 @@ import org.slf4j.LoggerFactory;
 import ng.kvc.NGKeyValueCoding;
 
 /**
- * FIXME: Should we allow creation of components without a context?
- * FIXME: Templating really belongs in a separate project, right?
+ * A component, for use in templates. Basically a user friendly NGElement with an assigned template files(s)
  */
 
 public class NGComponent implements NGElement, NGActionResults {
