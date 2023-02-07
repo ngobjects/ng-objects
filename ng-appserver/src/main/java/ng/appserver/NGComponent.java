@@ -68,6 +68,15 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
+	 * @return The application within which this component instance was constructed
+	 *
+	 * FIXME: Type safety (for our own session class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
+	 */
+	public NGApplication application() {
+		return NGApplication.application().application();
+	}
+
+	/**
 	 * @return true if this component should push/pull values to/from it's parent
 	 */
 	public boolean synchronizesVariablesWithBindings() {
