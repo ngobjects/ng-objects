@@ -106,8 +106,10 @@ public class NGExceptionPageDevelopment extends NGComponent {
 		}
 
 		// Finally, don't display the file if it doesn't exist
-		// FIXME: Why wouldn't the file exist? Can we check for different conditions earlier // Hugi 2023-01-30
-		return Files.exists( sourceFileContainingError() );
+		// FIXME: Why wouldn't the file exist? Can we check for different conditions earlier? // Hugi 2023-01-30
+		// return Files.exists( sourceFileContainingError() );
+
+		return true;
 	}
 
 	/**
