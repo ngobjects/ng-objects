@@ -100,7 +100,6 @@ public class NGExceptionPageDevelopment extends NGComponent {
 
 		// If the source is inside a JAR file
 		// FIXME: Extract the sources from source-containing jar-files? // Hugi 2023-01-30
-		// FIXME: Can't we check for this a little earlier in the process? I.e. before constructing the source file's path? // Hugi 2023-01-30
 		if( sourceFileContainingError().toString().contains( ".jar/" ) ) {
 			return false;
 		}
@@ -176,7 +175,7 @@ public class NGExceptionPageDevelopment extends NGComponent {
 	 * @return CSS class for the current line of the source file (to show odd/even lines and highlight the error line)
 	 */
 	public String sourceLineClass() {
-		List<String> cssClasses = new ArrayList<>();
+		final List<String> cssClasses = new ArrayList<>();
 		cssClasses.add( "src-line" );
 
 		if( currentSourceLineIndex % 2 == 0 ) {
