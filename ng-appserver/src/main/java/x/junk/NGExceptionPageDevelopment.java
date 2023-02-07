@@ -223,8 +223,6 @@ public class NGExceptionPageDevelopment extends NGComponent {
 
 	/**
 	 * @return The CSS class of the current row in the stack trace table.
-	 *
-	 * FIXME: Identify bundles and return appropriate class // Hugi 2022-07-10
 	 */
 	public String currentRowClass() {
 		return null;
