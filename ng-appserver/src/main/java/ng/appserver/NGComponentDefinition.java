@@ -32,14 +32,11 @@ public class NGComponentDefinition {
 
 	/**
 	 * FIXME: This is a temporary component definition cache, just to get us started // Hugi 2022-10-19
-	 * FIXME: This cache is a race condition risk // Hugi 2022-10-24
 	 */
 	private static Map<String, NGComponentDefinition> _componentDefinitionCache = new HashMap<>();
 
 	/**
 	 * Stores the parsed template if caching is enabled
-	 *
-	 * FIXME: This cache is a race condition risk // Hugi 2022-10-24
 	 */
 	private NGElement _cachedTemplate;
 
