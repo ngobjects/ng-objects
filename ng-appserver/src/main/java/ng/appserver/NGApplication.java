@@ -264,11 +264,8 @@ public class NGApplication {
 	 * @return A new instance of [componentDefinition] in the given [context]
 	 */
 	private NGComponent pageWithName( final NGComponentDefinition componentDefinition, final NGContext context ) {
-
-		// FIXME: componentDefinition will probably never be null // Hugi 2022-10-10
-		if( componentDefinition == null ) {
-			throw new RuntimeException( "No such component definition: " + componentDefinition );
-		}
+		Objects.requireNonNull( componentDefinition );
+		Objects.requireNonNull( context );
 
 		return componentDefinition.componentInstanceInContext( context );
 	}
