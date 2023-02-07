@@ -100,6 +100,7 @@ public class NGExceptionPageDevelopment extends NGComponent {
 
 		// If the source is inside a JAR file
 		// FIXME: Extract the sources from source-containing jar-files? // Hugi 2023-01-30
+		// FIXME: This doesn't actually work, we have to check the class resource's actual path // Hugi 2023-02-07
 		if( sourceFileContainingError().toString().contains( ".jar/" ) ) {
 			return false;
 		}
