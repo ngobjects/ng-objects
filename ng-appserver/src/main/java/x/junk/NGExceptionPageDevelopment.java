@@ -99,11 +99,6 @@ public class NGExceptionPageDevelopment extends NGComponent {
 			return false;
 		}
 
-		// FIXME: Why are we checking for this again? It's our own method that never returns null // Hugi 2023-01-30
-		if( sourceFileContainingError() == null ) {
-			return false;
-		}
-
 		// If the source is inside a JAR file
 		// FIXME: Extract the sources from source-containing jar-files? // Hugi 2023-01-30
 		// FIXME: Can't we check for this a little earlier in the process? I.e. before constructing the source file's path? // Hugi 2023-01-30
