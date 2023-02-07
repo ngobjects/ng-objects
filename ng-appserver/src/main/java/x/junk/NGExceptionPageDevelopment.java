@@ -112,8 +112,6 @@ public class NGExceptionPageDevelopment extends NGComponent {
 
 	/**
 	 * @return The source file where the exception originated (from the last line of the stack trace).
-	 *
-	 * FIXME: We need to locate the correct working directory here
 	 */
 	private Path sourceFileContainingError() {
 		final String nameOfThrowingClass = firstLineOfTrace().getFileName();
