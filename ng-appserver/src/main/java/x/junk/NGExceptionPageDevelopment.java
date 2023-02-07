@@ -14,7 +14,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.NGApplication;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 
@@ -95,7 +94,7 @@ public class NGExceptionPageDevelopment extends NGComponent {
 	public boolean showSource() {
 
 		// We only show the source file if we're in development mode (exposing code to production users is generally considered bad practice)
-		if( !NGApplication.application().isDevelopmentMode() ) {
+		if( !application().isDevelopmentMode() ) {
 			return false;
 		}
 
