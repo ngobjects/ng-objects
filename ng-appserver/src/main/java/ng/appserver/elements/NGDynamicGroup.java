@@ -47,9 +47,9 @@ public class NGDynamicGroup extends NGDynamicElement {
 
 		System.out.println( ucHeader );
 
-		if( ucHeader != null ) {
-			if( !context.updateContainerIDs.contains( ucHeader ) ) {
-				return true;
+		if( !ucHeader.isEmpty() ) {
+			if( !context.updateContainerIDs.contains( ucHeader.get( 0 ) ) ) {
+				return false;
 			}
 		}
 
