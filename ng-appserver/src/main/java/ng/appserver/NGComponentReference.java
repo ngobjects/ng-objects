@@ -75,11 +75,10 @@ public class NGComponentReference extends NGDynamicElement {
 		context.setCurrentComponent( newComponentInstance );
 	}
 
+	/**
+	 * Return control to the previous component
+	 */
 	private void afterComponent( final NGContext context ) {
-
-		// Return control to the previous component
-		// FIXME: I'm not sure this will work. What about stateless components? // Hugi 2022-12-27
-
 		context.setCurrentComponent( context.component().parent() );
 	}
 
