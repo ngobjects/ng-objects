@@ -49,7 +49,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 
 		if( ucHeader != null ) {
 			if( !context.updateContainerIDs.contains( ucHeader ) ) {
-				return false;
+				return true;
 			}
 		}
 
@@ -57,7 +57,10 @@ public class NGDynamicGroup extends NGDynamicElement {
 	}
 
 	protected void appendChildrenToResponse( NGResponse response, NGContext context ) {
-		if( shouldRender( context ) ) {
+		final boolean shouldRender = shouldRender( context );
+		System.out.println( shouldRender );
+
+		if( shouldRender ) {
 			if( _children != null ) { // See mention of nullyness in the declaration of _children
 				context.elementID().addBranch();
 

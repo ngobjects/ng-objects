@@ -15,6 +15,7 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGElement;
 import ng.appserver.elements.AjaxUpdateContainer;
+import ng.appserver.elements.AjaxUpdateLink;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGForm;
@@ -51,6 +52,7 @@ public class NGElementUtils {
 
 	static {
 		addClass( AjaxUpdateContainer.class, "auc" );
+		addClass( AjaxUpdateLink.class, "aul" );
 		addClass( NGComponentContent.class, "content" );
 		addClass( NGConditional.class, "if" );
 		addClass( NGForm.class, "form" );
