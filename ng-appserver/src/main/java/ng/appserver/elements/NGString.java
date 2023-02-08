@@ -61,7 +61,7 @@ public class NGString extends NGDynamicElement {
 
 			String string = objectValue.toString();
 
-			if( escapeHTML == true ) {
+			if( escapeHTML ) {
 				string = NGHTMLUtilities.escapeHTML( string );
 			}
 
