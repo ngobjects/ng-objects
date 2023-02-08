@@ -69,18 +69,16 @@ public class NGComponentReference extends NGDynamicElement {
 		// Before we make our newly created component the "active" one, we need to pull values, if required
 		newComponentInstance.pullBindingValuesfromParent();
 
-		// FIXME: We're currently only pulling values, we need to push values as well. That happens later
-
 		// Set the component in the context
 		context.setCurrentComponent( newComponentInstance );
 	}
 
+	/**
+	 * Return control to the previous component
+	 */
 	private void afterComponent( final NGContext context ) {
-
-		// Return control to the previous component
-		// FIXME: I'm not sure this will work. What about stateless components? // Hugi 2022-12-27
-
 		context.setCurrentComponent( context.component().parent() );
+		//		context.component().pushBindingValuesToParent(); // FIXME: We need to look into the null associations map on NGComponent before implementing this (would prefer to use an empty map instead) // Hugi 2023-02-08
 	}
 
 	@Override

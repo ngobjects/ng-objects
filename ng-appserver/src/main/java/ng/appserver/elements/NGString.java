@@ -43,31 +43,30 @@ public class NGString extends NGDynamicElement {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		Object value = _valueAss.valueInComponent( context.component() );
-
-		if( value == null ) {
-			value = "";
-		}
+		Object objectValue = _valueAss.valueInComponent( context.component() );
 
 		if( _valueWhenEmptyAss != null ) {
-			if( value == null || (value instanceof String s && s.isEmpty()) ) {
-				value = _valueWhenEmptyAss.valueInComponent( context.component() );
+			if( objectValue == null || (objectValue instanceof String s && s.isEmpty()) ) {
+				objectValue = _valueWhenEmptyAss.valueInComponent( context.component() );
 			}
 		}
 
-		String result = value.toString();
+		// If objectValue is null, we don't do anything at all. Otherwise, we proceed to do some rendering.
+		if( objectValue != null ) {
+			boolean escapeHTML = true;
 
-		boolean escapeHTML = true;
+			if( _escapeHTMLAss != null ) {
+				escapeHTML = (boolean)_escapeHTMLAss.valueInComponent( context.component() );
+			}
 
-		if( _escapeHTMLAss != null ) {
-			escapeHTML = (boolean)_escapeHTMLAss.valueInComponent( context.component() );
+			String string = objectValue.toString();
+
+			if( escapeHTML ) {
+				string = NGHTMLUtilities.escapeHTML( string );
+			}
+
+			response.appendContentString( string );
 		}
-
-		if( escapeHTML == true ) {
-			result = NGHTMLUtilities.escapeHTML( result );
-		}
-
-		response.appendContentString( result );
 	}
 
 	@Override
