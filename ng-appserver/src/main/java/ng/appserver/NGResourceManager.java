@@ -30,7 +30,7 @@ public class NGResourceManager {
 	 * FIXME: Current implementation is for testing only
 	 */
 	private boolean _cachingEnabled() {
-		return !NGApplication.application().cachingEnabled();
+		return NGApplication.application().cachingEnabled();
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
