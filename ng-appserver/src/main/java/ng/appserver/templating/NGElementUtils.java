@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGElement;
+import ng.appserver.elements.AjaxUpdateContainer;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGForm;
@@ -49,6 +50,7 @@ public class NGElementUtils {
 	private static final Map<String, String> _shortcutToClassMap = new HashMap<>();
 
 	static {
+		addClass( AjaxUpdateContainer.class, "auc" );
 		addClass( NGComponentContent.class, "content" );
 		addClass( NGConditional.class, "if" );
 		addClass( NGForm.class, "form" );

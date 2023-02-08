@@ -42,16 +42,32 @@ public class NGDynamicGroup extends NGDynamicElement {
 		appendChildrenToResponse( response, context );
 	}
 
-	protected void appendChildrenToResponse( NGResponse response, NGContext context ) {
-		if( _children != null ) { // See mention of nullyness in the declaration of _children
-			context.elementID().addBranch();
+	private boolean shouldRender( NGContext context ) {
+		final List<String> ucHeader = context.request().headers().get( "x-updatecontainerid" );
 
-			for( final NGElement child : children() ) {
-				child.appendToResponse( response, context );
-				context.elementID().increment();
+		System.out.println( ucHeader );
+
+		if( ucHeader != null ) {
+			if( !context.updateContainerIDs.contains( ucHeader ) ) {
+				return false;
 			}
+		}
 
-			context.elementID().removeBranch();
+		return true;
+	}
+
+	protected void appendChildrenToResponse( NGResponse response, NGContext context ) {
+		if( shouldRender( context ) ) {
+			if( _children != null ) { // See mention of nullyness in the declaration of _children
+				context.elementID().addBranch();
+
+				for( final NGElement child : children() ) {
+					child.appendToResponse( response, context );
+					context.elementID().increment();
+				}
+
+				context.elementID().removeBranch();
+			}
 		}
 	}
 

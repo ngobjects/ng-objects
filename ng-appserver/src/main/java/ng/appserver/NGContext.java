@@ -1,8 +1,12 @@
 package ng.appserver;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class NGContext {
+
+	public Set<String> updateContainerIDs = new HashSet<>();
 
 	/**
 	 * The request that initiated the creation of this context
