@@ -1,5 +1,8 @@
 package ng.appserver;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +32,7 @@ public abstract class NGMessage {
 	 *
 	 * FIXME: Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming) // Hugi 2023-02-04
 	 */
-	private byte[] _contentBytes = new byte[] {};
+	private ByteArrayOutputStream _contentBytes = new ByteArrayOutputStream();
 
 	/**
 	 * @return The HTTP version of this message
@@ -102,15 +105,28 @@ public abstract class NGMessage {
 	}
 
 	public void appendContentString( final String stringToAppend ) {
-		setContentString( contentString().concat( stringToAppend ) );
+		try {
+			_contentBytes.write( stringToAppend.getBytes( StandardCharsets.UTF_8 ) );
+		}
+		catch( IOException e ) {
+			// FIXME: Butt ugly // Hugi 2023-02-08
+			throw new UncheckedIOException( e );
+		}
 	}
 
 	public byte[] contentBytes() {
-		return _contentBytes;
+		return _contentBytes.toByteArray();
 	}
 
 	public void setContentBytes( final byte[] contentBytes ) {
-		_contentBytes = contentBytes;
+		_contentBytes = new ByteArrayOutputStream();
+		try {
+			_contentBytes.write( contentBytes );
+		}
+		catch( IOException e ) {
+			// FIXME: Butt ugly // Hugi 2023-02-08
+			throw new UncheckedIOException( e );
+		}
 	}
 
 	/**
