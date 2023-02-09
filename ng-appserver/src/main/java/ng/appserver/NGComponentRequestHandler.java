@@ -52,7 +52,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// We can probably assume that since we're working with the page, it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
 		session.retainPageWithContextIDInCache( context._originatingContextID() );
 
-		logger.info( "Page restored from cache is: " + originalPage.getClass() );
+		logger.debug( "Page restored from cache is: " + originalPage.getClass() );
 
 		// Push the page in the context
 		context.setPage( originalPage );
