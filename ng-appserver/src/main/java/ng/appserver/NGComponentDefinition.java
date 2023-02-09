@@ -136,8 +136,10 @@ public class NGComponentDefinition {
 
 	/**
 	 * @return The name of the component definition. For class-based component, this will correspond to the component class's simpleName
+	 *
+	 * FIXME: We still haven't defined what a component's name is. Is it a fully qualified class name? The component's short name? Are there namespaces? Use with care // Hugi 2023-02-09
 	 */
-	private String name() {
+	public String name() {
 		return _name;
 	}
 
