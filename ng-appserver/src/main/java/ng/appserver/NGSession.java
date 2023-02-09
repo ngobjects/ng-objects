@@ -2,7 +2,7 @@ package ng.appserver;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -56,7 +56,7 @@ public class NGSession {
 	 *
 	 * FIXME: We're currently storing every page forever. The size of the cache needs to be limited // Hugi 2023-01-21
 	 */
-	private Map<String, NGComponent> _pageCache = new HashMap<>();
+	public Map<String, NGComponent> _pageCache = new LinkedHashMap<>();
 
 	public NGSession() {
 		this( UUID.randomUUID().toString() );
