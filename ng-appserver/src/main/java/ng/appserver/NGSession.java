@@ -158,16 +158,25 @@ public class NGSession {
 		_manuallyTerminated = true;
 	}
 
-	public void savePage( String contextID, NGComponent component ) {
+	/**
+	 * Saves the given page in the page cache
+	 */
+	public void savePage( final String contextID, final NGComponent component ) {
 		logger.debug( "Saving page {} in cache with contextID {} ", component.getClass(), contextID );
 		_pageCache.put( contextID, component );
 	}
 
-	public NGComponent restorePageFromCache( String contextID ) {
+	/**
+	 * Retrieves the page with the given contextID from the page cache
+	 */
+	public NGComponent restorePageFromCache( final String contextID ) {
 		logger.debug( "Restoring page from cache with contextID: " + contextID );
 		return _pageCache.get( contextID );
 	}
 
+	/**
+	 * Moves the given page to the front of the page cache
+	 */
 	public void retainPageWithContextIDInCache( final String contextID ) {
 		logger.debug( "Retaining contextID {} in cache", contextID );
 		final NGComponent component = _pageCache.remove( contextID );
