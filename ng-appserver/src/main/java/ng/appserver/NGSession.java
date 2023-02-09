@@ -52,7 +52,6 @@ public class NGSession {
 	/**
 	 * In the case of component actions, stores the currently active page instance by contextID.
 	 *
-	 * FIXME: While a session would usually only be working with one page at a time, this might have to be looked into WRT concurrency? // Hugi 2023-01-21
 	 * FIXME: We're currently storing every page forever. The size of the cache needs to be limited // Hugi 2023-01-21
 	 */
 	private Map<String, NGComponent> _pageCache = new HashMap<>();
