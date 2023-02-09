@@ -53,8 +53,6 @@ public class NGSession {
 
 	/**
 	 * In the case of component actions, stores the currently active page instance by contextID.
-	 *
-	 * FIXME: We're currently storing every page forever. The size of the cache needs to be limited // Hugi 2023-01-21
 	 */
 	public Map<String, NGComponent> _pageCache = new LinkedHashMap<>();
 
@@ -164,6 +162,15 @@ public class NGSession {
 	public void savePage( final String contextID, final NGComponent component ) {
 		logger.debug( "Saving page {} in cache with contextID {} ", component.getClass(), contextID );
 		_pageCache.put( contextID, component );
+
+		if( _pageCache.size() > pageCacheSize() ) {
+			// Since the page cache is a LinkedHashMap (which maintains insertion order), the first entry should be the oldest one
+			final String oldestEntryKey = _pageCache.keySet().iterator().next();
+
+			// Bye bye
+			_pageCache.remove( oldestEntryKey );
+			logger.debug( "Removed contextID {} from page cache", component.getClass(), oldestEntryKey );
+		}
 	}
 
 	/**
