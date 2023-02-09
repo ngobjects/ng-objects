@@ -59,12 +59,13 @@ public class NGContext {
 		// FIXME: This is not exactly a beautiful way to check if we're handling a component request // Hugi 2023-01-22
 		if( request.uri().contains( "/wo/" ) ) {
 			final String componentPart = request.parsedURI().getString( 1 );
+			final int firstPeriodIndex = componentPart.indexOf( '.' );
 
 			// The _originatingContextID is the first part of the request handler path
-			_originatingContextID = componentPart.split( "\\." )[0];
+			_originatingContextID = componentPart.substring( 0, firstPeriodIndex );
 
 			// The sending element ID consists of all the integers after the first one.
-			_senderID = componentPart.substring( _originatingContextID.length() + 1 );
+			_senderID = componentPart.substring( firstPeriodIndex + 1 );
 		}
 	}
 
