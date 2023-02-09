@@ -31,8 +31,10 @@ public abstract class NGMessage {
 	 * The content of this message
 	 *
 	 * FIXME: Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming) // Hugi 2023-02-04
+	 * FIXME: That arbitrarily picked buffer size may need to be given a little more thought... // Hugi 2023-02-08
+	 * FIXME: After a little testing ; it's clear that using StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream // Hugi 2023-02-08
 	 */
-	private ByteArrayOutputStream _contentBytes = new ByteArrayOutputStream();
+	private ByteArrayOutputStream _contentBytes = new ByteArrayOutputStream( 8192 );
 
 	/**
 	 * @return The HTTP version of this message

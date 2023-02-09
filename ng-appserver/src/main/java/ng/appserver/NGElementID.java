@@ -1,41 +1,66 @@
 package ng.appserver;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * Represents an elementID.
- *
- * FIXME: This class is a dead ringer for some optimization. It's used _a lot_ during rendering and integers in a list are not really performant // Hugi 2023-01-07
  */
 
 public class NGElementID {
 
-	private final List<Integer> elements = new ArrayList<>();
+	/**
+	 * The index of the component we're currently manipulating in components[]
+	 */
+	private int index = -1;
+
+	/**
+	 * The components of the elementID.
+	 *
+	 * FIXME: This needs to be dynamically resized // Hugi 203-02-09
+	 */
+	private final int[] components = new int[10];
 
 	public void addBranch() {
-		elements.add( 0 );
+		index++;
 	}
 
 	public void removeBranch() {
-		elements.remove( elements.size() - 1 );
+		components[index] = 0;
+		index--;
 	}
 
 	public void increment() {
-		int lastValue = elements.remove( elements.size() - 1 );
-		elements.add( lastValue + 1 );
+		components[index]++;
 	}
 
 	@Override
 	public String toString() {
-		return String.join( ".", elements.stream().map( String::valueOf ).toList() );
+
+		// An empty elementID is just an empty string.
+		// ...Sigh. This is really just here satisfy the unit test, since this should never happen during actual execution.
+		if( index == -1 ) {
+			return "";
+		}
+
+		final int stringLengthGuess = index * 3; // We're venturing a guess that the max length of the elementID is three letter pr. component (two digits+period)
+		final StringBuilder b = new StringBuilder( stringLengthGuess );
+
+		for( int i = 0; i <= index; i++ ) {
+			b.append( components[i] );
+
+			if( i < index ) {
+				b.append( '.' );
+			}
+		}
+
+		return b.toString();
 	}
 
 	@Override
 	public boolean equals( Object obj ) {
 
 		if( obj instanceof NGElementID ng ) {
-			return elements.equals( ng.elements );
+			Arrays.equals( components, ng.components );
 		}
 
 		return false;
@@ -43,6 +68,6 @@ public class NGElementID {
 
 	@Override
 	public int hashCode() {
-		return elements.hashCode();
+		return components.hashCode();
 	}
 }

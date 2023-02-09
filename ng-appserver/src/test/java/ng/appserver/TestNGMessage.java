@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
@@ -64,6 +65,6 @@ public class TestNGMessage {
 		NGResponse r = new NGResponse();
 		byte[] initialBytes = "Hvað er að frétta".getBytes( StandardCharsets.UTF_8 );
 		r.setContentBytes( initialBytes );
-		assertEquals( initialBytes, r.contentBytes() );
+		assertArrayEquals( initialBytes, r.contentBytes() );
 	}
 }
