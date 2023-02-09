@@ -175,10 +175,16 @@ public class NGContext {
 		return elementID().toString().equals( senderID() );
 	}
 
+	/**
+	 * @return true if we're currently rendering inside a form
+	 */
 	public boolean isInForm() {
 		return _isInForm;
 	}
 
+	/**
+	 * Set by NGForm to indicate if we're inside a form or not.
+	 */
 	public void setIsInForm( boolean value ) {
 		_isInForm = value;
 	}
