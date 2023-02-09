@@ -16,9 +16,12 @@ public class NGElementID {
 	/**
 	 * The components of the elementID.
 	 *
-	 * FIXME: This needs to be dynamically resized // Hugi 203-02-09
+	 * Note that this was initially an int[] but was switched to a byte[] to make the array more compact (we make a lot of these on large pages).
+	 * Using byte limits us to elementIDs no higher than 127. Although that's _unlikely_ to happen, it *could*, so we might have to reverse this decision later.
+	 *
+	 * FIXME: This array needs to be dynamically resized // Hugi 203-02-09
 	 */
-	private final int[] components = new int[10];
+	private final byte[] components = new byte[10];
 
 	public void addBranch() {
 		index++;
