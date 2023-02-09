@@ -82,8 +82,6 @@ public class NGContext {
 
 	/**
 	 * @return This context's session, or null if no session is present.
-	 *
-	 * FIXME: This currently really only checks if session() has been invoked. We probably need to do a little deeper checking than this // Hugi 2023-01-07
 	 */
 	@Deprecated
 	public NGSession existingSession() {
