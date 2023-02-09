@@ -49,6 +49,9 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			throw new IllegalStateException( "No page found in the page cache for contextID %s. The page has probably been pushed out of the session's page cache".formatted( context._originatingContextID() ) );
 		}
 
+		// We can probably assume that since we're working with the page, it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
+		session.retainPageWithContextIDInCache( context._originatingContextID() );
+
 		logger.info( "Page restored from cache is: " + originalPage.getClass() );
 
 		// Push the page in the context
