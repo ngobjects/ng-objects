@@ -18,6 +18,13 @@ import java.util.TreeMap;
 public abstract class NGMessage {
 
 	/**
+	 * Default length we initialize the size of the content data byte[] with.
+	 *
+	 * FIXME: This arbitrarily picked buffer size may need to be given a little more thought... // Hugi 2023-02-08
+	 */
+	private static final int DEFAULT_CONTENT_DATA_LENGTH = 8192;
+
+	/**
 	 * The HTTP version of this message
 	 */
 	private String _httpVersion = "HTTP/1.0";
@@ -31,10 +38,9 @@ public abstract class NGMessage {
 	 * The content of this message
 	 *
 	 * FIXME: Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming) // Hugi 2023-02-04
-	 * FIXME: That arbitrarily picked buffer size may need to be given a little more thought... // Hugi 2023-02-08
 	 * FIXME: After a little testing ; it's clear that using StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream // Hugi 2023-02-08
 	 */
-	private ByteArrayOutputStream _contentBytes = new ByteArrayOutputStream( 8192 );
+	private ByteArrayOutputStream _contentBytes = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
 
 	/**
 	 * @return The HTTP version of this message
@@ -107,13 +113,7 @@ public abstract class NGMessage {
 	}
 
 	public void appendContentString( final String stringToAppend ) {
-		try {
-			_contentBytes.write( stringToAppend.getBytes( StandardCharsets.UTF_8 ) );
-		}
-		catch( IOException e ) {
-			// FIXME: Butt ugly // Hugi 2023-02-08
-			throw new UncheckedIOException( e );
-		}
+		appendContentBytes( stringToAppend.getBytes( StandardCharsets.UTF_8 ) );
 	}
 
 	public byte[] contentBytes() {
@@ -121,12 +121,15 @@ public abstract class NGMessage {
 	}
 
 	public void setContentBytes( final byte[] contentBytes ) {
-		_contentBytes = new ByteArrayOutputStream();
+		_contentBytes = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
+		appendContentBytes( contentBytes );
+	}
+
+	public void appendContentBytes( final byte[] contentBytes ) {
 		try {
 			_contentBytes.write( contentBytes );
 		}
 		catch( IOException e ) {
-			// FIXME: Butt ugly // Hugi 2023-02-08
 			throw new UncheckedIOException( e );
 		}
 	}
