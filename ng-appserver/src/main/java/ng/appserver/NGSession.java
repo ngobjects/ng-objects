@@ -31,6 +31,8 @@ public class NGSession {
 
 	/**
 	 * The last date at which this session was touched
+	 *
+	 * FIXME: Calling an instant a "date" is not nice // Hugi 2023-01-21
 	 */
 	private Instant _lastTouchedDate;
 
@@ -88,8 +90,6 @@ public class NGSession {
 
 	/**
 	 * @return The time at which this session was created
-	 *
-	 * FIXME: Don't like the 'date' part of the name since it's an instant // Hugi 2023-01-22
 	 */
 	public Instant birthDate() {
 		return _birthDate;
@@ -97,8 +97,6 @@ public class NGSession {
 
 	/**
 	 * @return The last date at which this session was touched
-	 *
-	 * FIXME: Don't like the 'date' part of the name since it's an instant // Hugi 2023-01-22
 	 */
 	public Instant lastTouchedDate() {
 		return _lastTouchedDate;
