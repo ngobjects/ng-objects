@@ -179,6 +179,8 @@ public class NGContext {
 
 	/**
 	 * @return ID of the element being targeted by a component action
+	 *
+	 * FIXME: We should replace this with (or have an alternative) an NGElementID, to prevent constantly invoking NElementID.toString() in invokeAction() (when checking if the current element is the sender element) // Hugi 2023-02-09
 	 */
 	public String senderID() {
 		return _senderID;
@@ -186,6 +188,13 @@ public class NGContext {
 
 	public boolean isInForm() {
 		return _isInForm;
+	}
+
+	/**
+	 * @return True if the current element is the sender
+	 */
+	public boolean currentElementIsSender() {
+		return elementID().toString().equals( senderID() );
 	}
 
 	public void setIsInForm( boolean value ) {
