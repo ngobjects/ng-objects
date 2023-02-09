@@ -167,4 +167,10 @@ public class NGSession {
 		logger.debug( "Restoring page from cache with contextID: " + contextID );
 		return _pageCache.get( contextID );
 	}
+
+	public void retainPageWithContextIDInCache( final String contextID ) {
+		logger.debug( "Retaining contextID {} in cache", contextID );
+		final NGComponent component = _pageCache.remove( contextID );
+		_pageCache.put( contextID, component );
+	}
 }
