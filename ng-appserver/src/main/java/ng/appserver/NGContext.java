@@ -10,13 +10,6 @@ public class NGContext {
 	private final NGRequest _request;
 
 	/**
-	 * The response that will be constructed and/or  will be returned by this context.
-	 *
-	 * FIXME: Currently not used. Disabled until we decide what to do with it // Hugi 2023-01-11
-	 */
-	//	private NGResponse _response;
-
-	/**
 	 * The component currently being processed by this context
 	 */
 	private NGComponent _currentComponent;
@@ -79,13 +72,6 @@ public class NGContext {
 	public NGRequest request() {
 		return _request;
 	}
-
-	/**
-	 * FIXME: Currently not used. Disabled until we decide what to do with it // Hugi 2023-01-11
-	 */
-	//	public NGResponse response() {
-	//		return _response;
-	//	}
 
 	/**
 	 * @return This context's session, creating a session if none is present.
