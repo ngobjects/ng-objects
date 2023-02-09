@@ -58,17 +58,23 @@ public class NGContext {
 
 		// FIXME: This is not exactly a beautiful way to check if we're handling a component request // Hugi 2023-01-22
 		if( request.uri().contains( "/wo/" ) ) {
+			// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
 			final String componentPart = request.parsedURI().getString( 1 );
+
+			// The contextID and the elementID are separated by a period, so let's split on that.
 			final int firstPeriodIndex = componentPart.indexOf( '.' );
 
-			// The _originatingContextID is the first part of the request handler path
+			// The _originatingContextID is the first part of the request handler path. This tells us where the request is coming from.
 			_originatingContextID = componentPart.substring( 0, firstPeriodIndex );
 
-			// The sending element ID consists of all the integers after the first one.
+			// The sending element ID consists of everything after the first period.
 			_senderID = componentPart.substring( firstPeriodIndex + 1 );
 		}
 	}
 
+	/**
+	 * @return The request that this context originates from
+	 */
 	public NGRequest request() {
 		return _request;
 	}
@@ -98,7 +104,7 @@ public class NGContext {
 	}
 
 	/**
-	 * @return The component currently being rendered by this context
+	 * @return The component currently being rendered in this context
 	 *
 	 * FIXME: Initially called component(). to reflect the WO naming. Perhaps better called currentComponent() to reflect it's use better?
 	 */
@@ -106,7 +112,10 @@ public class NGContext {
 		return _currentComponent;
 	}
 
-	public void setCurrentComponent( NGComponent component ) {
+	/**
+	 * Set the component currently being rendered in this context
+	 */
+	public void setCurrentComponent( final NGComponent component ) {
 		_currentComponent = component;
 	}
 
@@ -120,7 +129,7 @@ public class NGContext {
 	/**
 	 * Set the page currently being rendered by this context.
 	 *
-	 *  FIXME: Can't we just assume that if we're setting the page, we're also setting the current component? OR should we always be explicit about that? // Hugi 2023-01-07
+	 * FIXME: Can't we just assume that if we're setting the page, we're also setting the current component? Or should we always be explicit about that? // Hugi 2023-01-07
 	 */
 	public void setPage( NGComponent value ) {
 		_page = value;
