@@ -168,15 +168,15 @@ public class NGContext {
 		return _senderID;
 	}
 
-	public boolean isInForm() {
-		return _isInForm;
-	}
-
 	/**
 	 * @return True if the current element is the sender
 	 */
 	public boolean currentElementIsSender() {
 		return elementID().toString().equals( senderID() );
+	}
+
+	public boolean isInForm() {
+		return _isInForm;
 	}
 
 	public void setIsInForm( boolean value ) {
