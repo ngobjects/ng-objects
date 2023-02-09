@@ -41,7 +41,6 @@ public class NGContext {
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
 	 * Used in combination with _requestContextID to find the proper action to initiate.
 	 *
-	 * FIXME: I kind of feel like it should be the responsibility of the component request handler to maintain this. Component actions are leaking into the framework here.
 	 * FIXME: Rename to _requestElementID to mirror the naming of _requestContextID?
 	 */
 	private String _senderID;
