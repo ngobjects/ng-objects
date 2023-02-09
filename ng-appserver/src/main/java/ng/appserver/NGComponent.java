@@ -59,6 +59,15 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
+	 * @return The component's name.
+	 *
+	 *  FIXME: We still haven't defined what a component's name is. Is it a fully qualified class name? The component's short name? Are there namespaces? Use with care // Hugi 2023-02-09
+	 */
+	public String name() {
+		return _componentDefinition.name();
+	}
+
+	/**
 	 * @return The current session
 	 *
 	 * FIXME: Type safety (for our own session class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
