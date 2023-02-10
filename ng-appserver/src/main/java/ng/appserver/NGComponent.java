@@ -173,11 +173,6 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	public Object valueForBinding( String bindingName ) {
 
-		// FIXME: Not a fan of nulls
-		//		if( _associations == null ) {
-		//			return null;
-		//		}
-
 		// Access our associations and fetch the value based on the binding name
 		final NGAssociation association = _associations.get( bindingName );
 
