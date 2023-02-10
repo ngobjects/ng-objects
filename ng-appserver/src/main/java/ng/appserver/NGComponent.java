@@ -229,8 +229,10 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		appendToResponse( response, context() );
 
-		// FIXME: I'm not quite sure this is the place to save the page, since saving pages should only occur in component actions. Why save a page if no component action is happening? // Hugi 2023-02-06
-		// We need to check if any elements on the page are component elements that require the page to be stored? // Hugi 2023-01-07
+		// If we have a session, we're going to have to assume our page instance has to be saved
+		// Actually, we should only have to save the page instance if we're currently in some way involved in component actions
+		// (i.e. the page was a result of a component action invocation, or generates some stateful URLs that reference it)
+		// But we don't currently have a way to check for that. So hasSession() it is.
 		if( context().hasSession() ) {
 			context().session().savePage( context().contextID(), this );
 		}
