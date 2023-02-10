@@ -9,6 +9,11 @@ import java.util.Arrays;
 public class NGElementID {
 
 	/**
+	 * Character used to separate the individual components of the element ID
+	 */
+	private static final char COMPONENT_SEPARATOR = '.';
+
+	/**
 	 * The index of the component we're currently manipulating in components[]
 	 */
 	private int index = -1;
@@ -49,7 +54,7 @@ public class NGElementID {
 			b.append( components[i] );
 
 			if( i < index ) {
-				b.append( '.' );
+				b.append( COMPONENT_SEPARATOR );
 			}
 		}
 

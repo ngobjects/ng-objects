@@ -124,15 +124,15 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
-		try {
-			final NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
-			_currentDynamicTag = dynamicTag;
-			_currentDynamicTag.addChildElement( element );
-		}
-		catch( RuntimeException e ) { // FIXME: Catching RuntimeException feels super weird // Hugi 2022-10-07
-			final String templ = "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.";
-			throw new RuntimeException( templ.formatted( componentName( _currentDynamicTag ), prettyPrintDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
-		}
+		//		try {
+		final NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
+		_currentDynamicTag = dynamicTag;
+		_currentDynamicTag.addChildElement( element );
+		//		}
+		//		catch( RuntimeException e ) { // FIXME: Catching RuntimeException feels super weird // Hugi 2022-10-07
+		//			final String templ = "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.";
+		//			throw new RuntimeException( templ.formatted( componentName( _currentDynamicTag ), prettyPrintDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
+		//		}
 	}
 
 	public void didParseComment( final String parsedString ) {

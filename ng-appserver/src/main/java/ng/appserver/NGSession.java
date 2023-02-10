@@ -2,7 +2,7 @@ package ng.appserver;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,6 +31,8 @@ public class NGSession {
 
 	/**
 	 * The last date at which this session was touched
+	 *
+	 * FIXME: Calling an instant a "date" is not nice // Hugi 2023-01-21
 	 */
 	private Instant _lastTouchedDate;
 
@@ -46,18 +48,13 @@ public class NGSession {
 
 	/**
 	 * Holds our context ID
-	 *
-	 * FIXME: At what point do we reset the counter? // Hugi 2023-01-21
 	 */
 	private int currentContextID = 0;
 
 	/**
 	 * In the case of component actions, stores the currently active page instance by contextID.
-	 *
-	 * FIXME: While a session would usually only be working with one page at a time, this might have to be looked into WRT concurrency? // Hugi 2023-01-21
-	 * FIXME: We're currently storing every page forever. The size of the cache needs to be limited // Hugi 2023-01-21
 	 */
-	private Map<String, NGComponent> _pageCache = new HashMap<>();
+	public Map<String, NGComponent> _pageCache = new LinkedHashMap<>();
 
 	public NGSession() {
 		this( UUID.randomUUID().toString() );
@@ -65,6 +62,15 @@ public class NGSession {
 
 	private NGSession( final String sessionID ) {
 		this( sessionID, Instant.now() );
+	}
+
+	/**
+	 * @return THe size of the page cache
+	 *
+	 * FIXME: Temporary location for this parameter, will eventually be loaded from Properties
+	 */
+	private int pageCacheSize() {
+		return 10;
 	}
 
 	private NGSession( final String sessionID, final Instant birthDate ) {
@@ -91,8 +97,6 @@ public class NGSession {
 
 	/**
 	 * @return The time at which this session was created
-	 *
-	 * FIXME: Don't like the 'date' part of the name since it's an instant // Hugi 2023-01-22
 	 */
 	public Instant birthDate() {
 		return _birthDate;
@@ -100,8 +104,6 @@ public class NGSession {
 
 	/**
 	 * @return The last date at which this session was touched
-	 *
-	 * FIXME: Don't like the 'date' part of the name since it's an instant // Hugi 2023-01-22
 	 */
 	public Instant lastTouchedDate() {
 		return _lastTouchedDate;
@@ -154,13 +156,37 @@ public class NGSession {
 		_manuallyTerminated = true;
 	}
 
-	public void savePage( String contextID, NGComponent component ) {
+	/**
+	 * Saves the given page in the page cache
+	 */
+	public void savePage( final String contextID, final NGComponent component ) {
 		logger.debug( "Saving page {} in cache with contextID {} ", component.getClass(), contextID );
 		_pageCache.put( contextID, component );
+
+		if( _pageCache.size() > pageCacheSize() ) {
+			// Since the page cache is a LinkedHashMap (which maintains insertion order), the first entry should be the oldest one
+			final String oldestEntryKey = _pageCache.keySet().iterator().next();
+
+			// Bye bye
+			_pageCache.remove( oldestEntryKey );
+			logger.debug( "Removed contextID {} from page cache", component.getClass(), oldestEntryKey );
+		}
 	}
 
-	public NGComponent restorePageFromCache( String contextID ) {
+	/**
+	 * Retrieves the page with the given contextID from the page cache
+	 */
+	public NGComponent restorePageFromCache( final String contextID ) {
 		logger.debug( "Restoring page from cache with contextID: " + contextID );
 		return _pageCache.get( contextID );
+	}
+
+	/**
+	 * Moves the given page to the front of the page cache
+	 */
+	public void retainPageWithContextIDInCache( final String contextID ) {
+		logger.debug( "Retaining contextID {} in cache", contextID );
+		final NGComponent component = _pageCache.remove( contextID );
+		_pageCache.put( contextID, component );
 	}
 }

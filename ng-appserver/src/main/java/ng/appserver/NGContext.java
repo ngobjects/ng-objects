@@ -14,16 +14,9 @@ public class NGContext {
 	private final NGRequest _request;
 
 	/**
-	 * The response that will be constructed and/or  will be returned by this context.
-	 *
-	 * FIXME: Currently not used. Disabled until we decide what to do with it // Hugi 2023-01-11
+	 * This context's uniqueID within it's session
 	 */
-	//	private NGResponse _response;
-
-	/**
-	 * The component currently being processed by this context
-	 */
-	private NGComponent _currentComponent;
+	private String _contextID;
 
 	/**
 	 * The page level component
@@ -31,20 +24,21 @@ public class NGContext {
 	private NGComponent _page;
 
 	/**
-	 * This context's uniqueID within it's session
+	 * The component currently being processed by this context
 	 */
-	private String _contextID;
+	private NGComponent _currentComponent;
 
 	/**
 	 * ID of the element currently being rendered by the context.
 	 *
 	 * FIXME: Rename to currentElementID?  // Hugi 2022-06-06
-	 * FIXME: Not sure we want to initialize the elementID here. Cheaper to do elsewhere? // Hugi 2022-06-08
 	 */
-	private NGElementID _elementID = new NGElementID();
+	private NGElementID _elementID;
 
 	/**
 	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
+	 *
+	 * FIXME: This can probably be removed from here and just moved to NGComponentRequestHandler
 	 */
 	private String _originatingContextID;
 
@@ -52,8 +46,7 @@ public class NGContext {
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
 	 * Used in combination with _requestContextID to find the proper action to initiate.
 	 *
-	 * FIXME: I kind of feel like it should be the responsibility of the component request handler to maintain this. Component actions are leaking into the framework here.
-	 * FIXME: Rename to _requestElementID to mirror the naming of _requestContextID?
+	 * FIXME: We should replace this with (or have an alternative) an NGElementID, to prevent constantly invoking NElementID.toString() in invokeAction() (when checking if the current element is the sender element) // Hugi 2023-02-09
 	 */
 	private String _senderID;
 
@@ -64,32 +57,33 @@ public class NGContext {
 
 	public NGContext( final NGRequest request ) {
 		Objects.requireNonNull( request );
-
 		_request = request;
 		request.setContext( this );
 
+		_elementID = new NGElementID();
+
 		// FIXME: This is not exactly a beautiful way to check if we're handling a component request // Hugi 2023-01-22
-		if( request.uri().contains( "/wo/" ) ) {
+		if( request.uri().startsWith( NGComponentRequestHandler.DEFAULT_PATH ) ) {
+			// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
 			final String componentPart = request.parsedURI().getString( 1 );
 
-			// The _originatingContextID is the first part of the request handler path
-			_originatingContextID = componentPart.split( "\\." )[0];
+			// The contextID and the elementID are separated by a period, so let's split on that.
+			final int firstPeriodIndex = componentPart.indexOf( '.' );
 
-			// The sending element ID consists of all the integers after the first one.
-			_senderID = componentPart.substring( _originatingContextID.length() + 1 );
+			// The _originatingContextID is the first part of the request handler path. This tells us where the request is coming from.
+			_originatingContextID = componentPart.substring( 0, firstPeriodIndex );
+
+			// The sending element ID consists of everything after the first period.
+			_senderID = componentPart.substring( firstPeriodIndex + 1 );
 		}
 	}
 
+	/**
+	 * @return The request that this context originates from
+	 */
 	public NGRequest request() {
 		return _request;
 	}
-
-	/**
-	 * FIXME: Currently not used. Disabled until we decide what to do with it // Hugi 2023-01-11
-	 */
-	//	public NGResponse response() {
-	//		return _response;
-	//	}
 
 	/**
 	 * @return This context's session, creating a session if none is present.
@@ -101,8 +95,6 @@ public class NGContext {
 
 	/**
 	 * @return This context's session, or null if no session is present.
-	 *
-	 * FIXME: This currently really only checks if session() has been invoked. We probably need to do a little deeper checking than this // Hugi 2023-01-07
 	 */
 	@Deprecated
 	public NGSession existingSession() {
@@ -118,7 +110,7 @@ public class NGContext {
 	}
 
 	/**
-	 * @return The component currently being rendered by this context
+	 * @return The component currently being rendered in this context
 	 *
 	 * FIXME: Initially called component(). to reflect the WO naming. Perhaps better called currentComponent() to reflect it's use better?
 	 */
@@ -126,7 +118,10 @@ public class NGContext {
 		return _currentComponent;
 	}
 
-	public void setCurrentComponent( NGComponent component ) {
+	/**
+	 * Set the component currently being rendered in this context
+	 */
+	public void setCurrentComponent( final NGComponent component ) {
 		_currentComponent = component;
 	}
 
@@ -140,7 +135,7 @@ public class NGContext {
 	/**
 	 * Set the page currently being rendered by this context.
 	 *
-	 *  FIXME: Can't we just assume that if we're setting the page, we're also setting the current component? OR should we always be explicit about that? // Hugi 2023-01-07
+	 * FIXME: Can't we just assume that if we're setting the page, we're also setting the current component? Or should we always be explicit about that? // Hugi 2023-01-07
 	 */
 	public void setPage( NGComponent value ) {
 		_page = value;
@@ -150,8 +145,6 @@ public class NGContext {
 	 * @return ID of the element currently being rendered by the context.
 	 *
 	 * FIXME: Take note of concurrency issues for lazy initialization // Hugi 2023-01-21
-	 * FIXME: Why isn't the contextID an integer? Keeping it a string for now for WO code compaitibility // Hugi 2023-01-21
-	 * FIXME: Should we check for an existing session before creating a contextID? Perhaps just always return zero for a session-less contextID? // Hugi 2023-01-21
 	 */
 	public String contextID() {
 		if( _contextID == null ) {
@@ -163,8 +156,6 @@ public class NGContext {
 
 	/**
 	 * @return The ID of the "original context", i.e. the context from which the request that created this context was initiated
-	 *
-	 * FIXME: This can probably be removed from here and just moved to NGComponentRequestHandler
 	 */
 	public String _originatingContextID() {
 		return _originatingContextID;
@@ -179,15 +170,9 @@ public class NGContext {
 
 	/**
 	 * @return ID of the element being targeted by a component action
-	 *
-	 * FIXME: We should replace this with (or have an alternative) an NGElementID, to prevent constantly invoking NElementID.toString() in invokeAction() (when checking if the current element is the sender element) // Hugi 2023-02-09
 	 */
 	public String senderID() {
 		return _senderID;
-	}
-
-	public boolean isInForm() {
-		return _isInForm;
 	}
 
 	/**
@@ -197,18 +182,25 @@ public class NGContext {
 		return elementID().toString().equals( senderID() );
 	}
 
+	/**
+	 * @return true if we're currently rendering inside a form
+	 */
+	public boolean isInForm() {
+		return _isInForm;
+	}
+
+	/**
+	 * Set by NGForm to indicate if we're inside a form or not.
+	 */
 	public void setIsInForm( boolean value ) {
 		_isInForm = value;
 	}
 
 	/**
 	 * @return The URL for invoking the action in the current context
-	 *
-	 * FIXME: This method is a symptom of component actions leaking into generic code, doesn't really belong // Hugi 2023-01-08
-	 * FIXME: Make nice instead of ugly // Hugi 2023-01-08
 	 */
 	public String componentActionURL() {
-		return "/wo/" + contextID() + "." + elementID();
+		return NGComponentRequestHandler.DEFAULT_PATH + contextID() + "." + elementID();
 	}
 
 	@Override

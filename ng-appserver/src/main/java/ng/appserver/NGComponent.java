@@ -19,7 +19,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	private static final Logger logger = LoggerFactory.getLogger( NGComponent.class );
 
 	/**
-	 * The page's context
+	 * The component's context
 	 */
 	private NGContext _context;
 
@@ -35,10 +35,8 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * Map of this component's children
-	 *
-	 * FIXME: Should we be initializing this here? // Hugi 2022-12-30
 	 */
-	private Map<NGElementID, NGComponent> _children = new HashMap<>();
+	private final Map<NGElementID, NGComponent> _children;
 
 	/**
 	 * Store a reference to the associations
@@ -56,6 +54,16 @@ public class NGComponent implements NGElement, NGActionResults {
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
 		_context = context;
+		_children = new HashMap<>();
+	}
+
+	/**
+	 * @return The component's name.
+	 *
+	 *  FIXME: We still haven't defined what a component's name is. Is it a fully qualified class name? The component's short name? Are there namespaces? Use with care // Hugi 2023-02-09
+	 */
+	public String name() {
+		return _componentDefinition.name();
 	}
 
 	/**
@@ -70,7 +78,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	/**
 	 * @return The application within which this component instance was constructed
 	 *
-	 * FIXME: Type safety (for our own session class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
+	 * FIXME: Type safety (for our own application class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
 	 */
 	public NGApplication application() {
 		return NGApplication.application().application();
@@ -127,20 +135,23 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * FIXME: Working on component actions, exposing this meanwhile. We have to  move the page to a new context when it's restored from the cache
+	 * Set the component's context
 	 */
 	private void setContext( NGContext newContext ) {
 		_context = newContext;
 	}
 
+	/**
+	 * @return The component's context
+	 */
 	public NGContext context() {
 		return _context;
 	}
 
 	/**
-	 * FIXME: I'm keeping in line with familiar names from WO here. We don't have any concept of "awake()" though. Although that's starting to look good...
-	 *
 	 * Sets the context for this component and it's children
+	 *
+	 * FIXME: I'm keeping in line with familiar names from WO here. We don't have any concept of "awake()" though. Although that's starting to sound good...
 	 */
 	public void awakeInContext( NGContext newContext ) {
 		setContext( newContext );
@@ -150,19 +161,17 @@ public class NGComponent implements NGElement, NGActionResults {
 		}
 	}
 
+	/**
+	 * @return A new page level component
+	 */
 	public <E extends NGComponent> E pageWithName( Class<E> pageClass ) {
-		return NGApplication.application().pageWithName( pageClass, context() );
+		return application().pageWithName( pageClass, context() );
 	}
 
 	/**
 	 * @return The value of the named binding/association.
 	 */
 	public Object valueForBinding( String bindingName ) {
-
-		// FIXME: Not a fan of nulls
-		//		if( _associations == null ) {
-		//			return null;
-		//		}
 
 		// Access our associations and fetch the value based on the binding name
 		final NGAssociation association = _associations.get( bindingName );
@@ -221,8 +230,10 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		appendToResponse( response, context() );
 
-		// FIXME: I'm not quite sure this is the place to save the page, since saving pages should only occur in component actions. Why save a page if no component action is happening? // Hugi 2023-02-06
-		// We need to check if any elements on the page are component elements that require the page to be stored? // Hugi 2023-01-07
+		// If we have a session, we're going to have to assume our page instance has to be saved
+		// Actually, we should only have to save the page instance if we're currently in some way involved in component actions
+		// (i.e. the page was a result of a component action invocation, or generates some stateful URLs that reference it)
+		// But we don't currently have a way to check for that. So hasSession() it is.
 		if( context().hasSession() ) {
 			context().session().savePage( context().contextID(), this );
 		}

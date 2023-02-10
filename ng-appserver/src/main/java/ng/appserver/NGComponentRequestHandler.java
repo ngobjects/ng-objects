@@ -20,6 +20,11 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 
 	private static Logger logger = LoggerFactory.getLogger( NGComponentRequestHandler.class );
 
+	/**
+	 * The default path prefix for the component actions route
+	 */
+	public static String DEFAULT_PATH = "/wo/";
+
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
 
@@ -49,7 +54,10 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			throw new IllegalStateException( "No page found in the page cache for contextID %s. The page has probably been pushed out of the session's page cache".formatted( context._originatingContextID() ) );
 		}
 
-		logger.info( "Page restored from cache is: " + originalPage.getClass() );
+		// We can probably assume that since we're working with the page, it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
+		session.retainPageWithContextIDInCache( context._originatingContextID() );
+
+		logger.debug( "Page restored from cache is: " + originalPage.getClass() );
 
 		// Push the page in the context
 		context.setPage( originalPage );
@@ -58,8 +66,8 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 
 		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", context._originatingContextID(), originalPage );
 
-		// FIXME: We can probably save a few cycles by only performing takeValuesFromRequest if there are, you know, actual values in the request to take // Hugi 2023-01-07
-		if( !request.formValues().isEmpty() ) { // FIXME: This condition feels about right, but we might need to revisit when it comes to Ajax // Hugi 2023-02-05
+		// We only perform the takeValuesFromRequest phase if there are actual form values to read
+		if( !request.formValues().isEmpty() ) {
 			originalPage.takeValuesFromRequest( request, context );
 		}
 
@@ -85,8 +93,6 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 		else if( actionInvocationResults instanceof NGComponent newPage ) {
 			// If an action method returns an NGComponent, that's our new page in this context. We set it, and return it
-			// context.setPage( newPage ); // FIXME: We're now doing this in NGComponent.generateResponse(), probably not needed here at all // Hugi 2023-02-05
-			// context.setCurrentComponent( newPage ); // FIXME: We're now doing this in NGComponent.generateResponse(), probably not needed here at all // Hugi 2023-02-05
 			newPage.awakeInContext( context );
 			response = newPage.generateResponse();
 		}
@@ -95,6 +101,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			response = actionInvocationResults.generateResponse();
 		}
 
+		// Just a little self-documenting sanity checking
 		if( response == null ) {
 			throw new IllegalStateException( "Response is null. This should never happen" );
 		}
