@@ -93,8 +93,6 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 		else if( actionInvocationResults instanceof NGComponent newPage ) {
 			// If an action method returns an NGComponent, that's our new page in this context. We set it, and return it
-			// context.setPage( newPage ); // FIXME: We're now doing this in NGComponent.generateResponse(), probably not needed here at all // Hugi 2023-02-05
-			// context.setCurrentComponent( newPage ); // FIXME: We're now doing this in NGComponent.generateResponse(), probably not needed here at all // Hugi 2023-02-05
 			newPage.awakeInContext( context );
 			response = newPage.generateResponse();
 		}
@@ -103,6 +101,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			response = actionInvocationResults.generateResponse();
 		}
 
+		// Just a little self-documenting sanity checking
 		if( response == null ) {
 			throw new IllegalStateException( "Response is null. This should never happen" );
 		}
