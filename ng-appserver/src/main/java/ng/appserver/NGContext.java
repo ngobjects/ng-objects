@@ -34,12 +34,16 @@ public class NGContext {
 
 	/**
 	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
+	 *
+	 * FIXME: This can probably be removed from here and just moved to NGComponentRequestHandler
 	 */
 	private String _originatingContextID;
 
 	/**
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
 	 * Used in combination with _requestContextID to find the proper action to initiate.
+	 *
+	 * FIXME: We should replace this with (or have an alternative) an NGElementID, to prevent constantly invoking NElementID.toString() in invokeAction() (when checking if the current element is the sender element) // Hugi 2023-02-09
 	 */
 	private String _senderID;
 
@@ -137,8 +141,6 @@ public class NGContext {
 	 * @return ID of the element currently being rendered by the context.
 	 *
 	 * FIXME: Take note of concurrency issues for lazy initialization // Hugi 2023-01-21
-	 * FIXME: Why isn't the contextID an integer? Keeping it a string for now for WO code compaitibility // Hugi 2023-01-21
-	 * FIXME: Should we check for an existing session before creating a contextID? Perhaps just always return zero for a session-less contextID? // Hugi 2023-01-21
 	 */
 	public String contextID() {
 		if( _contextID == null ) {
@@ -150,8 +152,6 @@ public class NGContext {
 
 	/**
 	 * @return The ID of the "original context", i.e. the context from which the request that created this context was initiated
-	 *
-	 * FIXME: This can probably be removed from here and just moved to NGComponentRequestHandler
 	 */
 	public String _originatingContextID() {
 		return _originatingContextID;
@@ -166,8 +166,6 @@ public class NGContext {
 
 	/**
 	 * @return ID of the element being targeted by a component action
-	 *
-	 * FIXME: We should replace this with (or have an alternative) an NGElementID, to prevent constantly invoking NElementID.toString() in invokeAction() (when checking if the current element is the sender element) // Hugi 2023-02-09
 	 */
 	public String senderID() {
 		return _senderID;
@@ -196,9 +194,6 @@ public class NGContext {
 
 	/**
 	 * @return The URL for invoking the action in the current context
-	 *
-	 * FIXME: This method is a symptom of component actions leaking into generic code, doesn't really belong // Hugi 2023-01-08
-	 * FIXME: Make nice instead of ugly // Hugi 2023-01-08
 	 */
 	public String componentActionURL() {
 		return NGComponentRequestHandler.DEFAULT_PATH + contextID() + "." + elementID();
