@@ -296,10 +296,6 @@ public class NGApplication {
 		return _sessionStore;
 	}
 
-	public NGSession restoreSessionWithID( final String sessionID ) {
-		return sessionStore().checkoutSessionWithID( sessionID );
-	}
-
 	public NGResponse dispatchRequest( final NGRequest request ) {
 
 		try {
