@@ -160,7 +160,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	public <E extends NGComponent> E pageWithName( Class<E> pageClass ) {
-		return NGApplication.application().pageWithName( pageClass, context() );
+		return application().pageWithName( pageClass, context() );
 	}
 
 	/**
