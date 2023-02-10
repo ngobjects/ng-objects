@@ -55,7 +55,7 @@ public class NGContext {
 		request.setContext( this );
 
 		// FIXME: This is not exactly a beautiful way to check if we're handling a component request // Hugi 2023-01-22
-		if( request.uri().contains( "/wo/" ) ) {
+		if( request.uri().startsWith( NGComponentRequestHandler.DEFAULT_PATH ) ) {
 			// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
 			final String componentPart = request.parsedURI().getString( 1 );
 
@@ -201,7 +201,7 @@ public class NGContext {
 	 * FIXME: Make nice instead of ugly // Hugi 2023-01-08
 	 */
 	public String componentActionURL() {
-		return "/wo/" + contextID() + "." + elementID();
+		return NGComponentRequestHandler.DEFAULT_PATH + contextID() + "." + elementID();
 	}
 
 	@Override
