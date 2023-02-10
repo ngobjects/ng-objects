@@ -40,8 +40,6 @@ public class NGContext {
 	/**
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
 	 * Used in combination with _requestContextID to find the proper action to initiate.
-	 *
-	 * FIXME: Rename to _requestElementID to mirror the naming of _requestContextID?
 	 */
 	private String _senderID;
 
