@@ -44,9 +44,8 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 
 		final NGDynamicResource resource = pop( resourceID.get() );
 
-		// FIXME: How to handle this properly? User configurable? Just always a 404
 		if( resource == null ) {
-			return new NGResponse( "Resource '" + resourceID.get() + "' does not exist", 404 );
+			return new NGResponse( "Dynamic resource '" + resourceID.get() + "' does not exist", 404 );
 		}
 
 		// FIXME: Get the correct resource type
