@@ -191,8 +191,8 @@ public class NGComponentDefinition {
 	private NGElement _loadTemplate() {
 		try {
 			// Let's try first for the traditional template
-			String htmlTemplateString = loadHTMLTemplateString( name() );
-			String wodString = loadWODTemplateString( name() );
+			String htmlTemplateString = loadHTMLStringFromTemplateFolder( name() );
+			String wodString = loadWODStringFromTemplateFolder( name() );
 
 			// If that fails, let's go for the single file html template
 			// FIXME: this is not a good way to check for this. Check for existence of files and determine heuristics from there
@@ -219,23 +219,23 @@ public class NGComponentDefinition {
 	/**
 	 * @return The HTML template for the named component
 	 */
-	private static String loadHTMLTemplateString( final String templateName ) {
+	private static String loadHTMLStringFromTemplateFolder( final String templateName ) {
 		Objects.requireNonNull( templateName );
-		return loadTemplateFile( templateName, "html" );
+		return loadStringFromTemplateFolder( templateName, "html" );
 	}
 
 	/**
 	 * @return The WOD template for the named component
 	 */
-	private static String loadWODTemplateString( final String templateName ) {
+	private static String loadWODStringFromTemplateFolder( final String templateName ) {
 		Objects.requireNonNull( templateName );
-		return loadTemplateFile( templateName, "wod" );
+		return loadStringFromTemplateFolder( templateName, "wod" );
 	}
 
 	/**
 	 * @return The string template for the named component
 	 */
-	private static String loadTemplateFile( final String templateName, final String extension ) {
+	private static String loadStringFromTemplateFolder( final String templateName, final String extension ) {
 		Objects.requireNonNull( templateName );
 		Objects.requireNonNull( extension );
 
