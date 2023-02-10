@@ -44,8 +44,6 @@ public class NGApplication {
 
 	/**
 	 * Session storage and coordination
-	 *
-	 * FIXME: A question of if this is a part of the application. In the case of stateful actions, it's likely that it'll have to be // Hugi 2022-10-22
 	 */
 	private NGSessionStore _sessionStore;
 
