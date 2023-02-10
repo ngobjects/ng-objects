@@ -135,20 +135,23 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * FIXME: Working on component actions, exposing this meanwhile. We have to  move the page to a new context when it's restored from the cache
+	 * Set the component's context
 	 */
 	private void setContext( NGContext newContext ) {
 		_context = newContext;
 	}
 
+	/**
+	 * @return The component's context
+	 */
 	public NGContext context() {
 		return _context;
 	}
 
 	/**
-	 * FIXME: I'm keeping in line with familiar names from WO here. We don't have any concept of "awake()" though. Although that's starting to look good...
-	 *
 	 * Sets the context for this component and it's children
+	 *
+	 * FIXME: I'm keeping in line with familiar names from WO here. We don't have any concept of "awake()" though. Although that's starting to sound good...
 	 */
 	public void awakeInContext( NGContext newContext ) {
 		setContext( newContext );
@@ -158,6 +161,9 @@ public class NGComponent implements NGElement, NGActionResults {
 		}
 	}
 
+	/**
+	 * @return A new page level component
+	 */
 	public <E extends NGComponent> E pageWithName( Class<E> pageClass ) {
 		return application().pageWithName( pageClass, context() );
 	}
