@@ -28,9 +28,8 @@ public class NGContext {
 	 * ID of the element currently being rendered by the context.
 	 *
 	 * FIXME: Rename to currentElementID?  // Hugi 2022-06-06
-	 * FIXME: Not sure we want to initialize the elementID here. Cheaper to do elsewhere? // Hugi 2022-06-08
 	 */
-	private NGElementID _elementID = new NGElementID();
+	private NGElementID _elementID;
 
 	/**
 	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
@@ -54,9 +53,10 @@ public class NGContext {
 
 	public NGContext( final NGRequest request ) {
 		Objects.requireNonNull( request );
-
 		_request = request;
 		request.setContext( this );
+
+		_elementID = new NGElementID();
 
 		// FIXME: This is not exactly a beautiful way to check if we're handling a component request // Hugi 2023-01-22
 		if( request.uri().startsWith( NGComponentRequestHandler.DEFAULT_PATH ) ) {
