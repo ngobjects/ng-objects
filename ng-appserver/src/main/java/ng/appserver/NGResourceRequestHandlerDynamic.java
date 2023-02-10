@@ -48,16 +48,13 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 			return new NGResponse( "Dynamic resource '" + resourceID.get() + "' does not exist", 404 );
 		}
 
-		// FIXME: Get the correct resource type
-		final String mimeType = "image/jpeg";
-
 		// FIXME: Detect and set the correct response headers
 		final NGResponse response = new NGResponse();
 		response.setStatus( 200 );
 		response.setContentInputStream( resource.inputStream() );
 		response.setContentInputStreamLength( resource.length() );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceID.get() ) );
-		response.setHeader( "Content-Type", mimeType );
+		response.setHeader( "Content-Type", resource.mimeType() );
 		return response;
 	}
 
