@@ -68,5 +68,5 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	public static record NGDynamicResource(
 			InputStream inputStream,
 			String mimeType,
-			Integer length ) {}
+			Long length ) {}
 }
