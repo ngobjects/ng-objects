@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResourceRequestHandlerDynamic;
+import ng.appserver.NGResourceRequestHandlerDynamic.NGDynamicResource;
 import ng.appserver.NGResponse;
 
 /**
@@ -79,11 +81,13 @@ public class NGImage extends NGDynamicElement {
 			}
 		}
 
+		final String mimeType = "image/jpeg"; // FIXME: Add and read a mimeType binding // Hugi 2023-02-10
+
 		// In case of a data binding, we always just store the data in the resource cache, under a new key each time. Kind of lame.
 		if( _dataAssociation != null ) {
 			byte[] bytes = (byte[])_dataAssociation.valueInComponent( component );
 			final String id = UUID.randomUUID().toString();
-			NGResourceRequestHandlerDynamic.push( id, bytes );
+			NGResourceRequestHandlerDynamic.push( id, new NGDynamicResource( new ByteArrayInputStream( bytes ), mimeType, bytes.length ) );
 			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( id ).get();
 		}
 
