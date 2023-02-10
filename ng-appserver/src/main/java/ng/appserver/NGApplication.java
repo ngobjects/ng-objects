@@ -345,10 +345,6 @@ public class NGApplication {
 			return response;
 		}
 		catch( NGSessionRestorationException e ) {
-			// FIXME: Some debugging logic for good measure // Hugi 2023-01-11
-			System.out.println( "====== START Session restoration error location =====" );
-			e.printStackTrace(); // FIXME
-			System.out.println( "====== END Session restoration error location =====" );
 			return handleSessionRestorationException( e ).generateResponse();
 		}
 		catch( Throwable throwable ) {
