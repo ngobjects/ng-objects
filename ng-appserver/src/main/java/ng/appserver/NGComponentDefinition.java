@@ -73,7 +73,7 @@ public class NGComponentDefinition {
 	}
 
 	/**
-	 * @return The component definition for the given class.
+	 * @return The component definition for the given name.
 	 */
 	public static NGComponentDefinition get( final String componentName ) {
 		Objects.requireNonNull( componentName );
@@ -81,7 +81,7 @@ public class NGComponentDefinition {
 	}
 
 	/**
-	 * @return The component definition for the given name.
+	 * @return The component definition for the given class.
 	 */
 	public static NGComponentDefinition get( final Class<? extends NGComponent> componentClass ) {
 		Objects.requireNonNull( componentClass );
@@ -90,8 +90,6 @@ public class NGComponentDefinition {
 
 	/**
 	 * @return a component definition by either name OR class (never both)
-	 *
-	 * FIXME: We should be failing here if the componentDefinition has neither a class nor a template (Since that's a non-existant component) // Hugi 2023-02-03
 	 */
 	private static NGComponentDefinition get( String componentName, Class<? extends NGComponent> componentClass ) {
 
@@ -126,6 +124,14 @@ public class NGComponentDefinition {
 		}
 
 		final NGComponentDefinition newComponentDefinition = new NGComponentDefinition( componentName, componentClass );
+
+		// The only reason for us to load the template here is to check if we're trying to construct a component that doesn't exist (i.e. no class and no template)
+		// We place it in the cached template to prevent re-parsing in case of component caching being enabled. If caching is disabled, the cached template is never read.
+		newComponentDefinition._cachedTemplate = newComponentDefinition._loadTemplate();
+
+		if( newComponentDefinition._cachedTemplate == null && componentClass.equals( NGComponent.class ) ) {
+			throw new IllegalArgumentException( "Component '%s' does not exist (a component must have either a class or a template, usually both)".formatted( componentName ) );
+		}
 
 		if( _cachingEnabled() ) {
 			_componentDefinitionCache.put( componentName, newComponentDefinition );
@@ -184,9 +190,7 @@ public class NGComponentDefinition {
 	}
 
 	/**
-	 * FIXME: We should try loading the old style HTML-template first. If that succeeds, load the wod file.
-	 * Then, if loading of the old style template loading fails, we check for a new style HTML-file instead.
-	 * Finally, log a warning if nothing is found (or even hard fail with an exception)
+	 * @return A component template by loading the component's template files and parsing them
 	 */
 	private NGElement _loadTemplate() {
 		try {
@@ -195,7 +199,6 @@ public class NGComponentDefinition {
 			String wodString = loadWODStringFromTemplateFolder( name() );
 
 			// If that fails, let's go for the single file html template
-			// FIXME: this is not a good way to check for this. Check for existence of files and determine heuristics from there
 			if( htmlTemplateString.isEmpty() && wodString.isEmpty() ) {
 				final Optional<byte[]> htmlTemplate = NGResourceLoader.readComponentResource( name() + ".html" );
 
@@ -204,9 +207,9 @@ public class NGComponentDefinition {
 				}
 			}
 
-			// FIXME: I feel like we should be throwing an exception in this case // Hugi 2022-11-27
 			if( htmlTemplateString.isEmpty() ) {
 				logger.warn( "Component template '%s' not found".formatted( name() ) );
+				return null;
 			}
 
 			return NGTemplateParser.parse( htmlTemplateString, wodString, Collections.emptyList() );
