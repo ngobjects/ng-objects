@@ -10,9 +10,9 @@ public class NGContext {
 	private final NGRequest _request;
 
 	/**
-	 * The component currently being processed by this context
+	 * This context's uniqueID within it's session
 	 */
-	private NGComponent _currentComponent;
+	private String _contextID;
 
 	/**
 	 * The page level component
@@ -20,9 +20,9 @@ public class NGContext {
 	private NGComponent _page;
 
 	/**
-	 * This context's uniqueID within it's session
+	 * The component currently being processed by this context
 	 */
-	private String _contextID;
+	private NGComponent _currentComponent;
 
 	/**
 	 * ID of the element currently being rendered by the context.
