@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
+import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
@@ -62,9 +63,13 @@ public class NGImage extends NGDynamicElement {
 		_dataInputStreamAssociation = associations.get( "dataInputStream" );
 		_dataInputStreamLengthAssociation = associations.get( "dataInputStreamLength" );
 
-		//		if( _srcAssociation == null && _filenameAssociation == null && _dataAssociation == null ) {
-		//			throw new IllegalArgumentException( "You must set [filename], [data] or [src] bindings" );
-		//		}
+		if( _srcAssociation == null && _filenameAssociation == null && _dataAssociation == null && _dataInputStreamAssociation == null ) {
+			throw new NGBindingConfigurationException( "You must set [filename], [data], [dataInputStream] or [src] bindings" );
+		}
+
+		if( _dataInputStreamAssociation != null && _dataInputStreamLengthAssociation == null ) {
+			throw new NGBindingConfigurationException( "If [dataInputStream] is bound, you must also bind [dataInputStreamLength]" );
+		}
 
 		// Now we collect the associations that we've already consumed and keep the rest around, to add to the image as attributes
 		// Not exactly pretty, but let's work with this a little
