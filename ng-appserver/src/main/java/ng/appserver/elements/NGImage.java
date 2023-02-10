@@ -1,6 +1,7 @@
 package ng.appserver.elements;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +32,16 @@ public class NGImage extends NGDynamicElement {
 	/**
 	 * For keeping the filename of the image
 	 */
+	private final NGAssociation _dataInputStreamAssociation;
+
+	/**
+	 * For keeping the filename of the image
+	 */
+	private final NGAssociation _dataInputStreamLengthAssociation;
+
+	/**
+	 * For keeping the filename of the image
+	 */
 	private final NGAssociation _filenameAssociation;
 
 	/**
@@ -48,16 +59,20 @@ public class NGImage extends NGDynamicElement {
 		_filenameAssociation = associations.get( "filename" );
 		_srcAssociation = associations.get( "src" );
 		_dataAssociation = associations.get( "data" );
+		_dataInputStreamAssociation = associations.get( "dataInputStream" );
+		_dataInputStreamLengthAssociation = associations.get( "dataInputStreamLength" );
 
-		if( _srcAssociation == null && _filenameAssociation == null && _dataAssociation == null ) {
-			throw new IllegalArgumentException( "You must set [filename], [data] or [src] bindings" );
-		}
+		//		if( _srcAssociation == null && _filenameAssociation == null && _dataAssociation == null ) {
+		//			throw new IllegalArgumentException( "You must set [filename], [data] or [src] bindings" );
+		//		}
 
 		// Now we collect the associations that we've already consumed and keep the rest around, to add to the image as attributes
 		// Not exactly pretty, but let's work with this a little
 		_additionalAssociations = new HashMap<>( associations );
 		_additionalAssociations.remove( "filename" );
 		_additionalAssociations.remove( "data" );
+		_additionalAssociations.remove( "dataInputStream" );
+		_additionalAssociations.remove( "dataInputStreamLength" );
 		_additionalAssociations.remove( "src" );
 	}
 
@@ -87,7 +102,18 @@ public class NGImage extends NGDynamicElement {
 		if( _dataAssociation != null ) {
 			byte[] bytes = (byte[])_dataAssociation.valueInComponent( component );
 			final String id = UUID.randomUUID().toString();
-			NGResourceRequestHandlerDynamic.push( id, new NGDynamicResource( new ByteArrayInputStream( bytes ), mimeType, bytes.length ) );
+			final NGDynamicResource resource = new NGDynamicResource( new ByteArrayInputStream( bytes ), mimeType, (long)bytes.length );
+			NGResourceRequestHandlerDynamic.push( id, resource );
+			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( id ).get();
+		}
+
+		// FIXME: Lots of code duplication from the 'data' binding handling, refactor and consolidate once we have a semi-nice structure for this // Hugi 2023-02-10
+		if( _dataInputStreamAssociation != null ) {
+			long dataInputStreamLength = (long)_dataInputStreamLengthAssociation.valueInComponent( component );
+			final InputStream is = (InputStream)_dataInputStreamAssociation.valueInComponent( component );
+			final String id = UUID.randomUUID().toString();
+			final NGDynamicResource resource = new NGDynamicResource( is, mimeType, dataInputStreamLength );
+			NGResourceRequestHandlerDynamic.push( id, resource );
 			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( id ).get();
 		}
 
