@@ -8,8 +8,6 @@ import java.util.Optional;
 import ng.appserver.privates.NGParsedURI;
 
 /**
- * FIXME: This class still represents work in progress.
- *
  * Missing:
  * - cache keys
  * - cache timeout (tied to session perhaps?)
