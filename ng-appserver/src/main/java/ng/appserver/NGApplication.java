@@ -345,7 +345,12 @@ public class NGApplication {
 			return response;
 		}
 		catch( NGSessionRestorationException e ) {
+			// FIXME: We should probably be invoking handleException() here
 			return handleSessionRestorationException( e ).generateResponse();
+		}
+		catch( NGPageRestorationException e ) {
+			// FIXME: We should probably be invoking handleException() here
+			return handlePageRestorationException( e ).generateResponse();
 		}
 		catch( Throwable throwable ) {
 			// FIXME: Generate a uniqueID for the exception that occurred and show it to the user (for tracing/debugging) // Hugi 2022-10-13
@@ -388,6 +393,16 @@ public class NGApplication {
 		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context withing a dead session feels weird // Hugi 2023-01-11
 		nextPage.setException( exception );
 		return nextPage;
+	}
+
+	/**
+	 * If the application fails to restore a page from the session's page cache during component action request handling,
+	 * (usually because the page cache has been exhausted, and the page pushed out of the cache), this method will be invoked and it's response returned to the user.
+	 *
+	 * FIXME: Create a nicer response for this // Hugi 2023-02-10
+	 */
+	protected NGActionResults handlePageRestorationException( final NGPageRestorationException exception ) {
+		return new NGResponse( exception.getMessage(), 404 );
 	}
 
 	/**

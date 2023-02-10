@@ -50,8 +50,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 
 		// No page found in cache. If this happens, the page has probably been pushed out of the session's page cache.
 		if( originalPage == null ) {
-			// FIXME: This will be common enough that it needs it's own separate handling, such as WO's handlePageRestorationErrorInContext() // Hugi 2023-02-05
-			throw new IllegalStateException( "No page found in the page cache for contextID %s. The page has probably been pushed out of the session's page cache".formatted( context._originatingContextID() ) );
+			throw new NGPageRestorationException( request, "No page found in the page cache for contextID %s. The page has probably been pushed out of the session's page cache".formatted( context._originatingContextID() ) );
 		}
 
 		// We can probably assume that since we're working with the page, it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
