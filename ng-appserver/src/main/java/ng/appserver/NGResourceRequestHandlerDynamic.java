@@ -26,7 +26,6 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	 */
 	private static Map<String, byte[]> _cacheMap = new HashMap<>();
 
-	// FIXME: Should we allow null resources in the cache?
 	public static void push( final String cacheKey, final byte[] data ) {
 		Objects.requireNonNull( cacheKey );
 		_cacheMap.put( cacheKey, data );
