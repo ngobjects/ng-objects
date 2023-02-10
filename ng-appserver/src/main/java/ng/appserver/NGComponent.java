@@ -19,7 +19,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	private static final Logger logger = LoggerFactory.getLogger( NGComponent.class );
 
 	/**
-	 * The page's context
+	 * The component's context
 	 */
 	private NGContext _context;
 
@@ -35,10 +35,8 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * Map of this component's children
-	 *
-	 * FIXME: Should we be initializing this here? // Hugi 2022-12-30
 	 */
-	private Map<NGElementID, NGComponent> _children = new HashMap<>();
+	private final Map<NGElementID, NGComponent> _children;
 
 	/**
 	 * Store a reference to the associations
@@ -56,6 +54,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
 		_context = context;
+		_children = new HashMap<>();
 	}
 
 	/**
@@ -79,7 +78,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	/**
 	 * @return The application within which this component instance was constructed
 	 *
-	 * FIXME: Type safety (for our own session class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
+	 * FIXME: Type safety (for our own application class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
 	 */
 	public NGApplication application() {
 		return NGApplication.application().application();
