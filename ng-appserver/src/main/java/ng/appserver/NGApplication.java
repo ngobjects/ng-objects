@@ -142,11 +142,7 @@ public class NGApplication {
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
 		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
 			final NGResponse response = new NGResponse( "<p>Session cookie reset</p><p><a href=\"/\">Re-enter</a></p>", 200 );
-			final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, "ded" );
-			sessionCookie.setMaxAge( 0 );
-			sessionCookie.setPath( "/" );
-			//				sessionCookie.setDomain( sessionID ) // FIXME: Implement
-			response.addCookie( sessionCookie );
+			response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
 			return response;
 		} );
 		_routeTables.add( systemRoutes );
@@ -323,14 +319,8 @@ public class NGApplication {
 			final String sessionID = request._sessionID();
 
 			if( sessionID != null ) {
-				if( request.existingSession() != null ) { // FIXME: Yuck // Hugi 2023-01-11
-					final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
-					sessionCookie.setMaxAge( (int)request.existingSession().timeOut().toSeconds() );
-					sessionCookie.setPath( "/" ); // FIXME: We probably want this to be configurable // Hugi 2023-02-06
-					// sessionCookie.setDomain( sessionID ) // FIXME: Implement // Hugi 2023-01-11
-					// sessionCookie.setSameSite( "Strict" ) // FIXME: Add once we have Servlet API 6 // Hugi 2023-02-06
-					// sessionCookie.setSecure( ... ) // FIXME: We also might want this to be configurable... Sending session cookies over HTTP isn't exactly brilliant in a production setting // Hugi 2023-02-06
-					response.addCookie( sessionCookie );
+				if( request.existingSession() != null ) { // FIXME: existingSession() isn't really a reliable way to get the session (at least not yet)  // Hugi 2023-01-11
+					response.addCookie( createSessionCookie( sessionID, (int)request.existingSession().timeOut().toSeconds() ) );
 				}
 			}
 
@@ -349,6 +339,16 @@ public class NGApplication {
 			handleException( throwable );
 			return exceptionResponse( throwable, request.context() ).generateResponse();
 		}
+	}
+
+	private static NGCookie createSessionCookie( final String sessionID, final int maxAge ) {
+		final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
+		sessionCookie.setMaxAge( maxAge );
+		sessionCookie.setPath( "/" ); // FIXME: We probably want this to be configurable // Hugi 2023-02-06
+		// sessionCookie.setDomain( sessionID ) // FIXME: Implement // Hugi 2023-01-11
+		// sessionCookie.setSameSite( "Strict" ) // FIXME: Add once we have Servlet API 6 // Hugi 2023-02-06
+		// sessionCookie.setSecure( ... ) // FIXME: We also might want this to be configurable... Sending session cookies over HTTP isn't exactly brilliant in a production setting // Hugi 2023-02-06
+		return sessionCookie;
 	}
 
 	/**
