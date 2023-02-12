@@ -32,7 +32,6 @@ public class NGTextField extends NGDynamicElement {
 
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
-		// FIXME: we should only grab values from the request if it's containing form is being submitted. We probably need to pass that info along from NGForm (or perhaps NGSubmitButton?)
 		// FIXME: In that case, we're going to want to push the field's value through the value binding
 
 		final List<String> valuesFromRequest = request.formValues().get( nameFromCurrentElementId( context ) ); // FIXME: Account for multiple values/no value
