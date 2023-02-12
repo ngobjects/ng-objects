@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -179,7 +180,13 @@ public class NGRequest extends NGMessage {
 	 * @return The values of the named cookie
 	 */
 	public List<String> cookieValuesForKey( final String key ) {
-		return cookieValues().get( key );
+		final List<String> cookieValues = cookieValues().get( key );
+
+		if( cookieValues == null ) {
+			return Collections.emptyList();
+		}
+
+		return cookieValues;
 	}
 
 	/**
@@ -187,12 +194,7 @@ public class NGRequest extends NGMessage {
 	 * @throws IllegalArgumentException If there are many cookies with the given key
 	 */
 	public String cookieValueForKey( final String key ) {
-		List<String> values = cookieValuesForKey( key );
-
-		// FIXME: Ugh... (vomit) // Hugi 2023-01-10
-		if( values == null ) {
-			return null;
-		}
+		final List<String> values = cookieValuesForKey( key );
 
 		if( values.size() == 0 ) {
 			return null;
