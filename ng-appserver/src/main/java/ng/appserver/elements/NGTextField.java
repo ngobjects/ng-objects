@@ -32,9 +32,7 @@ public class NGTextField extends NGDynamicElement {
 
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
-		// FIXME: In that case, we're going to want to push the field's value through the value binding
-
-		final List<String> valuesFromRequest = request.formValues().get( nameFromCurrentElementId( context ) ); // FIXME: Account for multiple values/no value
+		final List<String> valuesFromRequest = request.formValues().get( nameFromCurrentElementId( context ) );
 
 		if( valuesFromRequest != null ) { // FIXME: Should formValues return an empty list or null if not present? // Hugi 2022-06-08
 			String valueFromRequest = valuesFromRequest.get( 0 );
