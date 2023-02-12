@@ -31,7 +31,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// CHECKME: Request validation may affect performance, but it's nice to have during the development phase // Hugi 2023-01-08
 		validateRequest( request );
 
-		// At this point, this point, the request's context is a freshly created one
+		// At this point the request's context is a freshly created one
 		final NGContext context = request.context();
 
 		if( context == null ) {
