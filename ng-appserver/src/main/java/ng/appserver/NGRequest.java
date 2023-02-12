@@ -180,6 +180,8 @@ public class NGRequest extends NGMessage {
 	 * @return The values of the named cookie
 	 */
 	public List<String> cookieValuesForKey( final String key ) {
+		Objects.requireNonNull( key );
+
 		final List<String> cookieValues = cookieValues().get( key );
 
 		if( cookieValues == null ) {
@@ -194,6 +196,8 @@ public class NGRequest extends NGMessage {
 	 * @throws IllegalArgumentException If there are many cookies with the given key
 	 */
 	public String cookieValueForKey( final String key ) {
+		Objects.requireNonNull( key );
+
 		final List<String> values = cookieValuesForKey( key );
 
 		if( values.size() == 0 ) {
