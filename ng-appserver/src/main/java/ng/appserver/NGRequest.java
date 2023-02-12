@@ -18,6 +18,9 @@ public class NGRequest extends NGMessage {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGRequest.class );
 
+	/**
+	 * Name of the cookie that stores our session ID on the client
+	 */
 	public static final String SESSION_ID_COOKIE_NAME = "ngsid";
 
 	/**
@@ -31,12 +34,12 @@ public class NGRequest extends NGMessage {
 	private String _method;
 
 	/**
-	 * The URI being acessed
+	 * The URI being accessed
 	 */
 	private String _uri;
 
 	/**
-	 * The URI being acessed, wrapped in a nice little API
+	 * The URI being accessed, wrapped in a nice little API
 	 */
 	private NGParsedURI _parsedURI;
 
@@ -55,6 +58,9 @@ public class NGRequest extends NGMessage {
 	 */
 	private String _sessionID;
 
+	/**
+	 * The request's session
+	 */
 	private NGSession _session;
 
 	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] contentBytes ) {
@@ -71,14 +77,19 @@ public class NGRequest extends NGMessage {
 		setContentBytes( contentBytes );
 	}
 
+	/**
+	 * @return The requests form values (query parameters)
+	 */
 	public Map<String, List<String>> formValues() {
 		return _formValues;
 	}
 
 	/**
+	 * Set the request's form values (query parameters)
+	 *
 	 * FIXME: Same goes for this as the cookieValues. The Map should be populated by the request object, not the adaptor // Hugi 2021-12-31
 	 */
-	public void _setFormValues( Map<String, List<String>> formValues ) {
+	public void _setFormValues( final Map<String, List<String>> formValues ) {
 		_formValues = formValues;
 	}
 
