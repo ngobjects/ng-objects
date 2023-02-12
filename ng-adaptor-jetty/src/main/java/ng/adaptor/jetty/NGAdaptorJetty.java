@@ -202,7 +202,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 
-		// FIXME: We're reading the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
+		// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
 		final Map<String, List<String>> formValuesFromServletRequest = formValues( sr.getParameterMap() );
 
 		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
