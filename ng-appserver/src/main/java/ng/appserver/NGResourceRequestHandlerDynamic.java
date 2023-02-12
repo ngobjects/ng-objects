@@ -48,7 +48,6 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 			return new NGResponse( "Dynamic resource '" + resourceID.get() + "' does not exist", 404 );
 		}
 
-		// FIXME: Detect and set the correct response headers
 		final NGResponse response = new NGResponse();
 		response.setStatus( 200 );
 		response.setContentInputStream( resource.inputStream(), resource.length() );
