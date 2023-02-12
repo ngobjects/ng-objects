@@ -51,8 +51,7 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 		// FIXME: Detect and set the correct response headers
 		final NGResponse response = new NGResponse();
 		response.setStatus( 200 );
-		response.setContentInputStream( resource.inputStream() );
-		response.setContentInputStreamLength( resource.length() );
+		response.setContentInputStream( resource.inputStream(), resource.length() );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceID.get() ) );
 		response.setHeader( "Content-Type", resource.mimeType() );
 		return response;

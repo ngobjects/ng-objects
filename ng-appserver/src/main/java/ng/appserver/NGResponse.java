@@ -71,20 +71,17 @@ public class NGResponse extends NGMessage implements NGActionResults {
 		_cookies.add( cookie );
 	}
 
+	public void setContentInputStream( final InputStream inputStream, final long contentInputStreamLength ) {
+		_contentInputStream = inputStream;
+		_contentInputStreamLength = contentInputStreamLength;
+	}
+
 	public InputStream contentInputStream() {
 		return _contentInputStream;
 	}
 
-	public void setContentInputStream( InputStream value ) {
-		_contentInputStream = value;
-	}
-
 	public long contentInputStreamLength() {
 		return _contentInputStreamLength;
-	}
-
-	public void setContentInputStreamLength( long value ) {
-		_contentInputStreamLength = value;
 	}
 
 	@Override
