@@ -37,8 +37,6 @@ public class NGApplication {
 
 	/**
 	 * The application's properties
-	 *
-	 * FIXME: While having properties is useful, we should be wondering if they should be public or only for internal use // Hugi 2022-10-22
 	 */
 	private NGProperties _properties;
 
