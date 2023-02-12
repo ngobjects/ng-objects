@@ -20,7 +20,7 @@ import ng.appserver.NGResourceRequestHandlerDynamic.NGDynamicResource;
 import ng.appserver.NGResponse;
 
 /**
- * FIXME: Add a [mimeType] binding for use in conjunction with the [data] binding. Requires a better management of cached resources.
+ * An image element
  */
 
 public class NGImage extends NGDynamicElement {
@@ -51,6 +51,11 @@ public class NGImage extends NGDynamicElement {
 	private final NGAssociation _srcAssociation;
 
 	/**
+	 * THe mimeType of an image supplied via [data] or [dataInputStream]
+	 */
+	private final NGAssociation _mimeTypeAssociation;
+
+	/**
 	 * For storing associations that aren't part of the component's basic associations
 	 */
 	private final Map<String, NGAssociation> _additionalAssociations;
@@ -62,9 +67,14 @@ public class NGImage extends NGDynamicElement {
 		_dataAssociation = associations.get( "data" );
 		_dataInputStreamAssociation = associations.get( "dataInputStream" );
 		_dataInputStreamLengthAssociation = associations.get( "dataInputStreamLength" );
+		_mimeTypeAssociation = associations.get( "mimeType" );
 
 		if( _srcAssociation == null && _filenameAssociation == null && _dataAssociation == null && _dataInputStreamAssociation == null ) {
 			throw new NGBindingConfigurationException( "You must set [filename], [data], [dataInputStream] or [src] bindings" );
+		}
+
+		if( (_dataAssociation != null || _dataInputStreamAssociation != null) && _mimeTypeAssociation == null ) {
+			throw new NGBindingConfigurationException( "You must set [mimeType] if using [data] or [dataInputStream]" );
 		}
 
 		if( _dataInputStreamAssociation != null && _dataInputStreamLengthAssociation == null ) {
@@ -75,10 +85,11 @@ public class NGImage extends NGDynamicElement {
 		// Not exactly pretty, but let's work with this a little
 		_additionalAssociations = new HashMap<>( associations );
 		_additionalAssociations.remove( "filename" );
+		_additionalAssociations.remove( "src" );
 		_additionalAssociations.remove( "data" );
 		_additionalAssociations.remove( "dataInputStream" );
 		_additionalAssociations.remove( "dataInputStreamLength" );
-		_additionalAssociations.remove( "src" );
+		_additionalAssociations.remove( "mimeType" );
 	}
 
 	@Override
@@ -101,7 +112,7 @@ public class NGImage extends NGDynamicElement {
 			}
 		}
 
-		final String mimeType = "image/jpeg"; // FIXME: Add and read a mimeType binding // Hugi 2023-02-10
+		final String mimeType = (String)_mimeTypeAssociation.valueInComponent( component );
 
 		// In case of a data binding, we always just store the data in the resource cache, under a new key each time. Kind of lame.
 		if( _dataAssociation != null ) {
