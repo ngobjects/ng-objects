@@ -52,7 +52,7 @@ public class NGTextField extends NGDynamicElement {
 			name = nameFromCurrentElementId( context );
 		}
 
-		final String value = (String)_valueAssociation.valueInComponent( context.component() ); // FIXME: This value might need to be converted/formatted
+		final String value = (String)_valueAssociation.valueInComponent( context.component() );
 
 		final Map<String, String> attributes = new HashMap<>();
 
