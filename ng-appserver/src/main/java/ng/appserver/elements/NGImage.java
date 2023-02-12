@@ -112,10 +112,9 @@ public class NGImage extends NGDynamicElement {
 			}
 		}
 
-		final String mimeType = (String)_mimeTypeAssociation.valueInComponent( component );
-
 		// In case of a data binding, we always just store the data in the resource cache, under a new key each time. Kind of lame.
 		if( _dataAssociation != null ) {
+			final String mimeType = (String)_mimeTypeAssociation.valueInComponent( component );
 			byte[] bytes = (byte[])_dataAssociation.valueInComponent( component );
 			final String id = UUID.randomUUID().toString();
 			final NGDynamicResource resource = new NGDynamicResource( new ByteArrayInputStream( bytes ), mimeType, (long)bytes.length );
@@ -125,6 +124,7 @@ public class NGImage extends NGDynamicElement {
 
 		// FIXME: Lots of code duplication from the 'data' binding handling, refactor and consolidate once we have a semi-nice structure for this // Hugi 2023-02-10
 		if( _dataInputStreamAssociation != null ) {
+			final String mimeType = (String)_mimeTypeAssociation.valueInComponent( component );
 			long dataInputStreamLength = (long)_dataInputStreamLengthAssociation.valueInComponent( component );
 			final InputStream is = (InputStream)_dataInputStreamAssociation.valueInComponent( component );
 			final String id = UUID.randomUUID().toString();
