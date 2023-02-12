@@ -535,7 +535,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * @return The componentDefinition corresponding to the given WOComponent class.
+	 * @return The componentDefinition corresponding to the given NGComponent class.
 	 *
 	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
 	 * FIXME: This should not be static, belongs in an instance of a different class.
@@ -548,7 +548,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * @return The componentDefinition corresponding to the named WOComponent
+	 * @return The componentDefinition corresponding to the named NGComponent
 	 *
 	 * FIXME: Languages aren't supported either yet, but I'm including the parameter while I consider what to do about it.
 	 * FIXME: This should not be static, belongs in an instance of a different class.

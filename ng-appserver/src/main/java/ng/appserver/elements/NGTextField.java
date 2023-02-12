@@ -74,7 +74,7 @@ public class NGTextField extends NGDynamicElement {
 	}
 
 	/**
-	 * @return A unique name for this text field, based on the WOContext's elementId
+	 * @return A unique name for this text field, based on the NGContext's elementId
 	 */
 	private String nameFromCurrentElementId( final NGContext context ) {
 		return context.elementID().toString();

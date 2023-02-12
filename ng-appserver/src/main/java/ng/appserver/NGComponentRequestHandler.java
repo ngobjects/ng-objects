@@ -34,6 +34,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// At this point the request's context is a freshly created one
 		final NGContext context = request.context();
 
+		// Just some saniyt checking for development
 		if( context == null ) {
 			throw new IllegalStateException( "The request's context is null. This should never happen" );
 		}
@@ -41,11 +42,12 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// We need to use the session to gain access to the page cache
 		final NGSession session = context.session();
 
+		// Just some saniyt checking for development
 		if( session == null ) {
 			throw new IllegalStateException( "The context's session is null. That should never happen" );
 		}
 
-		// Now let's try to restore the page from the cache
+		// Now let's try to restore the page from the cache, using the contextID provided by the URL
 		final NGComponent originalPage = session.restorePageFromCache( context._originatingContextID() );
 
 		// No page found in cache. If this happens, the page has probably been pushed out of the session's page cache.
@@ -53,7 +55,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			throw new NGPageRestorationException( request, "No page found in the page cache for contextID %s. The page has probably been pushed out of the session's page cache".formatted( context._originatingContextID() ) );
 		}
 
-		// We can probably assume that since we're working with the page, it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
+		// Since we're working with the page we can safely assume it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
 		session.retainPageWithContextIDInCache( context._originatingContextID() );
 
 		logger.debug( "Page restored from cache is: " + originalPage.getClass() );
@@ -96,7 +98,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			response = newPage.generateResponse();
 		}
 		else {
-			// If this is not a WOComponent, we don't need to take any special action and just invoke generateResponse() on the action's results
+			// If this is not an NGComponent, we don't need to take any special action and just invoke generateResponse() on the action's results
 			response = actionInvocationResults.generateResponse();
 		}
 
