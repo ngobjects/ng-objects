@@ -30,11 +30,9 @@ public class NGSession {
 	private final Instant _birthDate;
 
 	/**
-	 * The last date at which this session was touched
-	 *
-	 * FIXME: Calling an instant a "date" is not nice // Hugi 2023-01-21
+	 * The time at which this session was last touched
 	 */
-	private Instant _lastTouchedDate;
+	private Instant _lastTouched;
 
 	/**
 	 * The session's timeout
@@ -76,7 +74,7 @@ public class NGSession {
 	private NGSession( final String sessionID, final Instant birthDate ) {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
-		_lastTouchedDate = birthDate;
+		_lastTouched = birthDate;
 		_timeOut = defaultTimeOut();
 	}
 
@@ -105,15 +103,15 @@ public class NGSession {
 	/**
 	 * @return The last date at which this session was touched
 	 */
-	public Instant lastTouchedDate() {
-		return _lastTouchedDate;
+	public Instant lastTouched() {
+		return _lastTouched;
 	}
 
 	/**
 	 * "Touches" the session, indicating that it has been used (and thus prolonging it's life)
 	 */
 	public void touch() {
-		_lastTouchedDate = Instant.now();
+		_lastTouched = Instant.now();
 	}
 
 	/**
@@ -136,7 +134,7 @@ public class NGSession {
 	 * @return true if the session has timed out (and is thus due to be harvested/erased
 	 */
 	private boolean isTimedOut() {
-		return lastTouchedDate().plus( timeOut() ).isBefore( Instant.now() );
+		return lastTouched().plus( timeOut() ).isBefore( Instant.now() );
 	}
 
 	/**
