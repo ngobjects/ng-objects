@@ -13,9 +13,7 @@ public abstract class NGSessionStore {
 	public abstract void storeSession( final NGSession session );
 
 	/**
-	 * @return All sessions stored within
-	 *
-	 * FIXME: Not sure this method should exist, but we're using it for monitoring for now // Hugi 2023-01-21
+	 * @return All sessions stored by this session store.
 	 */
 	public abstract List<NGSession> sessions();
 }
