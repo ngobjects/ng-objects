@@ -5,7 +5,7 @@ import java.util.Optional;
 import ng.appserver.privates.NGMimeTypeDetector;
 
 /**
- * REquest handler for serving webserver-resources
+ * Request handler for serving webserver-resources
  */
 
 public class NGResourceRequestHandler extends NGRequestHandler {
@@ -28,7 +28,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 
 		// FIXME: How to handle this properly? User configurable? Just always a 404 // Hugi 2021-12-06
 		if( resourceBytes.isEmpty() ) {
-			final NGResponse errorResponse = new NGResponse( "webserver resources '" + resourcePath.get() + "' does not exist", 404 );
+			final NGResponse errorResponse = new NGResponse( "webserver resource '" + resourcePath.get() + "' does not exist", 404 );
 			errorResponse.setHeader( "content-type", "text/html" );
 			return errorResponse;
 		}
@@ -37,7 +37,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		final String resourceName = resourcePath.get().substring( resourcePath.get().lastIndexOf( "/" ) + 1 );
 		final String mimeType = NGMimeTypeDetector.mimeTypeForResourceName( resourcePath.get() );
 
-		// FIXME: Detect and set the correct response headers
+		// FIXME: Detect and set the correct response headers, especially with regard to caching // Hugi 2023-02-17
 		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName ) );
 		response.setHeader( "Content-Type", mimeType );
