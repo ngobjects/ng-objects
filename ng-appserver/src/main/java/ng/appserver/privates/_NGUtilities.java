@@ -30,6 +30,8 @@ public class _NGUtilities {
 		}
 
 		if( object instanceof Number n ) {
+			// Note that doubleValue might return Double.NaN which is... Troublesome. Trying to decide if NaN is true or false is almost a philosophical question.
+			// I'm still leaning towards keeping our definition of "only exactly zero is false", meaning NaN is true, making this code currently fine.
 			return n.doubleValue() != 0;
 		}
 
@@ -57,5 +59,10 @@ public class _NGUtilities {
 		catch( Throwable e ) {
 			logger.info( "Terminated existing development instance" );
 		}
+	}
+
+	public static void main( String[] args ) {
+		Number n = Double.NaN;
+		System.out.println( n.doubleValue() == 0 );
 	}
 }
