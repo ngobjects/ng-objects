@@ -124,9 +124,8 @@ public abstract class NGMessage {
 	 * @return The length of the message's data content
 	 *
 	 * FIXME: Not sure if we want this here. Currently only for performance while setting the content-length header. // Hugi 2023-02-17
-	 * FIXME: Should be long instead of int? Or perhaps int is fine, since byte arrays can't exceed int's max length? // Hugi 2023-02-17
 	 */
-	public int contentBytesLength() {
+	public long contentBytesLength() {
 		return _contentBytes.size();
 	}
 
