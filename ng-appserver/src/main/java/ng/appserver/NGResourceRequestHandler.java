@@ -5,7 +5,7 @@ import java.util.Optional;
 import ng.appserver.privates.NGMimeTypeDetector;
 
 /**
- * FIXME: We want this to work with streams, not byte arrays. In that case it just becomes the responsibility of this code to link up the file/socket streams
+ * REquest handler for serving webserver-resources
  */
 
 public class NGResourceRequestHandler extends NGRequestHandler {
@@ -23,6 +23,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
+		// FIXME: We want this to work with streams, not byte arrays. In that case it just becomes the responsibility of this code to link up the file/socket streams // Hugi 2023-02-17
 		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourcePath.get() );
 
 		// FIXME: How to handle this properly? User configurable? Just always a 404 // Hugi 2021-12-06
