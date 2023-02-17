@@ -24,8 +24,6 @@ public class NGSession {
 
 	/**
 	 * The birthdate of this session, as provided by System.currentTimeMillis()
-	 *
-	 * FIXME: Calling an instant a "date" is not nice // Hugi 2023-01-21
 	 */
 	private final Instant _birthDate;
 
