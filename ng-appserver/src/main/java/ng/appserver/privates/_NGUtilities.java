@@ -60,9 +60,4 @@ public class _NGUtilities {
 			logger.info( "Terminated existing development instance" );
 		}
 	}
-
-	public static void main( String[] args ) {
-		Number n = Double.NaN;
-		System.out.println( n.doubleValue() == 0 );
-	}
 }
