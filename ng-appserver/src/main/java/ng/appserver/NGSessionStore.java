@@ -3,7 +3,7 @@ package ng.appserver;
 import java.util.List;
 
 /**
- * FIXME: Should the session store perhaps be an interface? Not a lot of logic here at the moment // Hugi 2023-01-21
+ * Defines the basic methods required for a session store implementation
  */
 
 public abstract class NGSessionStore {
