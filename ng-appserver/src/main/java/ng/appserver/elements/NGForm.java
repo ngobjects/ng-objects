@@ -46,8 +46,9 @@ public class NGForm extends NGDynamicGroup {
 		if( context.elementID().toString().equals( context.senderID() ) ) {
 
 			// We only invoke the action association if the action binding is actually bound.
-			// This is because the form might contain several submit buttons, in which case the actual action to invoke is the action of the button pressed
-			// FIXME: Having a bound action in a form which has a submit button, also with a bound action, should be an error condition // Hugi 2023-02-02
+			// This is because the form might contain several submit buttons, in which case the actual action to invoke is the action of the button pressed.
+			// The actual button pressed will be identified by the button's name being present in the request's formValues. See NGSubmitButton.invokeAction() for implementation details.
+			// CHECKME: Having a bound action in a form which has a submit button, also with a bound action, might be an error condition // Hugi 2023-02-02
 			if( _actionAssociation != null ) {
 				return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 			}
