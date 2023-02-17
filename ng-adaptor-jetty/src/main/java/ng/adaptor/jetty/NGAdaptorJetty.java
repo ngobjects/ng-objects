@@ -136,7 +136,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			}
 			else {
 				// Otherwise we go for the length of the response's contained data/bytes.
-				contentLength = ngResponse.contentBytes().length;
+				contentLength = ngResponse.contentBytesLength();
 			}
 
 			servletResponse.setHeader( "content-length", String.valueOf( contentLength ) );
