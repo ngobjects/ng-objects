@@ -20,12 +20,12 @@ public class NGDefaultLifeBeatThread {
 	/**
 	 * Starts a lifebeat thread for communicating with wotaskd.
 	 */
-	public static void start( final NGProperties _properties ) {
-		final String hostName = _properties.propWOHost();
-		final String appName = _properties.propWOApplicationName();
-		final Integer appPort = _properties.propWOPort();
-		final Integer lifeBeatDestinationPort = _properties.propWOLifebeatDestinationPort();
-		final Integer lifeBeatIntervalInSeconds = _properties.propWOLifebeatIntervalInSeconds();
+	public static void start( final NGProperties properties ) {
+		final String hostName = properties.propWOHost();
+		final String appName = properties.propWOApplicationName();
+		final Integer appPort = properties.propWOPort();
+		final Integer lifeBeatDestinationPort = properties.propWOLifebeatDestinationPort();
+		final Integer lifeBeatIntervalInSeconds = properties.propWOLifebeatIntervalInSeconds();
 		final long lifeBeatIntervalInMilliseconds = TimeUnit.MILLISECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.SECONDS );
 
 		InetAddress hostAddress = null;
