@@ -29,7 +29,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		// Hugi 2023-02-17
 		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourcePath );
 
-		// FIXME: How to handle this properly? User configurable? Just always a 404? // Hugi 2021-12-06
+		// FIXME: Shouldn't we allow the user to customize the response for a non-existent resource? // Hugi 2021-12-06
 		if( resourceBytes.isEmpty() ) {
 			final NGResponse errorResponse = new NGResponse( "webserver resource '" + resourcePath + "' does not exist", 404 );
 			errorResponse.setHeader( "content-type", "text/html" );
@@ -40,7 +40,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		final String resourceName = resourcePath.substring( resourcePath.lastIndexOf( "/" ) + 1 );
 		final String mimeType = NGMimeTypeDetector.mimeTypeForResourceName( resourcePath );
 
-		// FIXME: Detect and set the correct response headers, especially with regard to caching // Hugi 2023-02-17
+		// FIXME: We need to allow some control over the headers for the returned resource, especially with regard to caching // Hugi 2023-02-17
 		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName ) );
 		response.setHeader( "Content-Type", mimeType );
@@ -48,8 +48,6 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	}
 
 	/**
-	 * FIXME: Not at all a good method for getting the resource URI
-	 *
 	 * @return The resource path from the given URI
 	 */
 	private static String resourcePathFromURI( final String uri ) {
