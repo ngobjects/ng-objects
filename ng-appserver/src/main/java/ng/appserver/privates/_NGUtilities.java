@@ -14,9 +14,9 @@ public class _NGUtilities {
 	/**
 	 * @return true if the given object is "truthy" for conditionals
 	 *
-	 * The conditions under which that is are
-	 * - boolean true
-	 * - a number that's exactly zero
+	 * The only conditions for returning false are:
+	 * - Boolean false (box or primitive)
+	 * - A number that's exactly zero
 	 * - null
 	 */
 	public static boolean isTruthy( Object object ) {
@@ -58,5 +58,4 @@ public class _NGUtilities {
 			logger.info( "Terminated existing development instance" );
 		}
 	}
-
 }
