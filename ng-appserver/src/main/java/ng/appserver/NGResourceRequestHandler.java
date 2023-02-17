@@ -5,10 +5,15 @@ import java.util.Optional;
 import ng.appserver.privates.NGMimeTypeDetector;
 
 /**
- * FIXME: Ideally I'd like this to work with streams, not byte arrays. In that case it just becomes the responsibility of this code to link up the file/socket streams
+ * FIXME: We want this to work with streams, not byte arrays. In that case it just becomes the responsibility of this code to link up the file/socket streams
  */
 
 public class NGResourceRequestHandler extends NGRequestHandler {
+
+	/**
+	 * The default path prefix for this request handler
+	 */
+	public static final String DEFAULT_PATH = "/wr/";
 
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {
@@ -44,6 +49,6 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	 * @return The resource path from the given URI
 	 */
 	private static String resourcePathFromURI( final String uri ) {
-		return uri.substring( "/wr/".length() );
+		return uri.substring( DEFAULT_PATH.length() );
 	}
 }

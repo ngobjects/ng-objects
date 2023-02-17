@@ -136,7 +136,7 @@ public class NGApplication {
 		// Then we add the "system route table"
 		final NGRouteTable systemRoutes = new NGRouteTable( "System routes" );
 		systemRoutes.map( NGComponentRequestHandler.DEFAULT_PATH, new NGComponentRequestHandler() );
-		systemRoutes.map( "/wr/", new NGResourceRequestHandler() );
+		systemRoutes.map( NGResourceRequestHandler.DEFAULT_PATH, new NGResourceRequestHandler() );
 		systemRoutes.map( "/wd/", new NGResourceRequestHandlerDynamic() );
 		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );

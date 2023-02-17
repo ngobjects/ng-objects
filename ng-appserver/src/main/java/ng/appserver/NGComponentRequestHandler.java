@@ -21,7 +21,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 	private static Logger logger = LoggerFactory.getLogger( NGComponentRequestHandler.class );
 
 	/**
-	 * The default path prefix for the component actions route
+	 * The default path prefix for this request handler
 	 */
 	public static String DEFAULT_PATH = "/wo/";
 
