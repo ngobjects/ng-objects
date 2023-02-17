@@ -17,25 +17,25 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {
-		final Optional<String> resourcePath = Optional.of( resourcePathFromURI( request.uri() ) );
+		final String resourcePath = resourcePathFromURI( request.uri() );
 
 		if( resourcePath.isEmpty() ) {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
 		// FIXME: We want this to work with streams, not byte arrays. In that case it just becomes the responsibility of this code to link up the file/socket streams // Hugi 2023-02-17
-		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourcePath.get() );
+		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourcePath );
 
-		// FIXME: How to handle this properly? User configurable? Just always a 404 // Hugi 2021-12-06
+		// FIXME: How to handle this properly? User configurable? Just always a 404? // Hugi 2021-12-06
 		if( resourceBytes.isEmpty() ) {
-			final NGResponse errorResponse = new NGResponse( "webserver resource '" + resourcePath.get() + "' does not exist", 404 );
+			final NGResponse errorResponse = new NGResponse( "webserver resource '" + resourcePath + "' does not exist", 404 );
 			errorResponse.setHeader( "content-type", "text/html" );
 			return errorResponse;
 		}
 
 		// Extract the name of the served resource to use in the filename header
-		final String resourceName = resourcePath.get().substring( resourcePath.get().lastIndexOf( "/" ) + 1 );
-		final String mimeType = NGMimeTypeDetector.mimeTypeForResourceName( resourcePath.get() );
+		final String resourceName = resourcePath.substring( resourcePath.lastIndexOf( "/" ) + 1 );
+		final String mimeType = NGMimeTypeDetector.mimeTypeForResourceName( resourcePath );
 
 		// FIXME: Detect and set the correct response headers, especially with regard to caching // Hugi 2023-02-17
 		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );
