@@ -51,16 +51,17 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 		final NGResponse response = new NGResponse();
 		response.setStatus( 200 );
 		response.setContentInputStream( resource.inputStream(), resource.length() );
-		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceID.get() ) );
+		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resource.filename() ) );
 		response.setHeader( "Content-Type", resource.mimeType() );
 		return response;
 	}
 
 	/**
-	 * FIXME: This could also benefit from a filename... // Hugi 2023-02-10
+	 * Represents a cached in-memory resource.
 	 */
 	public static record NGDynamicResource(
 			InputStream inputStream,
+			String filename,
 			String mimeType,
 			Long length ) {}
 }

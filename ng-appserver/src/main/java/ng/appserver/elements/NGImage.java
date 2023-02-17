@@ -117,7 +117,7 @@ public class NGImage extends NGDynamicElement {
 			final String mimeType = (String)_mimeTypeAssociation.valueInComponent( component );
 			byte[] bytes = (byte[])_dataAssociation.valueInComponent( component );
 			final String id = UUID.randomUUID().toString();
-			final NGDynamicResource resource = new NGDynamicResource( new ByteArrayInputStream( bytes ), mimeType, (long)bytes.length );
+			final NGDynamicResource resource = new NGDynamicResource( new ByteArrayInputStream( bytes ), id, mimeType, (long)bytes.length );
 			NGResourceRequestHandlerDynamic.push( id, resource );
 			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( id ).get();
 		}
@@ -128,7 +128,7 @@ public class NGImage extends NGDynamicElement {
 			long dataInputStreamLength = (long)_dataInputStreamLengthAssociation.valueInComponent( component );
 			final InputStream is = (InputStream)_dataInputStreamAssociation.valueInComponent( component );
 			final String id = UUID.randomUUID().toString();
-			final NGDynamicResource resource = new NGDynamicResource( is, mimeType, dataInputStreamLength );
+			final NGDynamicResource resource = new NGDynamicResource( is, id, mimeType, dataInputStreamLength );
 			NGResourceRequestHandlerDynamic.push( id, resource );
 			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( id ).get();
 		}
