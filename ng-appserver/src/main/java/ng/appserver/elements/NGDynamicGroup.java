@@ -43,7 +43,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 	}
 
 	protected void appendChildrenToResponse( NGResponse response, NGContext context ) {
-		if( _children != null ) { // See mention of nullyness in the declaration of _children
+		if( !_children.isEmpty() ) {
 			context.elementID().addBranch();
 
 			for( final NGElement child : children() ) {
@@ -63,7 +63,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 	private NGActionResults invokeChildrenAction( NGRequest request, NGContext context ) {
 		NGActionResults actionResults = null;
 
-		if( _children != null ) { // See mention of nullyness in the declaration of _children
+		if( !_children.isEmpty() ) {
 			context.elementID().addBranch();
 
 			final int count = _children.size();
@@ -86,7 +86,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 	}
 
 	private void takeChildrenValuesFromRequest( NGRequest request, NGContext context ) {
-		if( _children != null ) {
+		if( !_children.isEmpty() ) {
 			context.elementID().addBranch();
 
 			for( final NGElement child : children() ) {
