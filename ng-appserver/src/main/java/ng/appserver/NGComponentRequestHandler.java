@@ -34,7 +34,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// At this point the request's context is a freshly created one
 		final NGContext context = request.context();
 
-		// Just some saniyt checking for development
+		// Just some sanity checking for development
 		if( context == null ) {
 			throw new IllegalStateException( "The request's context is null. This should never happen" );
 		}
@@ -42,7 +42,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// We need to use the session to gain access to the page cache
 		final NGSession session = context.session();
 
-		// Just some saniyt checking for development
+		// Just some sanity checking for development
 		if( session == null ) {
 			throw new IllegalStateException( "The context's session is null. That should never happen" );
 		}
