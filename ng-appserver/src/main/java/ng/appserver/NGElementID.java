@@ -14,7 +14,8 @@ public class NGElementID {
 	private static final char COMPONENT_SEPARATOR = '.';
 
 	/**
-	 * The index of the component we're currently manipulating in components[]
+	 * The index of the component we're currently manipulating in components[].
+	 * This is effectively the length of the elementID -1
 	 */
 	private int index = -1;
 
@@ -36,6 +37,19 @@ public class NGElementID {
 
 	public void increment() {
 		components[index]++;
+	}
+
+	public static NGElementID fromString( final String elementIDString ) {
+		final NGElementID id = new NGElementID();
+		final String[] split = elementIDString.split( "\\." );
+
+		for( int i = 0; i < split.length; i++ ) {
+			id.components[i] = Integer.parseInt( split[i] );
+		}
+
+		id.index = split.length - 1;
+
+		return id;
 	}
 
 	@Override
@@ -65,7 +79,7 @@ public class NGElementID {
 	public boolean equals( Object obj ) {
 
 		if( obj instanceof NGElementID ng ) {
-			Arrays.equals( components, ng.components );
+			return Arrays.equals( components, ng.components ) && index == ng.index;
 		}
 
 		return false;
