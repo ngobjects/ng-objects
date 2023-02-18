@@ -368,7 +368,6 @@ public class NGApplication {
 			return _sessionClass().getConstructor().newInstance();
 		}
 		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
-			// FIXME: I can't just keep on throwing RuntimeException everywhere // Hugi 2023-02-05
 			throw new RuntimeException( e );
 		}
 	}
