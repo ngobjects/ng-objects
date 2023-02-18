@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,6 +18,9 @@ public class NGRequest extends NGMessage {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGRequest.class );
 
+	/**
+	 * Name of the cookie that stores our session ID on the client
+	 */
 	public static final String SESSION_ID_COOKIE_NAME = "ngsid";
 
 	/**
@@ -30,12 +34,12 @@ public class NGRequest extends NGMessage {
 	private String _method;
 
 	/**
-	 * The URI being acessed
+	 * The URI being accessed
 	 */
 	private String _uri;
 
 	/**
-	 * The URI being acessed, wrapped in a nice little API
+	 * The URI being accessed, wrapped in a nice little API
 	 */
 	private NGParsedURI _parsedURI;
 
@@ -54,6 +58,9 @@ public class NGRequest extends NGMessage {
 	 */
 	private String _sessionID;
 
+	/**
+	 * The request's session
+	 */
 	private NGSession _session;
 
 	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] contentBytes ) {
@@ -70,14 +77,19 @@ public class NGRequest extends NGMessage {
 		setContentBytes( contentBytes );
 	}
 
+	/**
+	 * @return The requests form values (query parameters)
+	 */
 	public Map<String, List<String>> formValues() {
 		return _formValues;
 	}
 
 	/**
+	 * Set the request's form values (query parameters)
+	 *
 	 * FIXME: Same goes for this as the cookieValues. The Map should be populated by the request object, not the adaptor // Hugi 2021-12-31
 	 */
-	public void _setFormValues( Map<String, List<String>> formValues ) {
+	public void _setFormValues( final Map<String, List<String>> formValues ) {
 		_formValues = formValues;
 	}
 
@@ -179,7 +191,15 @@ public class NGRequest extends NGMessage {
 	 * @return The values of the named cookie
 	 */
 	public List<String> cookieValuesForKey( final String key ) {
-		return cookieValues().get( key );
+		Objects.requireNonNull( key );
+
+		final List<String> cookieValues = cookieValues().get( key );
+
+		if( cookieValues == null ) {
+			return Collections.emptyList();
+		}
+
+		return cookieValues;
 	}
 
 	/**
@@ -187,12 +207,9 @@ public class NGRequest extends NGMessage {
 	 * @throws IllegalArgumentException If there are many cookies with the given key
 	 */
 	public String cookieValueForKey( final String key ) {
-		List<String> values = cookieValuesForKey( key );
+		Objects.requireNonNull( key );
 
-		// FIXME: Ugh... (vomit) // Hugi 2023-01-10
-		if( values == null ) {
-			return null;
-		}
+		final List<String> values = cookieValuesForKey( key );
 
 		if( values.size() == 0 ) {
 			return null;

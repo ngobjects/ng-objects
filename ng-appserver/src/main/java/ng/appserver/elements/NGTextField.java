@@ -32,10 +32,7 @@ public class NGTextField extends NGDynamicElement {
 
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
-		// FIXME: we should only grab values from the request if it's containing form is being submitted. We probably need to pass that info along from NGForm (or perhaps NGSubmitButton?)
-		// FIXME: In that case, we're going to want to push the field's value through the value binding
-
-		final List<String> valuesFromRequest = request.formValues().get( nameFromCurrentElementId( context ) ); // FIXME: Account for multiple values/no value
+		final List<String> valuesFromRequest = request.formValues().get( nameFromCurrentElementId( context ) );
 
 		if( valuesFromRequest != null ) { // FIXME: Should formValues return an empty list or null if not present? // Hugi 2022-06-08
 			String valueFromRequest = valuesFromRequest.get( 0 );
@@ -55,7 +52,7 @@ public class NGTextField extends NGDynamicElement {
 			name = nameFromCurrentElementId( context );
 		}
 
-		final String value = (String)_valueAssociation.valueInComponent( context.component() ); // FIXME: This value might need to be converted/formatted
+		final String value = (String)_valueAssociation.valueInComponent( context.component() );
 
 		final Map<String, String> attributes = new HashMap<>();
 
@@ -74,7 +71,7 @@ public class NGTextField extends NGDynamicElement {
 	}
 
 	/**
-	 * @return A unique name for this text field, based on the WOContext's elementId
+	 * @return A unique name for this text field, based on the NGContext's elementId
 	 */
 	private String nameFromCurrentElementId( final NGContext context ) {
 		return context.elementID().toString();

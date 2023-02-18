@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -8,8 +9,6 @@ import java.util.Optional;
 import ng.appserver.privates.NGParsedURI;
 
 /**
- * FIXME: This class still represents work in progress.
- *
  * Missing:
  * - cache keys
  * - cache timeout (tied to session perhaps?)
@@ -24,15 +23,14 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	 *
 	 * FIXME: This is currently just a regular HashMap, so we're storing resources indefinitely if they're never "popped" (i.e. read)
 	 */
-	private static Map<String, byte[]> _cacheMap = new HashMap<>();
+	private static Map<String, NGDynamicResource> _cacheMap = new HashMap<>();
 
-	// FIXME: Should we allow null resources in the cache?
-	public static void push( final String cacheKey, final byte[] data ) {
+	public static void push( final String cacheKey, final NGDynamicResource data ) {
 		Objects.requireNonNull( cacheKey );
 		_cacheMap.put( cacheKey, data );
 	}
 
-	public static byte[] pop( final String cacheKey ) {
+	public static NGDynamicResource pop( final String cacheKey ) {
 		return _cacheMap.remove( cacheKey );
 	}
 
@@ -44,20 +42,26 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
-		final byte[] resourceBytes = pop( resourceID.get() );
+		final NGDynamicResource resource = pop( resourceID.get() );
 
-		// FIXME: How to handle this properly? User configurable? Just always a 404
-		if( resourceBytes == null ) {
-			return new NGResponse( "Resource '" + resourceID.get() + "' does not exist", 404 );
+		if( resource == null ) {
+			return new NGResponse( "Dynamic resource '" + resourceID.get() + "' does not exist", 404 );
 		}
 
-		// FIXME: Get the correct resource type
-		final String mimeType = "image/jpeg";
-
-		// FIXME: Detect and set the correct response headers
-		final NGResponse response = new NGResponse( resourceBytes, 200 );
-		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceID.get() ) );
-		response.setHeader( "Content-Type", mimeType );
+		final NGResponse response = new NGResponse();
+		response.setStatus( 200 );
+		response.setContentInputStream( resource.inputStream(), resource.length() );
+		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resource.filename() ) );
+		response.setHeader( "Content-Type", resource.mimeType() );
 		return response;
 	}
+
+	/**
+	 * Represents a cached in-memory resource.
+	 */
+	public static record NGDynamicResource(
+			InputStream inputStream,
+			String filename,
+			String mimeType,
+			Long length ) {}
 }

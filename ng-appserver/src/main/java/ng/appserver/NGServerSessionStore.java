@@ -1,5 +1,6 @@
 package ng.appserver;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,9 @@ public class NGServerSessionStore extends NGSessionStore {
 		};
 
 		final Timer timer = new Timer( "SessionReaper", true );
-		timer.schedule( sessionReaperTask, 5000, 5000 ); // FIXME: execution times might need to be tuned a little // Hugi 2023-01-21
+		final long timeBeforeFirstExecution = Duration.ofSeconds( 5 ).toMillis();
+		final long timeBetweenExecutions = Duration.ofSeconds( 5 ).toMillis();
+		timer.schedule( sessionReaperTask, timeBeforeFirstExecution, timeBetweenExecutions ); // FIXME: These execution times need further consideration // Hugi 2023-01-21
 	}
 
 	@Override

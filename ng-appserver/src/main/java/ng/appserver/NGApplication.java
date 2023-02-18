@@ -37,15 +37,11 @@ public class NGApplication {
 
 	/**
 	 * The application's properties
-	 *
-	 * FIXME: While having properties is useful, we should be wondering if they should be public or only for internal use // Hugi 2022-10-22
 	 */
 	private NGProperties _properties;
 
 	/**
 	 * Session storage and coordination
-	 *
-	 * FIXME: A question of if this is a part of the application. In the case of stateful actions, it's likely that it'll have to be // Hugi 2022-10-22
 	 */
 	private NGSessionStore _sessionStore;
 
@@ -140,17 +136,13 @@ public class NGApplication {
 		// Then we add the "system route table"
 		final NGRouteTable systemRoutes = new NGRouteTable( "System routes" );
 		systemRoutes.map( NGComponentRequestHandler.DEFAULT_PATH, new NGComponentRequestHandler() );
-		systemRoutes.map( "/wr/", new NGResourceRequestHandler() );
+		systemRoutes.map( NGResourceRequestHandler.DEFAULT_PATH, new NGResourceRequestHandler() );
 		systemRoutes.map( "/wd/", new NGResourceRequestHandlerDynamic() );
 		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
 		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
 			final NGResponse response = new NGResponse( "<p>Session cookie reset</p><p><a href=\"/\">Re-enter</a></p>", 200 );
-			final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, "ded" );
-			sessionCookie.setMaxAge( 0 );
-			sessionCookie.setPath( "/" );
-			//				sessionCookie.setDomain( sessionID ) // FIXME: Implement
-			response.addCookie( sessionCookie );
+			response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
 			return response;
 		} );
 		_routeTables.add( systemRoutes );
@@ -223,7 +215,7 @@ public class NGApplication {
 			final NGRequestHandler handler = routeTable.handlerForURL( url );
 
 			if( handler != null ) {
-				logger.info( "Matched URL '{}' with route '{}' from table '{}'", url, "[untitled]", routeTable.name() ); // FIXME: Missing route name instead of [untitled] // Hugi 2022-11-27
+				logger.debug( "Matched URL '{}' with route '{}' from table '{}'", url, "[untitled]", routeTable.name() ); // FIXME: Missing route name instead of [untitled] // Hugi 2022-11-27
 				return handler;
 			}
 		}
@@ -298,10 +290,6 @@ public class NGApplication {
 		return _sessionStore;
 	}
 
-	public NGSession restoreSessionWithID( final String sessionID ) {
-		return sessionStore().checkoutSessionWithID( sessionID );
-	}
-
 	public NGResponse dispatchRequest( final NGRequest request ) {
 
 		try {
@@ -331,31 +319,36 @@ public class NGApplication {
 			final String sessionID = request._sessionID();
 
 			if( sessionID != null ) {
-				if( request.existingSession() != null ) { // FIXME: Yuck // Hugi 2023-01-11
-					final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
-					sessionCookie.setMaxAge( (int)request.existingSession().timeOut().toSeconds() ); // FIXME: Optimally, we wouldn't access the session object just to get the timeout value // Hugi 2023-01-11
-					sessionCookie.setPath( "/" ); // FIXME: We probably want this to be configurable // Hugi 2023-02-06
-					// sessionCookie.setDomain( sessionID ) // FIXME: Implement // Hugi 2023-01-11
-					// sessionCookie.setSameSite( "Strict" ) // FIXME: Add once we have Servlet API 6 // Hugi 2023-02-06
-					// sessionCookie.setSecure( ... ) // FIXME: We also might want this to be configurable... Sending session cookies over HTTP isn't exactly brilliant in a production setting // Hugi 2023-02-06
-					response.addCookie( sessionCookie );
+				if( request.existingSession() != null ) { // FIXME: existingSession() isn't really a reliable way to get the session (at least not yet)  // Hugi 2023-01-11
+					response.addCookie( createSessionCookie( sessionID, (int)request.existingSession().timeOut().toSeconds() ) );
 				}
 			}
 
 			return response;
 		}
 		catch( NGSessionRestorationException e ) {
-			// FIXME: Some debugging logic for good measure // Hugi 2023-01-11
-			System.out.println( "====== START Session restoration error location =====" );
-			e.printStackTrace(); // FIXME
-			System.out.println( "====== END Session restoration error location =====" );
+			// FIXME: We should probably be invoking handleException() here
 			return handleSessionRestorationException( e ).generateResponse();
+		}
+		catch( NGPageRestorationException e ) {
+			// FIXME: We should probably be invoking handleException() here
+			return handlePageRestorationException( e ).generateResponse();
 		}
 		catch( Throwable throwable ) {
 			// FIXME: Generate a uniqueID for the exception that occurred and show it to the user (for tracing/debugging) // Hugi 2022-10-13
 			handleException( throwable );
 			return exceptionResponse( throwable, request.context() ).generateResponse();
 		}
+	}
+
+	private static NGCookie createSessionCookie( final String sessionID, final int maxAge ) {
+		final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
+		sessionCookie.setMaxAge( maxAge );
+		sessionCookie.setPath( "/" ); // FIXME: We probably want this to be configurable // Hugi 2023-02-06
+		// sessionCookie.setDomain( sessionID ) // FIXME: Implement // Hugi 2023-01-11
+		// sessionCookie.setSameSite( "Strict" ) // FIXME: Add once we have Servlet API 6 // Hugi 2023-02-06
+		// sessionCookie.setSecure( ... ) // FIXME: We also might want this to be configurable... Sending session cookies over HTTP isn't exactly brilliant in a production setting // Hugi 2023-02-06
+		return sessionCookie;
 	}
 
 	/**
@@ -392,6 +385,16 @@ public class NGApplication {
 		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context withing a dead session feels weird // Hugi 2023-01-11
 		nextPage.setException( exception );
 		return nextPage;
+	}
+
+	/**
+	 * If the application fails to restore a page from the session's page cache during component action request handling,
+	 * (usually because the page cache has been exhausted, and the page pushed out of the cache), this method will be invoked and it's response returned to the user.
+	 *
+	 * FIXME: Create a nicer response for this // Hugi 2023-02-10
+	 */
+	protected NGActionResults handlePageRestorationException( final NGPageRestorationException exception ) {
+		return new NGResponse( exception.getMessage(), 404 );
 	}
 
 	/**
@@ -532,7 +535,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * @return The componentDefinition corresponding to the given WOComponent class.
+	 * @return The componentDefinition corresponding to the given NGComponent class.
 	 *
 	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
 	 * FIXME: This should not be static, belongs in an instance of a different class.
@@ -545,7 +548,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * @return The componentDefinition corresponding to the named WOComponent
+	 * @return The componentDefinition corresponding to the named NGComponent
 	 *
 	 * FIXME: Languages aren't supported either yet, but I'm including the parameter while I consider what to do about it.
 	 * FIXME: This should not be static, belongs in an instance of a different class.

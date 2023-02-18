@@ -2,9 +2,6 @@ package ng.appserver;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.elements.docs.NGDynamicElementDescription;
 
 /**
@@ -15,17 +12,13 @@ import ng.appserver.elements.docs.NGDynamicElementDescription;
 
 public abstract class NGDynamicElement implements NGElement {
 
-	private static final Logger logger = LoggerFactory.getLogger( NGDynamicElement.class );
-
 	/**
 	 * The constructor all dynamic elements must use. In the case of this class, it's a no-op so for sanity, we ensure we're always passing in null for all arguments
 	 */
 	public NGDynamicElement( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 
 		if( name != null || associations != null || contentTemplate != null ) {
-			logger.warn( getClass().getSimpleName() + ": [name], [associations] or [template] was not null. This constructor should only be invoked with null parameters" );
-			// FIXME: Since this is a weird state, we should probably be throwing here instead of logging. Babysteps. // Hugi 2022-07-09
-			// throw new IllegalArgumentException( "name, associations or template was not null. This constructor should only be invoked with null parameters" );
+			throw new IllegalArgumentException( getClass().getSimpleName() + ": [name], [associations] or [template] was not null. This constructor should only be invoked with null parameters" );
 		}
 	}
 

@@ -34,8 +34,6 @@ public class NGDirectAction {
 
 	/**
 	 * Invokes the method with the given name + "Action" and returns the result.
-	 *
-	 * FIXME: Error handling needs to be properly inspected here // Hugi 2021-12-31
 	 */
 	public NGActionResults performActionNamed( final String directActionName ) {
 		try {

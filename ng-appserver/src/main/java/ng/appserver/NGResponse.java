@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * FIXME: Need to decide what to do about responses of different types. // Hugi 2022-06-05
+ * FIXME: Need to decide what to do about responses of different types.
  * Is a string response the same type as a binary response or a streaming response, or should these have different implementations
  * Are responses even mutable? A mutable response should possibly have a different design or a builder
+ * // Hugi 2022-06-05
  */
 
 public class NGResponse extends NGMessage implements NGActionResults {
@@ -71,20 +72,17 @@ public class NGResponse extends NGMessage implements NGActionResults {
 		_cookies.add( cookie );
 	}
 
+	public void setContentInputStream( final InputStream inputStream, final long contentInputStreamLength ) {
+		_contentInputStream = inputStream;
+		_contentInputStreamLength = contentInputStreamLength;
+	}
+
 	public InputStream contentInputStream() {
 		return _contentInputStream;
 	}
 
-	public void setContentInputStream( InputStream value ) {
-		_contentInputStream = value;
-	}
-
 	public long contentInputStreamLength() {
 		return _contentInputStreamLength;
-	}
-
-	public void setContentInputStreamLength( long value ) {
-		_contentInputStreamLength = value;
 	}
 
 	@Override

@@ -120,6 +120,24 @@ public abstract class NGMessage {
 		return _contentBytes.toByteArray();
 	}
 
+	/**
+	 * @return The length of the message's data content
+	 *
+	 * FIXME: Not sure if we want this here. Currently only for performance while setting the content-length header. // Hugi 2023-02-17
+	 */
+	public long contentBytesLength() {
+		return _contentBytes.size();
+	}
+
+	/**
+	 * @return The response's content stream
+	 *
+	 * FIXME: Not sure I want this as public API, but it prevents the adaptor from having to do a copy of the stream's byte array // Hugi 2023-02-17
+	 */
+	public ByteArrayOutputStream contentBytestream() {
+		return _contentBytes;
+	}
+
 	public void setContentBytes( final byte[] contentBytes ) {
 		_contentBytes = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
 		appendContentBytes( contentBytes );

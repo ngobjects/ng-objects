@@ -22,6 +22,7 @@ public class Test_NGUtilities {
 		assertFalse( _NGUtilities.isTruthy( 0 ) );
 		assertTrue( _NGUtilities.isTruthy( 0.1 ) );
 		assertTrue( _NGUtilities.isTruthy( 2 ) );
+		assertTrue( _NGUtilities.isTruthy( Double.NaN ) );
 
 		assertFalse( _NGUtilities.isTruthy( BigDecimal.ZERO ) );
 		assertTrue( _NGUtilities.isTruthy( new BigDecimal( "2.5" ) ) );
