@@ -44,7 +44,7 @@ public class NGContext {
 	 *
 	 * FIXME: We should replace this with (or have an alternative) an NGElementID, to prevent constantly invoking NElementID.toString() in invokeAction() (when checking if the current element is the sender element) // Hugi 2023-02-09
 	 */
-	private String _senderID;
+	private NGElementID _senderID;
 
 	/**
 	 * Indicates the the context is currently rendering something nested inside a form element.
@@ -70,7 +70,7 @@ public class NGContext {
 			_originatingContextID = componentPart.substring( 0, firstPeriodIndex );
 
 			// The sending element ID consists of everything after the first period.
-			_senderID = componentPart.substring( firstPeriodIndex + 1 );
+			_senderID = NGElementID.fromString( componentPart.substring( firstPeriodIndex + 1 ) );
 		}
 	}
 
@@ -167,7 +167,7 @@ public class NGContext {
 	/**
 	 * @return ID of the element being targeted by a component action
 	 */
-	public String senderID() {
+	public NGElementID senderID() {
 		return _senderID;
 	}
 
@@ -175,7 +175,7 @@ public class NGContext {
 	 * @return True if the current element is the sender
 	 */
 	public boolean currentElementIsSender() {
-		return elementID().toString().equals( senderID() );
+		return elementID().equals( senderID() );
 	}
 
 	/**
