@@ -126,8 +126,6 @@ public class NGContext {
 
 	/**
 	 * Set the page currently being rendered by this context.
-	 *
-	 * FIXME: Can't we just assume that if we're setting the page, we're also setting the current component? Or should we always be explicit about that? // Hugi 2023-01-07
 	 */
 	public void setPage( NGComponent value ) {
 		_page = value;
