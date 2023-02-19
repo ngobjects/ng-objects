@@ -26,8 +26,6 @@ public class NGContext {
 
 	/**
 	 * ID of the element currently being rendered by the context.
-	 *
-	 * FIXME: Rename to currentElementID?  // Hugi 2022-06-06
 	 */
 	private NGElementID _currentElementID;
 
@@ -103,8 +101,6 @@ public class NGContext {
 
 	/**
 	 * @return The component currently being rendered in this context
-	 *
-	 * FIXME: Initially called component(). to reflect the WO naming. Perhaps better called currentComponent() to reflect it's use better?
 	 */
 	public NGComponent component() {
 		return _currentComponent;
@@ -113,7 +109,7 @@ public class NGContext {
 	/**
 	 * Set the component currently being rendered in this context
 	 */
-	public void setCurrentComponent( final NGComponent component ) {
+	public void setComponent( final NGComponent component ) {
 		_currentComponent = component;
 	}
 

@@ -222,7 +222,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		logger.debug( "Invoked {}.generateResponse()", getClass() );
 
 		context().setPage( this );
-		context().setCurrentComponent( this );
+		context().setComponent( this );
 
 		final NGResponse response = new NGResponse();
 		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding

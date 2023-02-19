@@ -23,9 +23,9 @@ public class NGComponentContent extends NGDynamicElement {
 
 		// FIXME: We also need to append the content of the component itself
 		if( component.contentElement() != null ) {
-			context.setCurrentComponent( component.parent() );
+			context.setComponent( component.parent() );
 			component.contentElement().appendToResponse( response, context );
-			context.setCurrentComponent( component );
+			context.setComponent( component );
 		}
 	}
 
@@ -34,9 +34,9 @@ public class NGComponentContent extends NGDynamicElement {
 		final NGComponent component = context.component();
 
 		if( component.contentElement() != null ) {
-			context.setCurrentComponent( component.parent() );
+			context.setComponent( component.parent() );
 			component.contentElement().takeValuesFromRequest( request, context );
-			context.setCurrentComponent( component );
+			context.setComponent( component );
 		}
 	}
 
@@ -47,9 +47,9 @@ public class NGComponentContent extends NGDynamicElement {
 		final NGComponent component = context.component();
 
 		if( component.contentElement() != null ) {
-			context.setCurrentComponent( component.parent() );
+			context.setComponent( component.parent() );
 			actionResults = component.contentElement().invokeAction( request, context );
-			context.setCurrentComponent( component );
+			context.setComponent( component );
 		}
 
 		return actionResults;

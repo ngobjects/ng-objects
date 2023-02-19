@@ -62,7 +62,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 
 		// Push the page in the context
 		context.setPage( originalPage );
-		context.setCurrentComponent( originalPage );
+		context.setComponent( originalPage );
 		context.page().awakeInContext( request.context() );
 
 		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", context._originatingContextID(), originalPage );
