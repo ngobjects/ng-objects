@@ -1,6 +1,7 @@
 package ng.appserver.elements.docs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -39,10 +40,10 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 	public static NGDynamicElementDescription NoDescription = new NGDynamicElementDescription( null, null, null, null );
 
 	/**
-	 * FIXME: We should be using Collections.emptyList() but KVC has a problem with it. Look into later // Hugi 2022-10-13
+	 * Represents missing documentation for an element. "Documentation forthcoming" added to poke the PTSD of veteran WO developers.
 	 */
 	public static NGDynamicElementDescription createEmptyDescription( Class<? extends NGDynamicElement> elementClass ) {
-		return new NGDynamicElementDescription( elementClass, new ArrayList<>(), new ArrayList<>(), "Documentation forthcoming" );
+		return new NGDynamicElementDescription( elementClass, Collections.emptyList(), Collections.emptyList(), "Documentation forthcoming" );
 	}
 
 	/**
