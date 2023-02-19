@@ -43,7 +43,7 @@ public class NGConditional extends NGDynamicGroup {
 		if( _negateAssociation != null ) {
 			final Boolean negate = (Boolean)_negateAssociation.valueInComponent( context.component() );
 
-			if( negate == true ) {
+			if( negate ) {
 				conditionAsBoolean = !conditionAsBoolean;
 			}
 		}
