@@ -29,7 +29,7 @@ public class NGContext {
 	 *
 	 * FIXME: Rename to currentElementID?  // Hugi 2022-06-06
 	 */
-	private NGElementID _elementID;
+	private NGElementID _currentElementID;
 
 	/**
 	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
@@ -52,7 +52,7 @@ public class NGContext {
 		_request = request;
 		request.setContext( this );
 
-		_elementID = new NGElementID();
+		_currentElementID = new NGElementID();
 
 		// FIXME: This is not exactly a beautiful way to check if we're handling a component request // Hugi 2023-01-22
 		if( request.uri().startsWith( NGComponentRequestHandler.DEFAULT_PATH ) ) {
@@ -157,7 +157,7 @@ public class NGContext {
 	 * @return ID of the element currently being rendered by the context.
 	 */
 	public NGElementID elementID() {
-		return _elementID;
+		return _currentElementID;
 	}
 
 	/**
@@ -197,6 +197,6 @@ public class NGContext {
 
 	@Override
 	public String toString() {
-		return "NGContext [_request=" + _request + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
+		return "NGContext [_request=" + _request + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _currentElementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
 	}
 }
