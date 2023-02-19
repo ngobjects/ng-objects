@@ -33,8 +33,6 @@ public class NGContext {
 
 	/**
 	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
-	 *
-	 * FIXME: This can probably be removed from here and just moved to NGComponentRequestHandler
 	 */
 	private String _originatingContextID;
 
