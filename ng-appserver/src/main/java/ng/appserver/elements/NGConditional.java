@@ -2,10 +2,12 @@ package ng.appserver.elements;
 
 import java.util.Map;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
+import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates._NGUtilities;
 
@@ -36,7 +38,32 @@ public class NGConditional extends NGDynamicGroup {
 	}
 
 	@Override
+	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
+		if( conditionInContext( context ) ) {
+			super.takeValuesFromRequest( request, context );
+		}
+	}
+
+	@Override
+	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+		if( conditionInContext( context ) ) {
+			return super.invokeAction( request, context );
+		}
+
+		return null;
+	}
+
+	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+		if( conditionInContext( context ) ) {
+			appendChildrenToResponse( response, context );
+		}
+	}
+
+	/**
+	 * @return The value our condition evaluates to
+	 */
+	private Boolean conditionInContext( NGContext context ) {
 		final Object condition = _conditionAssociation.valueInComponent( context.component() );
 		Boolean conditionAsBoolean = _NGUtilities.isTruthy( condition );
 
@@ -48,8 +75,6 @@ public class NGConditional extends NGDynamicGroup {
 			}
 		}
 
-		if( conditionAsBoolean ) {
-			appendChildrenToResponse( response, context );
-		}
+		return conditionAsBoolean;
 	}
 }
