@@ -50,6 +50,7 @@ public class NGContext {
 		_request = request;
 		request.setContext( this );
 
+		// CHECKME: We only need an elementID if we're going to be rendering a component, so theoretically, this could be initialized lazily
 		_currentElementID = new NGElementID();
 
 		// FIXME: This is not exactly a beautiful way to check if we're handling a component request
