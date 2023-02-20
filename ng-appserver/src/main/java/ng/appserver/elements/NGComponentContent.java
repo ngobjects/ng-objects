@@ -21,7 +21,6 @@ public class NGComponentContent extends NGDynamicElement {
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		final NGComponent component = context.component();
 
-		// FIXME: We also need to append the content of the component itself
 		if( component.contentElement() != null ) {
 			context.setComponent( component.parent() );
 			component.contentElement().appendToResponse( response, context );
