@@ -52,7 +52,9 @@ public class NGContext {
 
 		_currentElementID = new NGElementID();
 
-		// FIXME: This is not exactly a beautiful way to check if we're handling a component request // Hugi 2023-01-22
+		// FIXME: This is not exactly a beautiful way to check if we're handling a component request
+		// This code probably belongs in the NGComponentRequestHandler
+		// Hugi 2023-01-22
 		if( request.uri().startsWith( NGComponentRequestHandler.DEFAULT_PATH ) ) {
 			// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
 			final String componentPart = request.parsedURI().getString( 1 );
