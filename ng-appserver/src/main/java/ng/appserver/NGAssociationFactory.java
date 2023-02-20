@@ -20,7 +20,8 @@ public class NGAssociationFactory {
 	}
 
 	/**
-	 * FIXME: This represents a keypath that contains an operator (@). We currently don't use that type of keypaths (I don't think they're a good idea) but I'm keeping the functionality around for a bit.
+	 * This represents a keypath that contains an operator (@).
+	 * Our KVC implementation currently does not support operators but I'm keeping the functionality around for a bit while I mull this over
 	 */
 	private static boolean keyPathIsReadOnly( String keyPath ) {
 		return keyPath.startsWith( "@" ) || keyPath.indexOf( ".@" ) > 0;
