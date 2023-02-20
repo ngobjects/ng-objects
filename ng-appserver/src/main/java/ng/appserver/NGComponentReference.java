@@ -70,14 +70,14 @@ public class NGComponentReference extends NGDynamicElement {
 		newComponentInstance.pullBindingValuesfromParent();
 
 		// Set the component in the context
-		context.setCurrentComponent( newComponentInstance );
+		context.setComponent( newComponentInstance );
 	}
 
 	/**
 	 * Return control to the previous component
 	 */
 	private void afterComponent( final NGContext context ) {
-		context.setCurrentComponent( context.component().parent() );
+		context.setComponent( context.component().parent() );
 		//		context.component().pushBindingValuesToParent(); // FIXME: We need to look into the null associations map on NGComponent before implementing this (would prefer to use an empty map instead) // Hugi 2023-02-08
 	}
 

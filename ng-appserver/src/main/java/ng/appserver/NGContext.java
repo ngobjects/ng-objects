@@ -30,25 +30,19 @@ public class NGContext {
 
 	/**
 	 * ID of the element currently being rendered by the context.
-	 *
-	 * FIXME: Rename to currentElementID?  // Hugi 2022-06-06
 	 */
-	private NGElementID _elementID;
+	private NGElementID _currentElementID;
 
 	/**
 	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
-	 *
-	 * FIXME: This can probably be removed from here and just moved to NGComponentRequestHandler
 	 */
-	private String _originatingContextID;
+	private final String _originatingContextID;
 
 	/**
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
 	 * Used in combination with _requestContextID to find the proper action to initiate.
-	 *
-	 * FIXME: We should replace this with (or have an alternative) an NGElementID, to prevent constantly invoking NElementID.toString() in invokeAction() (when checking if the current element is the sender element) // Hugi 2023-02-09
 	 */
-	private String _senderID;
+	private final NGElementID _senderID;
 
 	/**
 	 * Indicates the the context is currently rendering something nested inside a form element.
@@ -60,9 +54,12 @@ public class NGContext {
 		_request = request;
 		request.setContext( this );
 
-		_elementID = new NGElementID();
+		// CHECKME: We only need an elementID if we're going to be rendering a component, so theoretically, this could be initialized lazily
+		_currentElementID = new NGElementID();
 
-		// FIXME: This is not exactly a beautiful way to check if we're handling a component request // Hugi 2023-01-22
+		// FIXME: This is not exactly a beautiful way to check if we're handling a component request
+		// This code probably belongs in the NGComponentRequestHandler
+		// Hugi 2023-01-22
 		if( request.uri().startsWith( NGComponentRequestHandler.DEFAULT_PATH ) ) {
 			// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
 			final String componentPart = request.parsedURI().getString( 1 );
@@ -74,7 +71,12 @@ public class NGContext {
 			_originatingContextID = componentPart.substring( 0, firstPeriodIndex );
 
 			// The sending element ID consists of everything after the first period.
-			_senderID = componentPart.substring( firstPeriodIndex + 1 );
+			_senderID = NGElementID.fromString( componentPart.substring( firstPeriodIndex + 1 ) );
+		}
+		else {
+			// These are just here to fulfill the final declaration of _originatingContextID and _senderID
+			_originatingContextID = null;
+			_senderID = null;
 		}
 	}
 
@@ -111,8 +113,6 @@ public class NGContext {
 
 	/**
 	 * @return The component currently being rendered in this context
-	 *
-	 * FIXME: Initially called component(). to reflect the WO naming. Perhaps better called currentComponent() to reflect it's use better?
 	 */
 	public NGComponent component() {
 		return _currentComponent;
@@ -121,7 +121,7 @@ public class NGContext {
 	/**
 	 * Set the component currently being rendered in this context
 	 */
-	public void setCurrentComponent( final NGComponent component ) {
+	public void setComponent( final NGComponent component ) {
 		_currentComponent = component;
 	}
 
@@ -134,8 +134,6 @@ public class NGContext {
 
 	/**
 	 * Set the page currently being rendered by this context.
-	 *
-	 * FIXME: Can't we just assume that if we're setting the page, we're also setting the current component? Or should we always be explicit about that? // Hugi 2023-01-07
 	 */
 	public void setPage( NGComponent value ) {
 		_page = value;
@@ -165,13 +163,13 @@ public class NGContext {
 	 * @return ID of the element currently being rendered by the context.
 	 */
 	public NGElementID elementID() {
-		return _elementID;
+		return _currentElementID;
 	}
 
 	/**
 	 * @return ID of the element being targeted by a component action
 	 */
-	public String senderID() {
+	public NGElementID senderID() {
 		return _senderID;
 	}
 
@@ -179,7 +177,7 @@ public class NGContext {
 	 * @return True if the current element is the sender
 	 */
 	public boolean currentElementIsSender() {
-		return elementID().toString().equals( senderID() );
+		return elementID().equals( senderID() );
 	}
 
 	/**
@@ -205,6 +203,6 @@ public class NGContext {
 
 	@Override
 	public String toString() {
-		return "NGContext [_request=" + _request + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
+		return "NGContext [_request=" + _request + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _currentElementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
 	}
 }

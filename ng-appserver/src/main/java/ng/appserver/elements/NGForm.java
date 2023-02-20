@@ -43,7 +43,7 @@ public class NGForm extends NGDynamicGroup {
 
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
-		if( context.elementID().toString().equals( context.senderID() ) ) {
+		if( context.currentElementIsSender() ) {
 
 			// We only invoke the action association if the action binding is actually bound.
 			// This is because the form might contain several submit buttons, in which case the actual action to invoke is the action of the button pressed.

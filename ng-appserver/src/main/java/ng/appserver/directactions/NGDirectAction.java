@@ -28,6 +28,13 @@ public class NGDirectAction {
 		return _request;
 	}
 
+	/**
+	 * The action invoked if no direct action name is specified
+	 */
+	public NGActionResults defaultAction() {
+		return new NGResponse();
+	}
+
 	public <E extends NGComponent> E pageWithName( final Class<E> componentClass ) {
 		return NGApplication.application().pageWithName( componentClass, context() );
 	}

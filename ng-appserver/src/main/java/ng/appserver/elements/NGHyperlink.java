@@ -47,7 +47,7 @@ public class NGHyperlink extends NGDynamicGroup {
 
 		String href = null;
 
-		// An href-binding gest passed directly to the link.
+		// An href-binding gets passed directly to the link.
 		// FIXME: honestly, it should just be passed along with any other plain-vanilla binding, since it doesn't get any special treatment // Hugi 2023-02-05
 		if( _hrefAssociation != null ) {
 			href = (String)_hrefAssociation.valueInComponent( context.component() );
@@ -95,9 +95,6 @@ public class NGHyperlink extends NGDynamicGroup {
 				return result;
 			}
 
-			/**
-			 * FIXME: This isn't quite there yet // Hugi 2022-06-09
-			 */
 			if( _pageNameAssociation != null ) {
 				final String pageName = (String)_pageNameAssociation.valueInComponent( context.component() );
 				NGComponent actionResults = NGApplication.application().pageWithName( pageName, context );

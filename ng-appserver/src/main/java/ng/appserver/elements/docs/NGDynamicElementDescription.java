@@ -1,6 +1,7 @@
 package ng.appserver.elements.docs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -39,10 +40,10 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 	public static NGDynamicElementDescription NoDescription = new NGDynamicElementDescription( null, null, null, null );
 
 	/**
-	 * FIXME: We should be using Collections.emptyList() but KVC has a problem with it. Look into later // Hugi 2022-10-13
+	 * Represents missing documentation for an element. "Documentation forthcoming" added to poke the PTSD of veteran WO developers.
 	 */
 	public static NGDynamicElementDescription createEmptyDescription( Class<? extends NGDynamicElement> elementClass ) {
-		return new NGDynamicElementDescription( elementClass, new ArrayList<>(), new ArrayList<>(), "Documentation forthcoming" );
+		return new NGDynamicElementDescription( elementClass, Collections.emptyList(), Collections.emptyList(), "Documentation forthcoming" );
 	}
 
 	/**
@@ -118,7 +119,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 				List.of( "str" ),
 				List.of(
 						new NGBindingDescription( "value", Object.class, "The value to display. If not a string, toString() will be invoked on th object to render it" ),
-						new NGBindingDescription( "escapeHTML", Object.class, "Indicates if you want to convert reserved HTML characters to entity values for display (currently &lt; and &gt;). Defaults to true" ), // FIXME: Update docs when we've figured out other elements to escape
+						new NGBindingDescription( "escapeHTML", Object.class, "Indicates if you want to escape reserved HTML characters to entity values (&lt;, &gt;, single quote and double quote). Defaults to true" ),
 						new NGBindingDescription( "valueWhenEmpty", Object.class, "The value to display if [value] is null or empty (zero length string)" ) ),
 				"Renders to a string in a template. If anything other than a string gets passed to [value] it, toString() will be invoked on it to render it." ) );
 

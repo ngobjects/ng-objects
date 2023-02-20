@@ -22,6 +22,10 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	 * Storage of dynamic data.
 	 *
 	 * FIXME: This is currently just a regular HashMap, so we're storing resources indefinitely if they're never "popped" (i.e. read)
+	 * We're going to have to think about how best to approach a solution to this problem, since different resources might need different cache "scopes".
+	 * At first thought a request/context scoped cache sounds like a sensible default.
+	 * Other scopes could be session/application wide. Or custom? Hmm.
+	 * // Hugi 2023-02-17
 	 */
 	private static Map<String, NGDynamicResource> _cacheMap = new HashMap<>();
 

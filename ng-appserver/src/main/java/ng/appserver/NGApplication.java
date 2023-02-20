@@ -368,7 +368,6 @@ public class NGApplication {
 			return _sessionClass().getConstructor().newInstance();
 		}
 		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
-			// FIXME: I can't just keep on throwing RuntimeException everywhere // Hugi 2023-02-05
 			throw new RuntimeException( e );
 		}
 	}
@@ -377,8 +376,6 @@ public class NGApplication {
 	 * If the application fails to restore a session during request handling, this method will be invoked to generate a response for the user
 	 *
 	 * @return The page to return to the user when a session restoration error occurs.
-	 *
-	 * FIXME: Should this maybe just be an optional branch in the generic exception handling? // Hugi 2023-01-11
 	 */
 	protected NGActionResults handleSessionRestorationException( final NGSessionRestorationException exception ) {
 		//		return new NGResponse( "Session expired", 200 ); // FIXME: A raw, non-component baesed error might still be a good idea? // Hugi 2023-01-11

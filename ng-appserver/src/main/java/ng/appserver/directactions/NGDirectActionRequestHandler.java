@@ -27,10 +27,10 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 			return new NGResponse( "No direct action class name specified", 404 );
 		}
 
-		final Optional<String> directActionMethodName = parsedURI.getStringOptional( 2 );
+		Optional<String> directActionMethodName = parsedURI.getStringOptional( 2 );
 
 		if( directActionMethodName.isEmpty() ) {
-			return new NGResponse( "No direct action method name specified", 404 );
+			directActionMethodName = Optional.of( "default" );
 		}
 
 		try {

@@ -30,4 +30,10 @@ public class TestNGElementID {
 		elementID.removeBranch();
 		assertEquals( "0.1", elementID.toString() );
 	}
+
+	@Test
+	public void testFromString() {
+		assertEquals( NGElementID.fromString( "0.3.4" ).toString(), "0.3.4" );
+		//		assertEquals( NGElementID.fromString( "" ), "" );
+	}
 }

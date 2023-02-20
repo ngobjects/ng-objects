@@ -222,7 +222,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		logger.debug( "Invoked {}.generateResponse()", getClass() );
 
 		context().setPage( this );
-		context().setCurrentComponent( this );
+		context().setComponent( this );
 
 		// FIXME: Wwe should only be constructing an AjaxResponse if the request is an AjaxRequest
 		final NGResponse response = new NGAjaxResponse( context() );
