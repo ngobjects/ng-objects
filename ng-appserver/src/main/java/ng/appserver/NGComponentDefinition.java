@@ -3,10 +3,10 @@ package ng.appserver;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class NGComponentDefinition {
 	/**
 	 * FIXME: This is a temporary component definition cache, just to get us started // Hugi 2022-10-19
 	 */
-	private static Map<String, NGComponentDefinition> _componentDefinitionCache = new HashMap<>();
+	private static Map<String, NGComponentDefinition> _componentDefinitionCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Stores the parsed template if caching is enabled
