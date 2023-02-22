@@ -47,8 +47,6 @@ public class NGApplication {
 
 	/**
 	 * Resource loading, caching and management
-	 *
-	 * FIXME: A question of if this is a part of the application or if resource loading is a separate "thing" // Hugi 2022-10-22
 	 */
 	private NGResourceManager _resourceManager;
 
