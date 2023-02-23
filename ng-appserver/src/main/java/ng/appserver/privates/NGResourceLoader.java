@@ -193,14 +193,9 @@ public class NGResourceLoader {
 			logger.debug( "Reading resource {} ", resourcePath );
 
 			try {
-				final byte[] bytes = Files.readAllBytes( _basePath.resolve( resourcePath ) );
-
-				if( bytes == null ) {
-					return Optional.empty();
-				}
-
-				//				return Optional.of( bytes );
-				throw new RuntimeException( "Not implemented" );
+				// The path to the actual file on disk
+				final Path filePath = _basePath.resolve( resourcePath );
+				return Optional.of( Files.newInputStream( filePath ) );
 			}
 			catch( IOException e1 ) {
 				throw new RuntimeException( e1 );
