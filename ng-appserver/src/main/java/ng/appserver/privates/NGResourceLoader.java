@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,17 +193,33 @@ public class NGResourceLoader {
 			logger.debug( "Reading resource {} ", resourcePath );
 
 			try {
-				final byte[] bytes = Files.readAllBytes( _basePath.resolve( resourcePath ) );
-
-				if( bytes == null ) {
-					return Optional.empty();
-				}
-
-				//				return Optional.of( bytes );
-				throw new RuntimeException( "Not implemented" );
+				// The path to the actual file on disk
+				final Path filePath = _basePath.resolve( resourcePath );
+				return Optional.of( Files.newInputStream( filePath ) );
 			}
 			catch( IOException e1 ) {
 				throw new RuntimeException( e1 );
+			}
+		}
+	}
+
+	/**
+	 * FIXME: Work in progress on providing a wrapper class for resources // Hugi
+	 *
+	 * new NGResource( resourceURL::openStream, "filename.png", "image/jpeg", 5456l );
+	 */
+	public record NGResource(
+			Callable<InputStream> inputStreamSupplier,
+			String filename,
+			String mimeType,
+			Long length ) {
+
+		public byte[] bytes() {
+			try {
+				return inputStreamSupplier().call().readAllBytes();
+			}
+			catch( Exception e ) {
+				throw new RuntimeException( e );
 			}
 		}
 	}

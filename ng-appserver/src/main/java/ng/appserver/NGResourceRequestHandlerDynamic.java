@@ -1,10 +1,10 @@
 package ng.appserver;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import ng.appserver.privates.NGParsedURI;
 
@@ -27,7 +27,7 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	 * Other scopes could be session/application wide. Or custom? Hmm.
 	 * // Hugi 2023-02-17
 	 */
-	private static Map<String, NGDynamicResource> _cacheMap = new HashMap<>();
+	private static Map<String, NGDynamicResource> _cacheMap = new ConcurrentHashMap<>();
 
 	public static void push( final String cacheKey, final NGDynamicResource data ) {
 		Objects.requireNonNull( cacheKey );
