@@ -3,9 +3,6 @@ package ng.appserver.elements;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
@@ -16,8 +13,6 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 public class NGHyperlink extends NGDynamicGroup {
-
-	private static final Logger logger = LoggerFactory.getLogger( NGHyperlink.class );
 
 	private final NGAssociation _hrefAssociation;
 	private final NGAssociation _actionAssociation;
@@ -48,7 +43,6 @@ public class NGHyperlink extends NGDynamicGroup {
 		String href = null;
 
 		// An href-binding gets passed directly to the link.
-		// FIXME: honestly, it should just be passed along with any other plain-vanilla binding, since it doesn't get any special treatment // Hugi 2023-02-05
 		if( _hrefAssociation != null ) {
 			href = (String)_hrefAssociation.valueInComponent( context.component() );
 		}
@@ -61,43 +55,37 @@ public class NGHyperlink extends NGDynamicGroup {
 			throw new IllegalStateException( "Failed to generate the href attribute for a hyperlink" );
 		}
 
-		StringBuilder startTag = new StringBuilder( "<a href=\"" + href + "\"" );
+		final StringBuilder tagString = new StringBuilder( "<a href=\"" + href + "\"" );
 
 		if( !_additionalAssociations.isEmpty() ) {
-			startTag.append( " " );
+			tagString.append( " " );
 
 			_additionalAssociations.forEach( ( name, ass ) -> {
-				startTag.append( " " );
-				startTag.append( name );
-				startTag.append( "=" );
-				startTag.append( "\"" + ass.valueInComponent( context.component() ) + "\"" );
+				tagString.append( " " );
+				tagString.append( name );
+				tagString.append( "=" );
+				tagString.append( "\"" + ass.valueInComponent( context.component() ) + "\"" );
 			} );
 		}
 
-		startTag.append( ">" );
-		response.appendContentString( startTag.toString() );
+		tagString.append( ">" );
+		response.appendContentString( tagString.toString() );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</a>" );
 	}
 
 	@Override
-	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+	public NGActionResults invokeAction( final NGRequest request, final NGContext context ) {
 
 		if( context.currentElementIsSender() ) {
-			logger.debug( "invokeAction() : current contextID is: " + context.contextID() );
-			logger.debug( "invokeAction() : current elementID is: " + context.elementID() );
-			logger.debug( "invokeAction() : current senderID is: " + context.senderID() );
-			logger.debug( "invokeAction() : current component is: " + context.component() );
 
 			if( _actionAssociation != null ) {
-				NGActionResults result = (NGActionResults)_actionAssociation.valueInComponent( context.component() );
-				logger.debug( "Action result is: " + result );
-				return result;
+				return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 			}
 
 			if( _pageNameAssociation != null ) {
 				final String pageName = (String)_pageNameAssociation.valueInComponent( context.component() );
-				NGComponent actionResults = NGApplication.application().pageWithName( pageName, context );
+				final NGComponent actionResults = NGApplication.application().pageWithName( pageName, context );
 				return actionResults;
 			}
 		}
