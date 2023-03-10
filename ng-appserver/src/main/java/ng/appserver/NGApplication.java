@@ -222,7 +222,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: I'm not quite sure what to do about this variable. Belongs here or someplace else?
+	 * FIXME: I'm not quite sure what to do about this variable. Belongs here or someplace else? // Hugi 2023-03-10
 	 */
 	public boolean isDevelopmentMode() {
 		return _properties.isDevelopmentMode();
@@ -274,6 +274,7 @@ public class NGApplication {
 	 * @return true if we want to enable caches
 	 *
 	 * FIXME: This is not here to stay. It's just nice to have a single location to refer to for now, rather than always using isDevelopmentMode() // Hugi 2022-10-19
+	 * FIXME: While this is temporary, note that it's not best for performance to check properties every time this method is invoked. We should be caching the result. Just not doing it now, since we're still consolidating caching // Hugi 2023-03-10
 	 */
 	@Deprecated
 	public boolean cachingEnabled() {
