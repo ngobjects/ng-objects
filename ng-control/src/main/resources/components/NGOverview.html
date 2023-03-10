@@ -5,7 +5,8 @@
 		<meta charset="utf-8">
 	</head>
 	<body>
-		<h2>Smu</h2>
+
+		<h2>Sessions</h2>
 		<table>
 			<tr>
 				<th>Birth date</th>
@@ -23,6 +24,16 @@
 					<td><wo:str value="$currentSession.shouldTerminate" /></td>
 					<td><wo:if condition="$isMySession"><strong>This is your session!</strong></wo:if></td>
 					<td><wo:link action="$terminate">Kill!</wo:link></td>
+				</tr>
+			</wo:repetition>
+		</table>
+
+		<h2>Properties</h2>
+		<table>
+			<wo:repetition list="$propertyKeys" item="$currentPropertyKey">  
+				<tr>
+					<td><wo:str value="$currentPropertyKey" /></td>
+					<td><wo:str value="$currentPropertyValue" /></td>
 				</tr>
 			</wo:repetition>
 		</table>
