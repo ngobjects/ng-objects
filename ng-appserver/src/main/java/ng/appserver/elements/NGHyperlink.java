@@ -6,6 +6,7 @@ import java.util.Map;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
+import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
@@ -33,6 +34,10 @@ public class NGHyperlink extends NGDynamicGroup {
 		_hrefAssociation = _additionalAssociations.remove( "href" );
 		_actionAssociation = _additionalAssociations.remove( "action" );
 		_pageNameAssociation = _additionalAssociations.remove( "pageName" );
+
+		if( _hrefAssociation == null && _actionAssociation == null && _pageNameAssociation == null ) {
+			throw new NGBindingConfigurationException( "You must bind one of [action], [pageName] or [href]" );
+		}
 	}
 
 	@Override
@@ -44,8 +49,7 @@ public class NGHyperlink extends NGDynamicGroup {
 		if( _hrefAssociation != null ) {
 			href = (String)_hrefAssociation.valueInComponent( context.component() );
 		}
-
-		if( _actionAssociation != null || _pageNameAssociation != null ) {
+		else if( _actionAssociation != null || _pageNameAssociation != null ) {
 			href = context.componentActionURL();
 		}
 
