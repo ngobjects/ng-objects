@@ -23,7 +23,7 @@ public class NGSession {
 	private final String _sessionID;
 
 	/**
-	 * The birthdate of this session, as provided by System.currentTimeMillis()
+	 * The birth date of this session
 	 */
 	private final Instant _birthDate;
 
