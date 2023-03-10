@@ -25,16 +25,13 @@ public class NGHyperlink extends NGDynamicGroup {
 
 	public NGHyperlink( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( name, associations, template );
-		_hrefAssociation = associations.get( "href" );
-		_actionAssociation = associations.get( "action" );
-		_pageNameAssociation = associations.get( "pageName" );
 
-		// Now we collect the associations that we've already consumed and keep the rest around, to add to the image as attributes
-		// Not exactly pretty, but let's work with this a little
+		// Clone the dictionary so additionalAssociations will contain additional associations
+		// (bindings that get passed directly to the <a> tag as attributes.
 		_additionalAssociations = new HashMap<>( associations );
-		_additionalAssociations.remove( "href" );
-		_additionalAssociations.remove( "action" );
-		_additionalAssociations.remove( "pageName" );
+		_hrefAssociation = _additionalAssociations.remove( "href" );
+		_actionAssociation = _additionalAssociations.remove( "action" );
+		_pageNameAssociation = _additionalAssociations.remove( "pageName" );
 	}
 
 	@Override
