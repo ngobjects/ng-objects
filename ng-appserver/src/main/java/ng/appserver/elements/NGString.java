@@ -43,6 +43,7 @@ public class NGString extends NGDynamicElement {
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		Object objectValue = _valueAss.valueInComponent( context.component() );
 
+		// FIXME: This is probably wrong. The object might be not null, but return a null/empty String representation // Hugi 2023-03-10
 		if( _valueWhenEmptyAss != null ) {
 			if( objectValue == null || (objectValue instanceof String s && s.isEmpty()) ) {
 				objectValue = _valueWhenEmptyAss.valueInComponent( context.component() );
