@@ -51,7 +51,7 @@ public class NGImage extends NGDynamicElement {
 	private final NGAssociation _srcAssociation;
 
 	/**
-	 * THe mimeType of an image supplied via [data] or [dataInputStream]
+	 * The mimeType of an image supplied via [data] or [dataInputStream]
 	 */
 	private final NGAssociation _mimeTypeAssociation;
 
@@ -62,12 +62,13 @@ public class NGImage extends NGDynamicElement {
 
 	public NGImage( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 		super( null, null, null );
-		_filenameAssociation = associations.get( "filename" );
-		_srcAssociation = associations.get( "src" );
-		_dataAssociation = associations.get( "data" );
-		_dataInputStreamAssociation = associations.get( "dataInputStream" );
-		_dataInputStreamLengthAssociation = associations.get( "dataInputStreamLength" );
-		_mimeTypeAssociation = associations.get( "mimeType" );
+		_additionalAssociations = new HashMap<>( associations );
+		_filenameAssociation = _additionalAssociations.remove( "filename" );
+		_srcAssociation = _additionalAssociations.remove( "src" );
+		_dataAssociation = _additionalAssociations.remove( "data" );
+		_dataInputStreamAssociation = _additionalAssociations.remove( "dataInputStream" );
+		_dataInputStreamLengthAssociation = _additionalAssociations.remove( "dataInputStreamLength" );
+		_mimeTypeAssociation = _additionalAssociations.remove( "mimeType" );
 
 		if( _srcAssociation == null && _filenameAssociation == null && _dataAssociation == null && _dataInputStreamAssociation == null ) {
 			throw new NGBindingConfigurationException( "You must set [filename], [data], [dataInputStream] or [src] bindings" );
@@ -80,16 +81,6 @@ public class NGImage extends NGDynamicElement {
 		if( _dataInputStreamAssociation != null && _dataInputStreamLengthAssociation == null ) {
 			throw new NGBindingConfigurationException( "If [dataInputStream] is bound, you must also bind [dataInputStreamLength]" );
 		}
-
-		// Now we collect the associations that we've already consumed and keep the rest around, to add to the image as attributes
-		// Not exactly pretty, but let's work with this a little
-		_additionalAssociations = new HashMap<>( associations );
-		_additionalAssociations.remove( "filename" );
-		_additionalAssociations.remove( "src" );
-		_additionalAssociations.remove( "data" );
-		_additionalAssociations.remove( "dataInputStream" );
-		_additionalAssociations.remove( "dataInputStreamLength" );
-		_additionalAssociations.remove( "mimeType" );
 	}
 
 	@Override
