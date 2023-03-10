@@ -11,6 +11,7 @@ import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 
 public class NGHyperlink extends NGDynamicGroup {
 
@@ -52,21 +53,18 @@ public class NGHyperlink extends NGDynamicGroup {
 			throw new IllegalStateException( "Failed to generate the href attribute for a hyperlink" );
 		}
 
-		final StringBuilder tagString = new StringBuilder( "<a href=\"" + href + "\"" );
+		final Map<String, String> attributes = new HashMap<>();
+		attributes.put( "href", href );
 
-		if( !_additionalAssociations.isEmpty() ) {
-			tagString.append( " " );
+		_additionalAssociations.forEach( ( name, ass ) -> {
+			final Object value = ass.valueInComponent( context.component() );
 
-			_additionalAssociations.forEach( ( name, ass ) -> {
-				tagString.append( " " );
-				tagString.append( name );
-				tagString.append( "=" );
-				tagString.append( "\"" + ass.valueInComponent( context.component() ) + "\"" );
-			} );
-		}
+			if( value != null ) {
+				attributes.put( name, value.toString() );
+			}
+		} );
 
-		tagString.append( ">" );
-		response.appendContentString( tagString.toString() );
+		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "a", attributes, false ) );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</a>" );
 	}
