@@ -4,12 +4,27 @@
 		<title>Control center</title>
 		<meta charset="utf-8">
 		<style>
+			:root {
+				--ng-table-color: rgb(200,200,200);
+			}
+
+			body {
+				font-family: sans-serif;
+				font-size: 13px;
+			}
+
 			table {
-				
+				border: 1px solid var(--ng-table-color);
+				border-width: 1px 0px 0px 1px;
+				border-spacing: 0px;
+				empty-cells: show;
 			}
 			
-			tr {
-				border-bottom: 1px solid gray;
+			td,th {
+				border: 1px solid var(--ng-table-color);
+				border-width: 0px 1px 1px 0px;
+				padding: 4px;
+				vertical-align: top;
 			}
 		</style>
 	</head>
@@ -37,23 +52,22 @@
 			</wo:repetition>
 		</table>
 
+		<h2>NGProperties</h2>
+		<table>
+			<wo:repetition list="$propertyKeys" item="$currentPropertyKey">  
+				<tr>
+					<td><wo:str value="$currentPropertyKey" /></td>
+					<td><wo:str value="$currentPropertyValue" /></td>
+				</tr>
+			</wo:repetition>
+		</table>
+
 		<h2>System properties</h2>
 		<table>
 			<wo:repetition list="$systemPropertyKeys" item="$currentPropertyKey">  
 				<tr>
 					<td><wo:str value="$currentPropertyKey" /></td>
 					<td><wo:str value="$currentSystemPropertyValue" /></td>
-				</tr>
-			</wo:repetition>
-		</table>
-
-		<h2>NGProperties</h2>
-		<wo:str value="$propertyKeys" />
-		<table>
-			<wo:repetition list="$propertyKeys" item="$currentPropertyKey">  
-				<tr>
-					<td><wo:str value="$currentPropertyKey" /></td>
-					<td><wo:str value="$currentPropertyValue" /></td>
 				</tr>
 			</wo:repetition>
 		</table>
