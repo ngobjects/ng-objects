@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,15 @@ public class NGProperties {
 	 */
 	public void putAll( Map<String, String> properties ) {
 		_allProperties.putAll( properties );
+	}
+
+	/**
+	 * @return A list of all configured property keys
+	 *
+	 * FIXME: This method does not belong in the worldview we want later // Hugi 2023-03-10
+	 */
+	public Collection<String> allKeys() {
+		return _allProperties.keySet();
 	}
 
 	/**
