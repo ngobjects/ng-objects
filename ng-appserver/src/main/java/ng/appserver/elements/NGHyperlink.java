@@ -3,21 +3,18 @@ package ng.appserver.elements;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
+import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 
 public class NGHyperlink extends NGDynamicGroup {
-
-	private static final Logger logger = LoggerFactory.getLogger( NGHyperlink.class );
 
 	private final NGAssociation _hrefAssociation;
 	private final NGAssociation _actionAssociation;
@@ -30,16 +27,17 @@ public class NGHyperlink extends NGDynamicGroup {
 
 	public NGHyperlink( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( name, associations, template );
-		_hrefAssociation = associations.get( "href" );
-		_actionAssociation = associations.get( "action" );
-		_pageNameAssociation = associations.get( "pageName" );
 
-		// Now we collect the associations that we've already consumed and keep the rest around, to add to the image as attributes
-		// Not exactly pretty, but let's work with this a little
+		// Clone the dictionary so additionalAssociations will contain additional associations
+		// (bindings that get passed directly to the <a> tag as attributes.
 		_additionalAssociations = new HashMap<>( associations );
-		_additionalAssociations.remove( "href" );
-		_additionalAssociations.remove( "action" );
-		_additionalAssociations.remove( "pageName" );
+		_hrefAssociation = _additionalAssociations.remove( "href" );
+		_actionAssociation = _additionalAssociations.remove( "action" );
+		_pageNameAssociation = _additionalAssociations.remove( "pageName" );
+
+		if( _hrefAssociation == null && _actionAssociation == null && _pageNameAssociation == null ) {
+			throw new NGBindingConfigurationException( "You must bind one of [action], [pageName] or [href]" );
+		}
 	}
 
 	@Override
@@ -48,12 +46,10 @@ public class NGHyperlink extends NGDynamicGroup {
 		String href = null;
 
 		// An href-binding gets passed directly to the link.
-		// FIXME: honestly, it should just be passed along with any other plain-vanilla binding, since it doesn't get any special treatment // Hugi 2023-02-05
 		if( _hrefAssociation != null ) {
 			href = (String)_hrefAssociation.valueInComponent( context.component() );
 		}
-
-		if( _actionAssociation != null || _pageNameAssociation != null ) {
+		else if( _actionAssociation != null || _pageNameAssociation != null ) {
 			href = context.componentActionURL();
 		}
 
@@ -61,43 +57,34 @@ public class NGHyperlink extends NGDynamicGroup {
 			throw new IllegalStateException( "Failed to generate the href attribute for a hyperlink" );
 		}
 
-		StringBuilder startTag = new StringBuilder( "<a href=\"" + href + "\"" );
+		final Map<String, String> attributes = new HashMap<>();
+		attributes.put( "href", href );
 
-		if( !_additionalAssociations.isEmpty() ) {
-			startTag.append( " " );
+		_additionalAssociations.forEach( ( name, ass ) -> {
+			final Object value = ass.valueInComponent( context.component() );
 
-			_additionalAssociations.forEach( ( name, ass ) -> {
-				startTag.append( " " );
-				startTag.append( name );
-				startTag.append( "=" );
-				startTag.append( "\"" + ass.valueInComponent( context.component() ) + "\"" );
-			} );
-		}
+			if( value != null ) {
+				attributes.put( name, value.toString() );
+			}
+		} );
 
-		startTag.append( ">" );
-		response.appendContentString( startTag.toString() );
+		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "a", attributes, false ) );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</a>" );
 	}
 
 	@Override
-	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+	public NGActionResults invokeAction( final NGRequest request, final NGContext context ) {
 
 		if( context.currentElementIsSender() ) {
-			logger.debug( "invokeAction() : current contextID is: " + context.contextID() );
-			logger.debug( "invokeAction() : current elementID is: " + context.elementID() );
-			logger.debug( "invokeAction() : current senderID is: " + context.senderID() );
-			logger.debug( "invokeAction() : current component is: " + context.component() );
 
 			if( _actionAssociation != null ) {
-				NGActionResults result = (NGActionResults)_actionAssociation.valueInComponent( context.component() );
-				logger.debug( "Action result is: " + result );
-				return result;
+				return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 			}
 
 			if( _pageNameAssociation != null ) {
 				final String pageName = (String)_pageNameAssociation.valueInComponent( context.component() );
-				NGComponent actionResults = NGApplication.application().pageWithName( pageName, context );
+				final NGComponent actionResults = NGApplication.application().pageWithName( pageName, context );
 				return actionResults;
 			}
 		}
