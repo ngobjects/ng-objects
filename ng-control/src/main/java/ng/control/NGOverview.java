@@ -3,7 +3,6 @@ package ng.control;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGComponent;
@@ -32,17 +31,23 @@ public class NGOverview extends NGComponent {
 		return null;
 	}
 
-	public Map<Object, Object> properties() {
-		return System.getProperties();
-	}
-
-	public List<String> propertyKeys() {
+	public List<String> systemPropertyKeys() {
 		final List<String> list = new ArrayList( System.getProperties().keySet() );
 		list.sort( Comparator.naturalOrder() );
 		return list;
 	}
 
-	public Object currentPropertyValue() {
-		return properties().get( currentPropertyKey );
+	public Object currentSystemPropertyValue() {
+		return System.getProperties().get( currentPropertyKey );
+	}
+
+	public List<String> propertyKeys() {
+		final List<String> list = new ArrayList<>( application().properties().allKeys() );
+		list.sort( Comparator.naturalOrder() );
+		return list;
+	}
+
+	public String currentPropertyValue() {
+		return application().properties().get( (String)currentPropertyKey );
 	}
 }

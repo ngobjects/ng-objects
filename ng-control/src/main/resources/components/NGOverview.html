@@ -3,6 +3,15 @@
 	<head>
 		<title>Control center</title>
 		<meta charset="utf-8">
+		<style>
+			table {
+				
+			}
+			
+			tr {
+				border-bottom: 1px solid gray;
+			}
+		</style>
 	</head>
 	<body>
 
@@ -28,7 +37,18 @@
 			</wo:repetition>
 		</table>
 
-		<h2>Properties</h2>
+		<h2>System properties</h2>
+		<table>
+			<wo:repetition list="$systemPropertyKeys" item="$currentPropertyKey">  
+				<tr>
+					<td><wo:str value="$currentPropertyKey" /></td>
+					<td><wo:str value="$currentSystemPropertyValue" /></td>
+				</tr>
+			</wo:repetition>
+		</table>
+
+		<h2>NGProperties</h2>
+		<wo:str value="$propertyKeys" />
 		<table>
 			<wo:repetition list="$propertyKeys" item="$currentPropertyKey">  
 				<tr>
