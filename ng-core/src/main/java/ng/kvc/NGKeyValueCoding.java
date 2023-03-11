@@ -66,8 +66,9 @@ public interface NGKeyValueCoding {
 			if( object instanceof NGKeyValueCoding kvcObject ) {
 				kvcObject.takeValueForKey( value, key );
 			}
-
-			DefaultImplementation.takeValueForKey( object, value, key );
+			else {
+				DefaultImplementation.takeValueForKey( object, value, key );
+			}
 		}
 	}
 
