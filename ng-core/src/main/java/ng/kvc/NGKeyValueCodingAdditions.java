@@ -1,7 +1,10 @@
 package ng.kvc;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
+
+/**
+ * FIXME: We're missing unit tests for this // Hugi 2023-03-11
+ */
 
 public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 
@@ -22,9 +25,6 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 			return DefaultImplementation.valueForKeyPath( object, keyPath );
 		}
 
-		/**
-		 * FIXME: Very basic implementation for testing // Hugi 2022-04-23
-		 */
 		public static void takeValueForKeyPath( final Object object, final Object value, final String keyPath ) {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( keyPath );
@@ -40,16 +40,13 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 
 	public static class DefaultImplementation {
 
-		/**
-		 * Temporary implementation for testing
-		 */
 		public static Object valueForKeyPath( final Object object, final String keyPath ) {
-			String[] keyPaths = keyPath.split( "\\." );
+			final String[] keyPathComponents = keyPath.split( "\\." );
 
 			Object result = object;
 
-			for( String currentKeyPath : keyPaths ) {
-				result = NGKeyValueCoding.Utility.valueForKey( result, currentKeyPath );
+			for( String currentKeyPathComponent : keyPathComponents ) {
+				result = NGKeyValueCoding.Utility.valueForKey( result, currentKeyPathComponent );
 
 				if( result == null ) {
 					return null;
@@ -60,12 +57,17 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 		}
 
 		public static void takeValueForKeyPath( Object object, Object value, String keyPath ) {
-			try {
-				Field field = object.getClass().getField( keyPath );
-				field.set( object, value );
+			int lastPeriodIndex = keyPath.lastIndexOf( '.' );
+
+			// No periods means it's just a single key, so we don't need to resolve the keyPath
+			if( lastPeriodIndex == -1 ) {
+				NGKeyValueCoding.Utility.takeValueForKey( object, value, keyPath );
 			}
-			catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e ) {
-				throw new RuntimeException( e );
+			else {
+				final String targetPath = keyPath.substring( 0, lastPeriodIndex ); // The target object is the on represented by the keypath, up to the last element
+				final String valueKey = keyPath.substring( lastPeriodIndex + 1 ); // Last element in the keyPath is the field we want to set on the object represented by targetPath
+				final Object actualTargetObject = valueForKeyPath( object, targetPath );
+				NGKeyValueCoding.Utility.takeValueForKey( actualTargetObject, value, valueKey );
 			}
 		}
 	}
