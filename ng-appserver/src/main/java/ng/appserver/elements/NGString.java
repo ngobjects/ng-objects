@@ -16,17 +16,17 @@ public class NGString extends NGDynamicElement {
 	/**
 	 * The string's value
 	 */
-	private NGAssociation _valueAssociation;
+	private final NGAssociation _valueAssociation;
 
 	/**
 	 * A value to display if the string is null or empty (length==0)
 	 */
-	private NGAssociation _valueWhenEmptyAssociation;
+	private final NGAssociation _valueWhenEmptyAssociation;
 
 	/**
 	 * Indicates if we want to escape HTML values. Defaults to true
 	 */
-	private NGAssociation _escapeHTMLAssociation;
+	private final NGAssociation _escapeHTMLAssociation;
 
 	public NGString( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 		super( null, null, null );
