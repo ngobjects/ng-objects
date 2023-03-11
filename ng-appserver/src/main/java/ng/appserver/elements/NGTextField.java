@@ -11,6 +11,7 @@ import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
+import ng.appserver.privates._NGUtilities;
 
 public class NGTextField extends NGDynamicElement {
 
@@ -24,10 +25,18 @@ public class NGTextField extends NGDynamicElement {
 	 */
 	private final NGAssociation _valueAssociation;
 
+	/**
+	 * Indicates that the text field is disabled.
+	 *
+	 * Both actually disables the text fields, and prevents values from it from being read.
+	 */
+	private final NGAssociation _disabledAssociation;
+
 	public NGTextField( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
 		_nameAssociation = associations.get( "name" );
 		_valueAssociation = associations.get( "value" );
+		_disabledAssociation = associations.get( "disabled" );
 	}
 
 	@Override
@@ -54,24 +63,35 @@ public class NGTextField extends NGDynamicElement {
 			attributes.put( "value", value );
 		}
 
+		if( disabled( context ) ) {
+			// FIXME: 'disabled' is a "boolean attribute" and doesn't really need a value. We need a nice way to generate those // Hugi 2023-03-11
+			attributes.put( "disabled", "" );
+		}
+
 		final String tagString = NGHTMLUtilities.createElementStringWithAttributes( "input", attributes, true );
 		response.appendContentString( tagString );
 	}
 
+	/**
+	 * @return True if the field is disabled
+	 */
+	private boolean disabled( final NGContext context ) {
+		if( _disabledAssociation != null ) {
+			return _NGUtilities.isTruthy( _disabledAssociation.valueInComponent( context.component() ) );
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return The name of the field (to use in the HTML code)
+	 */
 	private String name( final NGContext context ) {
 
 		if( _nameAssociation != null ) {
 			return (String)_nameAssociation.valueInComponent( context.component() );
 		}
 
-		return nameFromCurrentElementId( context );
-
-	}
-
-	/**
-	 * @return A unique name for this text field, based on the NGContext's elementId
-	 */
-	private String nameFromCurrentElementId( final NGContext context ) {
 		return context.elementID().toString();
 	}
 }
