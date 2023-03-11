@@ -1,6 +1,7 @@
 package ng.appserver;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Represents an elementID.
@@ -87,6 +88,6 @@ public class NGElementID {
 
 	@Override
 	public int hashCode() {
-		return components.hashCode();
+		return Objects.hash( components, index );
 	}
 }
