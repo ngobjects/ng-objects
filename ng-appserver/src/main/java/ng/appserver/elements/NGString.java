@@ -19,14 +19,14 @@ public class NGString extends NGDynamicElement {
 	private NGAssociation _valueAss;
 
 	/**
-	 * Indicates if we want to escape HTML values. Defaults to true
-	 */
-	private NGAssociation _escapeHTMLAss;
-
-	/**
 	 * A value to display if the string is null or empty (length==0)
 	 */
 	private NGAssociation _valueWhenEmptyAss;
+
+	/**
+	 * Indicates if we want to escape HTML values. Defaults to true
+	 */
+	private NGAssociation _escapeHTMLAss;
 
 	public NGString( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 		super( null, null, null );
