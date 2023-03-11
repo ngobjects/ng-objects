@@ -17,7 +17,7 @@ import ng.appserver.NGResponse;
 
 public class NGGenericElement extends NGDynamicElement {
 
-	private NGAssociation elementNameAssociation;
+	private final NGAssociation elementNameAssociation;
 
 	/**
 	 * For storing associations that aren't part of the component's basic associations

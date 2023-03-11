@@ -17,7 +17,7 @@ import ng.appserver.privates.NGHTMLUtilities;
 
 public class NGForm extends NGDynamicGroup {
 
-	private NGAssociation _actionAssociation;
+	private final NGAssociation _actionAssociation;
 
 	public NGForm( String name, Map<String, NGAssociation> associations, NGElement contentTemplate ) {
 		super( name, associations, contentTemplate );

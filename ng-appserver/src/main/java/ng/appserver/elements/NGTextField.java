@@ -17,12 +17,12 @@ public class NGTextField extends NGDynamicElement {
 	/**
 	 * 'name' attribute of the text field. If not specified, will be populated using the elementID
 	 */
-	private NGAssociation _nameAssociation;
+	private final NGAssociation _nameAssociation;
 
 	/**
 	 * The value for the field. This is a bidirectional binding that will also pass the value upstrem.
 	 */
-	private NGAssociation _valueAssociation;
+	private final NGAssociation _valueAssociation;
 
 	public NGTextField( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
