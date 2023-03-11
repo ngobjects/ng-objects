@@ -32,7 +32,7 @@ public class NGTextField extends NGDynamicElement {
 
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
-		final List<String> valuesFromRequest = request.formValues().get( nameFromCurrentElementId( context ) );
+		final List<String> valuesFromRequest = request.formValues().get( name( context ) );
 
 		if( valuesFromRequest != null ) { // FIXME: Should formValues return an empty list or null if not present? // Hugi 2022-06-08
 			String valueFromRequest = valuesFromRequest.get( 0 );
@@ -43,24 +43,12 @@ public class NGTextField extends NGDynamicElement {
 	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
 
-		final String name;
-
-		if( _nameAssociation != null ) {
-			name = (String)_nameAssociation.valueInComponent( context.component() );
-		}
-		else {
-			name = nameFromCurrentElementId( context );
-		}
-
 		final String value = (String)_valueAssociation.valueInComponent( context.component() );
 
 		final Map<String, String> attributes = new HashMap<>();
 
 		attributes.put( "type", "text" );
-
-		if( name != null ) {
-			attributes.put( "name", name );
-		}
+		attributes.put( "name", name( context ) );
 
 		if( value != null ) {
 			attributes.put( "value", value );
@@ -68,6 +56,16 @@ public class NGTextField extends NGDynamicElement {
 
 		final String tagString = NGHTMLUtilities.createElementStringWithAttributes( "input", attributes, true );
 		response.appendContentString( tagString );
+	}
+
+	private String name( final NGContext context ) {
+
+		if( _nameAssociation != null ) {
+			return (String)_nameAssociation.valueInComponent( context.component() );
+		}
+
+		return nameFromCurrentElementId( context );
+
 	}
 
 	/**
