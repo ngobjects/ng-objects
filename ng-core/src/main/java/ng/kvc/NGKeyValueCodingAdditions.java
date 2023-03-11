@@ -33,13 +33,7 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 				kvcAdditionsObject.takeValueForKeyPath( value, keyPath );
 			}
 			else {
-				try {
-					Field field = object.getClass().getField( keyPath );
-					field.set( object, value );
-				}
-				catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e ) {
-					throw new RuntimeException( e );
-				}
+				DefaultImplementation.takeValueForKeyPath( object, value, keyPath );
 			}
 		}
 	}
@@ -65,8 +59,14 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 			return result;
 		}
 
-		public void takeValueForKeyPath( Object object, Object target, String keyPath ) {
-			throw new RuntimeException( "Not implemented" );
+		public static void takeValueForKeyPath( Object object, Object value, String keyPath ) {
+			try {
+				Field field = object.getClass().getField( keyPath );
+				field.set( object, value );
+			}
+			catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e ) {
+				throw new RuntimeException( e );
+			}
 		}
 	}
 }
