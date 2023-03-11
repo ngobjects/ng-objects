@@ -29,12 +29,17 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( keyPath );
 
-			try {
-				Field field = object.getClass().getField( keyPath );
-				field.set( object, value );
+			if( object instanceof NGKeyValueCodingAdditions kvcAdditionsObject ) {
+				kvcAdditionsObject.takeValueForKeyPath( value, keyPath );
 			}
-			catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e ) {
-				throw new RuntimeException( e );
+			else {
+				try {
+					Field field = object.getClass().getField( keyPath );
+					field.set( object, value );
+				}
+				catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e ) {
+					throw new RuntimeException( e );
+				}
 			}
 		}
 	}
