@@ -41,11 +41,15 @@ public class NGTextField extends NGDynamicElement {
 
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
-		final List<String> valuesFromRequest = request.formValues().get( name( context ) );
+		if( !disabled( context ) ) {
+			final List<String> valuesFromRequest = request.formValues().get( name( context ) );
 
-		if( valuesFromRequest != null ) { // FIXME: Should formValues return an empty list or null if not present? // Hugi 2022-06-08
-			String valueFromRequest = valuesFromRequest.get( 0 );
-			_valueAssociation.setValue( valueFromRequest, context.component() );
+			// FIXME: Should formValues return an empty list or null if not present? // Hugi 2022-06-08
+			// FIXME: We should probably warn or even fail/throw if multiple values are present? // Hugi 2023-03-11
+			if( valuesFromRequest != null ) {
+				String valueFromRequest = valuesFromRequest.get( 0 );
+				_valueAssociation.setValue( valueFromRequest, context.component() );
+			}
 		}
 	}
 
