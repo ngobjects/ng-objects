@@ -22,7 +22,7 @@ public class NGElementID {
 	/**
 	 * The components of the elementID.
 	 *
-	 * FIXME: This array needs to be dynamically resized // Hugi 203-02-09
+	 * FIXME: This array needs to be dynamically resized // Hugi 2023-02-09
 	 */
 	private final int[] components = new int[10];
 
