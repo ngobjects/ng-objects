@@ -64,9 +64,9 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 				NGKeyValueCoding.Utility.takeValueForKey( object, value, keyPath );
 			}
 			else {
-				final String targetPath = keyPath.substring( 0, lastPeriodIndex ); // The target object is the on represented by the keypath, up to the last element
+				final String targetPath = keyPath.substring( 0, lastPeriodIndex ); // The targeted object is found by resolving the keyPath up to (excluding) the last element
 				final String valueKey = keyPath.substring( lastPeriodIndex + 1 ); // Last element in the keyPath is the field we want to set on the object represented by targetPath
-				final Object actualTargetObject = valueForKeyPath( object, targetPath );
+				final Object actualTargetObject = valueForKeyPath( object, targetPath ); // FIXME: Our targeted object could have been resolved to null. I'm not sure if we want that to be a hard fail (which it currently is) or a no-op // Hugi 2023-03-11
 				NGKeyValueCoding.Utility.takeValueForKey( actualTargetObject, value, valueKey );
 			}
 		}
