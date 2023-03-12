@@ -119,7 +119,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * Invoked before each of the three R-R phases in NGComponent.
 	 * Iterates through all the component's bindings, pulls values from the parent component and sets them using KVC
 	 */
-	public void pullBindingValuesfromParent() {
+	public void pullBindingValuesFromParent() {
 		if( synchronizesVariablesWithBindings() ) {
 			for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
 				final String bindingName = binding.getKey();
