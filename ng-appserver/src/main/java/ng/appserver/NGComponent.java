@@ -44,7 +44,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	private final Map<NGElementID, NGComponent> _children;
 
 	/**
-	 * Store a reference to the associations
+	 * The associations passed in to this component from it's parent component
 	 */
 	private Map<String, NGAssociation> _associations;
 
@@ -86,7 +86,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * FIXME: Type safety (for our own application class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
 	 */
 	public NGApplication application() {
-		return NGApplication.application().application();
+		return NGApplication.application();
 	}
 
 	/**
@@ -190,6 +190,16 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		// Now let's go into the parent component and get that value.
 		return association.valueInComponent( parent() );
+	}
+
+	public void setValueForBinding( Object value, String bindingName ) {
+
+		final NGAssociation association = _associations.get( bindingName );
+
+		// FIXME: Should we throw if the binding is not bound here? Obviously, an explicit operation has failed // Hugi 2023-03-12
+		if( association != null ) {
+			association.setValue( value, parent() );
+		}
 	}
 
 	public NGComponent parent() {

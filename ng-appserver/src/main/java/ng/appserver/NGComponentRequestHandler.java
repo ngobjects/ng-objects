@@ -80,7 +80,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		logger.debug( "Action invocation returned {}", actionInvocationResults );
 
 		// The response we will eventually return
-		NGResponse response;
+		final NGResponse response;
 
 		// The response returned by an action can be
 		// - null : Meaning we're working within a page/staying on the same page instance

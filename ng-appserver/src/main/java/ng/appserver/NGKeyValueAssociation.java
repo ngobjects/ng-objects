@@ -19,7 +19,7 @@ public class NGKeyValueAssociation extends NGAssociation {
 	}
 
 	@Override
-	public void setValue( Object value, NGComponent component ) {
+	public void setValue( final Object value, final NGComponent component ) {
 		Objects.requireNonNull( component );
 		NGKeyValueCodingAdditions.Utility.takeValueForKeyPath( component, value, _keyPath );
 	}
