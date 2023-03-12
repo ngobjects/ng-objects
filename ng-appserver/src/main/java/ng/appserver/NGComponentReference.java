@@ -12,6 +12,8 @@ public class NGComponentReference extends NGDynamicElement {
 
 	/**
 	 * Holds a reference to the fully qualified class name of the component we're going to render
+	 *
+	 * FIXME: Should possibly be a reference to an NGComponentDefinition? // Hugi 2023-03-12
 	 */
 	private final String _componentName;
 
