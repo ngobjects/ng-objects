@@ -156,9 +156,9 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * Sets the context for this component and it's children
+	 * Sets the context for this component and it's children.
 	 *
-	 * FIXME: I'm keeping in line with familiar names from WO here. We don't have any concept of "awake()" though. Although that's starting to sound good...
+	 * CHECKME: The name of this method is really just a relic from WO. We don't have the concepts of awake/sleep. So this could really just be… setContext? I mean, when would you really want your component's kids to be in a different context?
 	 */
 	public void awakeInContext( NGContext newContext ) {
 		setContext( newContext );
