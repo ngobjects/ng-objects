@@ -160,6 +160,13 @@ public class NGContext {
 	}
 
 	/**
+	 * Resets the current elementID
+	 */
+	public void _resetElementID() {
+		_currentElementID = new NGElementID();
+	}
+
+	/**
 	 * @return ID of the element currently being rendered by the context.
 	 */
 	public NGElementID elementID() {

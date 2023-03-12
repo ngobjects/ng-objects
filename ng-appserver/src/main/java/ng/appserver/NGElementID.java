@@ -32,12 +32,16 @@ public class NGElementID {
 	}
 
 	public void removeBranch() {
-		components[index] = 0;
-		index--;
+		if( index > -1 ) {
+			components[index] = 0;
+			index--;
+		}
 	}
 
 	public void increment() {
-		components[index]++;
+		if( index > -1 ) {
+			components[index]++;
+		}
 	}
 
 	public static NGElementID fromString( final String elementIDString ) {

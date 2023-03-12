@@ -12,6 +12,8 @@ public class NGComponentReference extends NGDynamicElement {
 
 	/**
 	 * Holds a reference to the fully qualified class name of the component we're going to render
+	 *
+	 * FIXME: Should possibly be a reference to an NGComponentDefinition? // Hugi 2023-03-12
 	 */
 	private final String _componentName;
 
@@ -45,12 +47,9 @@ public class NGComponentReference extends NGDynamicElement {
 		// Let's take hold of component that's being rendered, before we hand control to the new component
 		final NGComponent previousComponent = context.component();
 
-		NGComponent newComponentInstance = null;
+		NGComponent newComponentInstance = previousComponent.getChild( context.elementID() );
 
-		// We start by checking if the parent component has an already constructed and stored component instance for us
-		if( previousComponent != null ) {
-			newComponentInstance = previousComponent.getChild( context.elementID() );
-		}
+		// FIXME: If we actually did obtain an instance from the child cache here, don't we need to set the child's context or have we already set the context for the component tree? // Hugi 2023-03-11
 
 		// If no instance was obtained, we need to create the component
 		if( newComponentInstance == null ) {
@@ -67,7 +66,7 @@ public class NGComponentReference extends NGDynamicElement {
 		newComponentInstance.setContentElement( _contentTemplate );
 
 		// Before we make our newly created component the "active" one, we need to pull values, if required
-		newComponentInstance.pullBindingValuesfromParent();
+		newComponentInstance.pullBindingValuesFromParent();
 
 		// Set the component in the context
 		context.setComponent( newComponentInstance );

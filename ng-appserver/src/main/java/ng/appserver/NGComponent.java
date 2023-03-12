@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.kvc.NGKeyValueCoding;
 
 /**
@@ -15,8 +12,6 @@ import ng.kvc.NGKeyValueCoding;
  */
 
 public class NGComponent implements NGElement, NGActionResults {
-
-	private static final Logger logger = LoggerFactory.getLogger( NGComponent.class );
 
 	/**
 	 * The component's context
@@ -44,7 +39,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	private final Map<NGElementID, NGComponent> _children;
 
 	/**
-	 * Store a reference to the associations
+	 * The associations passed in to this component from it's parent component
 	 */
 	private Map<String, NGAssociation> _associations;
 
@@ -86,7 +81,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * FIXME: Type safety (for our own application class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
 	 */
 	public NGApplication application() {
-		return NGApplication.application().application();
+		return NGApplication.application();
 	}
 
 	/**
@@ -119,7 +114,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * Invoked before each of the three R-R phases in NGComponent.
 	 * Iterates through all the component's bindings, pulls values from the parent component and sets them using KVC
 	 */
-	public void pullBindingValuesfromParent() {
+	public void pullBindingValuesFromParent() {
 		if( synchronizesVariablesWithBindings() ) {
 			for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
 				final String bindingName = binding.getKey();
@@ -156,9 +151,9 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * Sets the context for this component and it's children
+	 * Sets the context for this component and it's children.
 	 *
-	 * FIXME: I'm keeping in line with familiar names from WO here. We don't have any concept of "awake()" though. Although that's starting to sound good...
+	 * CHECKME: The name of this method is really just a relic from WO. We don't have the concepts of awake/sleep. So this could really just be… setContext? I mean, when would you really want your component's kids to be in a different context?
 	 */
 	public void awakeInContext( NGContext newContext ) {
 		setContext( newContext );
@@ -190,6 +185,16 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		// Now let's go into the parent component and get that value.
 		return association.valueInComponent( parent() );
+	}
+
+	public void setValueForBinding( Object value, String bindingName ) {
+
+		final NGAssociation association = _associations.get( bindingName );
+
+		// FIXME: Should we throw if the binding is not bound here? Obviously, an explicit operation has failed // Hugi 2023-03-12
+		if( association != null ) {
+			association.setValue( value, parent() );
+		}
 	}
 
 	public NGComponent parent() {
@@ -226,14 +231,17 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	@Override
 	public NGResponse generateResponse() {
-		logger.debug( "Invoked {}.generateResponse()", getClass() );
-
 		context().setPage( this );
 		context().setComponent( this );
 
-		// FIXME: Wwe should only be constructing an AjaxResponse if the request is an AjaxRequest
+		// FIXME: We should only be constructing an AjaxResponse if the request is an AjaxRequest
 		final NGResponse response = new NGAjaxResponse( context() );
-		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding
+		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
+
+		// At this point, the context's elementID might be off.
+		// For example, if we ended up here by clicking/activating a hyperlink in invokeAction, we'll be in the middle of that component's elementID tree)
+		// So we have to start out clean and reset the elementID before entering our forced appendToResponse() stage.
+		context()._resetElementID();
 
 		appendToResponse( response, context() );
 

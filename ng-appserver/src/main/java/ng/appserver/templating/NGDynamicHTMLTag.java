@@ -74,7 +74,7 @@ public class NGDynamicHTMLTag {
 			}
 			else {
 				if( sb.length() > 0 ) {
-					NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
+					final NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
 					list.add( bareString );
 					sb.setLength( 0 );
 				}
@@ -84,12 +84,12 @@ public class NGDynamicHTMLTag {
 		}
 
 		if( sb.length() > 0 ) {
-			NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
+			final NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
 			sb.setLength( 0 );
 			list.add( bareString );
 		}
 
-		NGElement template;
+		final NGElement template;
 
 		if( list.size() == 1 ) {
 			final NGElement onlyElement = (NGElement)list.get( 0 );
