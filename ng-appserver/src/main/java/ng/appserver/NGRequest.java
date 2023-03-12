@@ -79,9 +79,24 @@ public class NGRequest extends NGMessage {
 
 	/**
 	 * @return The requests form values (query parameters)
+	 *
+	 * FIXME: Form values arent always strings? What about file uploads? (multipart/form-data) // Hugi 2023-03-11
 	 */
 	public Map<String, List<String>> formValues() {
 		return _formValues;
+	}
+
+	/**
+	 * @return The form values represented by given key/query parameter. Returns an empty list if the form value is not present
+	 */
+	public List<String> formValuesForKey( final String key ) {
+		final List<String> list = formValues().get( key );
+
+		if( list == null ) {
+			return Collections.emptyList();
+		}
+
+		return list;
 	}
 
 	/**

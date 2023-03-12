@@ -47,7 +47,22 @@ public class NGRepetition extends NGDynamicGroup {
 	 */
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
-		super.takeValuesFromRequest( request, context );
+		context.elementID().addBranch();
+
+		NGActionResults actionResults = null;
+
+		final List<?> list = list( context );
+
+		final int count = list.size();
+
+		for( int i = 0; i < count && actionResults == null; ++i ) {
+			context.elementID().increment(); // FIXME: Better to increment afterwards? // Hugi 2023-01-07
+			final Object object = list.get( i );
+			_itemAssociation.setValue( object, context.component() );
+			super.takeValuesFromRequest( request, context );
+		}
+
+		context.elementID().removeBranch();
 	}
 
 	@Override

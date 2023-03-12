@@ -20,12 +20,12 @@ public class NGConditional extends NGDynamicGroup {
 	/**
 	 * The condition this conditional evaluates
 	 */
-	private NGAssociation _conditionAssociation;
+	private final NGAssociation _conditionAssociation;
 
 	/**
 	 * If set to true, will reverse the condition in the "condition" binding. Defaults to false (…of course)
 	 */
-	private NGAssociation _negateAssociation;
+	private final NGAssociation _negateAssociation;
 
 	public NGConditional( final String name, final Map<String, NGAssociation> associations, final NGElement content ) {
 		super( name, associations, content );

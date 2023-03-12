@@ -17,7 +17,7 @@ import ng.appserver.NGResponse;
 
 public class NGGenericElement extends NGDynamicElement {
 
-	private NGAssociation elementNameAssociation;
+	private final NGAssociation elementNameAssociation;
 
 	/**
 	 * For storing associations that aren't part of the component's basic associations
@@ -25,7 +25,7 @@ public class NGGenericElement extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGGenericElement( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 		_additionalAssociations = new HashMap<>( associations );
 
 		elementNameAssociation = _additionalAssociations.remove( "elementName" );

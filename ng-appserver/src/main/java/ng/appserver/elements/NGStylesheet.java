@@ -18,7 +18,7 @@ import ng.appserver.NGResponse;
 
 public class NGStylesheet extends NGDynamicElement {
 
-	private NGAssociation _filenameAssociation;
+	private final NGAssociation _filenameAssociation;
 
 	public NGStylesheet( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );

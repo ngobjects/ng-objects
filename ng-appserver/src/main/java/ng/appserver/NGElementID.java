@@ -1,6 +1,7 @@
 package ng.appserver;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Represents an elementID.
@@ -22,9 +23,9 @@ public class NGElementID {
 	/**
 	 * The components of the elementID.
 	 *
-	 * FIXME: This array needs to be dynamically resized // Hugi 203-02-09
+	 * FIXME: This array needs to be dynamically resized // Hugi 2023-02-09
 	 */
-	private final int[] components = new int[10];
+	private final int[] components = new int[100];
 
 	public void addBranch() {
 		index++;
@@ -87,6 +88,6 @@ public class NGElementID {
 
 	@Override
 	public int hashCode() {
-		return components.hashCode();
+		return Objects.hash( components, index );
 	}
 }

@@ -35,6 +35,11 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * Map of this component's children
+	 *
+	 * FIXME:
+	 * We need to look into the implementation of this, since elementID is a mutable class.
+	 * In other words; we might be caching the same NGElementID multiple times under a different hash
+	 * Hugi 2023-03-11
 	 */
 	private final Map<NGElementID, NGComponent> _children;
 
@@ -125,11 +130,13 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	public void pushBindingValuesToParent() {
-		if( synchronizesVariablesWithBindings() ) {
-			for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
-				final String bindingName = binding.getKey();
-				final NGAssociation association = binding.getValue();
-				association.setValue( NGKeyValueCoding.DefaultImplementation.valueForKey( this, bindingName ), parent() );
+		if( _associations != null ) { // FIXME: I hate that associations can be null. Needs to be fixed in the template parser // Hugi 2023-03-11
+			if( synchronizesVariablesWithBindings() ) {
+				for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
+					final String bindingName = binding.getKey();
+					final NGAssociation association = binding.getValue();
+					association.setValue( NGKeyValueCoding.DefaultImplementation.valueForKey( this, bindingName ), parent() );
+				}
 			}
 		}
 	}

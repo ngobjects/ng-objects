@@ -18,8 +18,8 @@ import ng.appserver.privates.NGHTMLUtilities;
 
 public class NGSubmitButton extends NGDynamicElement {
 
-	private NGAssociation _actionAssociation;
-	private NGAssociation _valueAssociation; // FIXME: This should just be passed through with other "generic" HTML attributes
+	private final NGAssociation _actionAssociation;
+	private final NGAssociation _valueAssociation; // FIXME: This should just be passed through with other "generic" HTML attributes
 
 	public NGSubmitButton( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );

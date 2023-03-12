@@ -98,16 +98,11 @@ public class NGExceptionPageDevelopment extends NGComponent {
 			return false;
 		}
 
-		// If the source is inside a JAR file
-		// FIXME: Extract the sources from source-containing jar-files? // Hugi 2023-01-30
-		// FIXME: This doesn't actually work, we have to check the class resource's actual path // Hugi 2023-02-07
-		if( sourceFileContainingError().toString().contains( ".jar/" ) ) {
+		if( !Files.exists( sourceFileContainingError() ) ) {
+			// If the file doesn't exist, some of our earlier checks have failed (most probably the source is inside a jar)
+			// This is kind of a catch-all, we should be figuring out what the error conditions are and handling those instead.
 			return false;
 		}
-
-		// Finally, don't display the file if it doesn't exist
-		// FIXME: Why wouldn't the file exist? Can we check for different conditions earlier? // Hugi 2023-01-30
-		// return Files.exists( sourceFileContainingError() );
 
 		return true;
 	}
@@ -117,10 +112,34 @@ public class NGExceptionPageDevelopment extends NGComponent {
 	 */
 	private Path sourceFileContainingError() {
 		final String nameOfThrowingClass = firstLineOfTrace().getFileName();
-		final String projectPath = projectRootForClassName( firstLineOfTrace().getClassName() );
-		final String sourceFolder = projectPath + "src/main/java/";
+		final String projectRoot = projectRootForClassName( firstLineOfTrace().getClassName() );
+		final String sourceFolder = projectRoot + "src/main/java/";
 		final String path = sourceFolder + packageNameFromClassName( firstLineOfTrace().getClassName() ).replace( ".", "/" ) + "/" + nameOfThrowingClass;
 		return Paths.get( path );
+	}
+
+	/**
+	 * An extremely hacky method to get to our project root to locate the source file.
+	 * Should really be using some sort of bundle functionality to resolve this instead in the future.
+	 */
+	private static String projectRootForClassName( final String className ) {
+		final String classFilename = className.replace( '.', '/' ) + ".class";
+		final URL classURL = NGExceptionPageDevelopment.class.getClassLoader().getResource( classFilename );
+		final String filename = classURL.getFile().toString();
+
+		// If the source is inside a JAR file, we don't have a project root and currently don't display anything.
+		// We might want to consider looking inside source jars?
+		if( filename.contains( ".jar!/" ) ) {
+			return null;
+		}
+
+		final int targetIndex = filename.indexOf( "target/" ); // We're assuming a maven project with the standard "target" name for the build folder
+
+		if( targetIndex == -1 ) {
+			return null;
+		}
+
+		return filename.substring( 0, targetIndex );
 	}
 
 	/**
@@ -226,21 +245,5 @@ public class NGExceptionPageDevelopment extends NGComponent {
 	 */
 	public String currentRowClass() {
 		return null;
-	}
-
-	/**
-	 * An extremely hacky method to get to our project root to locate the source file. Should really be using a bundle instead in the future.
-	 */
-	private static String projectRootForClassName( final String className ) {
-		final String cn = className.replace( '.', '/' ) + ".class";
-		final URL u = NGExceptionPageDevelopment.class.getClassLoader().getResource( cn );
-		final String filename = u.getFile().toString();
-		final int targetIndex = filename.indexOf( "target" );
-
-		if( targetIndex == -1 ) {
-			return null;
-		}
-
-		return filename.substring( 0, targetIndex );
 	}
 }

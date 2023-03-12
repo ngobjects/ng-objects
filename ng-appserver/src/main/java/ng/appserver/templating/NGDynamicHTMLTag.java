@@ -53,6 +53,11 @@ public class NGDynamicHTMLTag {
 		return _parentTag;
 	}
 
+	/**
+	 * @return The tag's template
+	 *
+	 * FIXME: The entire flow here is a little... odd. Let's have a look // Hugi 2023-03-11
+	 */
 	public NGElement template() {
 
 		if( _children == null ) {

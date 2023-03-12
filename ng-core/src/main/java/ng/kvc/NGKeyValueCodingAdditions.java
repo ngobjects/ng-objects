@@ -1,7 +1,10 @@
 package ng.kvc;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
+
+/**
+ * FIXME: We're missing unit tests for this // Hugi 2023-03-11
+ */
 
 public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 
@@ -22,35 +25,28 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 			return DefaultImplementation.valueForKeyPath( object, keyPath );
 		}
 
-		/**
-		 * FIXME: Very basic implementation for testing // Hugi 2022-04-23
-		 */
 		public static void takeValueForKeyPath( final Object object, final Object value, final String keyPath ) {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( keyPath );
 
-			try {
-				Field field = object.getClass().getField( keyPath );
-				field.set( object, value );
+			if( object instanceof NGKeyValueCodingAdditions kvcAdditionsObject ) {
+				kvcAdditionsObject.takeValueForKeyPath( value, keyPath );
 			}
-			catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e ) {
-				throw new RuntimeException( e );
+			else {
+				DefaultImplementation.takeValueForKeyPath( object, value, keyPath );
 			}
 		}
 	}
 
 	public static class DefaultImplementation {
 
-		/**
-		 * Temporary implementation for testing
-		 */
 		public static Object valueForKeyPath( final Object object, final String keyPath ) {
-			String[] keyPaths = keyPath.split( "\\." );
+			final String[] keyPathComponents = keyPath.split( "\\." );
 
 			Object result = object;
 
-			for( String currentKeyPath : keyPaths ) {
-				result = NGKeyValueCoding.Utility.valueForKey( result, currentKeyPath );
+			for( String currentKeyPathComponent : keyPathComponents ) {
+				result = NGKeyValueCoding.Utility.valueForKey( result, currentKeyPathComponent );
 
 				if( result == null ) {
 					return null;
@@ -60,8 +56,19 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 			return result;
 		}
 
-		public void takeValueForKeyPath( Object object, Object target, String keyPath ) {
-			throw new RuntimeException( "Not implemented" );
+		public static void takeValueForKeyPath( Object object, Object value, String keyPath ) {
+			int lastPeriodIndex = keyPath.lastIndexOf( '.' );
+
+			// No periods means it's just a single key, so we don't need to resolve the keyPath
+			if( lastPeriodIndex == -1 ) {
+				NGKeyValueCoding.Utility.takeValueForKey( object, value, keyPath );
+			}
+			else {
+				final String targetPath = keyPath.substring( 0, lastPeriodIndex ); // The targeted object is found by resolving the keyPath up to (excluding) the last element
+				final String valueKey = keyPath.substring( lastPeriodIndex + 1 ); // Last element in the keyPath is the field we want to set on the object represented by targetPath
+				final Object actualTargetObject = valueForKeyPath( object, targetPath ); // FIXME: Our targeted object could have been resolved to null. I'm not sure if we want that to be a hard fail (which it currently is) or a no-op // Hugi 2023-03-11
+				NGKeyValueCoding.Utility.takeValueForKey( actualTargetObject, value, valueKey );
+			}
 		}
 	}
 }

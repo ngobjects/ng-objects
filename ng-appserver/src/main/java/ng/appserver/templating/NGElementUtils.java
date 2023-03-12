@@ -25,7 +25,6 @@ import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGJavaScript;
 import ng.appserver.elements.NGRepetition;
-import ng.appserver.elements.NGScript;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGSubmitButton;
@@ -64,7 +63,6 @@ public class NGElementUtils {
 		addClass( NGJavaScript.class, "script" );
 		addClass( NGRepetition.class, "repetition" );
 		addClass( NGSubmitButton.class, "submit" );
-		addClass( NGScript.class, "script" );
 		addClass( NGStylesheet.class, "stylesheet" );
 		addClass( NGTextField.class, "textfield" );
 		addClass( TestComponent.class );

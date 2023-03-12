@@ -16,37 +16,37 @@ public class NGString extends NGDynamicElement {
 	/**
 	 * The string's value
 	 */
-	private NGAssociation _valueAss;
-
-	/**
-	 * Indicates if we want to escape HTML values. Defaults to true
-	 */
-	private NGAssociation _escapeHTMLAss;
+	private final NGAssociation _valueAssociation;
 
 	/**
 	 * A value to display if the string is null or empty (length==0)
 	 */
-	private NGAssociation _valueWhenEmptyAss;
+	private final NGAssociation _valueWhenEmptyAssociation;
+
+	/**
+	 * Indicates if we want to escape HTML values. Defaults to true
+	 */
+	private final NGAssociation _escapeHTMLAssociation;
 
 	public NGString( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
 		super( null, null, null );
-		_valueAss = associations.get( "value" );
-		_valueWhenEmptyAss = associations.get( "valueWhenEmpty" );
-		_escapeHTMLAss = associations.get( "escapeHTML" );
+		_valueAssociation = associations.get( "value" );
+		_valueWhenEmptyAssociation = associations.get( "valueWhenEmpty" );
+		_escapeHTMLAssociation = associations.get( "escapeHTML" );
 
-		if( _valueAss == null ) {
+		if( _valueAssociation == null ) {
 			throw new NGBindingConfigurationException( "[value] binding is required" );
 		}
 	}
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		Object objectValue = _valueAss.valueInComponent( context.component() );
+		Object objectValue = _valueAssociation.valueInComponent( context.component() );
 
 		// FIXME: This is probably wrong. The object might be not null, but return a null/empty String representation // Hugi 2023-03-10
-		if( _valueWhenEmptyAss != null ) {
+		if( _valueWhenEmptyAssociation != null ) {
 			if( objectValue == null || (objectValue instanceof String s && s.isEmpty()) ) {
-				objectValue = _valueWhenEmptyAss.valueInComponent( context.component() );
+				objectValue = _valueWhenEmptyAssociation.valueInComponent( context.component() );
 			}
 		}
 
@@ -54,8 +54,8 @@ public class NGString extends NGDynamicElement {
 		if( objectValue != null ) {
 			boolean escapeHTML = true;
 
-			if( _escapeHTMLAss != null ) {
-				escapeHTML = (boolean)_escapeHTMLAss.valueInComponent( context.component() );
+			if( _escapeHTMLAssociation != null ) {
+				escapeHTML = (boolean)_escapeHTMLAssociation.valueInComponent( context.component() );
 			}
 
 			String string = objectValue.toString();
@@ -70,12 +70,12 @@ public class NGString extends NGDynamicElement {
 
 	@Override
 	public String toString() {
-		return "NGString [_valueAss=" + _valueAss + ", _escapeHTMLAss=" + _escapeHTMLAss + ", _valueWhenEmptyAss=" + _valueWhenEmptyAss + "]";
+		return "NGString [_valueAss=" + _valueAssociation + ", _escapeHTMLAss=" + _escapeHTMLAssociation + ", _valueWhenEmptyAss=" + _valueWhenEmptyAssociation + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( _escapeHTMLAss, _valueAss, _valueWhenEmptyAss );
+		return Objects.hash( _escapeHTMLAssociation, _valueAssociation, _valueWhenEmptyAssociation );
 	}
 
 	@Override
@@ -90,6 +90,6 @@ public class NGString extends NGDynamicElement {
 			return false;
 		}
 		NGString other = (NGString)obj;
-		return Objects.equals( _escapeHTMLAss, other._escapeHTMLAss ) && Objects.equals( _valueAss, other._valueAss ) && Objects.equals( _valueWhenEmptyAss, other._valueWhenEmptyAss );
+		return Objects.equals( _escapeHTMLAssociation, other._escapeHTMLAssociation ) && Objects.equals( _valueAssociation, other._valueAssociation ) && Objects.equals( _valueWhenEmptyAssociation, other._valueWhenEmptyAssociation );
 	}
 }

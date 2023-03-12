@@ -18,11 +18,15 @@ import ng.appserver.NGResponse;
 
 public class NGJavaScript extends NGDynamicElement {
 
-	private NGAssociation _filenameAssociation;
+	private final NGAssociation _filenameAssociation;
 
 	public NGJavaScript( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
 		_filenameAssociation = associations.get( "filename" );
+
+		if( _filenameAssociation == null ) {
+			throw new IllegalArgumentException( "'filename' is a required binding" );
+		}
 	}
 
 	@Override
