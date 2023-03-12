@@ -242,7 +242,12 @@ public class NGComponent implements NGElement, NGActionResults {
 		context().setComponent( this );
 
 		final NGResponse response = new NGResponse();
-		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding
+		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
+
+		// At this point, the context's elementID might be off.
+		// For example, if we ended up here by clicking/activating a hyperlink in invokeAction, we'll be in the middle of that component's elementID tree)
+		// So we have to start out clean and reset the elementID before entering our forced appendToResponse() stage.
+		context()._resetElementID();
 
 		appendToResponse( response, context() );
 
