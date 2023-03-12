@@ -42,10 +42,17 @@ public class NGTextField extends NGDynamicElement {
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
 		if( !disabled( context ) ) {
-			final List<String> valuesFromRequest = request.formValuesForKey( name( context ) );
+			final String name = name( context );
+			final List<String> valuesFromRequest = request.formValuesForKey( name );
 
 			if( !valuesFromRequest.isEmpty() ) {
-				final String valueFromRequest = valuesFromRequest.get( 0 ); // FIXME: We should probably warn or even fail/throw if multiple values are present? // Hugi 2023-03-11
+
+				// If multiple form values are present for the same field name, the potential for an error condition is probably high enough to just go ahead and fail.
+				if( valuesFromRequest.size() > 1 ) {
+					throw new IllegalStateException( "The request contains more than one form value named '%s'.".formatted( name ) );
+				}
+
+				final String valueFromRequest = valuesFromRequest.get( 0 );
 				_valueAssociation.setValue( valueFromRequest, context.component() );
 			}
 		}
