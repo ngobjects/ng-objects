@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.kvc.NGKeyValueCoding;
 
 /**
@@ -15,8 +12,6 @@ import ng.kvc.NGKeyValueCoding;
  */
 
 public class NGComponent implements NGElement, NGActionResults {
-
-	private static final Logger logger = LoggerFactory.getLogger( NGComponent.class );
 
 	/**
 	 * The component's context
@@ -236,8 +231,6 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	@Override
 	public NGResponse generateResponse() {
-		logger.debug( "Invoked {}.generateResponse()", getClass() );
-
 		context().setPage( this );
 		context().setComponent( this );
 
