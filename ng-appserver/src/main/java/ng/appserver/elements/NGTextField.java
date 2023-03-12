@@ -49,7 +49,7 @@ public class NGTextField extends NGDynamicElement {
 
 				// If multiple form values are present for the same field name, the potential for an error condition is probably high enough to just go ahead and fail.
 				if( valuesFromRequest.size() > 1 ) {
-					throw new IllegalStateException( "The request contains more than one form value named '%s'.".formatted( name ) );
+					throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( valuesFromRequest.size(), name, valuesFromRequest ) );
 				}
 
 				final String valueFromRequest = valuesFromRequest.get( 0 );
