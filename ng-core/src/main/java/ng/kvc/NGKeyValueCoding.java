@@ -10,15 +10,13 @@ import ng.NGRuntimeException;
 /**
  * NGKeyValueCoding is a simplified reimplementation of NSKeyValueCoding.
  *
- * FIXME: Implement missing key handling
- * FIXME: Decide if we're going to go all the way and do validation as well
- * FIXME: We should be marking bindings for directionality (read only/set only etc)
- * FIXME: We should be using cached MethodHandles for improved performance
+ * FIXME: Why check for the underscore fields before the fully matching field names? We're currently basically just doing that to keep compatibility with NSKVC // Hugi 2022-01-02
+ * FIXME: If a binding is available but not accessible, skip to checking if the next binding is accessible // Hugi 2023-03-18
  * FIXME: We might want to do the same gymnastics with fields as methods in case of private fields getting passed down to private inner classes
- * FIXME: Error handling
- * FIXME: Why check for the underscore fields before the fully matching field names? We're basically just doing that to keep compatibility with NSKVC // Hugi 2022-01-02
- * FIXME: Implement the correct method/field lookup ordering:
- * FIXME: We're going to want to decide what to do if there's an available key, but not accessible. Do we skip to the next "type" of binding or do we throw. Essentially; is shading allowed.
+ * FIXME: Error handling is completely missing // Hugi 2023-03-18
+ * FIXME: Bindings should be marked for directionality (read only/set only etc)
+ * FIXME: Decide if we're going to go all the way and do validation and error handling
+ * FIXME: We should be using cached MethodHandles for improved performance
  *
  * Lookup order when searching for a readable binding:
  *
@@ -33,11 +31,11 @@ import ng.NGRuntimeException;
  * 9. Field "smu"
  * 10. Field "isSmu"
  *
- * Lookup order when searching for a writable binding: // FIXME: Incomplete // Hugi 2022-12-27
+ * Lookup order when searching for a writable binding:
  *
  * 1. Method "setSmu"
  * 2. Field "smu"
- * ...
+ * ... // FIXME: Incomplete // Hugi 2022-12-27
  */
 
 public interface NGKeyValueCoding {
