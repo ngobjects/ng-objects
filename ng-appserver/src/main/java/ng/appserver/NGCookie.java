@@ -12,11 +12,7 @@ public class NGCookie {
 	private String _domain;
 	private String _comment;
 	private Integer _maxAge;
-
-	/**
-	 * Strict,Lax,None
-	 */
-	private String _sameSite;
+	private String _sameSite; // Strict,Lax,None
 	private boolean _isSecure;
 	private boolean _isHttpOnly;
 

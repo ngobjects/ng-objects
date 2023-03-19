@@ -61,7 +61,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 	}
 
 	/**
-	 * @return The list of shortcuts for the tag. FIXME: Butt-ugly
+	 * @return The list of shortcuts for the tag, as defined by the framework core.
 	 */
 	public List<String> aliases() {
 		final List<String> result = new ArrayList<>();
