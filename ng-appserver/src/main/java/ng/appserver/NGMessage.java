@@ -142,7 +142,7 @@ public abstract class NGMessage {
 	 *
 	 * FIXME: Not sure I want this as public API, but it prevents the adaptor from having to do a copy of the stream's byte array // Hugi 2023-02-17
 	 */
-	public ByteArrayOutputStream contentBytestream() {
+	public ByteArrayOutputStream contentByteStream() {
 		return _contentBytes;
 	}
 
