@@ -47,17 +47,20 @@ public class NGComponentReference extends NGDynamicElement {
 		// Let's take hold of component that's being rendered, before we hand control to the new component
 		final NGComponent previousComponent = context.component();
 
+		// If we've already rendered a component at this location in the element tree, an instance should be cached under it's elementID in parent's children map
 		NGComponent newComponentInstance = previousComponent.getChild( context.elementID() );
 
 		// FIXME: If we actually did obtain an instance from the child cache here, don't we need to set the child's context or have we already set the context for the component tree? // Hugi 2023-03-11
 
-		// If no instance was obtained, we need to create the component
+		// If no instance was obtained, we need to create the component instance and insert it into the parent's child map.
 		if( newComponentInstance == null ) {
 			// Load up our component's definition
 			final NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( _componentName, Collections.emptyList() );
 
 			// ...and obtain an instance of the component
 			newComponentInstance = componentDefinition.componentInstanceInContext( context );
+
+			// Finally, we store our component instance in it's parent child map, ensuring we're reusing instances between requests
 			previousComponent.addChild( context.elementID(), newComponentInstance );
 		}
 
