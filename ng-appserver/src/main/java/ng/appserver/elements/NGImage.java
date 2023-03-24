@@ -103,25 +103,29 @@ public class NGImage extends NGDynamicElement {
 			}
 		}
 
-		// In case of a data binding, we always just store the data in the resource cache, under a new key each time. Kind of lame.
-		if( _dataAssociation != null ) {
+		// In case of a [data] or [dataInputStream] binding, we create a resource in the resource cache under a new key each time.
+		if( _dataAssociation != null || _dataInputStreamAssociation != null ) {
 			final String mimeType = (String)_mimeTypeAssociation.valueInComponent( component );
-			byte[] bytes = (byte[])_dataAssociation.valueInComponent( component );
-			final String id = UUID.randomUUID().toString();
-			final NGDynamicResource resource = new NGDynamicResource( new ByteArrayInputStream( bytes ), id, mimeType, (long)bytes.length );
-			NGResourceRequestHandlerDynamic.push( id, resource );
-			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( id ).get();
-		}
 
-		// FIXME: Lots of code duplication from the 'data' binding handling, refactor and consolidate once we have a semi-nice structure for this // Hugi 2023-02-10
-		if( _dataInputStreamAssociation != null ) {
-			final String mimeType = (String)_mimeTypeAssociation.valueInComponent( component );
-			long dataInputStreamLength = (long)_dataInputStreamLengthAssociation.valueInComponent( component );
-			final InputStream is = (InputStream)_dataInputStreamAssociation.valueInComponent( component );
-			final String id = UUID.randomUUID().toString();
-			final NGDynamicResource resource = new NGDynamicResource( is, id, mimeType, dataInputStreamLength );
-			NGResourceRequestHandlerDynamic.push( id, resource );
-			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( id ).get();
+			// we obtain a key that we're going to store the cached resource under in the ResourceManager's cache
+			final String resourceCacheKey = UUID.randomUUID().toString();
+
+			final InputStream inputStream;
+			final Long length;
+
+			if( _dataAssociation != null ) {
+				byte[] bytes = (byte[])_dataAssociation.valueInComponent( component );
+				inputStream = new ByteArrayInputStream( bytes );
+				length = (long)bytes.length;
+			}
+			else {
+				inputStream = (InputStream)_dataInputStreamAssociation.valueInComponent( component );
+				length = (long)_dataInputStreamLengthAssociation.valueInComponent( component );
+			}
+
+			final NGDynamicResource resource = new NGDynamicResource( inputStream, resourceCacheKey, mimeType, length );
+			NGResourceRequestHandlerDynamic.push( resourceCacheKey, resource );
+			src = NGApplication.application().resourceManager().urlForDynamicResourceNamed( resourceCacheKey ).get();
 		}
 
 		if( _srcAssociation != null ) {

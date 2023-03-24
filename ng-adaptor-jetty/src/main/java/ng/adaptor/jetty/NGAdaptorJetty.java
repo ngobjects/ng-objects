@@ -159,7 +159,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 					}
 				}
 				else {
-					ngResponse.contentBytestream().writeTo( out );
+					ngResponse.contentByteStream().writeTo( out );
 				}
 			}
 		}

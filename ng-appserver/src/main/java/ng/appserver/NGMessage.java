@@ -18,9 +18,7 @@ import java.util.TreeMap;
 public abstract class NGMessage {
 
 	/**
-	 * Default length we initialize the size of the content data byte[] with.
-	 *
-	 * FIXME: This arbitrarily picked buffer size may need to be given a little more thought... // Hugi 2023-02-08
+	 * Arbitrarily picked default length we initialize the size of the content data byte[] with.
 	 */
 	private static final int DEFAULT_CONTENT_DATA_LENGTH = 8192;
 
@@ -32,13 +30,15 @@ public abstract class NGMessage {
 	/**
 	 * The headers  of this message
 	 */
-	private Map<String, List<String>> _headers = _createHeadersMap();
+	private Map<String, List<String>> _headers = _createEmptyHeadersMap();
 
 	/**
 	 * The content of this message
 	 *
-	 * FIXME: Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming) // Hugi 2023-02-04
-	 * FIXME: After a little testing ; it's clear that using StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream // Hugi 2023-02-08
+	 * FIXME:
+	 * Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming)
+	 * For example, it's clear that using a StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream
+	 * // Hugi 2023-02-08
 	 */
 	private ByteArrayOutputStream _contentBytes = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
 
@@ -64,12 +64,20 @@ public abstract class NGMessage {
 	}
 
 	/**
+	 * Creates an empty map to store headers.
+	 * Separate method since we might want to change the map type later.
+	 */
+	private static Map<String, List<String>> _createEmptyHeadersMap() {
+		return new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
+	}
+
+	/**
 	 * Sets the headers from the given map.
 	 *
 	 * FIXME: We're currently copying the map entries to a TreeMap to get case insensitivity. This is not the most efficient implementation // Hugi 2022-01-03
 	 */
 	public void setHeaders( final Map<String, List<String>> newHeaders ) {
-		_headers = _createHeadersMap();
+		_headers = _createEmptyHeadersMap();
 
 		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
 			_headers.put( header.getKey(), header.getValue() );
@@ -134,7 +142,7 @@ public abstract class NGMessage {
 	 *
 	 * FIXME: Not sure I want this as public API, but it prevents the adaptor from having to do a copy of the stream's byte array // Hugi 2023-02-17
 	 */
-	public ByteArrayOutputStream contentBytestream() {
+	public ByteArrayOutputStream contentByteStream() {
 		return _contentBytes;
 	}
 
@@ -150,13 +158,5 @@ public abstract class NGMessage {
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
 		}
-	}
-
-	/**
-	 * Creates the initial headers map.
-	 * Kept a separate method since we might want to change this to a different map type later.
-	 */
-	private static Map<String, List<String>> _createHeadersMap() {
-		return new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 	}
 }
