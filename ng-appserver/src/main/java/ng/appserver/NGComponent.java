@@ -274,7 +274,15 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * @return the template (which is stored by the component definition)
 	 */
 	public NGElement template() {
-		return _componentDefinition.template();
+		final NGElement template = _componentDefinition.template();
+
+		// FIXME: Not sure we want to throw here, but it currently feels better than silently failing // Hugi 2023-03-26
+
+		if( template == null ) {
+			throw new IllegalStateException( "The component " + name() + " is missing a template" );
+		}
+
+		return template;
 	}
 
 	/**
