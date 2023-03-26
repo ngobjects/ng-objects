@@ -78,6 +78,24 @@ public abstract class NGMessage {
 	}
 
 	/**
+	 * @return The header matching the given key
+	 */
+	public String headerForKey( final String key ) {
+		final List<String> values = headersForKey( key );
+
+		if( values.isEmpty() ) {
+			return null;
+		}
+
+		// Fail if multiple header values are present
+		if( values.size() > 1 ) {
+			throw new IllegalStateException( "The request contains %s headers named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( values.size(), key, values ) );
+		}
+
+		return values.get( 0 );
+	}
+
+	/**
 	 * Creates an empty map to store headers.
 	 * Separate method since we might want to change the map type later.
 	 */
