@@ -175,6 +175,11 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	public Object valueForBinding( String bindingName ) {
 
+		// FIXME: Remove this null check. We have to look into it WRT Hafnium's nullpointer occurring in USViewPage // Hugi 2023-03-26
+		if( _associations == null ) {
+			return null;
+		}
+
 		// Access our associations and fetch the value based on the binding name
 		final NGAssociation association = _associations.get( bindingName );
 
