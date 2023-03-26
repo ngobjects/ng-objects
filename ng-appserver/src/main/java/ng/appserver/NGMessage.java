@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,6 +62,19 @@ public abstract class NGMessage {
 	 */
 	public Map<String, List<String>> headers() {
 		return _headers;
+	}
+
+	/**
+	 * @return The headers matching the given key
+	 */
+	public List<String> headersForKey( final String key ) {
+		final List<String> values = headers().get( key );
+
+		if( values.isEmpty() ) {
+			return Collections.emptyList();
+		}
+
+		return values;
 	}
 
 	/**
