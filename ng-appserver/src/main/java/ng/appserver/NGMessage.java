@@ -70,7 +70,7 @@ public abstract class NGMessage {
 	public List<String> headersForKey( final String key ) {
 		final List<String> values = headers().get( key );
 
-		if( values.isEmpty() ) {
+		if( values == null ) {
 			return Collections.emptyList();
 		}
 
