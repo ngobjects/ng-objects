@@ -36,7 +36,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * In other words; we might be caching the same NGElementID multiple times under a different hash
 	 * Hugi 2023-03-11
 	 */
-	private final Map<NGElementID, NGComponent> _children;
+	private final Map<String, NGComponent> _children;
 
 	/**
 	 * The associations passed in to this component from it's parent component
@@ -94,7 +94,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	/**
 	 * Add the given child component with the given elementID
 	 */
-	public void addChild( NGElementID elementID, NGComponent child ) {
+	public void addChild( String elementID, NGComponent child ) {
 		Objects.requireNonNull( elementID );
 		Objects.requireNonNull( child );
 		_children.put( elementID, child );
@@ -105,7 +105,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 *
 	 * FIXME: Null? Really? // Hugi 2022-12-30
 	 */
-	public NGComponent getChild( NGElementID elementID ) {
+	public NGComponent getChild( String elementID ) {
 		Objects.requireNonNull( elementID );
 		return _children.get( elementID );
 	}
