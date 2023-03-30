@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.privates.NGResourceLoader;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGElementUtils;
@@ -209,7 +210,7 @@ public class NGComponentDefinition {
 
 			if( htmlTemplateString.isEmpty() ) {
 				logger.warn( "Component template '%s' not found".formatted( name() ) );
-				return null;
+				return new NGHTMLBareString( "" ); // FIXME: This is kind of ugly, but it will do for now // Hugi 2023-03-30
 			}
 
 			return NGTemplateParser.parse( htmlTemplateString, wodString, Collections.emptyList() );
