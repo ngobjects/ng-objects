@@ -398,9 +398,9 @@ public class NGApplication {
 	 */
 	public NGActionResults exceptionResponse( final Throwable throwable, final NGContext context ) {
 
-		// FIXME: Link up the production exception page // Hugi 2022-04-20
-		boolean isDevelopmentMode = true; // isDevelopmentMode();
+		final boolean isDevelopmentMode = isDevelopmentMode();
 
+		// If we're in development mode, we want to show some extra nice debugging information (sources, caches, context info etc.)
 		if( isDevelopmentMode ) {
 			final NGExceptionPageDevelopment nextPage = pageWithName( NGExceptionPageDevelopment.class, context );
 			nextPage.setException( throwable );
