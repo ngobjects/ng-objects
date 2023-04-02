@@ -35,11 +35,26 @@ public class NGResourceLoader {
 	private static ResourceSource webserverResourcesSource = new JavaClasspathResourceSource( WEBSERVER_RESOURCES_FOLDER );
 
 	/**
+	 * Name of the folder that stores application resources
+	 */
+	private static final String PUBLIC_RESOURCES_FOLDER = "public";
+
+	private static ResourceSource publicResourcesSource = new JavaClasspathResourceSource( PUBLIC_RESOURCES_FOLDER );
+
+	/**
 	 * Name of the folder that stores component templates
 	 */
 	private static final String COMPONENTS_FOLDER = "components";
 
 	private static ResourceSource componentResourcesSource = new JavaClasspathResourceSource( COMPONENTS_FOLDER );
+
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
+	public static Optional<byte[]> readPublicResource( final String resourcePath ) {
+		Objects.requireNonNull( resourcePath );
+		return publicResourcesSource.bytesForResourceWithPath( resourcePath );
+	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
