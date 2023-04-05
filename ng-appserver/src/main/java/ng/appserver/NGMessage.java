@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,6 +62,37 @@ public abstract class NGMessage {
 	 */
 	public Map<String, List<String>> headers() {
 		return _headers;
+	}
+
+	/**
+	 * @return The headers matching the given key
+	 */
+	public List<String> headersForKey( final String key ) {
+		final List<String> values = headers().get( key );
+
+		if( values == null ) {
+			return Collections.emptyList();
+		}
+
+		return values;
+	}
+
+	/**
+	 * @return The header matching the given key
+	 */
+	public String headerForKey( final String key ) {
+		final List<String> values = headersForKey( key );
+
+		if( values.isEmpty() ) {
+			return null;
+		}
+
+		// Fail if multiple header values are present
+		if( values.size() > 1 ) {
+			throw new IllegalStateException( "The request contains %s headers named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( values.size(), key, values ) );
+		}
+
+		return values.get( 0 );
 	}
 
 	/**

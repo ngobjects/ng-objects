@@ -28,6 +28,7 @@ import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGSubmitButton;
+import ng.appserver.elements.NGSwitchComponent;
 import ng.appserver.elements.NGTextField;
 import x.junk.TestComponent;
 
@@ -64,6 +65,7 @@ public class NGElementUtils {
 		addClass( NGRepetition.class, "repetition" );
 		addClass( NGSubmitButton.class, "submit" );
 		addClass( NGStylesheet.class, "stylesheet" );
+		addClass( NGSwitchComponent.class, "switch" );
 		addClass( NGTextField.class, "textfield" );
 		addClass( TestComponent.class );
 	}

@@ -28,6 +28,11 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		// Hugi 2023-02-17
 		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourcePath );
 
+		return responseForResource( resourceBytes, resourcePath );
+	}
+
+	public static NGResponse responseForResource( Optional<byte[]> resourceBytes, final String resourcePath ) {
+
 		// FIXME: Shouldn't we allow the user to customize the response for a non-existent resource? // Hugi 2021-12-06
 		if( resourceBytes.isEmpty() ) {
 			final NGResponse errorResponse = new NGResponse( "webserver resource '" + resourcePath + "' does not exist", 404 );

@@ -44,6 +44,11 @@ public class NGElementID {
 		}
 	}
 
+	public void addBranchAndSet( int value ) {
+		addBranch();
+		components[index] = value;
+	}
+
 	public static NGElementID fromString( final String elementIDString ) {
 		final NGElementID id = new NGElementID();
 		final String[] split = elementIDString.split( "\\." );

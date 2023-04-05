@@ -36,7 +36,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * In other words; we might be caching the same NGElementID multiple times under a different hash
 	 * Hugi 2023-03-11
 	 */
-	private final Map<NGElementID, NGComponent> _children;
+	private final Map<String, NGComponent> _children;
 
 	/**
 	 * The associations passed in to this component from it's parent component
@@ -94,7 +94,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	/**
 	 * Add the given child component with the given elementID
 	 */
-	public void addChild( NGElementID elementID, NGComponent child ) {
+	public void addChild( String elementID, NGComponent child ) {
 		Objects.requireNonNull( elementID );
 		Objects.requireNonNull( child );
 		_children.put( elementID, child );
@@ -105,7 +105,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 *
 	 * FIXME: Null? Really? // Hugi 2022-12-30
 	 */
-	public NGComponent getChild( NGElementID elementID ) {
+	public NGComponent getChild( String elementID ) {
 		Objects.requireNonNull( elementID );
 		return _children.get( elementID );
 	}
@@ -174,6 +174,11 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * @return The value of the named binding/association.
 	 */
 	public Object valueForBinding( String bindingName ) {
+
+		// FIXME: Remove this null check. We have to look into it WRT Hafnium's nullpointer occurring in USViewPage // Hugi 2023-03-26
+		if( _associations == null ) {
+			return null;
+		}
 
 		// Access our associations and fetch the value based on the binding name
 		final NGAssociation association = _associations.get( bindingName );
@@ -275,7 +280,15 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * @return the template (which is stored by the component definition)
 	 */
 	public NGElement template() {
-		return _componentDefinition.template();
+		final NGElement template = _componentDefinition.template();
+
+		// FIXME: Not sure we want to throw here, but it currently feels better than silently failing // Hugi 2023-03-26
+
+		if( template == null ) {
+			throw new IllegalStateException( "The component " + name() + " is missing a template" );
+		}
+
+		return template;
 	}
 
 	/**

@@ -26,6 +26,12 @@ public class NGResourceManager {
 	private final Map<String, Optional<byte[]>> _webserverResourceCache = new ConcurrentHashMap<>();
 
 	/**
+	 * FIXME: Experimental cache
+	 * FIXME: Resource caches should be located centrally
+	 */
+	private final Map<String, Optional<byte[]>> _publicResourceCache = new ConcurrentHashMap<>();
+
+	/**
 	 * Specifies if we want to use the resources cache.
 	 * FIXME: Current implementation is for testing only
 	 */
@@ -51,6 +57,29 @@ public class NGResourceManager {
 		}
 		else {
 			resource = NGResourceLoader.readWebserverResource( resourceName );
+		}
+
+		return resource;
+	}
+
+	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
+		Objects.requireNonNull( resourceName );
+
+		logger.debug( "Loading resource named {}. Caching: {}", resourceName, _cachingEnabled() );
+
+		Optional<byte[]> resource;
+
+		if( _cachingEnabled() ) {
+			resource = _publicResourceCache.get( resourceName );
+
+			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
+			if( resource == null ) {
+				resource = NGResourceLoader.readPublicResource( resourceName );
+				_publicResourceCache.put( resourceName, resource );
+			}
+		}
+		else {
+			resource = NGResourceLoader.readPublicResource( resourceName );
 		}
 
 		return resource;

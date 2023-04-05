@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -304,7 +305,21 @@ public class NGApplication {
 				final NGRequestHandler requestHandler = handlerForURL( request.uri() );
 
 				if( requestHandler == null ) {
-					return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
+					// FIXME: Very, very experimental public resource handler.
+					final String resourcePath = request.parsedURI().getString( 0 );
+
+					if( resourcePath.isEmpty() ) {
+						return new NGResponse( "No resource name specified", 400 );
+					}
+
+					// FIXME: We want this to work with streams, not byte arrays.
+					// To make this work, we'll have to cache a wrapper class for the resource; that wrapper must give us a "stream provider", not an actual stream, since we'll be consuming the stream of a cached resource multiple times.
+					// Hugi 2023-02-17
+					final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForPublicResourceNamed( resourcePath );
+
+					return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
+
+					//					return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
 				}
 
 				response = requestHandler.handleRequest( request );
@@ -398,9 +413,9 @@ public class NGApplication {
 	 */
 	public NGActionResults exceptionResponse( final Throwable throwable, final NGContext context ) {
 
-		// FIXME: Link up the production exception page // Hugi 2022-04-20
-		boolean isDevelopmentMode = true; // isDevelopmentMode();
+		final boolean isDevelopmentMode = isDevelopmentMode();
 
+		// If we're in development mode, we want to show some extra nice debugging information (sources, caches, context info etc.)
 		if( isDevelopmentMode ) {
 			final NGExceptionPageDevelopment nextPage = pageWithName( NGExceptionPageDevelopment.class, context );
 			nextPage.setException( throwable );

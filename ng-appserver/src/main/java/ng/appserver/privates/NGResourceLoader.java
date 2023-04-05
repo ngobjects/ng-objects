@@ -35,11 +35,26 @@ public class NGResourceLoader {
 	private static ResourceSource webserverResourcesSource = new JavaClasspathResourceSource( WEBSERVER_RESOURCES_FOLDER );
 
 	/**
+	 * Name of the folder that stores application resources
+	 */
+	private static final String PUBLIC_RESOURCES_FOLDER = "public";
+
+	private static ResourceSource publicResourcesSource = new JavaClasspathResourceSource( PUBLIC_RESOURCES_FOLDER );
+
+	/**
 	 * Name of the folder that stores component templates
 	 */
 	private static final String COMPONENTS_FOLDER = "components";
 
 	private static ResourceSource componentResourcesSource = new JavaClasspathResourceSource( COMPONENTS_FOLDER );
+
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
+	public static Optional<byte[]> readPublicResource( final String resourcePath ) {
+		Objects.requireNonNull( resourcePath );
+		return publicResourcesSource.bytesForResourceWithPath( resourcePath );
+	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
@@ -141,7 +156,8 @@ public class NGResourceLoader {
 			// If we didn't find the resource, warn the user
 			if( resourceURL == null ) {
 				// FIXME: This is probably not a WARN-sitation. We're polluting the logs // Hugi 2023-02-02
-				logger.warn( "Unable to locate resource {}", resourcePath );
+				// FIXME: Changed to .debug level. We're going to have to allow the user to handle missing resources in some way (or notify about it) // Hugi 2023-03-30
+				logger.debug( "Unable to locate resource {}", resourcePath );
 				return Optional.empty();
 			}
 

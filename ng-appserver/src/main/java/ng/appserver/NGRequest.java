@@ -99,6 +99,21 @@ public class NGRequest extends NGMessage {
 		return list;
 	}
 
+	public String formValueForKey( final String key ) {
+		final List<String> values = formValuesForKey( key );
+
+		if( values.isEmpty() ) {
+			return null; // FIXME: As usual, I'm not happy about returning nulls
+		}
+
+		// Fail if multiple form values are present for the same query parameter.
+		if( values.size() > 1 ) {
+			throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( values.size(), key, values ) );
+		}
+
+		return values.get( 0 );
+	}
+
 	/**
 	 * Set the request's form values (query parameters)
 	 *
@@ -265,6 +280,6 @@ public class NGRequest extends NGMessage {
 
 	@Override
 	public String toString() {
-		return "NGRequest [_context=" + _context + ", _method=" + _method + ", _uri=" + _uri + ", _parsedURI=" + _parsedURI + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _sessionID=" + _sessionID + ", _session=" + _session + "]";
+		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _parsedURI=" + _parsedURI + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _sessionID=" + _sessionID + ", _session=" + _session + "]";
 	}
 }
