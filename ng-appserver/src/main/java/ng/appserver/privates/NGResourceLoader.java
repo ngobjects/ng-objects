@@ -23,30 +23,22 @@ public class NGResourceLoader {
 	/**
 	 * Name of the folder that stores application resources
 	 */
-	private static final String APP_RESOURCES_FOLDER = "app-resources";
-
-	private static ResourceSource appResourcesSource = new JavaClasspathResourceSource( APP_RESOURCES_FOLDER );
+	private static ResourceSource appResourcesSource = new JavaClasspathResourceSource( "app-resources" );
 
 	/**
 	 * Name of the folder that stores application resources
 	 */
-	private static final String WEBSERVER_RESOURCES_FOLDER = "webserver-resources";
-
-	private static ResourceSource webserverResourcesSource = new JavaClasspathResourceSource( WEBSERVER_RESOURCES_FOLDER );
+	private static ResourceSource webserverResourcesSource = new JavaClasspathResourceSource( "webserver-resources" );
 
 	/**
 	 * Name of the folder that stores application resources
 	 */
-	private static final String PUBLIC_RESOURCES_FOLDER = "public";
-
-	private static ResourceSource publicResourcesSource = new JavaClasspathResourceSource( PUBLIC_RESOURCES_FOLDER );
+	private static ResourceSource publicResourcesSource = new JavaClasspathResourceSource( "public" );
 
 	/**
 	 * Name of the folder that stores component templates
 	 */
-	private static final String COMPONENTS_FOLDER = "components";
-
-	private static ResourceSource componentResourcesSource = new JavaClasspathResourceSource( COMPONENTS_FOLDER );
+	private static ResourceSource componentResourcesSource = new JavaClasspathResourceSource( "components" );
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
