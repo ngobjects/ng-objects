@@ -206,6 +206,9 @@ public class NGRequest extends NGMessage {
 		return existingSession() != null;
 	}
 
+	/**
+	 * @return A map of cookie values from the request.
+	 */
 	public Map<String, List<String>> cookieValues() {
 		return _cookieValues;
 	}
