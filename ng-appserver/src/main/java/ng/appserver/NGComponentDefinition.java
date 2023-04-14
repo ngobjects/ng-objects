@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.privates.NGResourceLoader;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGElementUtils;
@@ -48,6 +47,16 @@ public class NGComponentDefinition {
 	 * - In the case of classless component, this will be the template's filename (excluding the file's suffix)
 	 */
 	private final String _name;
+
+	/**
+	 * Class used to represent our own bookkeeping. Since template == null represents "not initialized yet", we use this to represent "initialized with no template available".
+	 */
+	private static class NoElement implements NGElement {}
+
+	/**
+	 * Template of components without a template
+	 */
+	private static final NoElement NO_ELEMENT = new NoElement();
 
 	private NGComponentDefinition( final String componentName, final Class<? extends NGComponent> componentClass ) {
 		Objects.requireNonNull( componentName );
@@ -130,7 +139,8 @@ public class NGComponentDefinition {
 		// We place it in the cached template to prevent re-parsing in case of component caching being enabled. If caching is disabled, the cached template is never read.
 		newComponentDefinition._cachedTemplate = newComponentDefinition._loadTemplate();
 
-		if( newComponentDefinition._cachedTemplate == null && componentClass.equals( NGComponent.class ) ) {
+		// FIXME: We should probably be using our pre-existing check-methods (hasTemplate()/isClassless()) here // Hugi 2023-04-14
+		if( newComponentDefinition._cachedTemplate instanceof NoElement && componentClass.equals( NGComponent.class ) ) {
 			throw new IllegalArgumentException( "Component '%s' does not exist (a component must have either a class or a template, usually both)".formatted( componentName ) );
 		}
 
@@ -196,24 +206,24 @@ public class NGComponentDefinition {
 	private NGElement _loadTemplate() {
 		try {
 			// Let's try first for the traditional template
-			String htmlTemplateString = loadHTMLStringFromTemplateFolder( name() );
-			String wodString = loadWODStringFromTemplateFolder( name() );
+			Optional<String> htmlTemplateStringOptional = loadHTMLStringFromTemplateFolder( name() );
+			Optional<String> wodStringOptional = loadWODStringFromTemplateFolder( name() );
 
 			// If that fails, let's go for the single file html template
-			if( htmlTemplateString.isEmpty() && wodString.isEmpty() ) {
+			if( htmlTemplateStringOptional.isEmpty() && wodStringOptional.isEmpty() ) {
 				final Optional<byte[]> htmlTemplate = NGResourceLoader.readComponentResource( name() + ".html" );
 
 				if( htmlTemplate.isPresent() ) {
-					htmlTemplateString = new String( htmlTemplate.get(), StandardCharsets.UTF_8 );
+					htmlTemplateStringOptional = Optional.of( new String( htmlTemplate.get(), StandardCharsets.UTF_8 ) );
 				}
 			}
 
-			if( htmlTemplateString.isEmpty() ) {
+			if( htmlTemplateStringOptional.isEmpty() ) {
 				logger.warn( "Component template '%s' not found".formatted( name() ) );
-				return new NGHTMLBareString( "" ); // FIXME: This is kind of ugly, but it will do for now // Hugi 2023-03-30
+				return NO_ELEMENT; // FIXME: This is kind of ugly, but it will do for now // Hugi 2023-03-30
 			}
 
-			return NGTemplateParser.parse( htmlTemplateString, wodString, Collections.emptyList() );
+			return NGTemplateParser.parse( htmlTemplateStringOptional.get(), wodStringOptional.orElse( "" ), Collections.emptyList() );
 		}
 		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );
@@ -221,9 +231,23 @@ public class NGComponentDefinition {
 	}
 
 	/**
+	 * @return true if this component does not have it's own class representation
+	 */
+	public boolean isClassless() {
+		return _componentClass == NGComponent.class;
+	}
+
+	/**
+	 * @return true if this component has not loaded template
+	 */
+	public boolean hasTemplate() {
+		return !(template() instanceof NoElement); // FIXME: We need to represent the non-existent template with something else than null
+	}
+
+	/**
 	 * @return The HTML template for the named component
 	 */
-	private static String loadHTMLStringFromTemplateFolder( final String templateName ) {
+	private static Optional<String> loadHTMLStringFromTemplateFolder( final String templateName ) {
 		Objects.requireNonNull( templateName );
 		return loadStringFromTemplateFolder( templateName, "html" );
 	}
@@ -231,7 +255,7 @@ public class NGComponentDefinition {
 	/**
 	 * @return The WOD template for the named component
 	 */
-	private static String loadWODStringFromTemplateFolder( final String templateName ) {
+	private static Optional<String> loadWODStringFromTemplateFolder( final String templateName ) {
 		Objects.requireNonNull( templateName );
 		return loadStringFromTemplateFolder( templateName, "wod" );
 	}
@@ -239,7 +263,7 @@ public class NGComponentDefinition {
 	/**
 	 * @return The string template for the named component
 	 */
-	private static String loadStringFromTemplateFolder( final String templateName, final String extension ) {
+	private static Optional<String> loadStringFromTemplateFolder( final String templateName, final String extension ) {
 		Objects.requireNonNull( templateName );
 		Objects.requireNonNull( extension );
 
@@ -248,9 +272,9 @@ public class NGComponentDefinition {
 		final Optional<byte[]> templateBytes = NGResourceLoader.readComponentResource( htmlTemplateFilename );
 
 		if( templateBytes.isEmpty() ) {
-			return "";
+			return Optional.empty();
 		}
 
-		return new String( templateBytes.get(), StandardCharsets.UTF_8 );
+		return Optional.of( new String( templateBytes.get(), StandardCharsets.UTF_8 ) );
 	}
 }
