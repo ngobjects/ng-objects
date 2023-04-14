@@ -135,12 +135,7 @@ public class NGComponentDefinition {
 
 		final NGComponentDefinition newComponentDefinition = new NGComponentDefinition( componentName, componentClass );
 
-		// The only reason for us to load the template here is to check if we're trying to construct a component that doesn't exist (i.e. no class and no template)
-		// We place it in the cached template to prevent re-parsing in case of component caching being enabled. If caching is disabled, the cached template is never read.
-		newComponentDefinition._cachedTemplate = newComponentDefinition._loadTemplate();
-
-		// FIXME: We should probably be using our pre-existing check-methods (hasTemplate()/isClassless()) here // Hugi 2023-04-14
-		if( newComponentDefinition._cachedTemplate instanceof NoElement && componentClass.equals( NGComponent.class ) ) {
+		if( newComponentDefinition.isClassless() && !newComponentDefinition.hasTemplate() ) {
 			throw new IllegalArgumentException( "Component '%s' does not exist (a component must have either a class or a template, usually both)".formatted( componentName ) );
 		}
 
