@@ -213,9 +213,11 @@ public class NGComponentDefinition {
 				}
 			}
 
+			// If no HTML template string was found, no template is present and no point in continuing loading
+			// FIXME: This is kind of ugly, but it will do for now // Hugi 2023-03-30
 			if( htmlTemplateStringOptional.isEmpty() ) {
 				logger.warn( "Component template '%s' not found".formatted( name() ) );
-				return NO_ELEMENT; // FIXME: This is kind of ugly, but it will do for now // Hugi 2023-03-30
+				return NO_ELEMENT;
 			}
 
 			return NGTemplateParser.parse( htmlTemplateStringOptional.get(), wodStringOptional.orElse( "" ), Collections.emptyList() );
