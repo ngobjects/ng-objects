@@ -582,10 +582,23 @@ public class NGApplication {
 	 *
 	 * @return An instance of the named dynamic element. This can be a classless component (in which case it's the template name), a simple class name or a full class name
 	 */
-	public static NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
-		Objects.requireNonNull( name );
+	public static NGElement dynamicElementWithName( final String identifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
+		Objects.requireNonNull( identifier );
 		Objects.requireNonNull( associations );
 		Objects.requireNonNull( languages );
+
+		final String name;
+
+		// First we're going to check if we have a tag alias present
+		final String shortName = NGElementUtils.tagShortcutMap().get( identifier );
+
+		if( shortName != null ) {
+			name = shortName;
+		}
+		else {
+			// If no shortcut is present for the given identifier, use the original identifier
+			name = identifier;
+		}
 
 		// First we locate the class of the element we're going to render.
 		final Class<? extends NGElement> elementClass = NGElementUtils.classWithNameNullIfNotFound( name );
