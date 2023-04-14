@@ -238,7 +238,7 @@ public class NGComponentDefinition {
 	 * @return true if this component has not loaded template
 	 */
 	public boolean hasTemplate() {
-		return !(template() instanceof NoElement); // FIXME: We need to represent the non-existent template with something else than null
+		return !(template() instanceof NoElement);
 	}
 
 	/**
