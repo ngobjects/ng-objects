@@ -18,18 +18,32 @@ import ng.appserver.privates.NGHTMLUtilities;
 
 public class NGSubmitButton extends NGDynamicElement {
 
+	/**
+	 * The action to invoke when this button is pressed
+	 */
 	private final NGAssociation _actionAssociation;
+
+	/**
+	 * Value (label, really) of the button
+	 */
 	private final NGAssociation _valueAssociation; // FIXME: This should just be passed through with other "generic" HTML attributes
+
+	/**
+	 * Pass-through attributes
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGSubmitButton( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
-		_actionAssociation = associations.get( "action" );
+		_additionalAssociations = new HashMap<>( associations );
+
+		_actionAssociation = _additionalAssociations.remove( "action" );
 
 		if( _actionAssociation == null ) {
 			throw new IllegalArgumentException( "'action' is a required binding" );
 		}
 
-		_valueAssociation = associations.get( "value" );
+		_valueAssociation = _additionalAssociations.remove( "value" );
 	}
 
 	@Override
@@ -41,6 +55,8 @@ public class NGSubmitButton extends NGDynamicElement {
 		if( _valueAssociation != null ) {
 			attributes.put( "value", (String)_valueAssociation.valueInComponent( context.component() ) );
 		}
+
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
 		final String htmlString = NGHTMLUtilities.createElementStringWithAttributes( "input", attributes, true );
 		response.appendContentString( htmlString );
