@@ -548,8 +548,8 @@ public class NGApplication {
 	/**
 	 * @return The componentDefinition corresponding to the given NGComponent class.
 	 *
-	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
-	 * FIXME: This should not be static, belongs in an instance of a different class.
+	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
 	private static NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass, final List<String> languages ) {
 		Objects.requireNonNull( componentClass );
@@ -561,8 +561,8 @@ public class NGApplication {
 	/**
 	 * @return The componentDefinition corresponding to the named NGComponent
 	 *
-	 * FIXME: Languages aren't supported either yet, but I'm including the parameter while I consider what to do about it.
-	 * FIXME: This should not be static, belongs in an instance of a different class.
+	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
 	public static NGComponentDefinition _componentDefinition( final String componentName, final List<String> languages ) {
 		Objects.requireNonNull( componentName );
@@ -572,7 +572,8 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This should not be static, belongs in an instance of a different class.
+	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: This should not be static // Hugi 2023-04-14
 	 *
 	 * @param name The name identifying what element we're getting
 	 * @param associations Associations used to bind the generated element to it's parent
