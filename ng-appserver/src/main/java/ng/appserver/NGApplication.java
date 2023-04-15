@@ -582,10 +582,23 @@ public class NGApplication {
 	 *
 	 * @return An instance of the named dynamic element. This can be a classless component (in which case it's the template name), a simple class name or a full class name
 	 */
-	public static NGElement dynamicElementWithName( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
-		Objects.requireNonNull( name );
+	public static NGElement dynamicElementWithName( final String identifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
+		Objects.requireNonNull( identifier );
 		Objects.requireNonNull( associations );
 		Objects.requireNonNull( languages );
+
+		final String name;
+
+		// First we're going to check if we have a tag alias present
+		final String shortName = NGElementUtils.tagShortcutMap().get( identifier );
+
+		if( shortName != null ) {
+			name = shortName;
+		}
+		else {
+			// If no shortcut is present for the given identifier, use the original identifier
+			name = identifier;
+		}
 
 		// First we locate the class of the element we're going to render.
 		final Class<? extends NGElement> elementClass = NGElementUtils.classWithNameNullIfNotFound( name );
@@ -597,6 +610,12 @@ public class NGApplication {
 			// FIXME: componentDefinition will probably never be null // Hugi 2022-10-10
 			if( componentDefinition == null ) {
 				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
+			}
+
+			// FIXME: If no template exists for the named classless element, we have to throw an exception. Silently failing is not nice // Hugi 2023-04-14
+			// FIXME: This check is probably redundant since we're already doing the same check during construction of a component definition // Hugi 2023-14-04
+			if( componentDefinition.isClassless() && !componentDefinition.hasTemplate() ) {
+				throw new IllegalArgumentException( "Could not construct a component with the name '%s'. It has neither a class nor a template" );
 			}
 
 			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
