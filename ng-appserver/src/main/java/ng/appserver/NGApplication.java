@@ -573,7 +573,6 @@ public class NGApplication {
 
 	/**
 	 * FIXME: This should not be static, belongs in an instance of a different class.
-	 * FIXME: If we're going to introduce namespaces, this would be the place
 	 *
 	 * @param name The name identifying what element we're getting
 	 * @param associations Associations used to bind the generated element to it's parent
