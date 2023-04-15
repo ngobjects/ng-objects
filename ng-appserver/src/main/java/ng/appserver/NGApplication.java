@@ -606,12 +606,6 @@ public class NGApplication {
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
 			final NGComponentDefinition componentDefinition = _componentDefinition( name, languages );
-
-			// FIXME: componentDefinition will probably never be null // Hugi 2022-10-10
-			if( componentDefinition == null ) {
-				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
-			}
-
 			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 
@@ -623,12 +617,6 @@ public class NGApplication {
 		// If it's not an element, let's move on to creating a component reference instead
 		if( NGComponent.class.isAssignableFrom( elementClass ) ) {
 			final NGComponentDefinition componentDefinition = _componentDefinition( (Class<? extends NGComponent>)elementClass, languages );
-
-			// FIXME: componentDefinition will probably never be null // Hugi 2022-10-10
-			if( componentDefinition == null ) {
-				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
-			}
-
 			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 
