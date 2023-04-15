@@ -612,12 +612,6 @@ public class NGApplication {
 				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
 			}
 
-			// FIXME: If no template exists for the named classless element, we have to throw an exception. Silently failing is not nice // Hugi 2023-04-14
-			// FIXME: This check is probably redundant since we're already doing the same check during construction of a component definition // Hugi 2023-14-04
-			if( componentDefinition.isClassless() && !componentDefinition.hasTemplate() ) {
-				throw new IllegalArgumentException( "Could not construct a component with the name '%s'. It has neither a class nor a template" );
-			}
-
 			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 
