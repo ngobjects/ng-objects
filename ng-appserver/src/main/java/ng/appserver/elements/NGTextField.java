@@ -69,23 +69,25 @@ public class NGTextField extends NGDynamicElement {
 					throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( valuesFromRequest.size(), name, valuesFromRequest ) );
 				}
 
-				Object value;
+				Object value = null;
 
-				final String stringValueFromRequest = valuesFromRequest.get( 0 );
+				final String stringValueFromRequest = valuesFromRequest.get( 0 ); // FIXME: I'm not totally sure about this. Passing in null to anything isn't nice, but it's in line with current WO behaviour so...
 
-				if( _formatterAssociation != null ) {
-					// If a formatter is present, we make a formatting attempt here
-					final Format formatter = (Format)_formatterAssociation.valueInComponent( context.component() );
+				if( !stringValueFromRequest.isEmpty() ) {
+					if( _formatterAssociation != null ) {
+						// If a formatter is present, we make a formatting attempt here
+						final Format formatter = (Format)_formatterAssociation.valueInComponent( context.component() );
 
-					try {
-						value = formatter.parseObject( stringValueFromRequest );
+						try {
+							value = formatter.parseObject( stringValueFromRequest );
+						}
+						catch( ParseException e ) {
+							throw new RuntimeException( e ); // FIXME: RuntimeException is probably not the right choice here
+						}
 					}
-					catch( ParseException e ) {
-						throw new RuntimeException( e ); // FIXME: RuntimeException is probably not the right choice here
+					else {
+						value = stringValueFromRequest;
 					}
-				}
-				else {
-					value = stringValueFromRequest;
 				}
 
 				_valueAssociation.setValue( value, context.component() );
