@@ -45,7 +45,6 @@ public class NGHyperlink extends NGDynamicGroup {
 
 		String href = null;
 
-		// An href-binding gets passed directly to the link.
 		if( _hrefAssociation != null ) {
 			href = (String)_hrefAssociation.valueInComponent( context.component() );
 		}
@@ -53,12 +52,11 @@ public class NGHyperlink extends NGDynamicGroup {
 			href = context.componentActionURL();
 		}
 
-		if( href == null ) {
-			throw new IllegalStateException( "Failed to generate the href attribute for a hyperlink" );
-		}
-
 		final Map<String, String> attributes = new HashMap<>();
-		attributes.put( "href", href );
+
+		if( href != null ) {
+			attributes.put( "href", href );
+		}
 
 		_additionalAssociations.forEach( ( name, ass ) -> {
 			final Object value = ass.valueInComponent( context.component() );
