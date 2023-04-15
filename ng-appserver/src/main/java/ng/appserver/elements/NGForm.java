@@ -2,6 +2,7 @@ package ng.appserver.elements;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
@@ -17,22 +18,41 @@ import ng.appserver.privates.NGHTMLUtilities;
 
 public class NGForm extends NGDynamicGroup {
 
+	/**
+	 * The action that will be performed by this form
+	 */
 	private final NGAssociation _actionAssociation;
+
+	/**
+	 * Pass-through attributes
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGForm( String name, Map<String, NGAssociation> associations, NGElement contentTemplate ) {
 		super( name, associations, contentTemplate );
-		_actionAssociation = associations.get( "action" );
+		_additionalAssociations = new HashMap<>( associations );
+
+		_actionAssociation = _additionalAssociations.get( "action" );
 	}
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		final Map<String, String> attributes = new HashMap<>();
 
-		attributes.put( "method", "POST" );
+		attributes.put( "method", "POST" ); // FIXME: We need to add a 'method' binding and handle it here // Hugi 2023-04-15
 
 		// We append the action association, even if there's no action bound.
 		// This is due to forms with multiple submit buttons, see invokeAction() for further documentation
+		// FIXME: We're going to have to revisit this for potential direct action submissions/route submissions // Hugi 2023-04-15
 		attributes.put( "action", context.componentActionURL() );
+
+		for( Entry<String, NGAssociation> entry : _additionalAssociations.entrySet() ) {
+			final Object value = entry.getValue().valueInComponent( context.component() );
+
+			if( value != null ) {
+				attributes.put( entry.getKey(), value.toString() ); // FIXME: Not sure we should be using toString() here. Further value conversion might be required
+			}
+		}
 
 		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "form", attributes, false ) );
 		context.setIsInForm( true );
