@@ -140,8 +140,14 @@ public class NGApplication {
 		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
 		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
-			final NGResponse response = new NGResponse( "<p>Session cookie reset</p><p><a href=\"/\">Re-enter</a></p>", 200 );
+			final NGResponse response = new NGResponse();
+
+			response.setHeader( "location", "/" );
+			response.setStatus( 302 );
+			response.setHeader( "content-type", "text/html" );
+			response.setHeader( "content-length", "0" );
 			response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
+
 			return response;
 		} );
 		_routeTables.add( systemRoutes );
