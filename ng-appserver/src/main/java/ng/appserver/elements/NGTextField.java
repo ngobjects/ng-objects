@@ -32,11 +32,17 @@ public class NGTextField extends NGDynamicElement {
 	 */
 	private final NGAssociation _disabledAssociation;
 
+	/**
+	 * Pass-through attributes
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
+
 	public NGTextField( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
-		_nameAssociation = associations.get( "name" );
-		_valueAssociation = associations.get( "value" );
-		_disabledAssociation = associations.get( "disabled" );
+		_additionalAssociations = new HashMap<>( associations );
+		_nameAssociation = _additionalAssociations.remove( "name" );
+		_valueAssociation = _additionalAssociations.remove( "value" );
+		_disabledAssociation = _additionalAssociations.remove( "disabled" );
 	}
 
 	@Override
@@ -61,16 +67,18 @@ public class NGTextField extends NGDynamicElement {
 	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
 
-		final String value = (String)_valueAssociation.valueInComponent( context.component() );
-
 		final Map<String, String> attributes = new HashMap<>();
 
-		attributes.put( "type", "text" );
+		attributes.put( "type", "text" ); // FIXME: This should be configurable through a 'type' binding // Hugi 2023-04-15
 		attributes.put( "name", name( context ) );
+
+		final String value = (String)_valueAssociation.valueInComponent( context.component() );
 
 		if( value != null ) {
 			attributes.put( "value", value );
 		}
+
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
 		if( disabled( context ) ) {
 			// FIXME: 'disabled' is a "boolean attribute" and doesn't really need a value. We need a nice way to generate those // Hugi 2023-03-11
