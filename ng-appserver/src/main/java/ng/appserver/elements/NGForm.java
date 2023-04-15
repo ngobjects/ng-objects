@@ -2,7 +2,6 @@ package ng.appserver.elements;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
@@ -37,22 +36,19 @@ public class NGForm extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+
+		// Attributes to be added to the generated HTML-tag
 		final Map<String, String> attributes = new HashMap<>();
 
-		attributes.put( "method", "POST" ); // FIXME: We need to add a 'method' binding and handle it here // Hugi 2023-04-15
+		// FIXME: Hardcoding method. We need to add a 'method' binding and handle it here // Hugi 2023-04-15
+		attributes.put( "method", "POST" );
 
 		// We append the action association, even if there's no action bound.
 		// This is due to forms with multiple submit buttons, see invokeAction() for further documentation
 		// FIXME: We're going to have to revisit this for potential direct action submissions/route submissions // Hugi 2023-04-15
 		attributes.put( "action", context.componentActionURL() );
 
-		for( Entry<String, NGAssociation> entry : _additionalAssociations.entrySet() ) {
-			final Object value = entry.getValue().valueInComponent( context.component() );
-
-			if( value != null ) {
-				attributes.put( entry.getKey(), value.toString() ); // FIXME: Not sure we should be using toString() here. Further value conversion might be required
-			}
-		}
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
 		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "form", attributes, false ) );
 		context.setIsInForm( true );
