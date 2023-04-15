@@ -31,7 +31,7 @@ public class NGForm extends NGDynamicGroup {
 		super( name, associations, contentTemplate );
 		_additionalAssociations = new HashMap<>( associations );
 
-		_actionAssociation = _additionalAssociations.get( "action" );
+		_actionAssociation = _additionalAssociations.remove( "action" );
 	}
 
 	@Override
