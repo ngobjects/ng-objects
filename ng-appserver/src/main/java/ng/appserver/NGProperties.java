@@ -67,12 +67,26 @@ public class NGProperties {
 		for( int i = 0; i < args.length; i = i + 2 ) {
 			String key = args[i];
 
-			if( key.startsWith( "-" ) ) {
-				key = key.substring( 1 );
+			if( key.startsWith( "-X" ) ) {
+				// JVM argument - ignore
+				// FIXME: Not sure about this functionality, experimental 2023-04-17
 			}
+			else if( key.startsWith( "-D" ) ) {
+				// Java argument is passed on to System.properties
+				// FIXME: Not sure about this functionality, experimental 2023-04-17
+				final String[] keyValuePair = key.split( "=" );
+				final String realKey = keyValuePair[0].substring( 2 );
+				final String realValue = keyValuePair[1];
+				System.setProperty( realKey, realValue );
+				m.put( realKey, realValue );
+			}
+			else if( key.startsWith( "-" ) ) {
+				// Otherwise this is a standard property
+				key = key.substring( 1 );
 
-			final String value = args[i + 1];
-			m.put( key, value );
+				final String value = args[i + 1];
+				m.put( key, value );
+			}
 		}
 
 		return m;
