@@ -22,6 +22,7 @@ import ng.appserver.elements.NGGenericElement;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGJavaScript;
+import ng.appserver.elements.NGPopUpButton;
 import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
@@ -58,6 +59,7 @@ public class NGElementUtils {
 		addClass( NGImage.class, "img" );
 		addClass( NGHyperlink.class, "link" );
 		addClass( NGJavaScript.class, "script" );
+		addClass( NGPopUpButton.class, "popup" );
 		addClass( NGRepetition.class, "repetition" );
 		addClass( NGSubmitButton.class, "submit" );
 		addClass( NGStylesheet.class, "stylesheet" );
