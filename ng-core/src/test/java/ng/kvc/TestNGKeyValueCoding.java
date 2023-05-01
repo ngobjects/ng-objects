@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -85,6 +86,18 @@ public class TestNGKeyValueCoding {
 		var home = new Home();
 		NGKeyValueCoding.Utility.takeValueForKey( home, "Hraunteigur 23", "address2Method" );
 		assertEquals( "Hraunteigur 23", NGKeyValueCoding.Utility.valueForKey( home, "address2" ) );
+	}
+
+	@Test
+	public void testAssignBigDecimalFieldFromLong() {
+		class Product {
+			public BigDecimal price;
+		}
+
+		Product testProduct = new Product();
+
+		NGKeyValueCoding.Utility.takeValueForKey( testProduct, 50l, "price" );
+		assertTrue( testProduct.price.compareTo( new BigDecimal( "50" ) ) == 0 );
 	}
 
 	public record RecordThatImplementsValueForKey( String name ) implements NGKeyValueCoding {
