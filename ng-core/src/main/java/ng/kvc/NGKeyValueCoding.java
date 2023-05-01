@@ -1,8 +1,10 @@
 package ng.kvc;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import ng.NGRuntimeException;
@@ -198,6 +200,7 @@ public interface NGKeyValueCoding {
 		method = writeMethod( object, "set" + keyCapitalized );
 
 		if( method != null ) {
+			// FIXME: Here we need to create a numeric method binding, once we have that available // Hugi 2023-05-01
 			return new MethodWriteBinding( method );
 		}
 
@@ -207,6 +210,11 @@ public interface NGKeyValueCoding {
 		field = field( object, key );
 
 		if( field != null ) {
+			// FIXME: This is as of yet a very, very incomplete implementation of the numeric value conversion. Finish. // Hugi 2023-05-01
+			if( BigDecimal.class.isAssignableFrom( field.getType() ) ) {
+				return new NumericFieldBinding( field );
+			}
+
 			return new FieldBinding( field );
 		}
 
@@ -378,7 +386,7 @@ public interface NGKeyValueCoding {
 	 */
 	public static class FieldBinding implements KVCWriteBinding, KVCReadBinding {
 
-		private final Field _field;
+		protected final Field _field;
 
 		public FieldBinding( Field field ) {
 			_field = field;
@@ -402,6 +410,36 @@ public interface NGKeyValueCoding {
 			}
 			catch( IllegalArgumentException | IllegalAccessException e ) {
 				// FIXME: Error handling is missing entirely
+				throw new RuntimeException( e );
+			}
+		}
+	}
+
+	public static class NumericFieldBinding extends FieldBinding {
+
+		public NumericFieldBinding( Field field ) {
+			super( field );
+		}
+
+		@Override
+		public void setValueInObject( Object value, Object object ) {
+			super.setValueInObject( convertValueToFieldType( value ), object );
+		}
+
+		private Object convertValueToFieldType( Object value ) {
+
+			if( value == null ) {
+				return null;
+			}
+
+			try {
+				// We look for a method called valueOf (which all the numeric classes should have)
+				final Constructor<?> valueCreationConstructor = _field.getType().getConstructor( String.class );
+
+				// FIXME: We're converting the value to a string before converting. Can't we do this in a more efficient manner? // Hugi 2023-05-01
+				return valueCreationConstructor.newInstance( value.toString() );
+			}
+			catch( NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e ) {
 				throw new RuntimeException( e );
 			}
 		}
