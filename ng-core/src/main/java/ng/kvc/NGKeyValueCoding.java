@@ -432,11 +432,20 @@ public interface NGKeyValueCoding {
 				return null;
 			}
 
+			final Class<?> fieldType = _field.getType();
+
+			if( value.getClass() == fieldType ) {
+				// No need to perform any conversion if the value class is already correct
+				return value;
+			}
+
 			try {
 				// We look for a method called valueOf (which all the numeric classes should have)
-				final Constructor<?> valueCreationConstructor = _field.getType().getConstructor( String.class );
+				// FIXME: BigDecimal doesn't have a valueOf( String ) method so we're currently using the string constructors instead. Those constructors are deprecated though so will at some point stop working // Hugi 2023-05-01
+				final Constructor<?> valueCreationConstructor = fieldType.getConstructor( String.class );
 
 				// FIXME: We're converting the value to a string before converting. Can't we do this in a more efficient manner? // Hugi 2023-05-01
+				// FIXME: We need to consider what to do about loss of scale (and other potential features of the numeric class in question)  // Hugi 2023-05-01
 				return valueCreationConstructor.newInstance( value.toString() );
 			}
 			catch( NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e ) {

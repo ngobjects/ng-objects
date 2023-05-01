@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -90,14 +91,52 @@ public class TestNGKeyValueCoding {
 
 	@Test
 	public void testAssignBigDecimalFieldFromLong() {
-		class Product {
-			public BigDecimal price;
-		}
 
 		Product testProduct = new Product();
 
 		NGKeyValueCoding.Utility.takeValueForKey( testProduct, 50l, "price" );
 		assertTrue( testProduct.price.compareTo( new BigDecimal( "50" ) ) == 0 );
+	}
+
+	@Test
+	public void testAssignBigDecimalFieldFromInteger() {
+
+		Product testProduct = new Product();
+
+		NGKeyValueCoding.Utility.takeValueForKey( testProduct, Integer.parseInt( "50" ), "price" );
+		assertTrue( testProduct.price.compareTo( new BigDecimal( "50" ) ) == 0 );
+	}
+
+	@Test
+	public void testAssignBigDecimalFieldFromDouble() {
+		Product testProduct = new Product();
+
+		NGKeyValueCoding.Utility.takeValueForKey( testProduct, 50.55d, "price" );
+		assertTrue( testProduct.price.compareTo( new BigDecimal( "50.55" ) ) == 0 );
+	}
+
+	@Test
+	public void testAssignBigDecimalFieldFromFloat() {
+		Product testProduct = new Product();
+
+		NGKeyValueCoding.Utility.takeValueForKey( testProduct, 50.55f, "price" );
+		assertTrue( testProduct.price.compareTo( new BigDecimal( "50.55" ) ) == 0 );
+	}
+
+	@Test
+	public void testAssignBigDecimalFieldFromBigInteger() {
+		Product testProduct = new Product();
+
+		NGKeyValueCoding.Utility.takeValueForKey( testProduct, new BigInteger( "50" ), "price" );
+		assertTrue( testProduct.price.compareTo( new BigDecimal( "50" ) ) == 0 );
+	}
+
+	@Test
+	public void testAssignBigDecimalFieldFromBigDecimal() {
+		Product testProduct = new Product();
+
+		NGKeyValueCoding.Utility.takeValueForKey( testProduct, new BigDecimal( "50.55" ), "price" );
+		assertTrue( testProduct.price.compareTo( new BigDecimal( "50.55" ) ) == 0 );
 	}
 
 	public record RecordThatImplementsValueForKey( String name ) implements NGKeyValueCoding {
@@ -139,5 +178,9 @@ public class TestNGKeyValueCoding {
 		public void setAddress2Method( String value ) {
 			address2 = value;
 		}
+	}
+
+	public static class Product {
+		public BigDecimal price;
 	}
 }
