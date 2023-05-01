@@ -69,9 +69,9 @@ public class NGTextField extends NGDynamicElement {
 					throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( valuesFromRequest.size(), name, valuesFromRequest ) );
 				}
 
-				Object value = null;
+				Object value = null; // FIXME: I'm not totally sure about this. Passing in null to anything isn't nice, but it's in line with current WO behaviour so...
 
-				final String stringValueFromRequest = valuesFromRequest.get( 0 ); // FIXME: I'm not totally sure about this. Passing in null to anything isn't nice, but it's in line with current WO behaviour so...
+				final String stringValueFromRequest = valuesFromRequest.get( 0 );
 
 				if( !stringValueFromRequest.isEmpty() ) {
 					if( _formatterAssociation != null ) {
