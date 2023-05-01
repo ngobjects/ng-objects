@@ -43,7 +43,7 @@ public class NGRepetition extends NGDynamicGroup {
 	}
 
 	/**
-	 * FIXME: This needs to be implemented
+	 * FIXME: Only partially implemented // Hugi 2023-05-01
 	 */
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
@@ -65,6 +65,9 @@ public class NGRepetition extends NGDynamicGroup {
 		context.elementID().removeBranch();
 	}
 
+	/**
+	 * FIXME: Only partially implemented // Hugi 2023-05-01
+	 */
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 		context.elementID().addBranch();
