@@ -312,7 +312,7 @@ public class NGApplication {
 
 				if( requestHandler == null ) {
 					// FIXME: Very, very experimental public resource handler.
-					final String resourcePath = request.parsedURI().getString( 0 );
+					final String resourcePath = request.uri();
 
 					if( resourcePath.isEmpty() ) {
 						return new NGResponse( "No resource name specified", 400 );
