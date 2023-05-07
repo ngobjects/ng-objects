@@ -580,6 +580,7 @@ public class NGApplication {
 	/**
 	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
 	 * FIXME: This should not be static // Hugi 2023-04-14
+	 * FIXME: Since this can only ever return DynamicElements, we can narrow the API's return type here // Hugi 2023-05-07
 	 *
 	 * @param name The name identifying what element we're getting
 	 * @param associations Associations used to bind the generated element to it's parent
