@@ -205,7 +205,7 @@ public class NGComponentDefinition {
 			Optional<String> wodStringOptional = loadWODStringFromTemplateFolder( name() );
 
 			// If that fails, let's go for the single file html template
-			if( htmlTemplateStringOptional.isEmpty() && wodStringOptional.isEmpty() ) {
+			if( htmlTemplateStringOptional.isEmpty() ) {
 				final Optional<byte[]> htmlTemplate = NGResourceLoader.readComponentResource( name() + ".html" );
 
 				if( htmlTemplate.isPresent() ) {
@@ -213,8 +213,7 @@ public class NGComponentDefinition {
 				}
 			}
 
-			// If no HTML template string was found, no template is present and no point in continuing loading
-			// FIXME: This is kind of ugly, but it will do for now // Hugi 2023-03-30
+			// If no html template string has been loaded, no template exists.
 			if( htmlTemplateStringOptional.isEmpty() ) {
 				logger.warn( "Component template '%s' not found".formatted( name() ) );
 				return NO_ELEMENT;

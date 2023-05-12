@@ -17,22 +17,38 @@ import ng.appserver.privates.NGHTMLUtilities;
 
 public class NGForm extends NGDynamicGroup {
 
+	/**
+	 * The action that will be performed by this form
+	 */
 	private final NGAssociation _actionAssociation;
+
+	/**
+	 * Pass-through attributes
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGForm( String name, Map<String, NGAssociation> associations, NGElement contentTemplate ) {
 		super( name, associations, contentTemplate );
-		_actionAssociation = associations.get( "action" );
+		_additionalAssociations = new HashMap<>( associations );
+
+		_actionAssociation = _additionalAssociations.remove( "action" );
 	}
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+
+		// Attributes to be added to the generated HTML-tag
 		final Map<String, String> attributes = new HashMap<>();
 
+		// FIXME: Hardcoding method. We need to add a 'method' binding and handle it here // Hugi 2023-04-15
 		attributes.put( "method", "POST" );
 
 		// We append the action association, even if there's no action bound.
 		// This is due to forms with multiple submit buttons, see invokeAction() for further documentation
+		// FIXME: We're going to have to revisit this for potential direct action submissions/route submissions // Hugi 2023-04-15
 		attributes.put( "action", context.componentActionURL() );
+
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
 		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "form", attributes, false ) );
 		context.setIsInForm( true );
@@ -49,6 +65,7 @@ public class NGForm extends NGDynamicGroup {
 			// This is because the form might contain several submit buttons, in which case the actual action to invoke is the action of the button pressed.
 			// The actual button pressed will be identified by the button's name being present in the request's formValues. See NGSubmitButton.invokeAction() for implementation details.
 			// CHECKME: Having a bound action in a form which has a submit button, also with a bound action, might be an error condition // Hugi 2023-02-02
+			// FIXME: A nice feature might be if we could make the action bound to the form the default action to perform on form submission, if no submit button was pressed (for example, if the return button was pressed). That's an actual improvement on WO // Hugi 2023-04-15
 			if( _actionAssociation != null ) {
 				return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 			}

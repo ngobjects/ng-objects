@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.BindException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -14,8 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -24,11 +27,13 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
@@ -201,6 +206,38 @@ public class NGAdaptorJetty extends NGAdaptor {
 	 * @return the given HttpServletRequest converted to an NGRequest
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
+
+		// FIXME: Starting work on multipart request handling. Very much experimental/work in progress // Hugi 2023-04-16
+		if( sr.getContentType() != null && sr.getContentType().startsWith( "multipart/form-data" ) ) {
+			System.out.println( ">>>>>>>>>> Multipart request detected" );
+
+			try {
+				final String string = Files.createTempFile( UUID.randomUUID().toString(), ".fileupload" ).toString();
+				System.out.println( "Multipart temp dir: " + string );
+				sr.setAttribute( Request.__MULTIPART_CONFIG_ELEMENT, new MultipartConfigElement( string ) );
+
+				for( Part part : sr.getParts() ) {
+					//					MultiPart mp = (MultiPart)part;
+					System.out.println( "============= START PARTS =============" );
+					System.out.println( part.getClass() );
+					System.out.println( part.getContentType() );
+					System.out.println( part.getName() );
+					System.out.println( part.getSubmittedFileName() );
+					System.out.println( part.getSize() );
+
+					System.out.println( "- Headers:" );
+					for( String headerName : part.getHeaderNames() ) {
+						System.out.println( "-- %s : %s".formatted( headerName, part.getHeaders( headerName ) ) );
+
+					}
+
+					System.out.println( "============= END PARTS =============" );
+				}
+			}
+			catch( IOException | ServletException e ) {
+				throw new RuntimeException( e );
+			}
+		}
 
 		// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
 		final Map<String, List<String>> formValuesFromServletRequest = formValues( sr.getParameterMap() );

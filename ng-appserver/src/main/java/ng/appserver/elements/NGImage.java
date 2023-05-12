@@ -18,6 +18,7 @@ import ng.appserver.NGElement;
 import ng.appserver.NGResourceRequestHandlerDynamic;
 import ng.appserver.NGResourceRequestHandlerDynamic.NGDynamicResource;
 import ng.appserver.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 
 /**
  * An image element
@@ -132,18 +133,12 @@ public class NGImage extends NGDynamicElement {
 			src = (String)_srcAssociation.valueInComponent( context.component() );
 		}
 
-		final StringBuilder b = new StringBuilder();
-		b.append( String.format( "<img src=\"%s\"", src ) );
+		final Map<String, String> properties = new HashMap<>();
+		properties.put( "src", src );
+		NGHTMLUtilities.addAssociationValuesToAttributes( properties, _additionalAssociations, component );
 
-		_additionalAssociations.forEach( ( name, ass ) -> {
-			b.append( " " );
-			b.append( name );
-			b.append( "=" );
-			b.append( "\"" + ass.valueInComponent( component ) + "\"" );
-		} );
+		final String tagString = NGHTMLUtilities.createElementStringWithAttributes( "img", properties, true );
 
-		b.append( " />" );
-
-		response.appendContentString( b.toString() );
+		response.appendContentString( tagString );
 	}
 }

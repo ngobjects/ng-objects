@@ -140,8 +140,14 @@ public class NGApplication {
 		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
 		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
-			final NGResponse response = new NGResponse( "<p>Session cookie reset</p><p><a href=\"/\">Re-enter</a></p>", 200 );
+			final NGResponse response = new NGResponse();
+
+			response.setHeader( "location", "/" );
+			response.setStatus( 302 );
+			response.setHeader( "content-type", "text/html" );
+			response.setHeader( "content-length", "0" );
 			response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
+
 			return response;
 		} );
 		_routeTables.add( systemRoutes );
@@ -306,7 +312,7 @@ public class NGApplication {
 
 				if( requestHandler == null ) {
 					// FIXME: Very, very experimental public resource handler.
-					final String resourcePath = request.parsedURI().getString( 0 );
+					final String resourcePath = request.uri();
 
 					if( resourcePath.isEmpty() ) {
 						return new NGResponse( "No resource name specified", 400 );
@@ -548,8 +554,8 @@ public class NGApplication {
 	/**
 	 * @return The componentDefinition corresponding to the given NGComponent class.
 	 *
-	 * FIXME: This is currently extremely simplistic. We need to check for the existence of a definition, add localization etc. // Hugi 2022-01-16
-	 * FIXME: This should not be static, belongs in an instance of a different class.
+	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
 	private static NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass, final List<String> languages ) {
 		Objects.requireNonNull( componentClass );
@@ -561,8 +567,8 @@ public class NGApplication {
 	/**
 	 * @return The componentDefinition corresponding to the named NGComponent
 	 *
-	 * FIXME: Languages aren't supported either yet, but I'm including the parameter while I consider what to do about it.
-	 * FIXME: This should not be static, belongs in an instance of a different class.
+	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
 	public static NGComponentDefinition _componentDefinition( final String componentName, final List<String> languages ) {
 		Objects.requireNonNull( componentName );
@@ -572,8 +578,9 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This should not be static, belongs in an instance of a different class.
-	 * FIXME: If we're going to introduce namespaces, this would be the place
+	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: This should not be static // Hugi 2023-04-14
+	 * FIXME: Since this can only ever return DynamicElements, we can narrow the API's return type here // Hugi 2023-05-07
 	 *
 	 * @param name The name identifying what element we're getting
 	 * @param associations Associations used to bind the generated element to it's parent
@@ -606,18 +613,6 @@ public class NGApplication {
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
 			final NGComponentDefinition componentDefinition = _componentDefinition( name, languages );
-
-			// FIXME: componentDefinition will probably never be null // Hugi 2022-10-10
-			if( componentDefinition == null ) {
-				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
-			}
-
-			// FIXME: If no template exists for the named classless element, we have to throw an exception. Silently failing is not nice // Hugi 2023-04-14
-			// FIXME: This check is probably redundant since we're already doing the same check during construction of a component definition // Hugi 2023-14-04
-			if( componentDefinition.isClassless() && !componentDefinition.hasTemplate() ) {
-				throw new IllegalArgumentException( "Could not construct a component with the name '%s'. It has neither a class nor a template" );
-			}
-
 			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 
@@ -629,12 +624,6 @@ public class NGApplication {
 		// If it's not an element, let's move on to creating a component reference instead
 		if( NGComponent.class.isAssignableFrom( elementClass ) ) {
 			final NGComponentDefinition componentDefinition = _componentDefinition( (Class<? extends NGComponent>)elementClass, languages );
-
-			// FIXME: componentDefinition will probably never be null // Hugi 2022-10-10
-			if( componentDefinition == null ) {
-				throw new IllegalArgumentException( "Failed to construct a component definition for '%s'".formatted( name ) );
-			}
-
 			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 

@@ -38,6 +38,9 @@ public class _NGUtilities {
 		return true;
 	}
 
+	/**
+	 * Indicates if we already tried stopping an existing development instance (we only try that once)
+	 */
 	private static boolean alreadyTriedStopping = false;
 
 	/**

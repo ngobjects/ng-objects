@@ -1,5 +1,7 @@
 package ng.appserver.elements;
 
+import java.text.Format;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +34,26 @@ public class NGTextField extends NGDynamicElement {
 	 */
 	private final NGAssociation _disabledAssociation;
 
+	/**
+	 * Allows you to pass in a java.text.Formatter instance to perform formatting on the entered value
+	 *
+	 * FIXME: We should probably seriously consider passing in our own formatter class here, since the java formatters su... uh, aren't that nice (thread safety, null problems, date formatters don't handle java.time etc.) // Hugi 2023-04-15
+	 * FIXME: This is also not going to be enough. We're probably going to have to perform some type coercion during value pull/push (in the association class perhaps?) in the case of for example BigDecimal/Double etc.) // Hugi 2023-04-15
+	 */
+	private final NGAssociation _formatterAssociation;
+
+	/**
+	 * Pass-through attributes
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
+
 	public NGTextField( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
-		_nameAssociation = associations.get( "name" );
-		_valueAssociation = associations.get( "value" );
-		_disabledAssociation = associations.get( "disabled" );
+		_additionalAssociations = new HashMap<>( associations );
+		_nameAssociation = _additionalAssociations.remove( "name" );
+		_valueAssociation = _additionalAssociations.remove( "value" );
+		_disabledAssociation = _additionalAssociations.remove( "disabled" );
+		_formatterAssociation = _additionalAssociations.remove( "formatter" );
 	}
 
 	@Override
@@ -52,8 +69,28 @@ public class NGTextField extends NGDynamicElement {
 					throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( valuesFromRequest.size(), name, valuesFromRequest ) );
 				}
 
-				final String valueFromRequest = valuesFromRequest.get( 0 );
-				_valueAssociation.setValue( valueFromRequest, context.component() );
+				Object value = null; // FIXME: I'm not totally sure about this. Passing in null to anything isn't nice, but it's in line with current WO behaviour so...
+
+				final String stringValueFromRequest = valuesFromRequest.get( 0 );
+
+				if( !stringValueFromRequest.isEmpty() ) {
+					if( _formatterAssociation != null ) {
+						// If a formatter is present, we make a formatting attempt here
+						final Format formatter = (Format)_formatterAssociation.valueInComponent( context.component() );
+
+						try {
+							value = formatter.parseObject( stringValueFromRequest );
+						}
+						catch( ParseException e ) {
+							throw new RuntimeException( e ); // FIXME: RuntimeException is probably not the right choice here
+						}
+					}
+					else {
+						value = stringValueFromRequest;
+					}
+				}
+
+				_valueAssociation.setValue( value, context.component() );
 			}
 		}
 	}
@@ -61,16 +98,28 @@ public class NGTextField extends NGDynamicElement {
 	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
 
-		final String value = (String)_valueAssociation.valueInComponent( context.component() );
-
 		final Map<String, String> attributes = new HashMap<>();
 
-		attributes.put( "type", "text" );
+		attributes.put( "type", "text" ); // FIXME: This should be configurable through a 'type' binding // Hugi 2023-04-15
 		attributes.put( "name", name( context ) );
 
-		if( value != null ) {
-			attributes.put( "value", value );
+		Object objectValue = _valueAssociation.valueInComponent( context.component() );
+
+		final String stringValue;
+
+		if( _formatterAssociation != null ) {
+			final Format formatter = (Format)_formatterAssociation.valueInComponent( context.component() );
+			stringValue = formatter.format( objectValue );
 		}
+		else {
+			stringValue = (String)objectValue; // FIXME: Shouldn't we do a toString here? // Hugi 2023-04-15
+		}
+
+		if( stringValue != null ) {
+			attributes.put( "value", stringValue );
+		}
+
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
 		if( disabled( context ) ) {
 			// FIXME: 'disabled' is a "boolean attribute" and doesn't really need a value. We need a nice way to generate those // Hugi 2023-03-11
