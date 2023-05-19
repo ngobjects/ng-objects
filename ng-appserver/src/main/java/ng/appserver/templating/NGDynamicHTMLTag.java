@@ -89,23 +89,17 @@ public class NGDynamicHTMLTag {
 			list.add( bareString );
 		}
 
-		final NGElement template;
-
 		if( list.size() == 1 ) {
 			final NGElement onlyElement = (NGElement)list.get( 0 );
 
 			if( onlyElement instanceof NGComponentReference ) {
-				template = new NGDynamicGroup( _name, null, onlyElement );
+				return new NGDynamicGroup( _name, null, onlyElement );
 			}
-			else {
-				template = onlyElement;
-			}
-		}
-		else {
-			template = new NGDynamicGroup( _name, null, list );
+
+			return onlyElement;
 		}
 
-		return template;
+		return new NGDynamicGroup( _name, null, list );
 	}
 
 	public void addChildElement( final Object stringOrElement ) {
