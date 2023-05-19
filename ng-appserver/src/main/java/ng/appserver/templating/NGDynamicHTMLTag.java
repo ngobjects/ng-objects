@@ -55,8 +55,6 @@ public class NGDynamicHTMLTag {
 
 	/**
 	 * @return The tag's template
-	 *
-	 * FIXME: The entire flow here is a little... odd. Let's have a look // Hugi 2023-03-11
 	 */
 	public NGElement template() {
 
@@ -64,13 +62,31 @@ public class NGDynamicHTMLTag {
 			return null;
 		}
 
-		// _children will contain both strings and elements. We iterate through the list, combining adjacent strings and wrapping them in NGHTMLBareStrings
-		// Other elements get added directly to the element list.
-		final List<NGElement> childElements = new ArrayList<>( _children.size() );
+		final List<NGElement> childElements = combineAndWrapBareStringElements( _children );
+
+		if( childElements.size() == 1 ) {
+			final NGElement onlyElement = childElements.get( 0 );
+
+			if( onlyElement instanceof NGComponentReference ) {
+				return new NGDynamicGroup( _name, null, onlyElement );
+			}
+
+			return onlyElement;
+		}
+
+		return new NGDynamicGroup( _name, null, childElements );
+	}
+
+	/**
+	 * Iterates through the list, combining adjacent strings and wrapping them in NGHTMLBareStrings
+	 * Other elements get added directly to the element list.
+	 */
+	private static List<NGElement> combineAndWrapBareStringElements( List children ) {
+		final List<NGElement> childElements = new ArrayList<>( children.size() );
 
 		final StringBuilder sb = new StringBuilder( 128 );
 
-		for( final Object currentChild : _children ) {
+		for( final Object currentChild : children ) {
 
 			if( currentChild instanceof String ) {
 				sb.append( (String)currentChild );
@@ -92,17 +108,7 @@ public class NGDynamicHTMLTag {
 			childElements.add( bareString );
 		}
 
-		if( childElements.size() == 1 ) {
-			final NGElement onlyElement = childElements.get( 0 );
-
-			if( onlyElement instanceof NGComponentReference ) {
-				return new NGDynamicGroup( _name, null, onlyElement );
-			}
-
-			return onlyElement;
-		}
-
-		return new NGDynamicGroup( _name, null, childElements );
+		return childElements;
 	}
 
 	public void addChildElement( final Object stringOrElement ) {
