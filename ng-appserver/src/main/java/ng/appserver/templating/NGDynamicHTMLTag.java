@@ -81,7 +81,7 @@ public class NGDynamicHTMLTag {
 	 * Iterates through the list, combining adjacent strings and wrapping them in NGHTMLBareStrings
 	 * Other elements get added directly to the element list.
 	 */
-	private static List<NGElement> combineAndWrapBareStringElements( List children ) {
+	private static List<NGElement> combineAndWrapBareStringElements( List<Object> children ) {
 		final List<NGElement> childElements = new ArrayList<>( children.size() );
 
 		final StringBuilder sb = new StringBuilder( 128 );
@@ -89,23 +89,28 @@ public class NGDynamicHTMLTag {
 		for( final Object currentChild : children ) {
 
 			if( currentChild instanceof String ) {
+				// If we encounter a string, we append it to the StringBuilder
 				sb.append( (String)currentChild );
 			}
 			else {
+				// If we encounter any other element and we still have unwrapped strings in our builder,
+				// we take the string data we've collected, wrap it up and add it to the element list.
 				if( sb.length() > 0 ) {
 					final NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
 					childElements.add( bareString );
 					sb.setLength( 0 );
 				}
 
+				// ... and then add the element itself
 				childElements.add( (NGElement)currentChild );
 			}
 		}
 
+		// If the last element happened to be a string, the StringBuilder will still have data so we wrap it here
 		if( sb.length() > 0 ) {
 			final NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
-			sb.setLength( 0 );
 			childElements.add( bareString );
+			sb.setLength( 0 );
 		}
 
 		return childElements;
