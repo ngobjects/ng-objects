@@ -29,7 +29,7 @@ public class NGDynamicHTMLTag {
 	private final NGDynamicHTMLTag _parentTag;
 
 	/**
-	 * Children of this tag
+	 * Children of this tag. This list contains a mix of (java) strings and NGElements.
 	 */
 	private List<Object> _children;
 
@@ -64,7 +64,10 @@ public class NGDynamicHTMLTag {
 			return null;
 		}
 
-		final List list = new ArrayList<>( _children.size() );
+		// _children will contain both strings and elements. We iterate through the list, combining adjacent strings and wrapping them in NGHTMLBareStrings
+		// Other elements get added directly to the element list.
+		final List<NGElement> childElements = new ArrayList<>( _children.size() );
+
 		final StringBuilder sb = new StringBuilder( 128 );
 
 		for( final Object currentChild : _children ) {
@@ -75,22 +78,22 @@ public class NGDynamicHTMLTag {
 			else {
 				if( sb.length() > 0 ) {
 					final NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
-					list.add( bareString );
+					childElements.add( bareString );
 					sb.setLength( 0 );
 				}
 
-				list.add( currentChild );
+				childElements.add( (NGElement)currentChild );
 			}
 		}
 
 		if( sb.length() > 0 ) {
 			final NGHTMLBareString bareString = new NGHTMLBareString( sb.toString() );
 			sb.setLength( 0 );
-			list.add( bareString );
+			childElements.add( bareString );
 		}
 
-		if( list.size() == 1 ) {
-			final NGElement onlyElement = (NGElement)list.get( 0 );
+		if( childElements.size() == 1 ) {
+			final NGElement onlyElement = childElements.get( 0 );
 
 			if( onlyElement instanceof NGComponentReference ) {
 				return new NGDynamicGroup( _name, null, onlyElement );
@@ -99,7 +102,7 @@ public class NGDynamicHTMLTag {
 			return onlyElement;
 		}
 
-		return new NGDynamicGroup( _name, null, list );
+		return new NGDynamicGroup( _name, null, childElements );
 	}
 
 	public void addChildElement( final Object stringOrElement ) {
