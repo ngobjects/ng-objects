@@ -15,10 +15,12 @@ import ng.appserver.elements.NGGenericElement;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGJavaScript;
+import ng.appserver.elements.NGPopUpButton;
 import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGSubmitButton;
+import ng.appserver.elements.NGSwitchComponent;
 import ng.appserver.elements.NGTextField;
 import ng.appserver.elements.docs.NGDynamicElementDescription.NGBindingDescription;
 import ng.appserver.templating.NGElementUtils;
@@ -103,6 +105,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 				"Displays an image. Bindings that are not part of the elements standard associations are passed on as attributes to the generated img tag." ) );
 
 		list.add( createEmptyDescription( NGJavaScript.class ) );
+		list.add( createEmptyDescription( NGPopUpButton.class ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGRepetition.class,
@@ -125,6 +128,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 
 		list.add( createEmptyDescription( NGStylesheet.class ) );
 		list.add( createEmptyDescription( NGSubmitButton.class ) );
+		list.add( createEmptyDescription( NGSwitchComponent.class ) );
 		list.add( createEmptyDescription( NGTextField.class ) );
 
 		return list;
