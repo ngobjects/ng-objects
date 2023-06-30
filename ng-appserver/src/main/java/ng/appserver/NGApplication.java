@@ -58,7 +58,7 @@ public class NGApplication {
 	private List<NGRouteTable> _routeTables = new ArrayList<>();
 
 	/**
-	 * FIXME: Temporary placeholder method while we continue to figure out the eprfect initialization process // Hugi 2022-10-22
+	 * FIXME: Temporary placeholder while we figure out the perfect initialization process // Hugi 2022-10-22
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		runAndReturn( args, applicationClass );
@@ -117,7 +117,7 @@ public class NGApplication {
 			e.printStackTrace();
 			System.exit( -1 );
 
-			// Essentially a dead return, just to satisfy the java compiler (which doesn't seem aware that it was just violently stabbed to death using System.exit())
+			// Essentially a dead return, just to satisfy the java compiler (which isn't aware that it was just violently stabbed to death using System.exit())
 			return null;
 		}
 	}
@@ -179,23 +179,29 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
+	 * @return The fully qualified class name of the http adaptor
 	 */
 	public String adaptorClassName() {
 		return "ng.adaptor.jetty.NGAdaptorJetty";
-		//		return ng.adaptor.raw.NGAdaptorRaw.class.getName();
+		// FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
+		// return ng.adaptor.raw.NGAdaptorRaw.class.getName();
 	}
 
+	/**
+	 * @return An adaptor class instance
+	 */
 	private NGAdaptor createAdaptor() {
 		try {
 			final Class<? extends NGAdaptor> adaptorClass = (Class<? extends NGAdaptor>)Class.forName( adaptorClassName() );
 			return adaptorClass.getConstructor().newInstance();
 		}
-		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e ) {
-			// FIXME: Handle the error
+		catch( Exception e ) {
+			logger.error( "Failed to instantiate adaptor class: " + adaptorClassName(), e );
 			e.printStackTrace();
 			System.exit( -1 );
-			return null; // wat?
+
+			// Essentially a dead return, just to satisfy the java compiler (which isn't aware that it was just violently stabbed to death using System.exit())
+			return null;
 		}
 	}
 
