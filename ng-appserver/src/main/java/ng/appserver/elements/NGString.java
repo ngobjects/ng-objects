@@ -43,7 +43,8 @@ public class NGString extends NGDynamicElement {
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		Object objectValue = _valueAssociation.valueInComponent( context.component() );
 
-		// FIXME: This is probably wrong. The object might be not null, but return a null/empty String representation // Hugi 2023-03-10
+		// Once we add support for formatters, this might be worth revisiting.
+		// I.e. an object might not be null, but it's formatted representation might be an empty string.
 		if( _valueWhenEmptyAssociation != null ) {
 			if( objectValue == null || (objectValue instanceof String s && s.isEmpty()) ) {
 				objectValue = _valueWhenEmptyAssociation.valueInComponent( context.component() );
