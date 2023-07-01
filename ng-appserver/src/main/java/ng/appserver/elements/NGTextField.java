@@ -38,7 +38,6 @@ public class NGTextField extends NGDynamicElement {
 	 * Allows you to pass in a java.text.Formatter instance to perform formatting on the entered value
 	 *
 	 * FIXME: We should probably seriously consider passing in our own formatter class here, since the java formatters su... uh, aren't that nice (thread safety, null problems, date formatters don't handle java.time etc.) // Hugi 2023-04-15
-	 * FIXME: This is also not going to be enough. We're probably going to have to perform some type coercion during value pull/push (in the association class perhaps?) in the case of for example BigDecimal/Double etc.) // Hugi 2023-04-15
 	 */
 	private final NGAssociation _formatterAssociation;
 
