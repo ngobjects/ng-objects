@@ -50,7 +50,7 @@ public class NGHTMLUtilities {
 			final Object value = entry.getValue().valueInComponent( component );
 
 			if( value != null ) {
-				attributes.put( entry.getKey(), value.toString() ); // FIXME: Not sure we should be using toString() here. Further value conversion might be required
+				attributes.put( entry.getKey(), value.toString() );
 			}
 		}
 	}
