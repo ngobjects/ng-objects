@@ -286,13 +286,15 @@ public class NGDeclarationParser {
 			association = NGAssociationFactory.associationWithValue( quotedString );
 		}
 		else if( isNumeric( associationValue ) ) {
-			Number number = null;
+			final Number number;
+
 			if( associationValue != null && associationValue.contains( "." ) ) {
 				number = Double.valueOf( associationValue );
 			}
 			else {
 				number = Integer.parseInt( associationValue );
 			}
+
 			association = NGAssociationFactory.associationWithValue( number );
 		}
 		else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
