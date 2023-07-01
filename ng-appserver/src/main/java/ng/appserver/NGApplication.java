@@ -438,8 +438,6 @@ public class NGApplication {
 
 	/**
 	 * @return A default response for requests to the root.
-	 *
-	 *  FIXME: This is just here as a temporary placeholder until we decide on a nicer default request handling mechanism
 	 */
 	public NGActionResults defaultResponse( final NGRequest request ) {
 		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
