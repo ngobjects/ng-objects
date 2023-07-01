@@ -49,13 +49,11 @@ public class NGRepetition extends NGDynamicGroup {
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
 		context.elementID().addBranch();
 
-		NGActionResults actionResults = null;
-
 		final List<?> list = list( context );
 
 		final int count = list.size();
 
-		for( int i = 0; i < count && actionResults == null; ++i ) {
+		for( int i = 0; i < count; ++i ) {
 			context.elementID().increment(); // FIXME: Better to increment afterwards? // Hugi 2023-01-07
 			final Object object = list.get( i );
 			_itemAssociation.setValue( object, context.component() );
