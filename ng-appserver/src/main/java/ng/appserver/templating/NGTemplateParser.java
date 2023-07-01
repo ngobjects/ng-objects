@@ -66,7 +66,7 @@ public class NGTemplateParser {
 
 	private NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 
-		// FIXME: This is a somewhat ugly hack for the template parser returning a null template for an empty HTML String (which is not what we want) // Hugi 2022-06-09
+		// Somewhat ugly hack to prevent the template parser from returning a null template for an empty HTML String (which is not what we want)
 		if( _htmlString.isEmpty() ) {
 			return new NGHTMLBareString( "" );
 		}
