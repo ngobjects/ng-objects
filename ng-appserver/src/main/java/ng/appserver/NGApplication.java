@@ -404,7 +404,6 @@ public class NGApplication {
 	 * @return The page to return to the user when a session restoration error occurs.
 	 */
 	protected NGActionResults handleSessionRestorationException( final NGSessionRestorationException exception ) {
-		//		return new NGResponse( "Session expired", 200 ); // FIXME: A raw, non-component baesed error might still be a good idea? // Hugi 2023-01-11
 		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context within a dead session feels weird // Hugi 2023-01-11
 		nextPage.setException( exception );
 		return nextPage;
