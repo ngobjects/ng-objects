@@ -17,8 +17,11 @@ public class NGDeclarationParser {
 
 	private static Logger logger = LoggerFactory.getLogger( NGDeclarationParser.class );
 
-	private static final int STATE_OUTSIDE = 0;
-	private static final int STATE_INSIDE_COMMENT = 2;
+	private enum ParserState {
+		Outside,
+		InsideComment
+	}
+
 	private static final String ESCAPED_QUOTE_STRING = "_WO_ESCAPED_QUOTE_";
 	private static final String QUOTED_STRING_KEY = "_WODP_";
 
@@ -53,7 +56,7 @@ public class NGDeclarationParser {
 		final StringBuilder stringb1 = new StringBuilder( 100 );
 		final StringTokenizer tokenizer = new StringTokenizer( str, "/", true );
 
-		int state = NGDeclarationParser.STATE_OUTSIDE;
+		ParserState state = ParserState.Outside;
 
 		try {
 			do {
@@ -62,11 +65,11 @@ public class NGDeclarationParser {
 				}
 				String token = tokenizer.nextToken();
 				switch( state ) {
-				case STATE_OUTSIDE:
+				case Outside:
 					if( token.equals( "/" ) ) {
 						token = tokenizer.nextToken();
 						if( token.startsWith( "*" ) ) {
-							state = NGDeclarationParser.STATE_INSIDE_COMMENT;
+							state = ParserState.InsideComment;
 							stringb1.append( '/' );
 							stringb1.append( token );
 						}
@@ -80,11 +83,11 @@ public class NGDeclarationParser {
 					}
 					break;
 
-				case STATE_INSIDE_COMMENT:
+				case InsideComment:
 					stringb1.append( token );
 					String s2 = stringb1.toString();
 					if( s2.endsWith( "*/" ) && !s2.equals( "/*/" ) ) {
-						state = NGDeclarationParser.STATE_OUTSIDE;
+						state = ParserState.Outside;
 					}
 					break;
 				}
