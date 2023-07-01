@@ -306,7 +306,7 @@ public class NGHTMLParser {
 	/**
 	 * Given a position in the template, tells us what line number it is.
 	 *
-	 * FIXME: This is currently not used, but I'm leaving the method in for future use, since I really want this functionality // Hugi 2022-07-29
+	 * Method is currently not used, but I'm leaving the method in for future use, since I really want this functionality // Hugi 2022-07-29
 	 */
 	private int lineNumber( int indexInTemplate ) {
 		String[] parts = _unparsedTemplate.split( "\n" );
@@ -330,7 +330,7 @@ public class NGHTMLParser {
 	/**
 	 * Indicates that we want to parse the attributes of "standard tags", i.e. non dynamic tags for dynamic bindings
 	 *
-	 * FIXME: This isn't really a feature I want to support, but I'm keeping it around for a little while // Hugi 2022-10-13
+	 * CHECKME: This isn't really a feature I want to support, but I'm keeping it around for a little while // Hugi 2022-10-13
 	 */
 	private static final boolean _parseStandardTags() {
 		return false;

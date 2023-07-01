@@ -129,7 +129,7 @@ public class NGTemplateParser {
 		_currentDynamicTag = dynamicTag;
 		_currentDynamicTag.addChildElement( element );
 		//		}
-		//		catch( RuntimeException e ) { // FIXME: Catching RuntimeException feels super weird // Hugi 2022-10-07
+		//		catch( RuntimeException e ) { // CHECKME: Catching RuntimeException feels super weird. Stopping it but keeping this around for a bit // Hugi 2022-10-07
 		//			final String templ = "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.";
 		//			throw new RuntimeException( templ.formatted( componentName( _currentDynamicTag ), prettyPrintDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
 		//		}
@@ -347,7 +347,7 @@ public class NGTemplateParser {
 			final String key = keyEnum.nextElement();
 			final NGAssociation association = declaration.associations().get( key );
 
-			// FIXME: Replace with some yummy pattern matching once that's out of preview // Hugi 2022-10-10
+			// CHECKME: Replace with some yummy pattern matching once that's out of preview // Hugi 2022-10-10
 			if( association instanceof NGKeyValueAssociation ass ) {
 				sb.append( key + "=" + ass.keyPath() );
 			}
