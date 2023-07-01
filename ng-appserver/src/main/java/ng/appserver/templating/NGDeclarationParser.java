@@ -286,6 +286,7 @@ public class NGDeclarationParser {
 			association = NGAssociationFactory.associationWithValue( quotedString );
 		}
 		else if( isNumeric( associationValue ) ) {
+			// FIXME: This value conversion feels a little odd to perform here // Hugi 2023-07-01
 			final Number number;
 
 			if( associationValue != null && associationValue.contains( "." ) ) {
@@ -297,6 +298,7 @@ public class NGDeclarationParser {
 
 			association = NGAssociationFactory.associationWithValue( number );
 		}
+		// FIXME: I'm not a fan of interpreting strings as booleans // Hugi 2023-07-01
 		else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
 			association = NGConstantValueAssociation.TRUE;
 		}
