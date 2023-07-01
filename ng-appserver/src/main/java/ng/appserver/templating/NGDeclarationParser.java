@@ -58,47 +58,40 @@ public class NGDeclarationParser {
 
 		ParserState state = ParserState.Outside;
 
-		try {
-			do {
-				if( !tokenizer.hasMoreTokens() ) {
-					break;
-				}
-				String token = tokenizer.nextToken();
-				switch( state ) {
-				case Outside:
-					if( token.equals( "/" ) ) {
-						token = tokenizer.nextToken();
-						if( token.startsWith( "*" ) ) {
-							state = ParserState.InsideComment;
-							stringb1.append( '/' );
-							stringb1.append( token );
-						}
-						else {
-							stringb.append( '/' );
-							stringb.append( token );
-						}
+		do {
+			if( !tokenizer.hasMoreTokens() ) {
+				break;
+			}
+			String token = tokenizer.nextToken();
+			switch( state ) {
+			case Outside:
+				if( token.equals( "/" ) ) {
+					token = tokenizer.nextToken();
+					if( token.startsWith( "*" ) ) {
+						state = ParserState.InsideComment;
+						stringb1.append( '/' );
+						stringb1.append( token );
 					}
 					else {
+						stringb.append( '/' );
 						stringb.append( token );
 					}
-					break;
-
-				case InsideComment:
-					stringb1.append( token );
-					String s2 = stringb1.toString();
-					if( s2.endsWith( "*/" ) && !s2.equals( "/*/" ) ) {
-						state = ParserState.Outside;
-					}
-					break;
 				}
+				else {
+					stringb.append( token );
+				}
+				break;
+
+			case InsideComment:
+				stringb1.append( token );
+				String s2 = stringb1.toString();
+				if( s2.endsWith( "*/" ) && !s2.equals( "/*/" ) ) {
+					state = ParserState.Outside;
+				}
+				break;
 			}
-			while( true );
 		}
-		catch( NoSuchElementException e ) {
-			throw new RuntimeException( e );
-			// CHECKME: Why are we swallowing this exception? // Hugi 2022-06-26
-			// logger.debug( "Parsing failed.", e );
-		}
+		while( true );
 
 		return stringb.toString();
 	}
@@ -110,43 +103,36 @@ public class NGDeclarationParser {
 		final StringBuilder declarationWithoutCommentsBuffer = new StringBuilder( 100 );
 		final StringTokenizer tokenizer = new StringTokenizer( escapedQuoteStr, "/\"", true );
 
-		try {
-			while( tokenizer.hasMoreTokens() ) {
-				String token = tokenizer.nextToken( "/\"" );
-				if( token.equals( "/" ) ) {
-					token = tokenizer.nextToken( "\n" );
-					if( token.startsWith( "/" ) ) {
-						token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
-						declarationWithoutCommentsBuffer.append( '\n' );
-						tokenizer.nextToken();
-					}
-					else {
-						declarationWithoutCommentsBuffer.append( '/' );
-						declarationWithoutCommentsBuffer.append( token );
-					}
-				}
-				else if( token.equals( "\"" ) ) {
-					token = tokenizer.nextToken( "\"" );
-					if( token.equals( "\"" ) ) {
-						token = "";
-					}
-					else {
-						tokenizer.nextToken();
-					}
-					String quotedStringKey = NGDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.size();
-					token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
-					_quotedStrings.put( quotedStringKey, token );
-					declarationWithoutCommentsBuffer.append( quotedStringKey );
+		while( tokenizer.hasMoreTokens() ) {
+			String token = tokenizer.nextToken( "/\"" );
+			if( token.equals( "/" ) ) {
+				token = tokenizer.nextToken( "\n" );
+				if( token.startsWith( "/" ) ) {
+					token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
+					declarationWithoutCommentsBuffer.append( '\n' );
+					tokenizer.nextToken();
 				}
 				else {
+					declarationWithoutCommentsBuffer.append( '/' );
 					declarationWithoutCommentsBuffer.append( token );
 				}
 			}
-		}
-		catch( NoSuchElementException e ) {
-			throw new RuntimeException( e );
-			// CHECKME: Why are we swallowing this exception? // Hugi 2022-06-26
-			// logger.debug( "Parsing failed.", e );
+			else if( token.equals( "\"" ) ) {
+				token = tokenizer.nextToken( "\"" );
+				if( token.equals( "\"" ) ) {
+					token = "";
+				}
+				else {
+					tokenizer.nextToken();
+				}
+				String quotedStringKey = NGDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.size();
+				token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
+				_quotedStrings.put( quotedStringKey, token );
+				declarationWithoutCommentsBuffer.append( quotedStringKey );
+			}
+			else {
+				declarationWithoutCommentsBuffer.append( token );
+			}
 		}
 
 		return declarationWithoutCommentsBuffer.toString();
