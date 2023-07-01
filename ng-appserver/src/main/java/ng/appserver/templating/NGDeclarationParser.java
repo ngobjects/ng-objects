@@ -1,10 +1,8 @@
 package ng.appserver.templating;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -213,15 +211,10 @@ public class NGDeclarationParser {
 
 		trimmedDeclarationBody = trimmedDeclarationBody.substring( 1, declarationBodyLength - 1 ).trim();
 
-		final List<String> bindings = Arrays.asList( trimmedDeclarationBody.split( ";" ) );
-		final Enumeration<String> bindingsEnum = Collections.enumeration( bindings );
+		final String[] bindings = trimmedDeclarationBody.split( ";" );
 
-		do {
-			if( !bindingsEnum.hasMoreElements() ) {
-				break;
-			}
-
-			final String binding = bindingsEnum.nextElement().trim();
+		for( String binding : bindings ) {
+			binding = binding.trim();
 
 			if( binding.length() != 0 ) {
 				final int equalsIndex = binding.indexOf( '=' );
@@ -253,7 +246,6 @@ public class NGDeclarationParser {
 				}
 			}
 		}
-		while( true );
 
 		return associations;
 	}
