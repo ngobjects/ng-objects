@@ -33,7 +33,9 @@ public class NGAdminAction extends NGDirectAction {
 	 */
 	public NGActionResults terminateAction() {
 		NGApplication.application().terminate();
-		return new NGResponse( "Application successfully terminated", 200 );
+		final NGResponse response = new NGResponse( "terminated", 200 );
+		response.setHeader( "content-type", "text/plain" );
+		return response;
 	}
 
 	/**
