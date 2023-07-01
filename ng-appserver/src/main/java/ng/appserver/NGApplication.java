@@ -31,7 +31,7 @@ public class NGApplication {
 	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
 
 	/**
-	 * FIXME: This is a global NGApplication object. We don't want a global NGApplication object // Hugi 2021-12-29
+	 * FIXME: This is a global NGApplication object. We don't want a global NGApplication object. It's only around for convenience for now // Hugi 2021-12-29
 	 */
 	@Deprecated
 	private static NGApplication _application;
@@ -107,7 +107,7 @@ public class NGApplication {
 
 			logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 
-			// FIXME: Assigning that unwanted global application...
+			// Assigning that unwanted global application...
 			_application = application;
 
 			return (E)application;
@@ -275,8 +275,6 @@ public class NGApplication {
 
 	/**
 	 * @return The global NGApplication instance.
-	 *
-	 * FIXME: I really do not want a global instance in the future, but I'm keeping it around for now as it's comforting while working with familiar patterns. // Hugi 2022-10-19
 	 */
 	@Deprecated
 	public static NGApplication application() {
