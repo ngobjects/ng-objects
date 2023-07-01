@@ -320,7 +320,7 @@ public class NGDeclarationParser {
 		return association;
 	}
 
-	private static boolean isNumeric( String string ) {
+	static boolean isNumeric( String string ) {
 		int length = string.length();
 
 		if( length == 0 ) {
