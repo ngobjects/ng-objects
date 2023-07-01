@@ -182,7 +182,7 @@ public class NGHTMLParser {
 	/**
 	 * This method is invoked to parse dynamic bindings in standard tags.
 	 *
-	 * FIXME: In the original Wonder version, this would catch any exception that happened and return the original token.
+	 * CHECKME: In the original Wonder version, this would catch any exception that happened and return the original token.
 	 * I think we should rather try to fix the exceptions as they occur (that is, if we decide to actually support this feature)
 	 *
 	 * @return A rewritten token if it has an inline binding or a closing tag, if it belongs to a rewritten token
@@ -329,7 +329,7 @@ public class NGHTMLParser {
 
 	/**
 	 * Indicates that we want to parse the attributes of "standard tags", i.e. non dynamic tags for dynamic bindings
-	 * 
+	 *
 	 * FIXME: This isn't really a feature I want to support, but I'm keeping it around for a little while // Hugi 2022-10-13
 	 */
 	private static final boolean _parseStandardTags() {
