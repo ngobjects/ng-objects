@@ -30,11 +30,6 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * Map of this component's children
-	 *
-	 * FIXME:
-	 * We need to look into the implementation of this, since elementID is a mutable class.
-	 * In other words; we might be caching the same NGElementID multiple times under a different hash
-	 * Hugi 2023-03-11
 	 */
 	private final Map<String, NGComponent> _children;
 
@@ -68,8 +63,6 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * @return The current session
-	 *
-	 * FIXME: Type safety (for our own session class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
 	 */
 	public NGSession session() {
 		return context().session();
@@ -77,8 +70,6 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * @return The application within which this component instance was constructed
-	 *
-	 * FIXME: Type safety (for our own application class) would be nice without subclassing in the consuming project. Not sure that's quite achievable here though // Hugi 2023-01-08
 	 */
 	public NGApplication application() {
 		return NGApplication.application();
@@ -102,8 +93,6 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * @return The child with the given elementID. Null if none
-	 *
-	 * FIXME: Null? Really? // Hugi 2022-12-30
 	 */
 	public NGComponent getChild( String elementID ) {
 		Objects.requireNonNull( elementID );
@@ -281,8 +270,6 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	public NGElement template() {
 		final NGElement template = _componentDefinition.template();
-
-		// FIXME: Not sure we want to throw here, but it currently feels better than silently failing // Hugi 2023-03-26
 
 		if( template == null ) {
 			throw new IllegalStateException( "The component " + name() + " is missing a template" );

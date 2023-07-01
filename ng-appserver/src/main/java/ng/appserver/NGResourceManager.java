@@ -20,20 +20,17 @@ public class NGResourceManager {
 	private static final Logger logger = LoggerFactory.getLogger( NGResourceManager.class );
 
 	/**
-	 * FIXME: Experimental cache
-	 * FIXME: Resource caches should be located centrally
+	 * FIXME: Experimental cache. Resource caches should be located centrally.
 	 */
 	private final Map<String, Optional<byte[]>> _webserverResourceCache = new ConcurrentHashMap<>();
 
 	/**
-	 * FIXME: Experimental cache
-	 * FIXME: Resource caches should be located centrally
+	 * FIXME: Experimental cache. Resource caches should be located centrally.
 	 */
 	private final Map<String, Optional<byte[]>> _publicResourceCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Specifies if we want to use the resources cache.
-	 * FIXME: Current implementation is for testing only
 	 */
 	private boolean _cachingEnabled() {
 		return NGApplication.application().cachingEnabled();
@@ -88,7 +85,6 @@ public class NGResourceManager {
 	/**
 	 * @return The URL for the named resource
 	 *
-	 * FIXME: Whoa, that's incomplete
 	 * FIXME: Determine if the resource exists first
 	 * FIXME: I don't feel this belongs here. URL generation and resource management are separate things
 	 */
@@ -105,7 +101,6 @@ public class NGResourceManager {
 	/**
 	 * @return The URL for the named resource
 	 *
-	 * FIXME: Whoa, that's incomplete
 	 * FIXME: Determine if the resource exists first
 	 * FIXME: I don't feel this belongs here. URL generation and resource management are separate things
 	 */

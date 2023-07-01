@@ -58,7 +58,7 @@ public class NGApplication {
 	private List<NGRouteTable> _routeTables = new ArrayList<>();
 
 	/**
-	 * FIXME: Temporary placeholder method while we continue to figure out the eprfect initialization process // Hugi 2022-10-22
+	 * FIXME: Temporary placeholder while we figure out the perfect initialization process // Hugi 2022-10-22
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		runAndReturn( args, applicationClass );
@@ -117,7 +117,7 @@ public class NGApplication {
 			e.printStackTrace();
 			System.exit( -1 );
 
-			// Essentially a dead return, just to satisfy the java compiler (which doesn't seem aware that it was just violently stabbed to death using System.exit())
+			// Essentially a dead return, just to satisfy the java compiler (which isn't aware that it was just violently stabbed to death using System.exit())
 			return null;
 		}
 	}
@@ -179,23 +179,29 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
+	 * @return The fully qualified class name of the http adaptor
 	 */
 	public String adaptorClassName() {
 		return "ng.adaptor.jetty.NGAdaptorJetty";
-		//		return ng.adaptor.raw.NGAdaptorRaw.class.getName();
+		// FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
+		// return ng.adaptor.raw.NGAdaptorRaw.class.getName();
 	}
 
+	/**
+	 * @return An adaptor class instance
+	 */
 	private NGAdaptor createAdaptor() {
 		try {
 			final Class<? extends NGAdaptor> adaptorClass = (Class<? extends NGAdaptor>)Class.forName( adaptorClassName() );
 			return adaptorClass.getConstructor().newInstance();
 		}
-		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e ) {
-			// FIXME: Handle the error
+		catch( Exception e ) {
+			logger.error( "Failed to instantiate adaptor class: " + adaptorClassName(), e );
 			e.printStackTrace();
 			System.exit( -1 );
-			return null; // wat?
+
+			// Essentially a dead return, just to satisfy the java compiler (which isn't aware that it was just violently stabbed to death using System.exit())
+			return null;
 		}
 	}
 
@@ -321,11 +327,11 @@ public class NGApplication {
 					// FIXME: We want this to work with streams, not byte arrays.
 					// To make this work, we'll have to cache a wrapper class for the resource; that wrapper must give us a "stream provider", not an actual stream, since we'll be consuming the stream of a cached resource multiple times.
 					// Hugi 2023-02-17
-					final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForPublicResourceNamed( resourcePath );
+					final Optional<byte[]> resourceBytes = resourceManager().bytesForPublicResourceNamed( resourcePath );
 
 					return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
 
-					//					return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
+					// return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
 				}
 
 				response = requestHandler.handleRequest( request );
@@ -346,16 +352,13 @@ public class NGApplication {
 
 			return response;
 		}
-		catch( NGSessionRestorationException e ) {
-			// FIXME: We should probably be invoking handleException() here
+		catch( final NGSessionRestorationException e ) {
 			return handleSessionRestorationException( e ).generateResponse();
 		}
-		catch( NGPageRestorationException e ) {
-			// FIXME: We should probably be invoking handleException() here
+		catch( final NGPageRestorationException e ) {
 			return handlePageRestorationException( e ).generateResponse();
 		}
-		catch( Throwable throwable ) {
-			// FIXME: Generate a uniqueID for the exception that occurred and show it to the user (for tracing/debugging) // Hugi 2022-10-13
+		catch( final Throwable throwable ) {
 			handleException( throwable );
 			return exceptionResponse( throwable, request.context() ).generateResponse();
 		}
@@ -398,8 +401,7 @@ public class NGApplication {
 	 * @return The page to return to the user when a session restoration error occurs.
 	 */
 	protected NGActionResults handleSessionRestorationException( final NGSessionRestorationException exception ) {
-		//		return new NGResponse( "Session expired", 200 ); // FIXME: A raw, non-component baesed error might still be a good idea? // Hugi 2023-01-11
-		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context withing a dead session feels weird // Hugi 2023-01-11
+		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context within a dead session feels weird // Hugi 2023-01-11
 		nextPage.setException( exception );
 		return nextPage;
 	}
@@ -409,6 +411,7 @@ public class NGApplication {
 	 * (usually because the page cache has been exhausted, and the page pushed out of the cache), this method will be invoked and it's response returned to the user.
 	 *
 	 * FIXME: Create a nicer response for this // Hugi 2023-02-10
+	 * FIXME: This is the component action request handler leaking into the generic application // Hugi 2023-07-01
 	 */
 	protected NGActionResults handlePageRestorationException( final NGPageRestorationException exception ) {
 		return new NGResponse( exception.getMessage(), 404 );
@@ -434,39 +437,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * @return A  response generated when an exception occurs
-	 *
-	 * FIXME: I'm letting this be for now, while we mull over if we wants thing to work without components/templating // Hugi 2022-10-08
-	 */
-	@Deprecated
-	private NGActionResults rawExceptionResponse( final Throwable throwable, final NGContext context ) {
-		final StringBuilder b = new StringBuilder();
-		b.append( "<style>body{ font-family: sans-serif}</style>" );
-		b.append( "<h3>An exception occurred</h3>" );
-		b.append( "<h1>%s</h1>".formatted( throwable.getClass().getName() ) );
-		b.append( "<h2>%s</h2>".formatted( throwable.getMessage() ) );
-
-		if( throwable.getCause() != null ) {
-			b.append( "<h3>Cause: %s</h3>".formatted( throwable.getCause().getMessage() ) );
-		}
-
-		for( StackTraceElement ste : throwable.getStackTrace() ) {
-			final String packageNameOnly = ste.getClassName().substring( 0, ste.getClassName().lastIndexOf( "." ) );
-			final String simpleClassNameOnly = ste.getClassName().substring( ste.getClassName().lastIndexOf( "." ) + 1 );
-
-			b.append( "<span style=\"display: inline-block; min-width: 300px\">%s</span>".formatted( packageNameOnly ) );
-			b.append( "<span style=\"display: inline-block; min-width: 500px\">%s</span>".formatted( simpleClassNameOnly + "." + ste.getMethodName() + "()" ) );
-			b.append( ste.getFileName() + ":" + ste.getLineNumber() );
-			b.append( "<br>" );
-		}
-
-		return new NGResponse( b.toString(), 500 );
-	}
-
-	/**
 	 * @return A default response for requests to the root.
-	 *
-	 *  FIXME: This is just here as a temporary placeholder until we decide on a nicer default request handling mechanism
 	 */
 	public NGActionResults defaultResponse( final NGRequest request ) {
 		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
@@ -580,7 +551,7 @@ public class NGApplication {
 	/**
 	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
 	 * FIXME: This should not be static // Hugi 2023-04-14
-	 * FIXME: Since this can only ever return DynamicElements, we can narrow the API's return type here // Hugi 2023-05-07
+	 * CHECKME: Since this can only ever return DynamicElements, we can probably narrow the return type here // Hugi 2023-05-07
 	 *
 	 * @param name The name identifying what element we're getting
 	 * @param associations Associations used to bind the generated element to it's parent

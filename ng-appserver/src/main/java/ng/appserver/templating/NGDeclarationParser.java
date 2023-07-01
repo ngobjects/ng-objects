@@ -1,17 +1,9 @@
 package ng.appserver.templating;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.StringTokenizer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGAssociation;
 import ng.appserver.NGAssociationFactory;
@@ -19,15 +11,16 @@ import ng.appserver.NGConstantValueAssociation;
 
 public class NGDeclarationParser {
 
-	private static Logger logger = LoggerFactory.getLogger( NGDeclarationParser.class );
+	private enum ParserState {
+		Outside,
+		InsideComment
+	}
 
-	private static final int STATE_OUTSIDE = 0;
-	private static final int STATE_INSIDE_COMMENT = 2;
 	private static final String ESCAPED_QUOTE_STRING = "_WO_ESCAPED_QUOTE_";
 	private static final String QUOTED_STRING_KEY = "_WODP_";
 
 	/**
-	 * FIXME: Why the hell is this an instance variable?
+	 * CHECKME: Keeping this an instance variable feels a little odd. Might want to revisit this design // Hugi 2023-07-01
 	 */
 	private final Map<String, String> _quotedStrings = new HashMap<>();
 
@@ -48,7 +41,7 @@ public class NGDeclarationParser {
 	 *
 	 * Should be private, only friendly due to testing
 	 *
-	 * FIXME: Shouldn't we fail on an unclosed comment?
+	 * CHECKME: Shouldn't we fail on an unclosed comment?
 	 */
 	static String _removeOldStyleCommentsFromString( String str ) {
 		Objects.requireNonNull( str );
@@ -57,49 +50,42 @@ public class NGDeclarationParser {
 		final StringBuilder stringb1 = new StringBuilder( 100 );
 		final StringTokenizer tokenizer = new StringTokenizer( str, "/", true );
 
-		int state = NGDeclarationParser.STATE_OUTSIDE;
+		ParserState state = ParserState.Outside;
 
-		try {
-			do {
-				if( !tokenizer.hasMoreTokens() ) {
-					break;
-				}
-				String token = tokenizer.nextToken();
-				switch( state ) {
-				case STATE_OUTSIDE:
-					if( token.equals( "/" ) ) {
-						token = tokenizer.nextToken();
-						if( token.startsWith( "*" ) ) {
-							state = NGDeclarationParser.STATE_INSIDE_COMMENT;
-							stringb1.append( '/' );
-							stringb1.append( token );
-						}
-						else {
-							stringb.append( '/' );
-							stringb.append( token );
-						}
+		do {
+			if( !tokenizer.hasMoreTokens() ) {
+				break;
+			}
+			String token = tokenizer.nextToken();
+			switch( state ) {
+			case Outside:
+				if( token.equals( "/" ) ) {
+					token = tokenizer.nextToken();
+					if( token.startsWith( "*" ) ) {
+						state = ParserState.InsideComment;
+						stringb1.append( '/' );
+						stringb1.append( token );
 					}
 					else {
+						stringb.append( '/' );
 						stringb.append( token );
 					}
-					break;
-
-				case STATE_INSIDE_COMMENT:
-					stringb1.append( token );
-					String s2 = stringb1.toString();
-					if( s2.endsWith( "*/" ) && !s2.equals( "/*/" ) ) {
-						state = NGDeclarationParser.STATE_OUTSIDE;
-					}
-					break;
 				}
+				else {
+					stringb.append( token );
+				}
+				break;
+
+			case InsideComment:
+				stringb1.append( token );
+				String s2 = stringb1.toString();
+				if( s2.endsWith( "*/" ) && !s2.equals( "/*/" ) ) {
+					state = ParserState.Outside;
+				}
+				break;
 			}
-			while( true );
 		}
-		catch( NoSuchElementException e ) {
-			throw new RuntimeException( e );
-			// FIXME: Why are we swallowing this exception? // Hugi 2022-06-26
-			// logger.debug( "Parsing failed.", e );
-		}
+		while( true );
 
 		return stringb.toString();
 	}
@@ -111,43 +97,36 @@ public class NGDeclarationParser {
 		final StringBuilder declarationWithoutCommentsBuffer = new StringBuilder( 100 );
 		final StringTokenizer tokenizer = new StringTokenizer( escapedQuoteStr, "/\"", true );
 
-		try {
-			while( tokenizer.hasMoreTokens() ) {
-				String token = tokenizer.nextToken( "/\"" );
-				if( token.equals( "/" ) ) {
-					token = tokenizer.nextToken( "\n" );
-					if( token.startsWith( "/" ) ) {
-						token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
-						declarationWithoutCommentsBuffer.append( '\n' );
-						tokenizer.nextToken();
-					}
-					else {
-						declarationWithoutCommentsBuffer.append( '/' );
-						declarationWithoutCommentsBuffer.append( token );
-					}
-				}
-				else if( token.equals( "\"" ) ) {
-					token = tokenizer.nextToken( "\"" );
-					if( token.equals( "\"" ) ) {
-						token = "";
-					}
-					else {
-						tokenizer.nextToken();
-					}
-					String quotedStringKey = NGDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.size();
-					token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
-					_quotedStrings.put( quotedStringKey, token );
-					declarationWithoutCommentsBuffer.append( quotedStringKey );
+		while( tokenizer.hasMoreTokens() ) {
+			String token = tokenizer.nextToken( "/\"" );
+			if( token.equals( "/" ) ) {
+				token = tokenizer.nextToken( "\n" );
+				if( token.startsWith( "/" ) ) {
+					token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\\\"" );
+					declarationWithoutCommentsBuffer.append( '\n' );
+					tokenizer.nextToken();
 				}
 				else {
+					declarationWithoutCommentsBuffer.append( '/' );
 					declarationWithoutCommentsBuffer.append( token );
 				}
 			}
-		}
-		catch( NoSuchElementException e ) {
-			throw new RuntimeException( e );
-			// FIXME: Why are we swallowing this exception? // Hugi 2022-06-26
-			// logger.debug( "Parsing failed.", e );
+			else if( token.equals( "\"" ) ) {
+				token = tokenizer.nextToken( "\"" );
+				if( token.equals( "\"" ) ) {
+					token = "";
+				}
+				else {
+					tokenizer.nextToken();
+				}
+				String quotedStringKey = NGDeclarationParser.QUOTED_STRING_KEY + _quotedStrings.size();
+				token = token.replace( NGDeclarationParser.ESCAPED_QUOTE_STRING, "\"" );
+				_quotedStrings.put( quotedStringKey, token );
+				declarationWithoutCommentsBuffer.append( quotedStringKey );
+			}
+			else {
+				declarationWithoutCommentsBuffer.append( token );
+			}
 		}
 
 		return declarationWithoutCommentsBuffer.toString();
@@ -159,10 +138,7 @@ public class NGDeclarationParser {
 		final Map<String, NGDeclaration> declarations = new HashMap<>();
 		final Map<String, String> rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
 
-		final Enumeration<String> rawDeclarationHeaderEnum = Collections.enumeration( rawDeclarations.keySet() );
-
-		while( rawDeclarationHeaderEnum.hasMoreElements() ) {
-			final String declarationHeader = rawDeclarationHeaderEnum.nextElement();
+		for( String declarationHeader : rawDeclarations.keySet() ) {
 			final String declarationBody = rawDeclarations.get( declarationHeader );
 			final int colonIndex = declarationHeader.indexOf( ':' );
 
@@ -213,15 +189,10 @@ public class NGDeclarationParser {
 
 		trimmedDeclarationBody = trimmedDeclarationBody.substring( 1, declarationBodyLength - 1 ).trim();
 
-		final List<String> bindings = Arrays.asList( trimmedDeclarationBody.split( ";" ) );
-		final Enumeration<String> bindingsEnum = Collections.enumeration( bindings );
+		final String[] bindings = trimmedDeclarationBody.split( ";" );
 
-		do {
-			if( !bindingsEnum.hasMoreElements() ) {
-				break;
-			}
-
-			final String binding = bindingsEnum.nextElement().trim();
+		for( String binding : bindings ) {
+			binding = binding.trim();
 
 			if( binding.length() != 0 ) {
 				final int equalsIndex = binding.indexOf( '=' );
@@ -253,13 +224,12 @@ public class NGDeclarationParser {
 				}
 			}
 		}
-		while( true );
 
 		return associations;
 	}
 
 	/**
-	 * FIXME: Doesn't this belong in NGAssociationFactory? // Hugi 2022-04-27
+	 * CHECKME: Doesn't this belong in NGAssociationFactory? // Hugi 2022-04-27
 	 */
 	public static NGAssociation _associationWithKey( String associationValue, Map<String, String> quotedStrings ) {
 		Objects.requireNonNull( associationValue );
@@ -298,15 +268,19 @@ public class NGDeclarationParser {
 			association = NGAssociationFactory.associationWithValue( quotedString );
 		}
 		else if( isNumeric( associationValue ) ) {
-			Number number = null;
+			// CHECKME: This value conversion feels a little odd to perform here // Hugi 2023-07-01
+			final Number number;
+
 			if( associationValue != null && associationValue.contains( "." ) ) {
 				number = Double.valueOf( associationValue );
 			}
 			else {
 				number = Integer.parseInt( associationValue );
 			}
+
 			association = NGAssociationFactory.associationWithValue( number );
 		}
+		// CHECKME: I'm not a fan of interpreting strings as booleans // Hugi 2023-07-01
 		else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
 			association = NGConstantValueAssociation.TRUE;
 		}
@@ -320,7 +294,7 @@ public class NGDeclarationParser {
 		return association;
 	}
 
-	private static boolean isNumeric( String string ) {
+	static boolean isNumeric( String string ) {
 		int length = string.length();
 
 		if( length == 0 ) {
@@ -361,36 +335,31 @@ public class NGDeclarationParser {
 		final StringBuilder declarationWithoutCommentBuffer = new StringBuilder( 100 );
 		final StringTokenizer tokenizer = new StringTokenizer( declarationStr, "{", true );
 
-		try {
-			while( tokenizer.hasMoreTokens() ) {
-				String token = tokenizer.nextToken( "{" );
+		while( tokenizer.hasMoreTokens() ) {
+			String token = tokenizer.nextToken( "{" );
 
-				if( token.equals( "{" ) ) {
-					token = tokenizer.nextToken( "}" );
+			if( token.equals( "{" ) ) {
+				token = tokenizer.nextToken( "}" );
 
-					if( token.equals( "}" ) ) {
-						token = "";
-					}
-					else {
-						tokenizer.nextToken();
-					}
-
-					String declarationWithoutComment = declarationWithoutCommentBuffer.toString();
-
-					if( declarationWithoutComment.startsWith( ";" ) ) {
-						declarationWithoutComment = declarationWithoutComment.substring( 1 );
-					}
-
-					declarations.put( declarationWithoutComment.trim(), "{" + token + "}" );
-					declarationWithoutCommentBuffer.setLength( 0 );
+				if( token.equals( "}" ) ) {
+					token = "";
 				}
 				else {
-					declarationWithoutCommentBuffer.append( token );
+					tokenizer.nextToken();
 				}
+
+				String declarationWithoutComment = declarationWithoutCommentBuffer.toString();
+
+				if( declarationWithoutComment.startsWith( ";" ) ) {
+					declarationWithoutComment = declarationWithoutComment.substring( 1 );
+				}
+
+				declarations.put( declarationWithoutComment.trim(), "{" + token + "}" );
+				declarationWithoutCommentBuffer.setLength( 0 );
 			}
-		}
-		catch( NoSuchElementException e ) {
-			logger.debug( "Failed to parse.", e );
+			else {
+				declarationWithoutCommentBuffer.append( token );
+			}
 		}
 
 		return declarations;

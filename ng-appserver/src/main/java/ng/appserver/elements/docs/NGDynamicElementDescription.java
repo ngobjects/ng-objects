@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
@@ -15,10 +16,12 @@ import ng.appserver.elements.NGGenericElement;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGJavaScript;
+import ng.appserver.elements.NGPopUpButton;
 import ng.appserver.elements.NGRepetition;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGSubmitButton;
+import ng.appserver.elements.NGSwitchComponent;
 import ng.appserver.elements.NGTextField;
 import ng.appserver.elements.docs.NGDynamicElementDescription.NGBindingDescription;
 import ng.appserver.templating.NGElementUtils;
@@ -88,7 +91,13 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 						new NGBindingDescription( "negate", Boolean.class, "Can be set to $true to 'flip' the condition" ) ),
 				"Wraps content in a template and decides to render it based on a condition. If the binding [condition] evaluates to $false, the contained content will not be rendered (and vice versa). If the 'negate' binding is set to $true, the condition will be flipped." ) );
 
-		list.add( createEmptyDescription( NGForm.class ) );
+		list.add( new NGDynamicElementDescription(
+				NGForm.class,
+				List.of( "form" ),
+				List.of(
+						new NGBindingDescription( "action", NGActionResults.class, "The action to invoke when the form is submitted" ),
+						new NGBindingDescription( "method", String.class, "The form's method (POST or GET). Defaults to 'POST'" ) ),
+				"An HTML form, specifically for use with component actions" ) );
 		list.add( createEmptyDescription( NGGenericContainer.class ) );
 		list.add( createEmptyDescription( NGGenericElement.class ) );
 		list.add( createEmptyDescription( NGHyperlink.class ) );
@@ -103,6 +112,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 				"Displays an image. Bindings that are not part of the elements standard associations are passed on as attributes to the generated img tag." ) );
 
 		list.add( createEmptyDescription( NGJavaScript.class ) );
+		list.add( createEmptyDescription( NGPopUpButton.class ) );
 
 		list.add( new NGDynamicElementDescription(
 				NGRepetition.class,
@@ -125,6 +135,7 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 
 		list.add( createEmptyDescription( NGStylesheet.class ) );
 		list.add( createEmptyDescription( NGSubmitButton.class ) );
+		list.add( createEmptyDescription( NGSwitchComponent.class ) );
 		list.add( createEmptyDescription( NGTextField.class ) );
 
 		return list;

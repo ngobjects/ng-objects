@@ -11,8 +11,7 @@ import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
 
 /**
- * FIXME: How are we going to decide if non-container elements are "closed" (i.e. a closing slash is added) // Hugi 2022-10-13
- * FIXME: NGGenericElement and NGGenericContainer share a lot of code... Hmm. // Hugi 2022-10-13
+ * CHECKME: NGGenericElement and NGGenericContainer share a lot of code, we could probably simplify this // Hugi 2022-10-13
  */
 
 public class NGGenericElement extends NGDynamicElement {
@@ -54,6 +53,7 @@ public class NGGenericElement extends NGDynamicElement {
 			}
 		} );
 
+		// We might want to add a binding to specify if non-container elements are "closed" (i.e. a closing slash is added)
 		b.append( " />" );
 
 		response.appendContentString( b.toString() );

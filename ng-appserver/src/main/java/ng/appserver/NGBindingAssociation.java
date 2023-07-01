@@ -15,7 +15,6 @@ public class NGBindingAssociation extends NGAssociation {
 
 	@Override
 	public void setValue( Object value, NGComponent component ) {
-		// FIXME: Setting values through binding associations is not yet supported // Hugi 2023-03-12
-		System.out.println( "FIXME: Setting values through binding associations is not yet supported" );
+		component.setValueForBinding( value, _binding );
 	}
 }

@@ -26,7 +26,7 @@ public class NGContext {
 	/**
 	 * The component currently being processed by this context
 	 */
-	private NGComponent _currentComponent;
+	private NGComponent _component;
 
 	/**
 	 * ID of the element currently being rendered by the context.
@@ -115,14 +115,14 @@ public class NGContext {
 	 * @return The component currently being rendered in this context
 	 */
 	public NGComponent component() {
-		return _currentComponent;
+		return _component;
 	}
 
 	/**
 	 * Set the component currently being rendered in this context
 	 */
 	public void setComponent( final NGComponent component ) {
-		_currentComponent = component;
+		_component = component;
 	}
 
 	/**
@@ -210,6 +210,6 @@ public class NGContext {
 
 	@Override
 	public String toString() {
-		return "NGContext [_request=" + _request + ", _currentComponent=" + _currentComponent + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _currentElementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
+		return "NGContext [_request=" + _request + ", _component=" + _component + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _currentElementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
 	}
 }

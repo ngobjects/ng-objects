@@ -2,8 +2,6 @@ package ng.appserver;
 
 import java.util.Map;
 
-import ng.appserver.elements.docs.NGDynamicElementDescription;
-
 /**
  * Common superclass for all dynamic elements.
  *
@@ -20,14 +18,5 @@ public abstract class NGDynamicElement implements NGElement {
 		if( name != null || associations != null || contentTemplate != null ) {
 			throw new IllegalArgumentException( getClass().getSimpleName() + ": [name], [associations] or [template] was not null. This constructor should only be invoked with null parameters" );
 		}
-	}
-
-	/**
-	 * @return The API description of this element
-	 *
-	 * FIXME: The description class might perhaps be better provided by an interface that can be optionally implemented by any classes that extend WOElement (including components)
-	 */
-	public NGDynamicElementDescription dynamicElementDescription() {
-		return NGDynamicElementDescription.NoDescription;
 	}
 }
