@@ -1,5 +1,7 @@
 package ng.appserver.elements;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +81,7 @@ public class NGPopUpButton extends NGDynamicElement {
 				}
 				else {
 					final int selectionIndex = Integer.parseInt( stringValueFromRequest );
-					final List<?> list = (List<?>)_listAss.valueInComponent( context.component() ); // FIXME: Use a method instead
+					final List<?> list = list( context );
 					final Object selectedItem = list.get( selectionIndex );
 					_selectionAss.setValue( selectedItem, context.component() );
 				}
@@ -100,8 +102,7 @@ public class NGPopUpButton extends NGDynamicElement {
 			attributes.put( "disabled", "" );
 		}
 
-		// FIXME: We need to allow for more list types here. We can reuse the logic from NGRepetition here // Hugi 2023-05-01
-		final List<?> list = (List<?>)_listAss.valueInComponent( context.component() );
+		final List<?> list = list( context );
 
 		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "select", attributes, false ) );
 
@@ -161,5 +162,26 @@ public class NGPopUpButton extends NGDynamicElement {
 		}
 
 		return context.elementID().toString();
+	}
+
+	/**
+	 * @return The value passed to the list association coerced to a List (if possible/supported)
+	 */
+	private List<?> list( final NGContext context ) {
+		final Object listAssociationValue = _listAss.valueInComponent( context.component() );
+
+		if( listAssociationValue == null ) {
+			return Collections.emptyList();
+		}
+
+		if( listAssociationValue instanceof List<?> cast ) {
+			return cast;
+		}
+
+		if( listAssociationValue instanceof Object[] cast ) {
+			return Arrays.asList( cast );
+		}
+
+		throw new IllegalArgumentException( "NGRepetition only accepts java.util.List and java Arrays. You sent me a %s".formatted( listAssociationValue.getClass() ) );
 	}
 }
