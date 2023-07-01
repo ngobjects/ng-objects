@@ -12,6 +12,10 @@ import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
+/**
+ * FIXME: Only partially implemented // Hugi 2023-05-01
+ */
+
 public class NGRepetition extends NGDynamicGroup {
 
 	/**
@@ -42,9 +46,6 @@ public class NGRepetition extends NGDynamicGroup {
 		_listAssociation = associations.get( "list" );
 	}
 
-	/**
-	 * FIXME: Only partially implemented // Hugi 2023-05-01
-	 */
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
 		context.elementID().addBranch();
@@ -54,7 +55,7 @@ public class NGRepetition extends NGDynamicGroup {
 		final int count = list.size();
 
 		for( int i = 0; i < count; ++i ) {
-			context.elementID().increment(); // FIXME: Better to increment afterwards? // Hugi 2023-01-07
+			context.elementID().increment();
 			final Object object = list.get( i );
 			_itemAssociation.setValue( object, context.component() );
 			super.takeValuesFromRequest( request, context );
@@ -63,9 +64,6 @@ public class NGRepetition extends NGDynamicGroup {
 		context.elementID().removeBranch();
 	}
 
-	/**
-	 * FIXME: Only partially implemented // Hugi 2023-05-01
-	 */
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 		context.elementID().addBranch();
@@ -77,7 +75,7 @@ public class NGRepetition extends NGDynamicGroup {
 		final int count = list.size();
 
 		for( int i = 0; i < count && actionResults == null; ++i ) {
-			context.elementID().increment(); // FIXME: Better to increment afterwards? // Hugi 2023-01-07
+			context.elementID().increment();
 			final Object object = list.get( i );
 			_itemAssociation.setValue( object, context.component() );
 			actionResults = super.invokeAction( request, context );
