@@ -89,7 +89,6 @@ public class NGResourceLoader {
 		}
 
 		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath );
-
 	}
 
 	/**
@@ -144,7 +143,6 @@ public class NGResourceLoader {
 				throw new UncheckedIOException( ioException );
 			}
 
-			// If we didn't find the resource, warn the user
 			if( resourceURL == null ) {
 				return Optional.empty();
 			}
