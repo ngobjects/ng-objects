@@ -23,7 +23,7 @@ public class NGDeclarationParser {
 	private static final String QUOTED_STRING_KEY = "_WODP_";
 
 	/**
-	 * FIXME: Why the hell is this an instance variable?
+	 * CHECKME: Keeping this an instance variable feels a little odd. Might want to revisit this design // Hugi 2023-07-01
 	 */
 	private final Map<String, String> _quotedStrings = new HashMap<>();
 
@@ -44,7 +44,7 @@ public class NGDeclarationParser {
 	 *
 	 * Should be private, only friendly due to testing
 	 *
-	 * FIXME: Shouldn't we fail on an unclosed comment?
+	 * CHECKME: Shouldn't we fail on an unclosed comment?
 	 */
 	static String _removeOldStyleCommentsFromString( String str ) {
 		Objects.requireNonNull( str );
@@ -93,7 +93,7 @@ public class NGDeclarationParser {
 		}
 		catch( NoSuchElementException e ) {
 			throw new RuntimeException( e );
-			// FIXME: Why are we swallowing this exception? // Hugi 2022-06-26
+			// CHECKME: Why are we swallowing this exception? // Hugi 2022-06-26
 			// logger.debug( "Parsing failed.", e );
 		}
 
@@ -142,7 +142,7 @@ public class NGDeclarationParser {
 		}
 		catch( NoSuchElementException e ) {
 			throw new RuntimeException( e );
-			// FIXME: Why are we swallowing this exception? // Hugi 2022-06-26
+			// CHECKME: Why are we swallowing this exception? // Hugi 2022-06-26
 			// logger.debug( "Parsing failed.", e );
 		}
 
@@ -247,7 +247,7 @@ public class NGDeclarationParser {
 	}
 
 	/**
-	 * FIXME: Doesn't this belong in NGAssociationFactory? // Hugi 2022-04-27
+	 * CHECKME: Doesn't this belong in NGAssociationFactory? // Hugi 2022-04-27
 	 */
 	public static NGAssociation _associationWithKey( String associationValue, Map<String, String> quotedStrings ) {
 		Objects.requireNonNull( associationValue );
@@ -286,7 +286,7 @@ public class NGDeclarationParser {
 			association = NGAssociationFactory.associationWithValue( quotedString );
 		}
 		else if( isNumeric( associationValue ) ) {
-			// FIXME: This value conversion feels a little odd to perform here // Hugi 2023-07-01
+			// CHECKME: This value conversion feels a little odd to perform here // Hugi 2023-07-01
 			final Number number;
 
 			if( associationValue != null && associationValue.contains( "." ) ) {
@@ -298,7 +298,7 @@ public class NGDeclarationParser {
 
 			association = NGAssociationFactory.associationWithValue( number );
 		}
-		// FIXME: I'm not a fan of interpreting strings as booleans // Hugi 2023-07-01
+		// CHECKME: I'm not a fan of interpreting strings as booleans // Hugi 2023-07-01
 		else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
 			association = NGConstantValueAssociation.TRUE;
 		}
