@@ -2,20 +2,14 @@ package ng.appserver.templating;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.StringTokenizer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGAssociation;
 import ng.appserver.NGAssociationFactory;
 import ng.appserver.NGConstantValueAssociation;
 
 public class NGDeclarationParser {
-
-	private static Logger logger = LoggerFactory.getLogger( NGDeclarationParser.class );
 
 	private enum ParserState {
 		Outside,
@@ -341,36 +335,31 @@ public class NGDeclarationParser {
 		final StringBuilder declarationWithoutCommentBuffer = new StringBuilder( 100 );
 		final StringTokenizer tokenizer = new StringTokenizer( declarationStr, "{", true );
 
-		try {
-			while( tokenizer.hasMoreTokens() ) {
-				String token = tokenizer.nextToken( "{" );
+		while( tokenizer.hasMoreTokens() ) {
+			String token = tokenizer.nextToken( "{" );
 
-				if( token.equals( "{" ) ) {
-					token = tokenizer.nextToken( "}" );
+			if( token.equals( "{" ) ) {
+				token = tokenizer.nextToken( "}" );
 
-					if( token.equals( "}" ) ) {
-						token = "";
-					}
-					else {
-						tokenizer.nextToken();
-					}
-
-					String declarationWithoutComment = declarationWithoutCommentBuffer.toString();
-
-					if( declarationWithoutComment.startsWith( ";" ) ) {
-						declarationWithoutComment = declarationWithoutComment.substring( 1 );
-					}
-
-					declarations.put( declarationWithoutComment.trim(), "{" + token + "}" );
-					declarationWithoutCommentBuffer.setLength( 0 );
+				if( token.equals( "}" ) ) {
+					token = "";
 				}
 				else {
-					declarationWithoutCommentBuffer.append( token );
+					tokenizer.nextToken();
 				}
+
+				String declarationWithoutComment = declarationWithoutCommentBuffer.toString();
+
+				if( declarationWithoutComment.startsWith( ";" ) ) {
+					declarationWithoutComment = declarationWithoutComment.substring( 1 );
+				}
+
+				declarations.put( declarationWithoutComment.trim(), "{" + token + "}" );
+				declarationWithoutCommentBuffer.setLength( 0 );
 			}
-		}
-		catch( NoSuchElementException e ) {
-			logger.debug( "Failed to parse.", e );
+			else {
+				declarationWithoutCommentBuffer.append( token );
+			}
 		}
 
 		return declarations;
