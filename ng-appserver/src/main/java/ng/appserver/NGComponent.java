@@ -30,11 +30,6 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * Map of this component's children
-	 *
-	 * FIXME:
-	 * We need to look into the implementation of this, since elementID is a mutable class.
-	 * In other words; we might be caching the same NGElementID multiple times under a different hash
-	 * Hugi 2023-03-11
 	 */
 	private final Map<String, NGComponent> _children;
 
