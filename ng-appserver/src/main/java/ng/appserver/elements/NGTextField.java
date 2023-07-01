@@ -115,7 +115,7 @@ public class NGTextField extends NGDynamicElement {
 				stringValue = objectValue.toString();
 			}
 			else {
-				stringValue = "";
+				stringValue = null;
 			}
 		}
 
