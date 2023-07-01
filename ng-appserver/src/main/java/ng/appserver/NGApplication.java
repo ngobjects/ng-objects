@@ -331,7 +331,7 @@ public class NGApplication {
 
 					return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
 
-					//					return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
+					// return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
 				}
 
 				response = requestHandler.handleRequest( request );
@@ -352,16 +352,13 @@ public class NGApplication {
 
 			return response;
 		}
-		catch( NGSessionRestorationException e ) {
-			// FIXME: We should probably be invoking handleException() here
+		catch( final NGSessionRestorationException e ) {
 			return handleSessionRestorationException( e ).generateResponse();
 		}
-		catch( NGPageRestorationException e ) {
-			// FIXME: We should probably be invoking handleException() here
+		catch( final NGPageRestorationException e ) {
 			return handlePageRestorationException( e ).generateResponse();
 		}
-		catch( Throwable throwable ) {
-			// FIXME: Generate a uniqueID for the exception that occurred and show it to the user (for tracing/debugging) // Hugi 2022-10-13
+		catch( final Throwable throwable ) {
 			handleException( throwable );
 			return exceptionResponse( throwable, request.context() ).generateResponse();
 		}
