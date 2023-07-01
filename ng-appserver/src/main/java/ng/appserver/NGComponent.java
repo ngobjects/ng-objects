@@ -192,6 +192,9 @@ public class NGComponent implements NGElement, NGActionResults {
 		}
 	}
 
+	/**
+	 * @return The component's parent component in it's current context
+	 */
 	public NGComponent parent() {
 		return _parent;
 	}
@@ -211,7 +214,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 * The component's contained content in it's current context
 	 */
 	public NGElement contentElement() {
 		return _contentElement;
