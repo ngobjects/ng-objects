@@ -111,7 +111,12 @@ public class NGTextField extends NGDynamicElement {
 			stringValue = formatter.format( objectValue );
 		}
 		else {
-			stringValue = (String)objectValue; // FIXME: Shouldn't we do a toString here? // Hugi 2023-04-15
+			if( objectValue != null ) {
+				stringValue = objectValue.toString();
+			}
+			else {
+				stringValue = "";
+			}
 		}
 
 		if( stringValue != null ) {
