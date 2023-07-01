@@ -158,7 +158,7 @@ public class NGComponentDefinition {
 	/**
 	 * @return A new component of the given class in the given context
 	 *
-	 * FIXME: In the case of stateless components, we are going to want to share an already cached instance // Hugi 2022-10-19
+	 * CHECKME: In the case of stateless components, we are going to want to share an already cached instance // Hugi 2022-10-19
 	 */
 	public NGComponent componentInstanceInContext( final NGContext context ) {
 		Objects.requireNonNull( context );
