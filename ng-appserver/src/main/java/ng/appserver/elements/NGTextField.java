@@ -99,7 +99,7 @@ public class NGTextField extends NGDynamicElement {
 
 		final Map<String, String> attributes = new HashMap<>();
 
-		attributes.put( "type", "text" ); // FIXME: This should be configurable through a 'type' binding // Hugi 2023-04-15
+		attributes.put( "type", "text" );
 		attributes.put( "name", name( context ) );
 
 		Object objectValue = _valueAssociation.valueInComponent( context.component() );
