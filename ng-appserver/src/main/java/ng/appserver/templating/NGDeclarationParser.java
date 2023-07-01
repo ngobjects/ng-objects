@@ -1,7 +1,5 @@
 package ng.appserver.templating;
 
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -157,10 +155,7 @@ public class NGDeclarationParser {
 		final Map<String, NGDeclaration> declarations = new HashMap<>();
 		final Map<String, String> rawDeclarations = _rawDeclarationsWithoutComment( declarationWithoutComment );
 
-		final Enumeration<String> rawDeclarationHeaderEnum = Collections.enumeration( rawDeclarations.keySet() );
-
-		while( rawDeclarationHeaderEnum.hasMoreElements() ) {
-			final String declarationHeader = rawDeclarationHeaderEnum.nextElement();
+		for( String declarationHeader : rawDeclarations.keySet() ) {
 			final String declarationBody = rawDeclarations.get( declarationHeader );
 			final int colonIndex = declarationHeader.indexOf( ':' );
 
@@ -189,6 +184,7 @@ public class NGDeclarationParser {
 			declarations.put( tagName, declaration );
 		}
 
+		System.out.println( "declarations: " + declarations );
 		return declarations;
 	}
 
