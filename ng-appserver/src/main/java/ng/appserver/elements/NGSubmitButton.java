@@ -13,7 +13,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 
 /**
- * FIXME: This is clearly an element that needs to pass on it's standard HTML attributes (such as "value") // Hugi 2022-12-30
+ * An HTML submit button, specifically useful for submitting/invoking component actions
  */
 
 public class NGSubmitButton extends NGDynamicElement {
@@ -22,11 +22,6 @@ public class NGSubmitButton extends NGDynamicElement {
 	 * The action to invoke when this button is pressed
 	 */
 	private final NGAssociation _actionAssociation;
-
-	/**
-	 * Value (label, really) of the button
-	 */
-	private final NGAssociation _valueAssociation; // FIXME: This should just be passed through with other "generic" HTML attributes
 
 	/**
 	 * Pass-through attributes
@@ -42,8 +37,6 @@ public class NGSubmitButton extends NGDynamicElement {
 		if( _actionAssociation == null ) {
 			throw new IllegalArgumentException( "'action' is a required binding" );
 		}
-
-		_valueAssociation = _additionalAssociations.remove( "value" );
 	}
 
 	@Override
@@ -51,10 +44,6 @@ public class NGSubmitButton extends NGDynamicElement {
 		final Map<String, String> attributes = new HashMap<>();
 		attributes.put( "type", "submit" );
 		attributes.put( "name", context.elementID().toString() );
-
-		if( _valueAssociation != null ) {
-			attributes.put( "value", (String)_valueAssociation.valueInComponent( context.component() ) );
-		}
 
 		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
