@@ -1,5 +1,8 @@
 package ng.appserver.privates;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
@@ -11,6 +14,8 @@ import ng.appserver.directactions.NGDirectAction;
  */
 
 public class NGAdminAction extends NGDirectAction {
+
+	private static final Logger logger = LoggerFactory.getLogger( NGAdminAction.class );
 
 	public NGAdminAction( NGRequest request ) {
 		super( request );
@@ -32,6 +37,7 @@ public class NGAdminAction extends NGDirectAction {
 	 * Terminates this application instance and returns a 200 response
 	 */
 	public NGActionResults terminateAction() {
+		logger.info( "Received a dev application termination request. Goodbye." );
 		NGApplication.application().terminate();
 		final NGResponse response = new NGResponse( "terminated", 200 );
 		response.setHeader( "content-type", "text/plain" );
