@@ -2,10 +2,6 @@ package ng.kvc;
 
 import java.util.Objects;
 
-/**
- * FIXME: We're missing unit tests for this // Hugi 2023-03-11
- */
-
 public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 
 	public Object valueForKeyPath( final String keyPath );
