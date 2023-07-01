@@ -104,17 +104,19 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * Iterates through all the component's bindings, pulls values from the parent component and sets them using KVC
 	 */
 	public void pullBindingValuesFromParent() {
-		if( synchronizesVariablesWithBindings() ) {
-			for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
-				final String bindingName = binding.getKey();
-				final NGAssociation association = binding.getValue();
-				NGKeyValueCoding.DefaultImplementation.takeValueForKey( this, association.valueInComponent( parent() ), bindingName );
+		if( parent() != null ) {
+			if( synchronizesVariablesWithBindings() ) {
+				for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
+					final String bindingName = binding.getKey();
+					final NGAssociation association = binding.getValue();
+					NGKeyValueCoding.DefaultImplementation.takeValueForKey( this, association.valueInComponent( parent() ), bindingName );
+				}
 			}
 		}
 	}
 
 	public void pushBindingValuesToParent() {
-		if( _associations != null ) { // FIXME: I hate that associations can be null. Needs to be fixed in the template parser // Hugi 2023-03-11
+		if( parent() != null ) {
 			if( synchronizesVariablesWithBindings() ) {
 				for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
 					final String bindingName = binding.getKey();
@@ -164,8 +166,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	public Object valueForBinding( String bindingName ) {
 
-		// FIXME: Remove this null check. We have to look into it WRT Hafnium's nullpointer occurring in USViewPage // Hugi 2023-03-26
-		if( _associations == null ) {
+		if( parent() == null ) {
 			return null;
 		}
 
