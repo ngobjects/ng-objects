@@ -184,7 +184,6 @@ public class NGDeclarationParser {
 			declarations.put( tagName, declaration );
 		}
 
-		System.out.println( "declarations: " + declarations );
 		return declarations;
 	}
 
