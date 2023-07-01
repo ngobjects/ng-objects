@@ -23,6 +23,11 @@ public class NGForm extends NGDynamicGroup {
 	private final NGAssociation _actionAssociation;
 
 	/**
+	 * The action that will be performed by this form
+	 */
+	private final NGAssociation _methodAssociation;
+
+	/**
 	 * Pass-through attributes
 	 */
 	private final Map<String, NGAssociation> _additionalAssociations;
@@ -32,6 +37,7 @@ public class NGForm extends NGDynamicGroup {
 		_additionalAssociations = new HashMap<>( associations );
 
 		_actionAssociation = _additionalAssociations.remove( "action" );
+		_methodAssociation = _additionalAssociations.remove( "method" );
 	}
 
 	@Override
@@ -40,8 +46,16 @@ public class NGForm extends NGDynamicGroup {
 		// Attributes to be added to the generated HTML-tag
 		final Map<String, String> attributes = new HashMap<>();
 
-		// FIXME: Hardcoding method. We need to add a 'method' binding and handle it here // Hugi 2023-04-15
-		attributes.put( "method", "POST" );
+		String method;
+
+		if( _methodAssociation != null ) {
+			method = (String)_methodAssociation.valueInComponent( context.component() );
+		}
+		else {
+			method = "POST";
+		}
+
+		attributes.put( "method", method );
 
 		// We append the action association, even if there's no action bound.
 		// This is due to forms with multiple submit buttons, see invokeAction() for further documentation
