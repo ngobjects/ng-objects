@@ -7,6 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication;
 
+/**
+ * If an application fails to bind to the port, stopPreviousDevelopmentInstance() can be invoked to try to kill an existing running application instance.
+ * The adaptor can then retry binding to the port.
+ */
+
 public class NGDevelopmentInstanceStopper {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGDevelopmentInstanceStopper.class );
@@ -17,7 +22,7 @@ public class NGDevelopmentInstanceStopper {
 	private static boolean alreadyTriedStopping = false;
 
 	/**
-	 * FIXME: Kill an existing WO application if that's what's blocking the instance
+	 * FIXME: Also kill WO application instances // Hugi 2023-07-01
 	 */
 	public static void stopPreviousDevelopmentInstance( int portNumber ) {
 		if( alreadyTriedStopping ) {

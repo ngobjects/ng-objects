@@ -40,6 +40,8 @@ public class NGAdminAction extends NGDirectAction {
 	 * @return Just a simple string to indicate that this is an NGObjects application
 	 */
 	public NGActionResults typeAction() {
-		return new NGResponse( "ng", 200 );
+		final NGResponse response = new NGResponse( "ng", 200 );
+		response.setHeader( "content-type", "text/plain" );
+		return response;
 	}
 }
