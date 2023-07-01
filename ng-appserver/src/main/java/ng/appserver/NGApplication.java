@@ -405,7 +405,7 @@ public class NGApplication {
 	 */
 	protected NGActionResults handleSessionRestorationException( final NGSessionRestorationException exception ) {
 		//		return new NGResponse( "Session expired", 200 ); // FIXME: A raw, non-component baesed error might still be a good idea? // Hugi 2023-01-11
-		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context withing a dead session feels weird // Hugi 2023-01-11
+		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context within a dead session feels weird // Hugi 2023-01-11
 		nextPage.setException( exception );
 		return nextPage;
 	}
@@ -415,6 +415,7 @@ public class NGApplication {
 	 * (usually because the page cache has been exhausted, and the page pushed out of the cache), this method will be invoked and it's response returned to the user.
 	 *
 	 * FIXME: Create a nicer response for this // Hugi 2023-02-10
+	 * FIXME: This is the component action request handler leaking into the generic application // Hugi 2023-07-01
 	 */
 	protected NGActionResults handlePageRestorationException( final NGPageRestorationException exception ) {
 		return new NGResponse( exception.getMessage(), 404 );
