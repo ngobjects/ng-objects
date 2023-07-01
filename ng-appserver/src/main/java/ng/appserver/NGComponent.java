@@ -98,8 +98,6 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	/**
 	 * @return The child with the given elementID. Null if none
-	 *
-	 * FIXME: Null? Really? // Hugi 2022-12-30
 	 */
 	public NGComponent getChild( String elementID ) {
 		Objects.requireNonNull( elementID );
