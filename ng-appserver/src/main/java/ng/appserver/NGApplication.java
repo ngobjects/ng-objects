@@ -441,35 +441,6 @@ public class NGApplication {
 	}
 
 	/**
-	 * @return A response describing an exception.
-	 *
-	 * This implementation does not use component rendering and thus is meant as  a "last resort" exception response if something happens in, for example NGExceptionPage itself
-	 */
-	private NGActionResults rawExceptionResponse( final Throwable throwable, final NGContext context ) {
-		final StringBuilder b = new StringBuilder();
-		b.append( "<style>body{ font-family: sans-serif}</style>" );
-		b.append( "<h3>An exception occurred</h3>" );
-		b.append( "<h1>%s</h1>".formatted( throwable.getClass().getName() ) );
-		b.append( "<h2>%s</h2>".formatted( throwable.getMessage() ) );
-
-		if( throwable.getCause() != null ) {
-			b.append( "<h3>Cause: %s</h3>".formatted( throwable.getCause().getMessage() ) );
-		}
-
-		for( StackTraceElement ste : throwable.getStackTrace() ) {
-			final String packageNameOnly = ste.getClassName().substring( 0, ste.getClassName().lastIndexOf( "." ) );
-			final String simpleClassNameOnly = ste.getClassName().substring( ste.getClassName().lastIndexOf( "." ) + 1 );
-
-			b.append( "<span style=\"display: inline-block; min-width: 300px\">%s</span>".formatted( packageNameOnly ) );
-			b.append( "<span style=\"display: inline-block; min-width: 500px\">%s</span>".formatted( simpleClassNameOnly + "." + ste.getMethodName() + "()" ) );
-			b.append( ste.getFileName() + ":" + ste.getLineNumber() );
-			b.append( "<br>" );
-		}
-
-		return new NGResponse( b.toString(), 500 );
-	}
-
-	/**
 	 * @return A default response for requests to the root.
 	 *
 	 *  FIXME: This is just here as a temporary placeholder until we decide on a nicer default request handling mechanism
