@@ -441,11 +441,10 @@ public class NGApplication {
 	}
 
 	/**
-	 * @return A  response generated when an exception occurs
+	 * @return A response describing an exception.
 	 *
-	 * FIXME: I'm letting this be for now, while we mull over if we wants thing to work without components/templating // Hugi 2022-10-08
+	 * This implementation does not use component rendering and thus is meant as  a "last resort" exception response if something happens in, for example NGExceptionPage itself
 	 */
-	@Deprecated
 	private NGActionResults rawExceptionResponse( final Throwable throwable, final NGContext context ) {
 		final StringBuilder b = new StringBuilder();
 		b.append( "<style>body{ font-family: sans-serif}</style>" );
