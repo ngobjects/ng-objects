@@ -153,15 +153,7 @@ public class NGResourceLoader {
 			}
 
 			try {
-				final InputStream resourceAsStream = resourceURL.openStream();
-
-				// FIXME: I don't see this happening, but better check for it and warn about it. Find out of openStream() can actually return null // Hugi 2023-01-30
-				if( resourceAsStream == null ) {
-					logger.warn( "Received null input stream from {}", resourcePath );
-					return Optional.empty();
-				}
-
-				return Optional.of( resourceAsStream );
+				return Optional.of( resourceURL.openStream() );
 			}
 			catch( final IOException ioException ) {
 				throw new UncheckedIOException( ioException );
