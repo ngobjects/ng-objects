@@ -22,10 +22,8 @@ import ng.appserver.privates.NGResourceLoader;
  * Handles properties loading
  *
  * FIXME: A decision needs to be made on if properties should return an Optional // Hugi 2021-11-21
- * FIXME: We need to cache properties // Hugi 2021-11-21
  * FIXME: Mark the origin of properties // Hugi 2021-11-21
  * FIXME: Properties need to get updated when a loaded Properties file is changed // Hugi 2023-02-22
- * FIXME: We need to watch the properties file for changes
  */
 
 public class NGProperties {
@@ -37,6 +35,9 @@ public class NGProperties {
 	 */
 	private final Map<String, String> _allProperties;
 
+	/**
+	 * List of sources of properties
+	 */
 	private final List<PropertiesSource> _sources;
 
 	public NGProperties() {
@@ -53,8 +54,6 @@ public class NGProperties {
 
 	/**
 	 * @return A list of all configured property keys
-	 *
-	 * FIXME: This method does not belong in the worldview we want later // Hugi 2023-03-10
 	 */
 	public Collection<String> allKeys() {
 		return _allProperties.keySet();
