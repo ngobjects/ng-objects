@@ -25,6 +25,7 @@ import ng.appserver.privates.NGResourceLoader;
  * FIXME: We need to cache properties // Hugi 2021-11-21
  * FIXME: Mark the origin of properties // Hugi 2021-11-21
  * FIXME: Properties need to get updated when a loaded Properties file is changed // Hugi 2023-02-22
+ * FIXME: We need to watch the properties file for changes
  */
 
 public class NGProperties {
@@ -36,14 +37,17 @@ public class NGProperties {
 	 */
 	private final Map<String, String> _allProperties;
 
+	private final List<PropertiesSource> _sources;
+
 	public NGProperties() {
 		_allProperties = new ConcurrentHashMap<>();
+		_sources = new ArrayList<>();
 	}
 
 	/**
 	 * FIXME: Don't like the name. We're going to have to overhaul this API
 	 */
-	public void putAll( Map<String, String> properties ) {
+	private void putAll( Map<String, String> properties ) {
 		_allProperties.putAll( properties );
 	}
 
@@ -56,63 +60,82 @@ public class NGProperties {
 		return _allProperties.keySet();
 	}
 
-	/**
-	 * @return Properties passed to the main method as a Map
-	 *
-	 * FIXME: I feel this method doesn't belong here
-	 */
-	public static Map<String, String> propertiesFromArgsString( final String[] args ) {
-		final Map<String, String> m = new HashMap<>();
-
-		for( int i = 0; i < args.length; i = i + 2 ) {
-			String key = args[i];
-
-			if( key.startsWith( "-X" ) ) {
-				// JVM argument - ignore
-				// FIXME: Not sure about this functionality, experimental 2023-04-17
-			}
-			else if( key.startsWith( "-D" ) ) {
-				// Java argument is passed on to System.properties
-				// FIXME: Not sure about this functionality, experimental 2023-04-17
-				final String[] keyValuePair = key.split( "=" );
-				final String realKey = keyValuePair[0].substring( 2 );
-				final String realValue = keyValuePair[1];
-				System.setProperty( realKey, realValue );
-				m.put( realKey, realValue );
-			}
-			else if( key.startsWith( "-" ) ) {
-				// Otherwise this is a standard property
-				key = key.substring( 1 );
-
-				final String value = args[i + 1];
-				m.put( key, value );
-			}
-		}
-
-		return m;
+	public void addAndReadResourceSource( PropertiesSource source ) {
+		_sources.add( source );
+		putAll( source.readAll() );
 	}
 
-	/**
-	 * @return The default properties as a map (loaded from the default Properties file)
-	 *
-	 * FIXME: We need to watch the properties file for changes
-	 * FIXME: I feel this method doesn't belong here
-	 */
-	public static Map<String, String> loadDefaultProperties() {
-		final Optional<byte[]> propertyBytes = NGResourceLoader.readAppResource( "Properties" );
+	public static interface PropertiesSource {
 
-		if( !propertyBytes.isPresent() ) {
-			logger.warn( "No default properties file found" );
-			return Collections.emptyMap();
+		public Map<String, String> readAll();
+	}
+
+	public static class PropertiesSourceResource implements PropertiesSource {
+
+		public String _resourceName;
+
+		public PropertiesSourceResource( String resourceName ) {
+			_resourceName = resourceName;
 		}
 
-		try {
-			final Properties p = new Properties();
-			p.load( new ByteArrayInputStream( propertyBytes.get() ) );
-			return (Map)p;
+		@Override
+		public Map<String, String> readAll() {
+			final Optional<byte[]> propertyBytes = NGResourceLoader.readAppResource( _resourceName );
+
+			if( !propertyBytes.isPresent() ) {
+				logger.warn( "No default properties file found" );
+				return Collections.emptyMap();
+			}
+
+			try {
+				final Properties p = new Properties();
+				p.load( new ByteArrayInputStream( propertyBytes.get() ) );
+				return (Map)p;
+			}
+			catch( IOException e ) {
+				throw new UncheckedIOException( e );
+			}
 		}
-		catch( IOException e ) {
-			throw new UncheckedIOException( e );
+	}
+
+	public static class PropertiesSourceArgv implements PropertiesSource {
+
+		public String[] _argv;
+
+		public PropertiesSourceArgv( String[] argv ) {
+			_argv = argv;
+		}
+
+		@Override
+		public Map<String, String> readAll() {
+			final Map<String, String> m = new HashMap<>();
+
+			for( int i = 0; i < _argv.length; i = i + 2 ) {
+				String key = _argv[i];
+
+				if( key.startsWith( "-X" ) ) {
+					// JVM argument - ignore
+					// FIXME: Not sure about this functionality, experimental 2023-04-17
+				}
+				else if( key.startsWith( "-D" ) ) {
+					// Java argument is passed on to System.properties
+					// FIXME: Not sure about this functionality, experimental 2023-04-17
+					final String[] keyValuePair = key.split( "=" );
+					final String realKey = keyValuePair[0].substring( 2 );
+					final String realValue = keyValuePair[1];
+					System.setProperty( realKey, realValue );
+					m.put( realKey, realValue );
+				}
+				else if( key.startsWith( "-" ) ) {
+					// Otherwise this is a standard property
+					key = key.substring( 1 );
+
+					final String value = _argv[i + 1];
+					m.put( key, value );
+				}
+			}
+
+			return m;
 		}
 	}
 
