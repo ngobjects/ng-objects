@@ -123,8 +123,7 @@ public class NGPopUpButton extends NGDynamicElement {
 				_indexAss.setValue( index, context.component() );
 			}
 
-			// FIXME: This isn't neccessarily a string. // Hugi 2023-05-01
-			final String displayString = (String)_displayStringAss.valueInComponent( context.component() );
+			final Object displayString = _displayStringAss.valueInComponent( context.component() );
 
 			// FIXME: Hacky way to get the currently selected item. We should be reusing logic from takeValuesFromRequest() here
 			final String indexValue = context.request().formValueForKey( name( context ) );
