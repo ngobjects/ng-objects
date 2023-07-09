@@ -27,7 +27,7 @@ public class NGContext {
 	/**
 	 * ID of the element currently being rendered by the context.
 	 */
-	private NGElementID _currentElementID;
+	private NGElementID _elementID;
 
 	/**
 	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
@@ -51,7 +51,7 @@ public class NGContext {
 		request.setContext( this );
 
 		// CHECKME: We only need an elementID if we're going to be rendering a component, so theoretically, this could be initialized lazily
-		_currentElementID = new NGElementID();
+		_elementID = new NGElementID();
 
 		// FIXME: This is not exactly a beautiful way to check if we're handling a component request
 		// This code probably belongs in the NGComponentRequestHandler
@@ -159,14 +159,14 @@ public class NGContext {
 	 * Resets the current elementID
 	 */
 	public void _resetElementID() {
-		_currentElementID = new NGElementID();
+		_elementID = new NGElementID();
 	}
 
 	/**
 	 * @return ID of the element currently being rendered by the context.
 	 */
 	public NGElementID elementID() {
-		return _currentElementID;
+		return _elementID;
 	}
 
 	/**
@@ -206,6 +206,6 @@ public class NGContext {
 
 	@Override
 	public String toString() {
-		return "NGContext [_request=" + _request + ", _component=" + _component + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _currentElementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
+		return "NGContext [_request=" + _request + ", _component=" + _component + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
 	}
 }
