@@ -56,6 +56,11 @@ public class NGApplication {
 	private NGResourceManager _resourceManager;
 
 	/**
+	 * A list of patterns that will be applied to URLs before they are processed by the framework
+	 */
+	private List<Pattern> urlRewritePatterns;
+
+	/**
 	 * In the old WO world, this would have been called "requestHandlers".
 	 * Since we want to have more dynamic route resolution, it makes sense to move that to a separate object.
 	 */
@@ -101,6 +106,9 @@ public class NGApplication {
 
 			// FIXME: This is just plain wrong. We want properties to be accessible during application initialization. Here we're loading properties after construction
 			application._properties = properties;
+
+			application.urlRewritePatterns = new ArrayList<>();
+			application.urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
 
 			// FIXME: We also might want to be more explicit about this
 			application.start();
@@ -307,7 +315,7 @@ public class NGApplication {
 	public NGResponse dispatchRequest( final NGRequest request ) {
 
 		try {
-			cleanupWOURL( request );
+			rewriteURL( request );
 
 			final NGResponse response;
 
@@ -454,20 +462,19 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: Well this is horrid // Hugi 2021-11-20
-	 *
 	 * What we're doing here is allowing for the WO URL structure, which is somewhat required to work with the WO Apache Adaptor.
 	 * Ideally, we don't want to prefix URLs at all, instead just handling requests at root level. But to begin with, perhaps we can
 	 * just allow for certain "prefix patterns" to mask out the WO part of the URL and hide it from the app. It might even be a useful
 	 * little feature on it's own.
 	 */
-	private void cleanupWOURL( final NGRequest request ) {
+	private void rewriteURL( final NGRequest request ) {
 
-		final Pattern pattern = Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties().propWOApplicationName() + ".woa(/[0-9])?" );
-		final Matcher matcher = pattern.matcher( request.uri() );
+		for( Pattern pattern : urlRewritePatterns ) {
+			final Matcher matcher = pattern.matcher( request.uri() );
 
-		if( matcher.find() ) {
-			request.setURI( request.uri().substring( matcher.group().length() ) );
+			if( matcher.find() ) {
+				request.setURI( request.uri().substring( matcher.group().length() ) );
+			}
 		}
 	}
 
