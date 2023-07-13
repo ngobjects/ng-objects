@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -461,19 +463,29 @@ public class NGApplication {
 	 */
 	private void cleanupWOURL( final NGRequest request ) {
 
+		final Pattern pattern = Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties().propWOApplicationName() + ".woa(/[0-9])?" );
+		final Matcher matcher = pattern.matcher( request.uri() );
+
+		if( matcher.find() ) {
+			request.setURI( request.uri().substring( matcher.group().length() ) );
+			logger.info( "Rewrote WO URI to {}", request.uri() );
+		}
+
+		/*
 		String woStart = "/Apps/WebObjects/%s.woa/1".formatted( properties().propWOApplicationName() );
-
+		
 		if( request.uri().startsWith( woStart ) ) {
 			request.setURI( request.uri().substring( woStart.length() ) );
 			logger.info( "Rewrote WO URI to {}", request.uri() );
 		}
-
+		
 		woStart = "/cgi-bin/WebObjects/%s.woa".formatted( properties().propWOApplicationName() );
-
+		
 		if( request.uri().startsWith( woStart ) ) {
 			request.setURI( request.uri().substring( woStart.length() ) );
 			logger.info( "Rewrote WO URI to {}", request.uri() );
 		}
+		*/
 	}
 
 	/**
