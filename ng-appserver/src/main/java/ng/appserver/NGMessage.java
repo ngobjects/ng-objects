@@ -105,8 +105,6 @@ public abstract class NGMessage {
 
 	/**
 	 * Sets the headers from the given map.
-	 *
-	 * FIXME: We're currently copying the map entries to a TreeMap to get case insensitivity. This is not the most efficient implementation // Hugi 2022-01-03
 	 */
 	public void setHeaders( final Map<String, List<String>> newHeaders ) {
 		_headers = _createEmptyHeadersMap();
