@@ -42,6 +42,9 @@ public class WOMPRequestHandler extends NGRequestHandler {
 		return new NGResponse();
 	}
 
+	/**
+	 * FIXME: We're just returning a hardcoded response at the moment. We'll have to consider if we even want to collect these statistics. A job for JFR perhaps.
+	 */
 	private NGResponse statistics() {
 		logger.info( "Returning a statistics response. Those are weird..." );
 
