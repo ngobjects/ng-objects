@@ -330,21 +330,7 @@ public class NGApplication {
 				final NGRequestHandler requestHandler = handlerForURL( request.uri() );
 
 				if( requestHandler == null ) {
-					// FIXME: Very, very experimental public resource handler.
-					final String resourcePath = request.uri();
-
-					if( resourcePath.isEmpty() ) {
-						return new NGResponse( "No resource name specified", 400 );
-					}
-
-					// FIXME: We want this to work with streams, not byte arrays.
-					// To make this work, we'll have to cache a wrapper class for the resource; that wrapper must give us a "stream provider", not an actual stream, since we'll be consuming the stream of a cached resource multiple times.
-					// Hugi 2023-02-17
-					final Optional<byte[]> resourceBytes = resourceManager().bytesForPublicResourceNamed( resourcePath );
-
-					return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
-
-					// return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
+					return noHandlerResponse( request );
 				}
 
 				response = requestHandler.handleRequest( request );
@@ -375,6 +361,27 @@ public class NGApplication {
 			handleException( throwable );
 			return exceptionResponse( throwable, request.context() ).generateResponse();
 		}
+	}
+
+	/**
+	 * Invoked to generate a response if no requestHandler was found for the given request. Essentially a 404 response.
+	 */
+	private NGResponse noHandlerResponse( final NGRequest request ) {
+		// FIXME: Very, very experimental public resource handler.
+		final String resourcePath = request.uri();
+
+		if( resourcePath.isEmpty() ) {
+			return new NGResponse( "No resource name specified", 400 );
+		}
+
+		// FIXME: We want this to work with streams, not byte arrays.
+		// To make this work, we'll have to cache a wrapper class for the resource; that wrapper must give us a "stream provider", not an actual stream, since we'll be consuming the stream of a cached resource multiple times.
+		// Hugi 2023-02-17
+		final Optional<byte[]> resourceBytes = resourceManager().bytesForPublicResourceNamed( resourcePath );
+
+		return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
+
+		// return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
 	}
 
 	private static NGCookie createSessionCookie( final String sessionID, final int maxAge ) {
