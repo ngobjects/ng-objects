@@ -15,15 +15,9 @@ import ng.appserver.NGAssociation;
 
 public record NGDeclaration( String name, String type, Map<String, NGAssociation> associations ) {
 
-	/**
-	 * Used to create new instances, ensuring nulls don't creep in on us somewhere
-	 *
-	 * @return a new instance of NGDeclaration.
-	 */
-	public static NGDeclaration create( final String declarationName, final String declarationType, final Map<String, NGAssociation> associations ) {
-		Objects.requireNonNull( declarationName );
-		Objects.requireNonNull( declarationType );
+	public NGDeclaration {
+		Objects.requireNonNull( name );
+		Objects.requireNonNull( type );
 		Objects.requireNonNull( associations );
-		return new NGDeclaration( declarationName, declarationType, associations );
 	}
 }

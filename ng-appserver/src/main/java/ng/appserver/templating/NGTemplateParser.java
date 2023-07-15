@@ -246,7 +246,7 @@ public class NGTemplateParser {
 			_inlineBindingCount++;
 		}
 
-		final NGDeclaration declaration = NGDeclaration.create( elementName, elementType, associations );
+		final NGDeclaration declaration = new NGDeclaration( elementName, elementType, associations );
 
 		_declarations.put( elementName, declaration );
 
