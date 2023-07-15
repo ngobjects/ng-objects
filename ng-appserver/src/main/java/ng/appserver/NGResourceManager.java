@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,36 +31,33 @@ public class NGResourceManager {
 	private final Map<String, Optional<byte[]>> _publicResourceCache = new ConcurrentHashMap<>();
 
 	/**
+	 * FIXME: Experimental cache. Resource caches should be located centrally.
+	 */
+	private final Map<String, Optional<byte[]>> _appResourceCache = new ConcurrentHashMap<>();
+
+	/**
 	 * Specifies if we want to use the resources cache.
 	 */
-	private boolean _cachingEnabled() {
+	private static boolean _cachingEnabled() {
 		return NGApplication.application().cachingEnabled();
+	}
+
+	public Optional<byte[]> bytesForAppResourceNamed( final String resourceName ) {
+		Objects.requireNonNull( resourceName );
+		return bytesForAnyResource( resourceName, _appResourceCache, NGResourceLoader::readAppResource );
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-
-		logger.debug( "Loading resource named {}. Caching: {}", resourceName, _cachingEnabled() );
-
-		Optional<byte[]> resource;
-
-		if( _cachingEnabled() ) {
-			resource = _webserverResourceCache.get( resourceName );
-
-			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
-			if( resource == null ) {
-				resource = NGResourceLoader.readWebserverResource( resourceName );
-				_webserverResourceCache.put( resourceName, resource );
-			}
-		}
-		else {
-			resource = NGResourceLoader.readWebserverResource( resourceName );
-		}
-
-		return resource;
+		return bytesForAnyResource( resourceName, _webserverResourceCache, NGResourceLoader::readWebserverResource );
 	}
 
 	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
+		Objects.requireNonNull( resourceName );
+		return bytesForAnyResource( resourceName, _publicResourceCache, NGResourceLoader::readPublicResource );
+	}
+
+	private static Optional<byte[]> bytesForAnyResource( final String resourceName, final Map<String, Optional<byte[]>> cacheMap, Function<String, Optional<byte[]>> readFunction ) {
 		Objects.requireNonNull( resourceName );
 
 		logger.debug( "Loading resource named {}. Caching: {}", resourceName, _cachingEnabled() );
@@ -67,16 +65,16 @@ public class NGResourceManager {
 		Optional<byte[]> resource;
 
 		if( _cachingEnabled() ) {
-			resource = _publicResourceCache.get( resourceName );
+			resource = cacheMap.get( resourceName );
 
 			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
 			if( resource == null ) {
-				resource = NGResourceLoader.readPublicResource( resourceName );
-				_publicResourceCache.put( resourceName, resource );
+				resource = readFunction.apply( resourceName );
+				cacheMap.put( resourceName, resource );
 			}
 		}
 		else {
-			resource = NGResourceLoader.readPublicResource( resourceName );
+			resource = readFunction.apply( resourceName );
 		}
 
 		return resource;
