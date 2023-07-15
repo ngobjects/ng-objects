@@ -24,6 +24,8 @@ import ng.appserver.privates.NGResourceLoader;
  * FIXME: A decision needs to be made on if properties should return an Optional // Hugi 2021-11-21
  * FIXME: Mark the origin of properties // Hugi 2021-11-21
  * FIXME: Properties need to get updated when a loaded Properties file is changed // Hugi 2023-02-22
+ * FIXME: Properties should be typesafe // Hugi 2023-07-15
+ * FIXME: Properties need default values // Hugi 2023-07-15
  */
 
 public class NGProperties {
