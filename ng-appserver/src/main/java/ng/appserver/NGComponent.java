@@ -174,6 +174,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		final NGAssociation association = _associations.get( bindingName );
 
 		// A null association means it's not bound, so we're going to return null
+		// CHECKME: Just returning null for an unbound binding isn't exactly nice. Should we look into failure modes here? // Hugi 2023-07-15
 		if( association == null ) {
 			return null;
 		}
@@ -186,7 +187,7 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		final NGAssociation association = _associations.get( bindingName );
 
-		// FIXME: Should we throw if the binding is not bound here? Obviously, an explicit operation has failed // Hugi 2023-03-12
+		// CHECKME: Should we throw if the binding is not bound here? After all, an explicit operation has failed and should not do so silently // Hugi 2023-03-12
 		if( association != null ) {
 			association.setValue( value, parent() );
 		}
@@ -282,7 +283,8 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * Sets the component definition for this component instance. See comment on variable, regarding if this method should be private.
+	 * Sets the component definition for this component instance.
+	 * CHECKME: See comment on variable, regarding if this method should be private // Hugi 2023-07-15
 	 */
 	public void _setComponentDefinition( final NGComponentDefinition componentDefinition ) {
 		Objects.requireNonNull( componentDefinition );
