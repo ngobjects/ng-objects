@@ -21,18 +21,10 @@ public class NGResourceManager {
 	private static final Logger logger = LoggerFactory.getLogger( NGResourceManager.class );
 
 	/**
-	 * FIXME: Experimental cache. Resource caches should be located centrally.
+	 * FIXME: Experimental caches. Resource caches should be located centrally.
 	 */
 	private final Map<String, Optional<byte[]>> _webserverResourceCache = new ConcurrentHashMap<>();
-
-	/**
-	 * FIXME: Experimental cache. Resource caches should be located centrally.
-	 */
 	private final Map<String, Optional<byte[]>> _publicResourceCache = new ConcurrentHashMap<>();
-
-	/**
-	 * FIXME: Experimental cache. Resource caches should be located centrally.
-	 */
 	private final Map<String, Optional<byte[]>> _appResourceCache = new ConcurrentHashMap<>();
 
 	/**
