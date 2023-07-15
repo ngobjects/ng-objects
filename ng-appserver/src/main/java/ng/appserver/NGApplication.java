@@ -108,6 +108,9 @@ public class NGApplication {
 			application._properties = properties;
 
 			application.urlRewritePatterns = new ArrayList<>();
+
+			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
+			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
 			application.urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
 
 			// FIXME: We also might want to be more explicit about this
@@ -462,10 +465,9 @@ public class NGApplication {
 	}
 
 	/**
-	 * What we're doing here is allowing for the WO URL structure, which is somewhat required to work with the WO Apache Adaptor.
-	 * Ideally, we don't want to prefix URLs at all, instead just handling requests at root level. But to begin with, perhaps we can
-	 * just allow for certain "prefix patterns" to mask out the WO part of the URL and hide it from the app. It might even be a useful
-	 * little feature on it's own.
+	 * Invoked by dispatchRequest before the request is handled to apply all url-rewriting patterns.
+	 *
+	 * CHECKME: Not really a fan of including this functionality, but it helps out with WO adaptor compatibility.
 	 */
 	private void rewriteURL( final NGRequest request ) {
 
