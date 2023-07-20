@@ -96,8 +96,6 @@ public class NGServletAdaptor extends HttpServlet {
 	private static Cookie ngCookieToServletCookie( final NGCookie ngCookie ) {
 		final Cookie servletCookie = new Cookie( ngCookie.name(), ngCookie.value() );
 
-		servletCookie.setVersion( 1 );
-
 		if( ngCookie.domain() != null ) {
 			servletCookie.setDomain( ngCookie.domain() );
 		}
