@@ -3,15 +3,19 @@ package ng.adaptor.jetty;
 import java.io.IOException;
 import java.net.BindException;
 
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.Servlet;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.privates.NGDevelopmentInstanceStopper;
@@ -49,12 +53,19 @@ public class NGAdaptorJetty extends NGAdaptor {
 		connector.setPort( port );
 		server.setConnectors( new Connector[] { connector } );
 
-		final ServletHandler servletHandler = new ServletHandler();
-		server.setHandler( servletHandler );
+		final ContextHandlerCollection contexts = new ContextHandlerCollection();
+		server.setHandler( contexts );
 
-		final ServletHolder holder = new ServletHolder();
-		holder.setServlet( new NGServletAdaptor( application ) );
-		servletHandler.addServletWithMapping( holder, "/" );
+		final ContextHandler context = new ServletContextHandler( "/" );
+
+		final ServletHandler servletHandler = new ServletHandler();
+		context.setHandler( servletHandler );
+		contexts.addHandler( context );
+
+		final Servlet servlet = new NGServletAdaptor( application );
+		final ServletHolder servletHolder = new ServletHolder();
+		servletHolder.setServlet( servlet );
+		servletHandler.addServletWithMapping( servletHolder, "/" );
 
 		try {
 			server.start();

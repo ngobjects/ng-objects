@@ -16,9 +16,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
 
-import org.eclipse.jetty.server.Request;
-
-import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
@@ -140,7 +137,7 @@ public class NGServletAdaptor extends HttpServlet {
 			try {
 				final String string = Files.createTempFile( UUID.randomUUID().toString(), ".fileupload" ).toString();
 				System.out.println( "Multipart temp dir: " + string );
-				sr.setAttribute( Request.__MULTIPART_CONFIG_ELEMENT, new MultipartConfigElement( string ) );
+				//				sr.setAttribute( Request.__MULTIPART_CONFIG_ELEMENT, new MultipartConfigElement( string ) );
 
 				for( Part part : sr.getParts() ) {
 					//					MultiPart mp = (MultiPart)part;
