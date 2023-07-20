@@ -117,10 +117,9 @@ public class NGServletAdaptor extends HttpServlet {
 			servletCookie.setMaxAge( ngCookie.maxAge() );
 		}
 
-		//		FIXME: The setAttribute() API was added in Servlet API 6.0, so this will have to wait for Jetty 12 (or for Jetty 11 to support an updated servlet spec) // Hugi 2023-02-06
-		//		if( ngCookie.sameSite() != null ) {
-		//			servletCookie.setAttribute( "SameSite", ngCookie.sameSite() );
-		//		}
+		if( ngCookie.sameSite() != null ) {
+			servletCookie.setAttribute( "SameSite", ngCookie.sameSite() );
+		}
 
 		return servletCookie;
 	}
