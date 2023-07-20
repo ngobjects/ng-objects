@@ -10,7 +10,6 @@ public class NGCookie {
 	private String _value;
 	private String _path;
 	private String _domain;
-	private String _comment;
 	private Integer _maxAge;
 	private String _sameSite; // Strict,Lax,None
 	private boolean _isSecure;
@@ -51,14 +50,6 @@ public class NGCookie {
 
 	public void setDomain( String domain ) {
 		_domain = domain;
-	}
-
-	public String comment() {
-		return _comment;
-	}
-
-	public void setComment( String comment ) {
-		_comment = comment;
 	}
 
 	public boolean isSecure() {

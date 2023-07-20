@@ -109,10 +109,6 @@ public class NGServletAdaptor extends HttpServlet {
 		servletCookie.setHttpOnly( ngCookie.isHttpOnly() );
 		servletCookie.setSecure( ngCookie.isSecure() );
 
-		if( ngCookie.comment() != null ) {
-			servletCookie.setComment( ngCookie.comment() );
-		}
-
 		if( ngCookie.maxAge() != null ) {
 			servletCookie.setMaxAge( ngCookie.maxAge() );
 		}
