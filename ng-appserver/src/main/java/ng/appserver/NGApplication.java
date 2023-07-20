@@ -365,9 +365,10 @@ public class NGApplication {
 
 	/**
 	 * Invoked to generate a response if no requestHandler was found for the given request. Essentially a 404 response.
+	 *
+	 * CHECKME: This currently incorporates a very experimental "public resources" handler, essentially a plain web server. This is not final // Hugi 2023-07-20
 	 */
 	private NGResponse noHandlerResponse( final NGRequest request ) {
-		// FIXME: Very, very experimental public resource handler.
 		final String resourcePath = request.uri();
 
 		if( resourcePath.isEmpty() ) {
