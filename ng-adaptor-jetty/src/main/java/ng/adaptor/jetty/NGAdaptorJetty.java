@@ -52,7 +52,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final ServletHandler servletHandler = new ServletHandler();
 		server.setHandler( servletHandler );
 
-		ServletHolder holder = new ServletHolder();
+		final ServletHolder holder = new ServletHolder();
 		holder.setServlet( new NGServletAdaptor( application ) );
 		servletHandler.addServletWithMapping( holder, "/" );
 

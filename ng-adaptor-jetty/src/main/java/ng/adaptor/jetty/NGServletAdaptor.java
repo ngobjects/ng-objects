@@ -87,7 +87,6 @@ public class NGServletAdaptor extends HttpServlet {
 		try( final OutputStream out = servletResponse.getOutputStream()) {
 			if( ngResponse.contentInputStream() != null ) {
 				try( final InputStream inputStream = ngResponse.contentInputStream()) {
-					// FIXME: We should probably be doing some buffering // Hugi 2023-01-26
 					inputStream.transferTo( out );
 				}
 			}
