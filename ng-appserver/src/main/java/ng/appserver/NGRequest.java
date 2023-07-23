@@ -103,7 +103,7 @@ public class NGRequest extends NGMessage {
 		final List<String> values = formValuesForKey( key );
 
 		if( values.isEmpty() ) {
-			return null; // FIXME: As usual, I'm not happy about returning nulls
+			return null;
 		}
 
 		// Fail if multiple form values are present for the same query parameter.
