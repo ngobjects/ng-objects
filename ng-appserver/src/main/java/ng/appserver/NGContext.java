@@ -111,8 +111,7 @@ public class NGContext {
 	/**
 	 * @return ID of the element currently being rendered by the context.
 	 *
-	 * FIXME: Take note of concurrency issues for lazy initialization // Hugi 2023-01-21
-	 * FIXME: We're creating a session just to obtain a contextID here. This should not be required // Hugi 2023-07-23
+	 * CHECKME: Take note of concurrency issues for lazy initialization // Hugi 2023-01-21
 	 */
 	public String contextID() {
 		if( _contextID == null ) {
