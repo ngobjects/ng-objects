@@ -39,6 +39,19 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			throw new IllegalStateException( "The request's context is null. This should never happen" );
 		}
 
+		// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
+		final String componentPart = request.parsedURI().getString( 1 );
+
+		// The contextID and the elementID are separated by a period, so let's split on that.
+		final int firstPeriodIndex = componentPart.indexOf( '.' );
+
+		// The _originatingContextID is the first part of the request handler path. This tells us where the request is coming from.
+		final String originatingContextID = componentPart.substring( 0, firstPeriodIndex );
+
+		// The sending element ID consists of everything after the first period.
+		final String senderIDString = componentPart.substring( firstPeriodIndex + 1 );
+		context._setSenderIDFromString( senderIDString );
+
 		// We need to use the session to gain access to the page cache
 		final NGSession session = context.session();
 
@@ -46,9 +59,6 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		if( session == null ) {
 			throw new IllegalStateException( "The context's session is null. That should never happen" );
 		}
-
-		// Extract the contextID initiating the request from the URL
-		final String originatingContextID = context._originatingContextID();
 
 		// Now let's try to restore the page from the cache, using the contextID provided by the URL
 		final NGComponent originalPage = session.restorePageFromCache( originatingContextID );

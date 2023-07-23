@@ -30,11 +30,6 @@ public class NGContext {
 	private NGElementID _elementID;
 
 	/**
-	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
-	 */
-	private String _originatingContextID;
-
-	/**
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
 	 * Used in combination with _requestContextID to find the proper action to initiate.
 	 */
@@ -52,28 +47,6 @@ public class NGContext {
 
 		// CHECKME: We only need an elementID if we're going to be rendering a component, so theoretically, this could be initialized lazily
 		_elementID = new NGElementID();
-
-		// FIXME: This is not exactly a beautiful way to check if we're handling a component request
-		// This code probably belongs in the NGComponentRequestHandler
-		// Hugi 2023-01-22
-		if( request.uri().startsWith( NGComponentRequestHandler.DEFAULT_PATH ) ) {
-			// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
-			final String componentPart = request.parsedURI().getString( 1 );
-
-			// The contextID and the elementID are separated by a period, so let's split on that.
-			final int firstPeriodIndex = componentPart.indexOf( '.' );
-
-			// The _originatingContextID is the first part of the request handler path. This tells us where the request is coming from.
-			_originatingContextID = componentPart.substring( 0, firstPeriodIndex );
-
-			// The sending element ID consists of everything after the first period.
-			_senderID = NGElementID.fromString( componentPart.substring( firstPeriodIndex + 1 ) );
-		}
-		else {
-			// These are just here to fulfill the final declaration of _originatingContextID and _senderID
-			_originatingContextID = null;
-			_senderID = null;
-		}
 	}
 
 	/**
@@ -150,20 +123,6 @@ public class NGContext {
 	}
 
 	/**
-	 * @return The ID of the "original context", i.e. the context from which the request that created this context was initiated
-	 */
-	public String _originatingContextID() {
-		return _originatingContextID;
-	}
-
-	/**
-	 * Set the originating contextID
-	 */
-	public void _setOriginatingContextID( final String value ) {
-		_originatingContextID = value;
-	}
-
-	/**
 	 * Resets the current elementID
 	 */
 	public void _resetElementID() {
@@ -221,6 +180,6 @@ public class NGContext {
 
 	@Override
 	public String toString() {
-		return "NGContext [_request=" + _request + ", _component=" + _component + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
+		return "NGContext [_request=" + _request + ", _component=" + _component + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
 	}
 }
