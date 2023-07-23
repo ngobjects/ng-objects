@@ -201,17 +201,12 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 * CHECKME: Kind of feel like this should be private, since it's something only the framework does
 	 */
-	public void setParent( final NGComponent parent ) {
+	public void setParent( final NGComponent parent, final Map<String, NGAssociation> associations, final NGElement contentElement ) {
 		_parent = parent;
-	}
-
-	/**
-	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
-	 */
-	public void setAssociations( final Map<String, NGAssociation> associations ) {
 		_associations = associations;
+		_contentElement = contentElement;
 	}
 
 	/**
@@ -219,13 +214,6 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	public NGElement contentElement() {
 		return _contentElement;
-	}
-
-	/**
-	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
-	 */
-	public void setContentElement( final NGElement contentElement ) {
-		_contentElement = contentElement;
 	}
 
 	@Override

@@ -62,9 +62,7 @@ public class NGComponentReference extends NGDynamicElement {
 			previousComponent.addChild( context.elementID().toString(), newComponentInstance );
 		}
 
-		newComponentInstance.setParent( previousComponent );
-		newComponentInstance.setAssociations( _associations );
-		newComponentInstance.setContentElement( _contentTemplate );
+		newComponentInstance.setParent( previousComponent, _associations, _contentTemplate );
 
 		// Before we make our newly created component the "active" one, we need to pull values, if required
 		newComponentInstance.pullBindingValuesFromParent();
