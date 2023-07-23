@@ -56,7 +56,7 @@ public class NGRequest extends NGMessage {
 	/**
 	 * FIXME: This is intended as a temporary placeholder. WIP.
 	 */
-	private String _sessionID;
+	private String _newlyCreatedSessionID;
 
 	/**
 	 * The request's session
@@ -140,11 +140,11 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
-	 * FIXME: WIP
+	 * @return This request's sessionID. Null if no sessionID is present.
 	 */
 	public String _sessionID() {
-		if( _sessionID != null ) {
-			return _sessionID;
+		if( _newlyCreatedSessionID != null ) {
+			return _newlyCreatedSessionID;
 		}
 
 		return _extractSessionID();
@@ -175,7 +175,7 @@ public class NGRequest extends NGMessage {
 			}
 			else {
 				_session = NGApplication.application().createSessionForRequest( this );
-				_sessionID = _session.sessionID();
+				_newlyCreatedSessionID = _session.sessionID();
 				NGApplication.application().sessionStore().storeSession( _session );
 			}
 		}
@@ -276,6 +276,6 @@ public class NGRequest extends NGMessage {
 
 	@Override
 	public String toString() {
-		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _parsedURI=" + _parsedURI + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _sessionID=" + _sessionID + ", _session=" + _session + "]";
+		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _parsedURI=" + _parsedURI + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _sessionID=" + _newlyCreatedSessionID + ", _session=" + _session + "]";
 	}
 }
