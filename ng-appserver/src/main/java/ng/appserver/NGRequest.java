@@ -151,13 +151,6 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
-	 * FIXME: WIP
-	 */
-	public void _setSessionID( String sessionID ) {
-		_sessionID = sessionID;
-	}
-
-	/**
 	 * @return An ID for an existing sessionID, if one was submitted by the client, null if the client submitted no session ID
 	 */
 	public String _extractSessionID() {
@@ -182,7 +175,7 @@ public class NGRequest extends NGMessage {
 			}
 			else {
 				_session = NGApplication.application().createSessionForRequest( this );
-				_setSessionID( _session.sessionID() );
+				_sessionID = _session.sessionID();
 				NGApplication.application().sessionStore().storeSession( _session );
 			}
 		}
