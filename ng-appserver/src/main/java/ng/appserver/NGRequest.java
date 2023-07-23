@@ -54,7 +54,7 @@ public class NGRequest extends NGMessage {
 	private Map<String, List<String>> _cookieValues;
 
 	/**
-	 * FIXME: This is intended as a temporary placeholder. WIP.
+	 * Holds a newly created sessionID
 	 */
 	private String _newlyCreatedSessionID;
 
@@ -147,13 +147,13 @@ public class NGRequest extends NGMessage {
 			return _newlyCreatedSessionID;
 		}
 
-		return _extractSessionID();
+		return _sessionIDFromCookie();
 	}
 
 	/**
 	 * @return An ID for an existing sessionID, if one was submitted by the client, null if the client submitted no session ID
 	 */
-	public String _extractSessionID() {
+	private String _sessionIDFromCookie() {
 		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
 	}
 
@@ -163,13 +163,13 @@ public class NGRequest extends NGMessage {
 	public NGSession session() {
 		if( _session == null ) {
 			// OK, we have no session. First, let's see if the request has some session information, so we can restore an existing session
-			if( _extractSessionID() != null ) {
-				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _extractSessionID() );
+			if( _sessionIDFromCookie() != null ) {
+				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _sessionIDFromCookie() );
 
 				// No session found, we enter the emergency phase
 				// FIXME: We need to handle the case of a non-existent session better // Hugi 2023-01-10
 				if( _session == null ) {
-					logger.warn( "No session found with id '{}'", _extractSessionID() );
+					logger.warn( "No session found with id '{}'", _sessionIDFromCookie() );
 					throw new NGSessionRestorationException( this );
 				}
 			}
