@@ -60,15 +60,6 @@ public class NGSession {
 		this( sessionID, Instant.now() );
 	}
 
-	/**
-	 * @return THe size of the page cache
-	 *
-	 * FIXME: Temporary location for this parameter, will eventually be loaded from Properties
-	 */
-	private int pageCacheSize() {
-		return 10;
-	}
-
 	private NGSession( final String sessionID, final Instant birthDate ) {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
@@ -147,6 +138,15 @@ public class NGSession {
 	 */
 	public void terminate() {
 		_manuallyTerminated = true;
+	}
+
+	/**
+	 * @return Size of the page cache
+	 *
+	 * CHECKME: Temporary location for this parameter, should be settable/loaded from Properties
+	 */
+	private int pageCacheSize() {
+		return 10;
 	}
 
 	/**
