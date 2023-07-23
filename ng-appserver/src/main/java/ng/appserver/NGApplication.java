@@ -30,6 +30,10 @@ import x.junk.NGExceptionPage;
 import x.junk.NGExceptionPageDevelopment;
 import x.junk.NGSessionTimeoutPage;
 
+/**
+ * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
+ */
+
 public class NGApplication {
 
 	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
@@ -67,14 +71,14 @@ public class NGApplication {
 	private List<NGRouteTable> _routeTables = new ArrayList<>();
 
 	/**
-	 * FIXME: Temporary placeholder while we figure out the perfect initialization process // Hugi 2022-10-22
+	 * Run the application
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		runAndReturn( args, applicationClass );
 	}
 
 	/**
-	 * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
+	 * Run the application and return the NGApplication instance
 	 */
 	public static <E extends NGApplication> E runAndReturn( final String[] args, final Class<E> applicationClass ) {
 		final long startTime = System.currentTimeMillis();
