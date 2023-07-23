@@ -104,7 +104,7 @@ public class NGApplication {
 		try {
 			application = applicationClass.getDeclaredConstructor().newInstance();
 
-			// FIXME: This is just plain wrong. We want properties to be accessible during application initialization. Here we're loading properties after construction
+			// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
 			application._properties = properties;
 
 			application.urlRewritePatterns = new ArrayList<>();
@@ -113,7 +113,7 @@ public class NGApplication {
 			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
 			application.urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
 
-			// FIXME: We also might want to be more explicit about this
+			// FIXME: starting the application should probably be done by the user
 			application.start();
 
 			if( properties.propWOLifebeatEnabled() ) {
@@ -128,11 +128,11 @@ public class NGApplication {
 			return (E)application;
 		}
 		catch( final Exception e ) {
-			// FIXME: we're going to want to identify certain error conditions an respond to them with an explanation // Hugi 2022-10-22
+			// CHECKME: We're going to want to check for/identify certain error conditions an respond to them with an explanation, rather than silently exploding // Hugi 2022-10-22
 			e.printStackTrace();
 			System.exit( -1 );
 
-			// Essentially a dead return, just to satisfy the java compiler (which isn't aware that it was just violently stabbed to death using System.exit())
+			// Dead return to satisfy the java compiler (which isn't aware that it's just been violently stabbed to death using System.exit())
 			return null;
 		}
 	}
@@ -215,7 +215,7 @@ public class NGApplication {
 			e.printStackTrace();
 			System.exit( -1 );
 
-			// Essentially a dead return, just to satisfy the java compiler (which isn't aware that it was just violently stabbed to death using System.exit())
+			// Dead return to satisfy the java compiler (which isn't aware that it's just been violently stabbed to death using System.exit())
 			return null;
 		}
 	}
