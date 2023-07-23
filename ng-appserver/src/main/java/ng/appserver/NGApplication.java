@@ -348,8 +348,16 @@ public class NGApplication {
 			final String sessionID = request._sessionID();
 
 			if( sessionID != null ) {
-				if( request.existingSession() != null ) { // FIXME: existingSession() isn't really a reliable way to get the session (at least not yet)  // Hugi 2023-01-11
-					response.addCookie( createSessionCookie( sessionID, (int)request.existingSession().timeOut().toSeconds() ) );
+				final NGSession session = request.existingSession();
+
+				if( session != null ) { // FIXME: existingSession() isn't really a reliable way to get the session (at least not yet)  // Hugi 2023-01-11
+					if( session.shouldTerminate() ) {
+						// If the session is terminating, delete the client side session cookie
+						response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
+					}
+					else {
+						response.addCookie( createSessionCookie( sessionID, (int)session.timeOut().toSeconds() ) );
+					}
 				}
 			}
 

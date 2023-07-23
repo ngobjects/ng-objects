@@ -144,8 +144,6 @@ public class NGSession {
 
 	/**
 	 * Terminates the session and removes it from it's storage.
-	 *
-	 * FIXME: Should session termination trigger the deletion of the session cookie? // Hugi 2023-01-21
 	 */
 	public void terminate() {
 		_manuallyTerminated = true;
