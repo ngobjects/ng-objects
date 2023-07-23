@@ -32,13 +32,13 @@ public class NGContext {
 	/**
 	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
 	 */
-	private final String _originatingContextID;
+	private String _originatingContextID;
 
 	/**
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
 	 * Used in combination with _requestContextID to find the proper action to initiate.
 	 */
-	private final NGElementID _senderID;
+	private NGElementID _senderID;
 
 	/**
 	 * Indicates the the context is currently rendering something nested inside a form element.
@@ -157,6 +157,13 @@ public class NGContext {
 	}
 
 	/**
+	 * Set the originating contextID
+	 */
+	public void _setOriginatingContextID( final String value ) {
+		_originatingContextID = value;
+	}
+
+	/**
 	 * Resets the current elementID
 	 */
 	public void _resetElementID() {
@@ -175,6 +182,13 @@ public class NGContext {
 	 */
 	public NGElementID senderID() {
 		return _senderID;
+	}
+
+	/**
+	 * Set the senderID
+	 */
+	public void _setSenderIDFromString( final String senderIDString ) {
+		_senderID = NGElementID.fromString( senderIDString );
 	}
 
 	/**
