@@ -39,7 +39,7 @@ public class NGHTMLUtilities {
 	/**
 	 * Goes through each key in [associations], read their value in [component] and add the resulting value to [attributes]
 	 *
-	 * FIXME: This thing sucks (in-place mutation of an existing map, wrong utility class etc) but it beats handcoding each case for now // Hugi 2023-04-15
+	 * CHECKME: This thing sucks (in-place mutation of an existing map, not really the right utility class etc) but at least it beats coding each case // Hugi 2023-04-15
 	 */
 	public static void addAssociationValuesToAttributes( final Map<String, String> attributes, final Map<String, NGAssociation> associations, final NGComponent component ) {
 		Objects.requireNonNull( attributes );
