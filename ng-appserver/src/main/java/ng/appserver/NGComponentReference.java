@@ -48,7 +48,10 @@ public class NGComponentReference extends NGDynamicElement {
 		// If we've already rendered a component at this location in the element tree, an instance should be cached under it's elementID in parent's children map
 		NGComponent newComponentInstance = previousComponent.getChild( context.elementID().toString() );
 
-		// FIXME: If we actually did obtain an instance from the child cache here, don't we need to set the child's context or have we already set the context for the component tree? // Hugi 2023-03-11
+		// CHECKME: If we actually did obtain an instance from the component's child cache, don't we need to set the child's context? // Hugi 2023-03-11
+		// Update on that: So; since we should only be getting a cached page instance if the page was served by the component request handler,
+		// the request handler has already updated the context for us.
+		// However, I'm keeping this comment in (and downgrading to CHECKME) since this might become relevant when/if we implement stateless components
 
 		// If no instance was obtained, we need to create the component instance and insert it into the parent's child map.
 		if( newComponentInstance == null ) {
