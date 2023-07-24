@@ -126,7 +126,7 @@ public class NGTextField extends NGDynamicElement {
 		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
 		if( disabled( context ) ) {
-			// FIXME: 'disabled' is a "boolean attribute" and doesn't really need a value. We need a nice way to generate those // Hugi 2023-03-11
+			// CHECKME: 'disabled' is a "boolean attribute" and doesn't really need a value. We need a nice way to generate those // Hugi 2023-03-11
 			attributes.put( "disabled", "" );
 		}
 
