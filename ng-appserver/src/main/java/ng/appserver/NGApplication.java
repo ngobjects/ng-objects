@@ -186,7 +186,10 @@ public class NGApplication {
 		ServiceLoader.load( NGPlugin.class )
 				.stream()
 				.map( Provider::get )
-				.forEach( NGPlugin::load );
+				.forEach( plugin -> {
+					logger.info( "Loading plugin {}", plugin.getClass().getName() );
+					plugin.load();
+				} );
 	}
 
 	/**
