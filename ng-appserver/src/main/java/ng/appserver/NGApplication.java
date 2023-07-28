@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +28,7 @@ import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGElementUtils;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
+import ng.plugins.NGPlugin;
 import x.junk.NGExceptionPage;
 import x.junk.NGExceptionPageDevelopment;
 import x.junk.NGSessionTimeoutPage;
@@ -170,6 +173,20 @@ public class NGApplication {
 			return response;
 		} );
 		_routeTables.add( systemRoutes );
+
+		// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
+		// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading everything in the classpath
+		loadPlugins();
+	}
+
+	/**
+	 * Locates plugins and loads them.
+	 */
+	private void loadPlugins() {
+		ServiceLoader.load( NGPlugin.class )
+				.stream()
+				.map( Provider::get )
+				.forEach( NGPlugin::load );
 	}
 
 	/**
