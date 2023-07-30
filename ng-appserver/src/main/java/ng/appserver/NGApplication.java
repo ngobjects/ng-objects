@@ -65,7 +65,7 @@ public class NGApplication {
 	/**
 	 * A list of patterns that will be applied to URLs before they are processed by the framework
 	 */
-	private List<Pattern> urlRewritePatterns;
+	private List<Pattern> _urlRewritePatterns;
 
 	/**
 	 * In the old WO world, this would have been called "requestHandlers".
@@ -106,19 +106,17 @@ public class NGApplication {
 
 		logger.info( "===== Properties =====\n" + properties._propertiesMapAsString() );
 
-		NGApplication application = null;
-
 		try {
-			application = applicationClass.getDeclaredConstructor().newInstance();
+			NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
 
 			// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
 			application._properties = properties;
 
-			application.urlRewritePatterns = new ArrayList<>();
+			application._urlRewritePatterns = new ArrayList<>();
 
 			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
 			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
-			application.urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
+			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
 
 			// FIXME: starting the application should probably be done by the user
 			application.start();
@@ -365,21 +363,7 @@ public class NGApplication {
 			}
 
 			// FIXME: Doesn't feel like the place to set the session ID in the response, but let's do it anyway :D // Hugi 2023-01-10
-			final String sessionID = request._sessionID();
-
-			if( sessionID != null ) {
-				final NGSession session = request.existingSession();
-
-				if( session != null ) { // FIXME: existingSession() isn't really a reliable way to get the session (at least not yet)  // Hugi 2023-01-11
-					if( session.shouldTerminate() ) {
-						// If the session is terminating, delete the client side session cookie
-						response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
-					}
-					else {
-						response.addCookie( createSessionCookie( sessionID, (int)session.timeOut().toSeconds() ) );
-					}
-				}
-			}
+			addSessionCookieToResponse( request, response );
 
 			return response;
 		}
@@ -392,6 +376,24 @@ public class NGApplication {
 		catch( final Throwable throwable ) {
 			handleException( throwable );
 			return exceptionResponse( throwable, request.context() ).generateResponse();
+		}
+	}
+
+	private void addSessionCookieToResponse( final NGRequest request, final NGResponse response ) {
+		final String sessionID = request._sessionID();
+
+		if( sessionID != null ) {
+			final NGSession session = request.existingSession();
+
+			if( session != null ) { // FIXME: existingSession() isn't really a reliable way to get the session (at least not yet)  // Hugi 2023-01-11
+				if( session.shouldTerminate() ) {
+					// If the session is terminating, delete the client side session cookie
+					response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
+				}
+				else {
+					response.addCookie( createSessionCookie( sessionID, (int)session.timeOut().toSeconds() ) );
+				}
+			}
 		}
 	}
 
@@ -505,7 +507,7 @@ public class NGApplication {
 	 */
 	private void rewriteURL( final NGRequest request ) {
 
-		for( Pattern pattern : urlRewritePatterns ) {
+		for( Pattern pattern : _urlRewritePatterns ) {
 			final Matcher matcher = pattern.matcher( request.uri() );
 
 			if( matcher.find() ) {
