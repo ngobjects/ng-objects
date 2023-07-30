@@ -156,13 +156,14 @@ public class NGSession {
 		logger.debug( "Saving page {} in cache with contextID {} ", component.getClass(), contextID );
 		_pageCache.put( contextID, component );
 
+		// If the page cache size has been reached, remove the oldest entry
 		if( _pageCache.size() > pageCacheSize() ) {
 			// Since the page cache is a LinkedHashMap (which maintains insertion order), the first entry should be the oldest one
 			final String oldestEntryKey = _pageCache.keySet().iterator().next();
 
 			// Bye bye
 			_pageCache.remove( oldestEntryKey );
-			logger.debug( "Removed contextID {} from page cache", component.getClass(), oldestEntryKey );
+			logger.debug( "Popped contextID {} from page cache", component.getClass(), oldestEntryKey );
 		}
 	}
 
