@@ -71,12 +71,19 @@ public class NGProperties {
 		public Map<String, String> readAll();
 	}
 
+	/**
+	 * Loads properties from a named resource
+	 */
 	public static class PropertiesSourceResource implements PropertiesSource {
 
-		public String _resourceName;
+		private final String _resourceName;
 
 		public PropertiesSourceResource( String resourceName ) {
 			_resourceName = resourceName;
+		}
+
+		public String resourceName() {
+			return _resourceName;
 		}
 
 		@Override
@@ -99,12 +106,19 @@ public class NGProperties {
 		}
 	}
 
+	/**
+	 * Generates properties by parsing the arguments passed on to the Application's startup script
+	 */
 	public static class PropertiesSourceArgv implements PropertiesSource {
 
-		public String[] _argv;
+		private final String[] _argv;
 
 		public PropertiesSourceArgv( String[] argv ) {
 			_argv = argv;
+		}
+
+		public String[] arguments() {
+			return _argv;
 		}
 
 		@Override
