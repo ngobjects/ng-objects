@@ -55,9 +55,9 @@ public class NGProperties {
 	}
 
 	/**
-	 * FIXME: Don't like the name. We're going to have to overhaul this API
+	 * Set the named properties
 	 */
-	private void putAll( Map<String, String> properties ) {
+	private void putAll( final Map<String, String> properties ) {
 		_allProperties.putAll( properties );
 	}
 
@@ -68,7 +68,10 @@ public class NGProperties {
 		return _allProperties.keySet();
 	}
 
-	public void addAndReadResourceSource( PropertiesSource source ) {
+	/**
+	 * Add a property source and read the provided properties
+	 */
+	public void addAndReadResourceSource( final PropertiesSource source ) {
 		_sources.add( source );
 		putAll( source.readAll() );
 	}
