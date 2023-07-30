@@ -565,7 +565,7 @@ public class NGApplication {
 	/**
 	 * @return The componentDefinition corresponding to the given NGComponent class.
 	 *
-	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: Languages are currently not supported. Parameter still included while we ponder localization // Hugi 2023-04-14
 	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
 	private static NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass, final List<String> languages ) {
@@ -578,7 +578,7 @@ public class NGApplication {
 	/**
 	 * @return The componentDefinition corresponding to the named NGComponent
 	 *
-	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: Languages are currently not supported. Parameter still included while we ponder localization // Hugi 2023-04-14
 	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
 	public static NGComponentDefinition _componentDefinition( final String componentName, final List<String> languages ) {
@@ -589,9 +589,8 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: Languages are currently not supported. Parameter still included while we ponder localization // Hugi 2023-04-14
 	 * FIXME: This should not be static // Hugi 2023-04-14
-	 * CHECKME: Since this can only ever return DynamicElements, we can probably narrow the return type here // Hugi 2023-05-07
 	 *
 	 * @param name The name identifying what element we're getting
 	 * @param associations Associations used to bind the generated element to it's parent
