@@ -186,7 +186,7 @@ public class NGApplication {
 				.map( Provider::get )
 				.forEach( plugin -> {
 					logger.info( "Loading plugin {}", plugin.getClass().getName() );
-					plugin.load();
+					plugin.load( this );
 				} );
 	}
 
