@@ -31,6 +31,15 @@
 		</wo:repetition>
 	</table>
 
+	<h2>NGProperties sources</h2>
+	<table>
+		<wo:repetition list="$application.properties.sources" item="$currentPropertySource">  
+			<tr>
+				<td><wo:str value="$currentPropertySource" /></td>
+			</tr>
+		</wo:repetition>
+	</table>
+
 	<h2>Java System properties</h2>
 	<table>
 		<wo:repetition list="$systemPropertyKeys" item="$currentPropertyKey">  

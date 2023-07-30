@@ -48,6 +48,13 @@ public class NGProperties {
 	}
 
 	/**
+	 * @return a list of sources properties get loaded from. The order of the list determines which property "wins" when properties are overridden.
+	 */
+	public List<PropertiesSource> sources() {
+		return _sources;
+	}
+
+	/**
 	 * FIXME: Don't like the name. We're going to have to overhaul this API
 	 */
 	private void putAll( Map<String, String> properties ) {
