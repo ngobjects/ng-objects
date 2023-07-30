@@ -1,75 +1,43 @@
-<!doctype html>
-<html>
-	<head>
-		<title>Control center</title>
-		<meta charset="utf-8">
-		<style>
-			:root {
-				--ng-table-color: rgb(200,200,200);
-			}
-
-			body {
-				font-family: sans-serif;
-				font-size: 13px;
-			}
-
-			table {
-				border: 1px solid var(--ng-table-color);
-				border-width: 1px 0px 0px 1px;
-				border-spacing: 0px;
-				empty-cells: show;
-			}
-			
-			td,th {
-				border: 1px solid var(--ng-table-color);
-				border-width: 0px 1px 1px 0px;
-				padding: 4px;
-				vertical-align: top;
-			}
-		</style>
-	</head>
-	<body>
-
-		<h2>Sessions</h2>
-		<table>
+<wo:NGControlWrapper>
+	<h2>Sessions</h2>
+	<table>
+		<tr>
+			<th>Birth date</th>
+			<th>Last touched</th>
+			<th>TimeOut</th>
+			<th>shouldTerminate</th>
+			<th>Mine?</th>
+			<th></th>
+		</tr>
+		<wo:repetition list="$sessions" item="$currentSession">
 			<tr>
-				<th>Birth date</th>
-				<th>Last touched</th>
-				<th>TimeOut</th>
-				<th>shouldTerminate</th>
-				<th>Mine?</th>
-				<th></th>
+				<td><wo:str value="$currentSession.birthDate" /></td>
+				<td><wo:str value="$currentSession.lastTouched" /></td>
+				<td><wo:str value="$currentSession.timeOut" /></td>
+				<td><wo:str value="$currentSession.shouldTerminate" /></td>
+				<td><wo:if condition="$isMySession"><strong>This is your session!</strong></wo:if></td>
+				<td><wo:link action="$terminate">Kill!</wo:link></td>
 			</tr>
-			<wo:repetition list="$sessions" item="$currentSession">
-				<tr>
-					<td><wo:str value="$currentSession.birthDate" /></td>
-					<td><wo:str value="$currentSession.lastTouched" /></td>
-					<td><wo:str value="$currentSession.timeOut" /></td>
-					<td><wo:str value="$currentSession.shouldTerminate" /></td>
-					<td><wo:if condition="$isMySession"><strong>This is your session!</strong></wo:if></td>
-					<td><wo:link action="$terminate">Kill!</wo:link></td>
-				</tr>
-			</wo:repetition>
-		</table>
+		</wo:repetition>
+	</table>
 
-		<h2>NGProperties</h2>
-		<table>
-			<wo:repetition list="$propertyKeys" item="$currentPropertyKey">  
-				<tr>
-					<td><wo:str value="$currentPropertyKey" /></td>
-					<td><wo:str value="$currentPropertyValue" /></td>
-				</tr>
-			</wo:repetition>
-		</table>
+	<h2>NGProperties</h2>
+	<table>
+		<wo:repetition list="$propertyKeys" item="$currentPropertyKey">  
+			<tr>
+				<td><wo:str value="$currentPropertyKey" /></td>
+				<td><wo:str value="$currentPropertyValue" /></td>
+			</tr>
+		</wo:repetition>
+	</table>
 
-		<h2>System properties</h2>
-		<table>
-			<wo:repetition list="$systemPropertyKeys" item="$currentPropertyKey">  
-				<tr>
-					<td><wo:str value="$currentPropertyKey" /></td>
-					<td><wo:str value="$currentSystemPropertyValue" /></td>
-				</tr>
-			</wo:repetition>
-		</table>
-	</body>
-</html>
+	<h2>Java System properties</h2>
+	<table>
+		<wo:repetition list="$systemPropertyKeys" item="$currentPropertyKey">  
+			<tr>
+				<td><wo:str value="$currentPropertyKey" /></td>
+				<td><wo:str value="$currentSystemPropertyValue" /></td>
+			</tr>
+		</wo:repetition>
+	</table>
+</wo:NGControlWrapper>
