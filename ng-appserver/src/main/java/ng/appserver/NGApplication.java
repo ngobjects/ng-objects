@@ -389,8 +389,10 @@ public class NGApplication {
 				if( session.shouldTerminate() ) {
 					// If the session is terminating, delete the client side session cookie
 					response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
+					// CHECKME: This might be a better location to ask session storage to dispose of a terminated session.
 				}
 				else {
+					session.touch();
 					response.addCookie( createSessionCookie( sessionID, (int)session.timeOut().toSeconds() ) );
 				}
 			}
