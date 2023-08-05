@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utilities for reading resources
  *
- * FIXME: Consumers should really never be going through this class directly. Resource providers should be registered with NGResourcesManager and resources then loaded from there // Hugi 2023-07-08
+ * FIXME: Consumers should really never be going through this class directly. Resource providers should be registered with NGResourceManager and resources then loaded from there // Hugi 2023-07-08
  */
 
 public class NGResourceLoader {
