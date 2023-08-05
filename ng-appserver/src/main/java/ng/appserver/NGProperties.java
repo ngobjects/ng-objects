@@ -82,6 +82,19 @@ public class NGProperties {
 	}
 
 	/**
+	 * FIXME: Finish implementation of this // This should contain the properties set in sources // Hugi 2023-08-05
+	 */
+	public static class PropertiesSourceCode implements PropertiesSource {
+
+		private Map<String, String> _properties;
+
+		@Override
+		public Map<String, String> readAll() {
+			return _properties;
+		}
+	}
+
+	/**
 	 * Loads properties from a named resource
 	 */
 	public static class PropertiesSourceResource implements PropertiesSource {
@@ -211,6 +224,35 @@ public class NGProperties {
 	}
 
 	/**
+	 * Defines a property
+	 *
+	 * FIXME: Finish this concept up (for defined, typesafe properties) // Hugi 2023-08-05
+	 */
+	public static class Property<E> {
+		private String _key;
+		private E _value;
+		private E _defaultValue;
+
+		public Property( final String key, E value, E defaultValue ) {
+			_key = key;
+			_value = value;
+			_defaultValue = defaultValue;
+		}
+
+		public String key() {
+			return _key;
+		}
+
+		public E value() {
+			return _value;
+		}
+
+		public E defaultValue() {
+			return _defaultValue;
+		}
+	}
+
+	/**
 	 * FIXME: We're creating cover methods for some of the more used properties for now. // Hugi 2021-12-29
 	 * This is not the way we it'll be going forward, but it will help with refactoring later (rather than using property name strings)
 	 */
@@ -244,33 +286,6 @@ public class NGProperties {
 
 	public String propWOOutputPath() {
 		return get( WOProperties.WOOutputPath.name() );
-	}
-
-	/**
-	 * Defines a property
-	 */
-	public static class Property<E> {
-		private String _key;
-		private E _value;
-		private E _defaultValue;
-
-		public Property( final String key, E value, E defaultValue ) {
-			_key = key;
-			_value = value;
-			_defaultValue = defaultValue;
-		}
-
-		public String key() {
-			return _key;
-		}
-
-		public E value() {
-			return _value;
-		}
-
-		public E defaultValue() {
-			return _defaultValue;
-		}
 	}
 
 	/**
