@@ -247,6 +247,33 @@ public class NGProperties {
 	}
 
 	/**
+	 * Defines a property
+	 */
+	public static class Property<E> {
+		private String _key;
+		private E _value;
+		private E _defaultValue;
+
+		public Property( final String key, E value, E defaultValue ) {
+			_key = key;
+			_value = value;
+			_defaultValue = defaultValue;
+		}
+
+		public String key() {
+			return _key;
+		}
+
+		public E value() {
+			return _value;
+		}
+
+		public E defaultValue() {
+			return _defaultValue;
+		}
+	}
+
+	/**
 	 * Container for all the old properties from WO
 	 */
 	public static enum WOProperties {
