@@ -41,6 +41,11 @@ public class NGElementUtils {
 	public static final Logger logger = LoggerFactory.getLogger( NGElementUtils.class );
 
 	/**
+	 * Packages that we look for component classes inside
+	 */
+	public static List<String> _elementPackages = new ArrayList<>();
+
+	/**
 	 * Classes registered to be searchable by classWithName()
 	 */
 	private static final List<Class<? extends NGElement>> _classes = new ArrayList<>();
@@ -68,6 +73,9 @@ public class NGElementUtils {
 		addClass( NGSwitchComponent.class, "switch" );
 		addClass( NGTextField.class, "textfield" );
 		addClass( TestComponent.class );
+
+		// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
+		addPackage( NGApplication.application().getClass().getPackageName() );
 	}
 
 	/**
@@ -79,6 +87,10 @@ public class NGElementUtils {
 		for( String shortcut : shortcuts ) {
 			_shortcutToClassMap.put( shortcut, clazz.getSimpleName() );
 		}
+	}
+
+	public static void addPackage( final String packageName ) {
+		_elementPackages.add( packageName );
 	}
 
 	/**
@@ -102,12 +114,13 @@ public class NGElementUtils {
 		}
 		catch( ClassNotFoundException e ) {}
 
-		// FIXME: Finally, and this is horrible, we're going to look for a component class inside the same package as the application class // Hugi 2022-10-10
-		try {
-			final String className = NGApplication.application().getClass().getPackageName() + "." + classNameToSearchFor;
-			return Class.forName( className );
+		for( String packageName : _elementPackages ) {
+			try {
+				final String className = packageName + "." + classNameToSearchFor;
+				return Class.forName( className );
+			}
+			catch( ClassNotFoundException e ) {}
 		}
-		catch( ClassNotFoundException e ) {}
 
 		throw new RuntimeException( "Class not found: " + classNameToSearchFor );
 	}
