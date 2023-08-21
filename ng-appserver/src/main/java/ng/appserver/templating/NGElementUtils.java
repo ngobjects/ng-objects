@@ -96,7 +96,7 @@ public class NGElementUtils {
 	/**
 	 * @return A class matching classNameToSearch for. Searches by fully qualified class name and simpleName.
 	 */
-	public static Class classWithName( String classNameToSearchFor ) {
+	private static Class classWithName( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
 		logger.debug( "Searching for class '{}'", classNameToSearchFor );
