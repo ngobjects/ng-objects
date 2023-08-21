@@ -153,11 +153,11 @@ public class NGProperties {
 
 				if( key.startsWith( "-X" ) ) {
 					// JVM argument - ignore
-					// FIXME: Not sure about this functionality, experimental 2023-04-17
+					// FIXME: Not sure about this functionality, experimental // Hugi  2023-04-17
 				}
 				else if( key.startsWith( "-D" ) ) {
 					// Java argument is passed on to System.properties
-					// FIXME: Not sure about this functionality, experimental 2023-04-17
+					// FIXME: This is definitely not the place to set System properties - experimental // Hugi 2023-04-17
 					final String[] keyValuePair = key.split( "=" );
 					final String realKey = keyValuePair[0].substring( 2 );
 					final String realValue = keyValuePair[1];
