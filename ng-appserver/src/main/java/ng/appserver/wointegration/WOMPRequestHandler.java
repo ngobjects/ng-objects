@@ -37,7 +37,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 			return statistics();
 		}
 
-		throw new IllegalArgumentException( "Unknown admin request: " + request );
+		throw new IllegalArgumentException( "Unknown admin request: " + request + " content: " + request.contentString() );
 	}
 
 	/**
