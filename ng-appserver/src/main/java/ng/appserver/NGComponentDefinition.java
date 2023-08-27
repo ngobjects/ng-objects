@@ -67,8 +67,6 @@ public class NGComponentDefinition {
 
 	/**
 	 * @return The cached component with the given name
-	 *
-	 * FIXME: Temp caching implementation
 	 */
 	private static NGComponentDefinition _cachedComponentDefinition( final String componentName ) {
 		Objects.requireNonNull( componentName );
