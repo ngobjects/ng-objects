@@ -214,6 +214,7 @@ public class NGComponentDefinition {
 			}
 
 			// If no html template string has been loaded, no template exists.
+			// CHECKME: We might want to fail here since a non-existent template at load time is almost definitely an error // Hugi 2023-08-27
 			if( htmlTemplateStringOptional.isEmpty() ) {
 				logger.warn( "Component template '%s' not found".formatted( name() ) );
 				return NO_ELEMENT;
