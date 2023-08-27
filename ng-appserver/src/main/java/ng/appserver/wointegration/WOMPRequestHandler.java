@@ -37,6 +37,10 @@ public class WOMPRequestHandler extends NGRequestHandler {
 			return statistics();
 		}
 
+		if( request.contentString().contains( "REFUSE" ) ) {
+			throw new IllegalArgumentException( "REFUSE operation is currently not supported" );
+		}
+
 		throw new IllegalArgumentException( "Unknown admin request: " + request + " content: " + request.contentString() );
 	}
 
