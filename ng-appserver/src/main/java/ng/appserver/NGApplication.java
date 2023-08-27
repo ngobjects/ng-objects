@@ -392,7 +392,7 @@ public class NGApplication {
 					// CHECKME: This might be a better location to ask session storage to dispose of a terminated session.
 				}
 				else {
-					session.touch();
+					session.touch(); // CHECKME: Probably the wrong location to do this, since this is now a cookie method... // Hugi 2023-08-27
 					response.addCookie( createSessionCookie( sessionID, (int)session.timeOut().toSeconds() ) );
 				}
 			}
@@ -415,6 +415,9 @@ public class NGApplication {
 		return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
 	}
 
+	/**
+	 * @return A session cookie
+	 */
 	private static NGCookie createSessionCookie( final String sessionID, final int maxAge ) {
 		final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
 		sessionCookie.setMaxAge( maxAge );
