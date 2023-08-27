@@ -11,7 +11,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGElement;
 import ng.appserver.elements.NGActionURL;
@@ -73,9 +72,6 @@ public class NGElementUtils {
 		addClass( NGSwitchComponent.class, "switch" );
 		addClass( NGTextField.class, "textfield" );
 		addClass( TestComponent.class );
-
-		// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
-		addPackage( NGApplication.application().getClass().getPackageName() );
 	}
 
 	/**

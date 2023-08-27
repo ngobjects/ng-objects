@@ -134,6 +134,9 @@ public class NGApplication {
 			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading everything in the classpath
 			_application.loadPlugins();
 
+			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
+			NGElementUtils.addPackage( applicationClass.getPackageName() );
+
 			return (E)application;
 		}
 		catch( final Exception e ) {
