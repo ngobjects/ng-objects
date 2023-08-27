@@ -229,14 +229,14 @@ public class NGComponentDefinition {
 	/**
 	 * @return true if this component does not have it's own class representation
 	 */
-	public boolean isClassless() {
+	private boolean isClassless() {
 		return _componentClass == NGComponent.class;
 	}
 
 	/**
 	 * @return true if this component has not loaded template
 	 */
-	public boolean hasTemplate() {
+	private boolean hasTemplate() {
 		return !(template() instanceof NoElement);
 	}
 
