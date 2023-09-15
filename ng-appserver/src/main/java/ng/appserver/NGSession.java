@@ -60,15 +60,6 @@ public class NGSession {
 		this( sessionID, Instant.now() );
 	}
 
-	/**
-	 * @return THe size of the page cache
-	 *
-	 * FIXME: Temporary location for this parameter, will eventually be loaded from Properties
-	 */
-	private int pageCacheSize() {
-		return 10;
-	}
-
 	private NGSession( final String sessionID, final Instant birthDate ) {
 		_sessionID = sessionID;
 		_birthDate = birthDate;
@@ -144,12 +135,18 @@ public class NGSession {
 
 	/**
 	 * Terminates the session and removes it from it's storage.
-	 *
-	 * FIXME: We need to notify the session's storage that the session has been terminated // Hugi 2023-01-21
-	 * FIXME: Should this method trigger the deletion of the session cookie as well? // Hugi 2023-01-21
 	 */
 	public void terminate() {
 		_manuallyTerminated = true;
+	}
+
+	/**
+	 * @return Size of the page cache
+	 *
+	 * CHECKME: Temporary location for this parameter, should be settable/loaded from Properties
+	 */
+	private int pageCacheSize() {
+		return 10;
 	}
 
 	/**
@@ -159,13 +156,14 @@ public class NGSession {
 		logger.debug( "Saving page {} in cache with contextID {} ", component.getClass(), contextID );
 		_pageCache.put( contextID, component );
 
+		// If the page cache size has been reached, remove the oldest entry
 		if( _pageCache.size() > pageCacheSize() ) {
 			// Since the page cache is a LinkedHashMap (which maintains insertion order), the first entry should be the oldest one
 			final String oldestEntryKey = _pageCache.keySet().iterator().next();
 
 			// Bye bye
 			_pageCache.remove( oldestEntryKey );
-			logger.debug( "Removed contextID {} from page cache", component.getClass(), oldestEntryKey );
+			logger.debug( "Popped contextID {} from page cache", component.getClass(), oldestEntryKey );
 		}
 	}
 

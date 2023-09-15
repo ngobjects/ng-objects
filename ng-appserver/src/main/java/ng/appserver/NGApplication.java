@@ -13,25 +13,36 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.NGProperties.PropertiesSourceArgv;
+import ng.appserver.NGProperties.PropertiesSourceResource;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGElementUtils;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
+import ng.plugins.NGPlugin;
 import x.junk.NGExceptionPage;
 import x.junk.NGExceptionPageDevelopment;
 import x.junk.NGSessionTimeoutPage;
+
+/**
+ * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
+ */
 
 public class NGApplication {
 
 	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
 
 	/**
-	 * FIXME: This is a global NGApplication object. We don't want a global NGApplication object // Hugi 2021-12-29
+	 * FIXME: This is a global NGApplication object. We don't want a global NGApplication object. It's only around for convenience for now // Hugi 2021-12-29
 	 */
 	@Deprecated
 	private static NGApplication _application;
@@ -52,27 +63,32 @@ public class NGApplication {
 	private NGResourceManager _resourceManager;
 
 	/**
+	 * A list of patterns that will be applied to URLs before they are processed by the framework
+	 */
+	private List<Pattern> _urlRewritePatterns;
+
+	/**
 	 * In the old WO world, this would have been called "requestHandlers".
 	 * Since we want to have more dynamic route resolution, it makes sense to move that to a separate object.
 	 */
 	private List<NGRouteTable> _routeTables = new ArrayList<>();
 
 	/**
-	 * FIXME: Temporary placeholder while we figure out the perfect initialization process // Hugi 2022-10-22
+	 * Run the application
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
 		runAndReturn( args, applicationClass );
 	}
 
 	/**
-	 * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
+	 * Run the application and return the NGApplication instance
 	 */
 	public static <E extends NGApplication> E runAndReturn( final String[] args, final Class<E> applicationClass ) {
 		final long startTime = System.currentTimeMillis();
 
 		final NGProperties properties = new NGProperties();
-		properties.putAll( NGProperties.loadDefaultProperties() );
-		properties.putAll( NGProperties.propertiesFromArgsString( args ) );
+		properties.addAndReadResourceSource( new PropertiesSourceResource( "Properties" ) );
+		properties.addAndReadResourceSource( new PropertiesSourceArgv( args ) );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		redirectOutputToFilesIfOutputPathSet( properties.propWOOutputPath() );
@@ -90,15 +106,19 @@ public class NGApplication {
 
 		logger.info( "===== Properties =====\n" + properties._propertiesMapAsString() );
 
-		NGApplication application = null;
-
 		try {
-			application = applicationClass.getDeclaredConstructor().newInstance();
+			NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
 
-			// FIXME: This is just plain wrong. We want properties to be accessible during application initialization. Here we're loading properties after construction
+			// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
 			application._properties = properties;
 
-			// FIXME: We also might want to be more explicit about this
+			application._urlRewritePatterns = new ArrayList<>();
+
+			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
+			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
+			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
+
+			// FIXME: starting the application should probably be done by the user
 			application.start();
 
 			if( properties.propWOLifebeatEnabled() ) {
@@ -107,17 +127,24 @@ public class NGApplication {
 
 			logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 
-			// FIXME: Assigning that unwanted global application...
+			// Assigning that unwanted global application...
 			_application = application;
+
+			// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
+			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading everything in the classpath
+			_application.loadPlugins();
+
+			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
+			NGElementUtils.addPackage( applicationClass.getPackageName() );
 
 			return (E)application;
 		}
 		catch( final Exception e ) {
-			// FIXME: we're going to want to identify certain error conditions an respond to them with an explanation // Hugi 2022-10-22
+			// CHECKME: We're going to want to check for/identify certain error conditions an respond to them with an explanation, rather than silently exploding // Hugi 2022-10-22
 			e.printStackTrace();
 			System.exit( -1 );
 
-			// Essentially a dead return, just to satisfy the java compiler (which isn't aware that it was just violently stabbed to death using System.exit())
+			// Dead return to satisfy the java compiler (which isn't aware that it's just been violently stabbed to death using System.exit())
 			return null;
 		}
 	}
@@ -151,6 +178,19 @@ public class NGApplication {
 			return response;
 		} );
 		_routeTables.add( systemRoutes );
+	}
+
+	/**
+	 * Locates plugins and loads them.
+	 */
+	private void loadPlugins() {
+		ServiceLoader.load( NGPlugin.class )
+				.stream()
+				.map( Provider::get )
+				.forEach( plugin -> {
+					logger.info( "Loading plugin {}", plugin.getClass().getName() );
+					plugin.load( this );
+				} );
 	}
 
 	/**
@@ -200,7 +240,7 @@ public class NGApplication {
 			e.printStackTrace();
 			System.exit( -1 );
 
-			// Essentially a dead return, just to satisfy the java compiler (which isn't aware that it was just violently stabbed to death using System.exit())
+			// Dead return to satisfy the java compiler (which isn't aware that it's just been violently stabbed to death using System.exit())
 			return null;
 		}
 	}
@@ -275,8 +315,6 @@ public class NGApplication {
 
 	/**
 	 * @return The global NGApplication instance.
-	 *
-	 * FIXME: I really do not want a global instance in the future, but I'm keeping it around for now as it's comforting while working with familiar patterns. // Hugi 2022-10-19
 	 */
 	@Deprecated
 	public static NGApplication application() {
@@ -305,7 +343,7 @@ public class NGApplication {
 	public NGResponse dispatchRequest( final NGRequest request ) {
 
 		try {
-			cleanupWOURL( request );
+			rewriteURL( request );
 
 			final NGResponse response;
 
@@ -317,21 +355,7 @@ public class NGApplication {
 				final NGRequestHandler requestHandler = handlerForURL( request.uri() );
 
 				if( requestHandler == null ) {
-					// FIXME: Very, very experimental public resource handler.
-					final String resourcePath = request.uri();
-
-					if( resourcePath.isEmpty() ) {
-						return new NGResponse( "No resource name specified", 400 );
-					}
-
-					// FIXME: We want this to work with streams, not byte arrays.
-					// To make this work, we'll have to cache a wrapper class for the resource; that wrapper must give us a "stream provider", not an actual stream, since we'll be consuming the stream of a cached resource multiple times.
-					// Hugi 2023-02-17
-					final Optional<byte[]> resourceBytes = resourceManager().bytesForPublicResourceNamed( resourcePath );
-
-					return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
-
-					// return new NGResponse( "No request handler found for uri " + request.uri(), 404 );
+					return noHandlerResponse( request );
 				}
 
 				response = requestHandler.handleRequest( request );
@@ -342,13 +366,7 @@ public class NGApplication {
 			}
 
 			// FIXME: Doesn't feel like the place to set the session ID in the response, but let's do it anyway :D // Hugi 2023-01-10
-			final String sessionID = request._sessionID();
-
-			if( sessionID != null ) {
-				if( request.existingSession() != null ) { // FIXME: existingSession() isn't really a reliable way to get the session (at least not yet)  // Hugi 2023-01-11
-					response.addCookie( createSessionCookie( sessionID, (int)request.existingSession().timeOut().toSeconds() ) );
-				}
-			}
+			addSessionCookieToResponse( request, response );
 
 			return response;
 		}
@@ -364,6 +382,45 @@ public class NGApplication {
 		}
 	}
 
+	private void addSessionCookieToResponse( final NGRequest request, final NGResponse response ) {
+		final String sessionID = request._sessionID();
+
+		if( sessionID != null ) {
+			final NGSession session = request.existingSession();
+
+			if( session != null ) { // FIXME: existingSession() isn't really a reliable way to get the session (at least not yet)  // Hugi 2023-01-11
+				if( session.shouldTerminate() ) {
+					// If the session is terminating, delete the client side session cookie
+					response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
+					// CHECKME: This might be a better location to ask session storage to dispose of a terminated session.
+				}
+				else {
+					session.touch(); // CHECKME: Probably the wrong location to do this, since this is now a cookie method... // Hugi 2023-08-27
+					response.addCookie( createSessionCookie( sessionID, (int)session.timeOut().toSeconds() ) );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Invoked to generate a response if no requestHandler was found for the given request. Essentially a 404 response.
+	 *
+	 * CHECKME: This currently incorporates a very experimental "public resources" handler, essentially a plain web server. This is not final // Hugi 2023-07-20
+	 */
+	private NGResponse noHandlerResponse( final NGRequest request ) {
+		final String resourcePath = request.uri();
+
+		if( resourcePath.isEmpty() ) {
+			return new NGResponse( "No resource name specified", 400 );
+		}
+
+		final Optional<byte[]> resourceBytes = resourceManager().bytesForPublicResourceNamed( resourcePath );
+		return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
+	}
+
+	/**
+	 * @return A session cookie
+	 */
 	private static NGCookie createSessionCookie( final String sessionID, final int maxAge ) {
 		final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
 		sessionCookie.setMaxAge( maxAge );
@@ -379,20 +436,6 @@ public class NGApplication {
 	 */
 	protected void handleException( Throwable throwable ) {
 		throwable.printStackTrace();
-	}
-
-	/**
-	 * @return A newly created session for the given NGRequest
-	 *
-	 * If you need to catch some info about the user, and do something like, for example, automatically log in a user based on a cookie value, this would be just the place.
-	 */
-	public NGSession createSessionForRequest( NGRequest request ) {
-		try {
-			return _sessionClass().getConstructor().newInstance();
-		}
-		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
-			throw new RuntimeException( e );
-		}
 	}
 
 	/**
@@ -452,27 +495,18 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: Well this is horrid // Hugi 2021-11-20
+	 * Invoked by dispatchRequest before the request is handled to apply all url-rewriting patterns.
 	 *
-	 * What we're doing here is allowing for the WO URL structure, which is somewhat required to work with the WO Apache Adaptor.
-	 * Ideally, we don't want to prefix URLs at all, instead just handling requests at root level. But to begin with, perhaps we can
-	 * just allow for certain "prefix patterns" to mask out the WO part of the URL and hide it from the app. It might even be a useful
-	 * little feature on it's own.
+	 * CHECKME: Not really a fan of including this functionality, but it helps out with WO adaptor compatibility.
 	 */
-	private void cleanupWOURL( final NGRequest request ) {
+	private void rewriteURL( final NGRequest request ) {
 
-		String woStart = "/Apps/WebObjects/%s.woa/1".formatted( properties().propWOApplicationName() );
+		for( Pattern pattern : _urlRewritePatterns ) {
+			final Matcher matcher = pattern.matcher( request.uri() );
 
-		if( request.uri().startsWith( woStart ) ) {
-			request.setURI( request.uri().substring( woStart.length() ) );
-			logger.info( "Rewrote WO URI to {}", request.uri() );
-		}
-
-		woStart = "/cgi-bin/WebObjects/%s.woa".formatted( properties().propWOApplicationName() );
-
-		if( request.uri().startsWith( woStart ) ) {
-			request.setURI( request.uri().substring( woStart.length() ) );
-			logger.info( "Rewrote WO URI to {}", request.uri() );
+			if( matcher.find() ) {
+				request.setURI( request.uri().substring( matcher.group().length() ) );
+			}
 		}
 	}
 
@@ -482,6 +516,20 @@ public class NGApplication {
 	 */
 	public NGContext createContextForRequest( NGRequest request ) {
 		return new NGContext( request );
+	}
+
+	/**
+	 * @return A newly created session for the given NGRequest
+	 *
+	 * If you need to catch some info about the user, and do something like, for example, automatically log in a user based on a cookie value, this would be just the place.
+	 */
+	public NGSession createSessionForRequest( NGRequest request ) {
+		try {
+			return _sessionClass().getConstructor().newInstance();
+		}
+		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
+			throw new RuntimeException( e );
+		}
 	}
 
 	/**
@@ -525,7 +573,7 @@ public class NGApplication {
 	/**
 	 * @return The componentDefinition corresponding to the given NGComponent class.
 	 *
-	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: Languages are currently not supported. Parameter still included while we ponder localization // Hugi 2023-04-14
 	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
 	private static NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass, final List<String> languages ) {
@@ -538,7 +586,7 @@ public class NGApplication {
 	/**
 	 * @return The componentDefinition corresponding to the named NGComponent
 	 *
-	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: Languages are currently not supported. Parameter still included while we ponder localization // Hugi 2023-04-14
 	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
 	public static NGComponentDefinition _componentDefinition( final String componentName, final List<String> languages ) {
@@ -549,9 +597,8 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: Languages are currently not supported, but the gets included while we ponder design for that // Hugi 2023-04-14
+	 * FIXME: Languages are currently not supported. Parameter still included while we ponder localization // Hugi 2023-04-14
 	 * FIXME: This should not be static // Hugi 2023-04-14
-	 * CHECKME: Since this can only ever return DynamicElements, we can probably narrow the return type here // Hugi 2023-05-07
 	 *
 	 * @param name The name identifying what element we're getting
 	 * @param associations Associations used to bind the generated element to it's parent

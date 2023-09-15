@@ -7,12 +7,15 @@ import java.util.List;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
+import ng.appserver.NGProperties.PropertiesSource;
 import ng.appserver.NGSession;
 
 public class NGOverview extends NGComponent {
 
 	public NGSession currentSession;
 	public Object currentPropertyKey;
+
+	public PropertiesSource currentPropertySource;
 
 	public NGOverview( NGContext context ) {
 		super( context );

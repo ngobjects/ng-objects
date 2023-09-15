@@ -31,18 +31,13 @@ public class NGContext {
 	/**
 	 * ID of the element currently being rendered by the context.
 	 */
-	private NGElementID _currentElementID;
-
-	/**
-	 * The ID of the "originating context", i.e. the context that initiated the request we're currently handling
-	 */
-	private final String _originatingContextID;
+	private NGElementID _elementID;
 
 	/**
 	 * In the case of component actions, this is the elementID of the element that invoked the action (clicked a link, submitted a form etc)
 	 * Used in combination with _requestContextID to find the proper action to initiate.
 	 */
-	private final NGElementID _senderID;
+	private NGElementID _senderID;
 
 	/**
 	 * Indicates the the context is currently rendering something nested inside a form element.
@@ -55,29 +50,7 @@ public class NGContext {
 		request.setContext( this );
 
 		// CHECKME: We only need an elementID if we're going to be rendering a component, so theoretically, this could be initialized lazily
-		_currentElementID = new NGElementID();
-
-		// FIXME: This is not exactly a beautiful way to check if we're handling a component request
-		// This code probably belongs in the NGComponentRequestHandler
-		// Hugi 2023-01-22
-		if( request.uri().startsWith( NGComponentRequestHandler.DEFAULT_PATH ) ) {
-			// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
-			final String componentPart = request.parsedURI().getString( 1 );
-
-			// The contextID and the elementID are separated by a period, so let's split on that.
-			final int firstPeriodIndex = componentPart.indexOf( '.' );
-
-			// The _originatingContextID is the first part of the request handler path. This tells us where the request is coming from.
-			_originatingContextID = componentPart.substring( 0, firstPeriodIndex );
-
-			// The sending element ID consists of everything after the first period.
-			_senderID = NGElementID.fromString( componentPart.substring( firstPeriodIndex + 1 ) );
-		}
-		else {
-			// These are just here to fulfill the final declaration of _originatingContextID and _senderID
-			_originatingContextID = null;
-			_senderID = null;
-		}
+		_elementID = new NGElementID();
 	}
 
 	/**
@@ -142,7 +115,7 @@ public class NGContext {
 	/**
 	 * @return ID of the element currently being rendered by the context.
 	 *
-	 * FIXME: Take note of concurrency issues for lazy initialization // Hugi 2023-01-21
+	 * CHECKME: Take note of concurrency issues for lazy initialization // Hugi 2023-01-21
 	 */
 	public String contextID() {
 		if( _contextID == null ) {
@@ -153,24 +126,17 @@ public class NGContext {
 	}
 
 	/**
-	 * @return The ID of the "original context", i.e. the context from which the request that created this context was initiated
-	 */
-	public String _originatingContextID() {
-		return _originatingContextID;
-	}
-
-	/**
 	 * Resets the current elementID
 	 */
 	public void _resetElementID() {
-		_currentElementID = new NGElementID();
+		_elementID = new NGElementID();
 	}
 
 	/**
 	 * @return ID of the element currently being rendered by the context.
 	 */
 	public NGElementID elementID() {
-		return _currentElementID;
+		return _elementID;
 	}
 
 	/**
@@ -178,6 +144,13 @@ public class NGContext {
 	 */
 	public NGElementID senderID() {
 		return _senderID;
+	}
+
+	/**
+	 * Set the senderID
+	 */
+	public void _setSenderIDFromString( final String senderIDString ) {
+		_senderID = NGElementID.fromString( senderIDString );
 	}
 
 	/**
@@ -210,6 +183,6 @@ public class NGContext {
 
 	@Override
 	public String toString() {
-		return "NGContext [_request=" + _request + ", _component=" + _component + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _currentElementID + ", _originatingContextID=" + _originatingContextID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
+		return "NGContext [_request=" + _request + ", _component=" + _component + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _senderID=" + _senderID + ", _isInForm=" + _isInForm + "]";
 	}
 }

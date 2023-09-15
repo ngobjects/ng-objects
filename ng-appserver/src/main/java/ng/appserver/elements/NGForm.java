@@ -79,7 +79,7 @@ public class NGForm extends NGDynamicGroup {
 			// This is because the form might contain several submit buttons, in which case the actual action to invoke is the action of the button pressed.
 			// The actual button pressed will be identified by the button's name being present in the request's formValues. See NGSubmitButton.invokeAction() for implementation details.
 			// CHECKME: Having a bound action in a form which has a submit button, also with a bound action, might be an error condition // Hugi 2023-02-02
-			// FIXME: A nice feature might be if we could make the action bound to the form the default action to perform on form submission, if no submit button was pressed (for example, if the return button was pressed). That's an actual improvement on WO // Hugi 2023-04-15
+			// CHECKME: A nice feature might be if we could make the action bound to the form the default action to perform on form submission, if no submit button was pressed (for example, if the return button was pressed) // Hugi 2023-04-15
 			if( _actionAssociation != null ) {
 				return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 			}

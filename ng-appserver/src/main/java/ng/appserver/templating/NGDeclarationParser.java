@@ -163,7 +163,7 @@ public class NGDeclarationParser {
 			}
 
 			final Map<String, NGAssociation> associations = _associationsForDictionaryString( declarationHeader, declarationBody );
-			NGDeclaration declaration = NGDeclaration.create( tagName, type, associations );
+			final NGDeclaration declaration = new NGDeclaration( tagName, type, associations );
 			declarations.put( tagName, declaration );
 		}
 

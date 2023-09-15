@@ -54,9 +54,9 @@ public class NGRequest extends NGMessage {
 	private Map<String, List<String>> _cookieValues;
 
 	/**
-	 * FIXME: This is intended as a temporary placeholder. WIP.
+	 * Holds a newly created sessionID
 	 */
-	private String _sessionID;
+	private String _newlyCreatedSessionID;
 
 	/**
 	 * The request's session
@@ -103,7 +103,7 @@ public class NGRequest extends NGMessage {
 		final List<String> values = formValuesForKey( key );
 
 		if( values.isEmpty() ) {
-			return null; // FIXME: As usual, I'm not happy about returning nulls
+			return null;
 		}
 
 		// Fail if multiple form values are present for the same query parameter.
@@ -140,27 +140,20 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
-	 * FIXME: WIP
+	 * @return This request's sessionID. Null if no sessionID is present.
 	 */
 	public String _sessionID() {
-		if( _sessionID != null ) {
-			return _sessionID;
+		if( _newlyCreatedSessionID != null ) {
+			return _newlyCreatedSessionID;
 		}
 
-		return _extractSessionID();
-	}
-
-	/**
-	 * FIXME: WIP
-	 */
-	public void _setSessionID( String sessionID ) {
-		_sessionID = sessionID;
+		return _sessionIDFromCookie();
 	}
 
 	/**
 	 * @return An ID for an existing sessionID, if one was submitted by the client, null if the client submitted no session ID
 	 */
-	public String _extractSessionID() {
+	private String _sessionIDFromCookie() {
 		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
 	}
 
@@ -170,19 +163,19 @@ public class NGRequest extends NGMessage {
 	public NGSession session() {
 		if( _session == null ) {
 			// OK, we have no session. First, let's see if the request has some session information, so we can restore an existing session
-			if( _extractSessionID() != null ) {
-				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _extractSessionID() );
+			if( _sessionIDFromCookie() != null ) {
+				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _sessionIDFromCookie() );
 
 				// No session found, we enter the emergency phase
 				// FIXME: We need to handle the case of a non-existent session better // Hugi 2023-01-10
 				if( _session == null ) {
-					logger.warn( "No session found with id '{}'", _extractSessionID() );
+					logger.warn( "No session found with id '{}'", _sessionIDFromCookie() );
 					throw new NGSessionRestorationException( this );
 				}
 			}
 			else {
 				_session = NGApplication.application().createSessionForRequest( this );
-				_setSessionID( _session.sessionID() );
+				_newlyCreatedSessionID = _session.sessionID();
 				NGApplication.application().sessionStore().storeSession( _session );
 			}
 		}
@@ -283,6 +276,6 @@ public class NGRequest extends NGMessage {
 
 	@Override
 	public String toString() {
-		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _parsedURI=" + _parsedURI + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _sessionID=" + _sessionID + ", _session=" + _session + "]";
+		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _parsedURI=" + _parsedURI + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _sessionID=" + _newlyCreatedSessionID + ", _session=" + _session + "]";
 	}
 }

@@ -105,8 +105,6 @@ public abstract class NGMessage {
 
 	/**
 	 * Sets the headers from the given map.
-	 *
-	 * FIXME: We're currently copying the map entries to a TreeMap to get case insensitivity. This is not the most efficient implementation // Hugi 2022-01-03
 	 */
 	public void setHeaders( final Map<String, List<String>> newHeaders ) {
 		_headers = _createEmptyHeadersMap();
@@ -162,8 +160,6 @@ public abstract class NGMessage {
 
 	/**
 	 * @return The length of the message's data content
-	 *
-	 * FIXME: Not sure if we want this here. Currently only for performance while setting the content-length header. // Hugi 2023-02-17
 	 */
 	public long contentBytesLength() {
 		return _contentBytes.size();
@@ -171,8 +167,6 @@ public abstract class NGMessage {
 
 	/**
 	 * @return The response's content stream
-	 *
-	 * FIXME: Not sure I want this as public API, but it prevents the adaptor from having to do a copy of the stream's byte array // Hugi 2023-02-17
 	 */
 	public ByteArrayOutputStream contentByteStream() {
 		return _contentBytes;

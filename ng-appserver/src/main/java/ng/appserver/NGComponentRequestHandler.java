@@ -39,6 +39,19 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			throw new IllegalStateException( "The request's context is null. This should never happen" );
 		}
 
+		// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
+		final String componentPart = request.parsedURI().getString( 1 );
+
+		// The contextID and the elementID are separated by a period, so let's split on that.
+		final int firstPeriodIndex = componentPart.indexOf( '.' );
+
+		// The _originatingContextID is the first part of the request handler path. This tells us where the request is coming from.
+		final String originatingContextID = componentPart.substring( 0, firstPeriodIndex );
+
+		// The sending element ID consists of everything after the first period.
+		final String senderIDString = componentPart.substring( firstPeriodIndex + 1 );
+		context._setSenderIDFromString( senderIDString );
+
 		// We need to use the session to gain access to the page cache
 		final NGSession session = context.session();
 
@@ -48,15 +61,15 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 
 		// Now let's try to restore the page from the cache, using the contextID provided by the URL
-		final NGComponent originalPage = session.restorePageFromCache( context._originatingContextID() );
+		final NGComponent originalPage = session.restorePageFromCache( originatingContextID );
 
 		// No page found in cache. If this happens, the page has probably been pushed out of the session's page cache.
 		if( originalPage == null ) {
-			throw new NGPageRestorationException( request, "No page found in the page cache for contextID %s. The page has probably been pushed out of the session's page cache".formatted( context._originatingContextID() ) );
+			throw new NGPageRestorationException( request, "No page found in the page cache for contextID %s. The page has probably been pushed out of the session's page cache".formatted( originatingContextID ) );
 		}
 
 		// Since we're working with the page we can safely assume it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
-		session.retainPageWithContextIDInCache( context._originatingContextID() );
+		session.retainPageWithContextIDInCache( originatingContextID );
 
 		logger.debug( "Page restored from cache is: " + originalPage.getClass() );
 
@@ -65,14 +78,14 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		context.setComponent( originalPage );
 		context.page().awakeInContext( request.context() );
 
-		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", context._originatingContextID(), originalPage );
+		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", originatingContextID, originalPage );
 
 		// We only perform the takeValuesFromRequest phase if there are actual form values to read
 		if( !request.formValues().isEmpty() ) {
 			originalPage.takeValuesFromRequest( request, context );
 		}
 
-		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), context._originatingContextID(), originalPage );
+		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), originatingContextID, originalPage );
 
 		// We now invoke the action on the original page instance
 		final NGActionResults actionInvocationResults = originalPage.invokeAction( request, context );

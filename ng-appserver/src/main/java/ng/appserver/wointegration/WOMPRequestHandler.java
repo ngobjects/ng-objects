@@ -24,7 +24,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 	public static final String KEY = "womp";
 
 	/**
-	 * FIXME: Still just checking for substrings here. We should be properly deserializing the request.
+	 * FIXME: Currently just checking for substrings in the requests's XML content. We should be properly deserializing.
 	 */
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
@@ -37,11 +37,16 @@ public class WOMPRequestHandler extends NGRequestHandler {
 			return statistics();
 		}
 
-		logger.info( "Unknown admin request" );
+		if( request.contentString().contains( "REFUSE" ) ) {
+			throw new IllegalArgumentException( "REFUSE operation is currently not supported" );
+		}
 
-		return new NGResponse();
+		throw new IllegalArgumentException( "Unknown admin request: " + request + " content: " + request.contentString() );
 	}
 
+	/**
+	 * FIXME: We're just returning a hardcoded response at the moment. We'll have to consider if we even want to collect these statistics. A job for JFR perhaps.
+	 */
 	private NGResponse statistics() {
 		logger.info( "Returning a statistics response. Those are weird..." );
 
@@ -50,12 +55,19 @@ public class WOMPRequestHandler extends NGRequestHandler {
 		return new NGResponse( b, 200 );
 	}
 
+	/**
+	 * Terminates the application by request from wotaskd and returns a success response
+	 */
 	private static NGResponse terminate() {
 		logger.info( "Terminating application by request from wotaskd..." );
+
 		logger.info( "Sending willStop..." );
 		NGDefaultLifeBeatThread._lifebeatThread.sendMessage( NGDefaultLifeBeatThread._lifebeatThread._messageGenerator._willStop );
 		logger.info( "Sent willstop." );
 
+		// We perform the shutdown in a thread that executes after we've returned the response to the client.
+		// This ensures the application has the opportunity to submit a response to wotaskd before shutting down.
+		// Not that pretty but does the job.
 		new Thread( () -> {
 			try {
 				Thread.sleep( 1000 );

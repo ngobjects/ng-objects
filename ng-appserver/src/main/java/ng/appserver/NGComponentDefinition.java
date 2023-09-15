@@ -67,8 +67,6 @@ public class NGComponentDefinition {
 
 	/**
 	 * @return The cached component with the given name
-	 *
-	 * FIXME: Temp caching implementation
 	 */
 	private static NGComponentDefinition _cachedComponentDefinition( final String componentName ) {
 		Objects.requireNonNull( componentName );
@@ -158,7 +156,7 @@ public class NGComponentDefinition {
 	/**
 	 * @return A new component of the given class in the given context
 	 *
-	 * FIXME: In the case of stateless components, we are going to want to share an already cached instance // Hugi 2022-10-19
+	 * CHECKME: In the case of stateless components, we are going to want to share an already cached instance // Hugi 2022-10-19
 	 */
 	public NGComponent componentInstanceInContext( final NGContext context ) {
 		Objects.requireNonNull( context );
@@ -214,6 +212,7 @@ public class NGComponentDefinition {
 			}
 
 			// If no html template string has been loaded, no template exists.
+			// CHECKME: We might want to fail here since a non-existent template at load time is almost definitely an error // Hugi 2023-08-27
 			if( htmlTemplateStringOptional.isEmpty() ) {
 				logger.warn( "Component template '%s' not found".formatted( name() ) );
 				return NO_ELEMENT;
@@ -229,14 +228,14 @@ public class NGComponentDefinition {
 	/**
 	 * @return true if this component does not have it's own class representation
 	 */
-	public boolean isClassless() {
+	private boolean isClassless() {
 		return _componentClass == NGComponent.class;
 	}
 
 	/**
 	 * @return true if this component has not loaded template
 	 */
-	public boolean hasTemplate() {
+	private boolean hasTemplate() {
 		return !(template() instanceof NoElement);
 	}
 

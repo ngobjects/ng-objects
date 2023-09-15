@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import ng.appserver.NGProperties;
 
 /**
- * FIXME: Created as a temporary holder class for the LifeBeatThread, just to get it out of NGApplication // Hugi 2022-04-18
+ * Created as a temporary holder class for the LifeBeatThread, just to get it out of NGApplication // Hugi 2022-04-18
  */
 
 public class NGDefaultLifeBeatThread {

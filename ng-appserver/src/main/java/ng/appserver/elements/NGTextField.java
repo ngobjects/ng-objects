@@ -68,7 +68,7 @@ public class NGTextField extends NGDynamicElement {
 					throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( valuesFromRequest.size(), name, valuesFromRequest ) );
 				}
 
-				Object value = null; // FIXME: I'm not totally sure about this. Passing in null to anything isn't nice, but it's in line with current WO behaviour so...
+				Object value = null; // We're sticking with null as the default for an empty string to align with WO behaviour. This might have to be revisited in the future.
 
 				final String stringValueFromRequest = valuesFromRequest.get( 0 );
 
@@ -126,7 +126,7 @@ public class NGTextField extends NGDynamicElement {
 		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
 		if( disabled( context ) ) {
-			// FIXME: 'disabled' is a "boolean attribute" and doesn't really need a value. We need a nice way to generate those // Hugi 2023-03-11
+			// CHECKME: 'disabled' is a "boolean attribute" and doesn't really need a value. We need a nice way to generate those // Hugi 2023-03-11
 			attributes.put( "disabled", "" );
 		}
 

@@ -9,13 +9,14 @@ import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Utilities for reading resources
+ *
+ * FIXME: Consumers should really never be going through this class directly. Resource providers should be registered with NGResourceManager and resources then loaded from there // Hugi 2023-07-08
  */
 
 public class NGResourceLoader {
@@ -90,7 +91,6 @@ public class NGResourceLoader {
 		}
 
 		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath );
-
 	}
 
 	/**
@@ -145,24 +145,12 @@ public class NGResourceLoader {
 				throw new UncheckedIOException( ioException );
 			}
 
-			// If we didn't find the resource, warn the user
 			if( resourceURL == null ) {
-				// FIXME: This is probably not a WARN-sitation. We're polluting the logs // Hugi 2023-02-02
-				// FIXME: Changed to .debug level. We're going to have to allow the user to handle missing resources in some way (or notify about it) // Hugi 2023-03-30
-				logger.debug( "Unable to locate resource {}", resourcePath );
 				return Optional.empty();
 			}
 
 			try {
-				final InputStream resourceAsStream = resourceURL.openStream();
-
-				// FIXME: I don't see this happening, but better check for it and warn about it. Find out of openStream() can actually return null // Hugi 2023-01-30
-				if( resourceAsStream == null ) {
-					logger.warn( "Received null input stream from {}", resourcePath );
-					return Optional.empty();
-				}
-
-				return Optional.of( resourceAsStream );
+				return Optional.of( resourceURL.openStream() );
 			}
 			catch( final IOException ioException ) {
 				throw new UncheckedIOException( ioException );
@@ -207,27 +195,6 @@ public class NGResourceLoader {
 			}
 			catch( IOException e1 ) {
 				throw new RuntimeException( e1 );
-			}
-		}
-	}
-
-	/**
-	 * FIXME: Work in progress on providing a wrapper class for resources // Hugi
-	 *
-	 * new NGResource( resourceURL::openStream, "filename.png", "image/jpeg", 5456l );
-	 */
-	public record NGResource(
-			Callable<InputStream> inputStreamSupplier,
-			String filename,
-			String mimeType,
-			Long length ) {
-
-		public byte[] bytes() {
-			try {
-				return inputStreamSupplier().call().readAllBytes();
-			}
-			catch( Exception e ) {
-				throw new RuntimeException( e );
 			}
 		}
 	}

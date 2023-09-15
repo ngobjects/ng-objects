@@ -72,9 +72,15 @@ public class NGRepetition extends NGDynamicGroup {
 
 		final List<?> list = list( context );
 
-		final int count = list.size();
+		// Note: You'd think it would be a good idea to cache the list size, right?
+		//
+		// final int count = list.size(); <-- don't do this
+		//
+		// No. If the invoked action modifies the list, for example by removing an item
+		// "count" becomes obsolete and we might get an OutOfBoundsException.
+		// This is just a warning for future coders.
 
-		for( int i = 0; i < count && actionResults == null; ++i ) {
+		for( int i = 0; i < list.size() && actionResults == null; ++i ) {
 			context.elementID().increment();
 			final Object object = list.get( i );
 			_itemAssociation.setValue( object, context.component() );

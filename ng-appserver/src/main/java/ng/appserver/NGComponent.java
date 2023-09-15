@@ -104,17 +104,19 @@ public class NGComponent implements NGElement, NGActionResults {
 	 * Iterates through all the component's bindings, pulls values from the parent component and sets them using KVC
 	 */
 	public void pullBindingValuesFromParent() {
-		if( synchronizesVariablesWithBindings() ) {
-			for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
-				final String bindingName = binding.getKey();
-				final NGAssociation association = binding.getValue();
-				NGKeyValueCoding.DefaultImplementation.takeValueForKey( this, association.valueInComponent( parent() ), bindingName );
+		if( parent() != null ) {
+			if( synchronizesVariablesWithBindings() ) {
+				for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
+					final String bindingName = binding.getKey();
+					final NGAssociation association = binding.getValue();
+					NGKeyValueCoding.DefaultImplementation.takeValueForKey( this, association.valueInComponent( parent() ), bindingName );
+				}
 			}
 		}
 	}
 
 	public void pushBindingValuesToParent() {
-		if( _associations != null ) { // FIXME: I hate that associations can be null. Needs to be fixed in the template parser // Hugi 2023-03-11
+		if( parent() != null ) {
 			if( synchronizesVariablesWithBindings() ) {
 				for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
 					final String bindingName = binding.getKey();
@@ -164,8 +166,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	public Object valueForBinding( String bindingName ) {
 
-		// FIXME: Remove this null check. We have to look into it WRT Hafnium's nullpointer occurring in USViewPage // Hugi 2023-03-26
-		if( _associations == null ) {
+		if( parent() == null ) {
 			return null;
 		}
 
@@ -173,6 +174,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		final NGAssociation association = _associations.get( bindingName );
 
 		// A null association means it's not bound, so we're going to return null
+		// CHECKME: Just returning null for an unbound binding isn't exactly nice. Should we look into failure modes here? // Hugi 2023-07-15
 		if( association == null ) {
 			return null;
 		}
@@ -185,42 +187,33 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		final NGAssociation association = _associations.get( bindingName );
 
-		// FIXME: Should we throw if the binding is not bound here? Obviously, an explicit operation has failed // Hugi 2023-03-12
+		// CHECKME: Should we throw if the binding is not bound here? After all, an explicit operation has failed and should not do so silently // Hugi 2023-03-12
 		if( association != null ) {
 			association.setValue( value, parent() );
 		}
 	}
 
+	/**
+	 * @return The component's parent component in it's current context
+	 */
 	public NGComponent parent() {
 		return _parent;
 	}
 
 	/**
-	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 * CHECKME: Kind of feel like this should be private, since it's something only the framework does
 	 */
-	public void setParent( final NGComponent parent ) {
+	public void setParent( final NGComponent parent, final Map<String, NGAssociation> associations, final NGElement contentElement ) {
 		_parent = parent;
-	}
-
-	/**
-	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
-	 */
-	public void setAssociations( final Map<String, NGAssociation> associations ) {
 		_associations = associations;
+		_contentElement = contentElement;
 	}
 
 	/**
-	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
+	 * The component's contained content in it's current context
 	 */
 	public NGElement contentElement() {
 		return _contentElement;
-	}
-
-	/**
-	 * FIXME: I feel this should be private, since it's something only the framework should do (during the appendToResponse phase)
-	 */
-	public void setContentElement( final NGElement contentElement ) {
-		_contentElement = contentElement;
 	}
 
 	@Override
@@ -279,7 +272,8 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * Sets the component definition for this component instance. See comment on variable, regarding if this method should be private.
+	 * Sets the component definition for this component instance.
+	 * CHECKME: See comment on variable, regarding if this method should be private // Hugi 2023-07-15
 	 */
 	public void _setComponentDefinition( final NGComponentDefinition componentDefinition ) {
 		Objects.requireNonNull( componentDefinition );

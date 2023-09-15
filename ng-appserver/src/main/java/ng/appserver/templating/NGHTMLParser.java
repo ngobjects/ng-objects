@@ -182,7 +182,7 @@ public class NGHTMLParser {
 	/**
 	 * This method is invoked to parse dynamic bindings in standard tags.
 	 *
-	 * FIXME: In the original Wonder version, this would catch any exception that happened and return the original token.
+	 * CHECKME: In the original Wonder version, this would catch any exception that happened and return the original token.
 	 * I think we should rather try to fix the exceptions as they occur (that is, if we decide to actually support this feature)
 	 *
 	 * @return A rewritten token if it has an inline binding or a closing tag, if it belongs to a rewritten token
@@ -306,7 +306,7 @@ public class NGHTMLParser {
 	/**
 	 * Given a position in the template, tells us what line number it is.
 	 *
-	 * FIXME: This is currently not used, but I'm leaving the method in for future use, since I really want this functionality // Hugi 2022-07-29
+	 * Method is currently not used, but I'm leaving the method in for future use, since I really want this functionality // Hugi 2022-07-29
 	 */
 	private int lineNumber( int indexInTemplate ) {
 		String[] parts = _unparsedTemplate.split( "\n" );
@@ -329,8 +329,8 @@ public class NGHTMLParser {
 
 	/**
 	 * Indicates that we want to parse the attributes of "standard tags", i.e. non dynamic tags for dynamic bindings
-	 * 
-	 * FIXME: This isn't really a feature I want to support, but I'm keeping it around for a little while // Hugi 2022-10-13
+	 *
+	 * CHECKME: This isn't really a feature I want to support, but I'm keeping it around for a little while // Hugi 2022-10-13
 	 */
 	private static final boolean _parseStandardTags() {
 		return false;

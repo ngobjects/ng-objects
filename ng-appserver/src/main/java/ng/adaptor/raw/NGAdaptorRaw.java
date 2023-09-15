@@ -41,7 +41,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 
 	@Override
 	public void start( NGApplication application ) {
-		// FIXME: Properties should be loaded from NGProperties eventually, put here as a placeholder for now... // Hugi 2021-12-29
+		// CHECKME: Properties should be loaded from NGProperties // Hugi 2021-12-29
 		final int port = 1200;
 		final int workerThreadCount = 4;
 
@@ -62,7 +62,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 					start( application );
 				}
 				else {
-					// FIXME: Handle this a bit more gracefully perhaps? // Hugi 2021-11-20
+					// CHECKME: Handle a bit more gracefully // Hugi 2021-11-20
 					e.printStackTrace();
 					System.exit( -1 );
 				}
@@ -89,8 +89,6 @@ public class NGAdaptorRaw extends NGAdaptor {
 				final NGResponse response = _application.dispatchRequest( request );
 
 				writeResponseToStream( response, _clientSocket.getOutputStream() );
-
-				// Note that closing the socket also closes it's inputstream and outputstream
 				_clientSocket.close();
 			}
 			catch( final IOException e ) {
@@ -99,16 +97,13 @@ public class NGAdaptorRaw extends NGAdaptor {
 		}
 	}
 
-	/**
-	 * FIXME: We're currently writing directly to the stream. Some sort of buffered writing would probably be more appropriate
-	 */
 	private static void writeResponseToStream( final NGResponse response, OutputStream stream ) {
 		Objects.requireNonNull( response );
 		Objects.requireNonNull( stream );
 
 		try {
 			stream = new BufferedOutputStream( stream, 32000 );
-			write( stream, response.httpVersion() + " " + response.status() /* + " OK" */ ); // FIXME: We might want to consider a reason phrase
+			write( stream, response.httpVersion() + " " + response.status() /* + " OK" */ ); // CHECKME: We might want to consider a reason phrase
 			write( stream, CRLF );
 
 			for( final Entry<String, List<String>> entry : response.headers().entrySet() ) {
@@ -148,8 +143,8 @@ public class NGAdaptorRaw extends NGAdaptor {
 		Objects.requireNonNull( stream );
 
 		try {
-			// FIXME: We should not be using a BufferedReader. Those *suck*
-			// FIXME: This hardcoded encoding is really hardcoded, isn't it?
+			// CHECKME: We should not be using a BufferedReader
+			// CHECKME: This hardcoded encoding is really hardcoded, isn't it?
 			final BufferedReader in = new BufferedReader( new InputStreamReader( stream, StandardCharsets.UTF_8 ) );
 
 			String method = null;
@@ -174,12 +169,9 @@ public class NGAdaptorRaw extends NGAdaptor {
 				else {
 					final int colonIndex = line.indexOf( ":" );
 
-					// FIXME: Handle multiple same-name headers
-					// FIXME: Handle multiple header values
+					// CHECKME: Handle multiple same-name headers
 					if( colonIndex > -1 ) {
-						String headerName = line.substring( 0, colonIndex );
-						headerName = headerName.toLowerCase(); // FIXME: We want headers to be case preserving. This is currently a hack.
-
+						final String headerName = line.substring( 0, colonIndex );
 						String headerValueString = line.substring( colonIndex + 1 ).trim();
 						headerValueString = headerValueString.trim(); // RFC 2616 tells us leading/trailing whitespace is insignificant.
 						headers.put( headerName, Arrays.asList( headerValueString ) );
@@ -196,8 +188,8 @@ public class NGAdaptorRaw extends NGAdaptor {
 				final int contentLength = Integer.parseInt( contentLengthHeaderValues.get( 0 ) );
 
 				if( contentLength > 0 ) {
-					// FIXME: Handle non-string request content
-					//			String bodyLine = in.readLine();
+					// CHECKME: Handle non-string request content
+					// String bodyLine = in.readLine();
 					final char[] contentBuffer = new char[contentLength];
 					in.read( contentBuffer, 0, contentLength );
 
@@ -209,7 +201,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 				}
 			}
 			else {
-				logger.debug( "I didn't find a content-length header, so I'm not parsing any content. Just so you know it" ); // FIXME: We're going to want to look into this // Hugi 2022-06-04
+				logger.debug( "I didn't find a content-length header, so I'm not parsing any content. Just so you know it" ); // CHECKME: We're going to want to look into this // Hugi 2022-06-04
 				content = new byte[0];
 			}
 

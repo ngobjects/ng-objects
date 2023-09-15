@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Control center</title>
+		<meta charset="utf-8">
+		<style>
+			:root {
+				--ng-table-color: rgb(200,200,200);
+			}
+
+			body {
+				font-family: sans-serif;
+				font-size: 13px;
+			}
+
+			table {
+				border: 1px solid var(--ng-table-color);
+				border-width: 1px 0px 0px 1px;
+				border-spacing: 0px;
+				empty-cells: show;
+			}
+			
+			td,th {
+				border: 1px solid var(--ng-table-color);
+				border-width: 0px 1px 1px 0px;
+				padding: 4px;
+				vertical-align: top;
+			}
+		</style>
+	</head>
+	<body>
+		<wo:content />
+	</body>
+</html>
