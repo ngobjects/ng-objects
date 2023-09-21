@@ -65,7 +65,7 @@ public class NGElementUtils {
 		addClass( NGImage.class, "img" );
 		addClass( NGHyperlink.class, "link" );
 		addClass( NGJavaScript.class, "script" );
-		addClass( NGPopUpButton.class, "popup" );
+		addClass( NGPopUpButton.class, "popUpButton" ); // CHECKME: We might want to consider just naming this "popup" 
 		addClass( NGRepetition.class, "repetition" );
 		addClass( NGSubmitButton.class, "submit" );
 		addClass( NGStylesheet.class, "stylesheet" );
