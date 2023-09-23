@@ -28,6 +28,7 @@ import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGSubmitButton;
 import ng.appserver.elements.NGSwitchComponent;
+import ng.appserver.elements.NGText;
 import ng.appserver.elements.NGTextField;
 import x.junk.TestComponent;
 
@@ -65,11 +66,12 @@ public class NGElementUtils {
 		addClass( NGImage.class, "img" );
 		addClass( NGHyperlink.class, "link" );
 		addClass( NGJavaScript.class, "script" );
-		addClass( NGPopUpButton.class, "popUpButton" ); // CHECKME: We might want to consider just naming this "popup" 
+		addClass( NGPopUpButton.class, "popUpButton" ); // CHECKME: We might want to consider just naming this "popup"
 		addClass( NGRepetition.class, "repetition" );
 		addClass( NGSubmitButton.class, "submit" );
 		addClass( NGStylesheet.class, "stylesheet" );
 		addClass( NGSwitchComponent.class, "switch" );
+		addClass( NGText.class, "text" );
 		addClass( NGTextField.class, "textfield" );
 		addClass( TestComponent.class );
 	}
