@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGElement;
 import ng.appserver.elements.NGActionURL;
+import ng.appserver.elements.NGBrowser;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGForm;
@@ -57,6 +58,7 @@ public class NGElementUtils {
 
 	static {
 		addClass( NGActionURL.class, "actionURL" );
+		addClass( NGBrowser.class, "browser" );
 		addClass( NGComponentContent.class, "content" );
 		addClass( NGConditional.class, "if" );
 		addClass( NGForm.class, "form" );
