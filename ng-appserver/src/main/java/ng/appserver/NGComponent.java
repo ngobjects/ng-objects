@@ -162,6 +162,13 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
+	 * @return true if the named binding is bound
+	 */
+	public boolean hasBinding( final String bindingName ) {
+		return _associations.get( bindingName ) != null;
+	}
+
+	/**
 	 * @return The value of the named binding/association.
 	 */
 	public Object valueForBinding( String bindingName ) {

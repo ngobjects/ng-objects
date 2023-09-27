@@ -16,6 +16,7 @@ import ng.appserver.NGElement;
 import ng.appserver.elements.AjaxUpdateContainer;
 import ng.appserver.elements.AjaxUpdateLink;
 import ng.appserver.elements.NGActionURL;
+import ng.appserver.elements.NGBrowser;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGForm;
@@ -61,6 +62,7 @@ public class NGElementUtils {
 		addClass( NGActionURL.class, "actionURL" );
 		addClass( AjaxUpdateContainer.class, "auc" );
 		addClass( AjaxUpdateLink.class, "aul" );
+		addClass( NGBrowser.class, "browser" );
 		addClass( NGComponentContent.class, "content" );
 		addClass( NGConditional.class, "if" );
 		addClass( NGForm.class, "form" );
