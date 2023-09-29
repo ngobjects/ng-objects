@@ -192,12 +192,11 @@ public interface NGKeyValueCoding {
 	 * FIXME: The list of methods/field names to lookup is not complete // Hugi 2022-12-27
 	 */
 	private static KVCWriteBinding writeBindingForKey( final Object object, final String key ) {
-		Method method;
 
 		final String keyCapitalized = key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
 
-		// Now we try the old bean-style getMethod()
-		method = writeMethod( object, "set" + keyCapitalized );
+		// Look for the setKey() method
+		Method method = writeMethod( object, "set" + keyCapitalized );
 
 		if( method != null ) {
 			// FIXME: This is as of yet a very, very incomplete implementation of the numeric value conversion. Finish. // Hugi 2023-05-01
@@ -208,10 +207,8 @@ public interface NGKeyValueCoding {
 			return new MethodWriteBinding( method );
 		}
 
-		Field field;
-
 		// First we try for just the key ("key")
-		field = field( object, key );
+		Field field = field( object, key );
 
 		if( field != null ) {
 			// FIXME: This is as of yet a very, very incomplete implementation of the numeric value conversion. Finish. // Hugi 2023-05-01
