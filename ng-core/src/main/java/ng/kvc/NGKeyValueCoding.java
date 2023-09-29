@@ -423,7 +423,8 @@ public interface NGKeyValueCoding {
 
 		@Override
 		public void setValueInObject( Object value, Object object ) {
-			super.setValueInObject( convertValueToFieldType( value ), object );
+			final Object convertedValue = convertValueToFieldType( value );
+			super.setValueInObject( convertedValue, object );
 		}
 
 		private Object convertValueToFieldType( Object value ) {
@@ -451,6 +452,30 @@ public interface NGKeyValueCoding {
 			catch( NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e ) {
 				throw new RuntimeException( e );
 			}
+		}
+	}
+
+	public static class NumericMethodReadBinding extends MethodReadBinding {
+
+		public NumericMethodReadBinding( Method method ) {
+			super( method );
+		}
+
+		@Override
+		public Object valueInObject( Object object ) {
+			return super.valueInObject( object );
+		}
+	}
+
+	public static class NumericMethodWriteBinding extends MethodWriteBinding {
+
+		public NumericMethodWriteBinding( Method method ) {
+			super( method );
+		}
+
+		@Override
+		public void setValueInObject( Object value, Object object ) {
+			super.setValueInObject( value, object );
 		}
 	}
 
