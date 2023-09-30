@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGAssociation;
+import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
@@ -38,6 +39,10 @@ public class NGText extends NGDynamicElement {
 		_additionalAssociations = new HashMap<>( associations );
 		_nameAssociation = _additionalAssociations.remove( "name" );
 		_valueAssociation = _additionalAssociations.remove( "value" );
+
+		if( _valueAssociation == null ) {
+			throw new NGBindingConfigurationException( "[value] binding is required" );
+		}
 	}
 
 	@Override
