@@ -39,12 +39,12 @@ import x.junk.TestComponent;
 
 public class NGElementUtils {
 
-	public static final Logger logger = LoggerFactory.getLogger( NGElementUtils.class );
+	private static final Logger logger = LoggerFactory.getLogger( NGElementUtils.class );
 
 	/**
 	 * Packages that we look for component classes inside
 	 */
-	public static List<String> _elementPackages = new ArrayList<>();
+	private static List<String> _elementPackages = new ArrayList<>();
 
 	/**
 	 * Classes registered to be searchable by classWithName()
