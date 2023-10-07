@@ -1,7 +1,5 @@
 package ng.appserver.templating;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +9,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGElement;
 import ng.appserver.elements.NGActionURL;
 import ng.appserver.elements.NGBrowser;
@@ -144,21 +141,5 @@ public class NGElementUtils {
 	 */
 	public static Map<String, String> tagShortcutMap() {
 		return _shortcutToClassMap;
-	}
-
-	/**
-	 * @return A new NGDynamicElement constructed using the given parameters
-	 */
-	public static <E extends NGElement> E createElement( final Class<E> elementClass, final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		final Class<?>[] parameterTypes = { String.class, Map.class, NGElement.class };
-		final Object[] parameters = { name, associations, contentTemplate };
-
-		try {
-			final Constructor<E> constructor = elementClass.getDeclaredConstructor( parameterTypes );
-			return constructor.newInstance( parameters );
-		}
-		catch( NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
-			throw new RuntimeException( e );
-		}
 	}
 }
