@@ -43,7 +43,7 @@ public class NGSession {
 	private boolean _manuallyTerminated = false;
 
 	/**
-	 * Holds our context ID
+	 * ID of the context last rendered by this session
 	 */
 	private int currentContextID = 0;
 
