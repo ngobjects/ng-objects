@@ -221,11 +221,11 @@ public class NGApplication {
 
 	/**
 	 * @return The fully qualified class name of the http adaptor
+	 *
+	 * CHECKME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
 	 */
 	public String adaptorClassName() {
 		return "ng.adaptor.jetty.NGAdaptorJetty";
-		// FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
-		// return ng.adaptor.raw.NGAdaptorRaw.class.getName();
 	}
 
 	/**
