@@ -41,7 +41,7 @@ public class NGElementUtils {
 	/**
 	 * Packages that we look for component classes inside
 	 */
-	private static List<String> _elementPackages = new ArrayList<>();
+	private static List<String> _packages = new ArrayList<>();
 
 	/**
 	 * Classes registered to be searchable by classWithName()
@@ -87,7 +87,7 @@ public class NGElementUtils {
 	}
 
 	public static void addPackage( final String packageName ) {
-		_elementPackages.add( packageName );
+		_packages.add( packageName );
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class NGElementUtils {
 		}
 		catch( ClassNotFoundException e ) {}
 
-		for( String packageName : _elementPackages ) {
+		for( String packageName : _packages ) {
 			try {
 				final String className = packageName + "." + classNameToSearchFor;
 				return Class.forName( className );
