@@ -61,6 +61,14 @@ public class NGRepetition extends NGDynamicGroup {
 			super.takeValuesFromRequest( request, context );
 		}
 
+		if( _itemAssociation != null ) {
+			_itemAssociation.setValue( null, context.component() );
+		}
+
+		if( _indexAssociation != null ) {
+			_indexAssociation.setValue( null, context.component() );
+		}
+
 		context.elementID().removeBranch();
 	}
 
@@ -85,6 +93,14 @@ public class NGRepetition extends NGDynamicGroup {
 			final Object object = list.get( i );
 			_itemAssociation.setValue( object, context.component() );
 			actionResults = super.invokeAction( request, context );
+		}
+
+		if( _itemAssociation != null ) {
+			_itemAssociation.setValue( null, context.component() );
+		}
+
+		if( _indexAssociation != null ) {
+			_indexAssociation.setValue( null, context.component() );
 		}
 
 		context.elementID().removeBranch();
@@ -130,6 +146,14 @@ public class NGRepetition extends NGDynamicGroup {
 					appendChildrenToResponse( response, context );
 				}
 			}
+		}
+
+		if( _itemAssociation != null ) {
+			_itemAssociation.setValue( null, context.component() );
+		}
+
+		if( _indexAssociation != null ) {
+			_indexAssociation.setValue( null, context.component() );
 		}
 
 		context.elementID().removeBranch();
