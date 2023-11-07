@@ -65,9 +65,10 @@ public class NGRepetition extends NGDynamicGroup {
 			_itemAssociation.setValue( null, context.component() );
 		}
 
-		if( _indexAssociation != null ) {
-			_indexAssociation.setValue( null, context.component() );
-		}
+		//		FIXME: This won't work for a non-nullable primitive type (int/double etc.)
+		//		if( _indexAssociation != null ) {
+		//			_indexAssociation.setValue( null, context.component() );
+		//		}
 
 		context.elementID().removeBranch();
 	}
@@ -99,9 +100,10 @@ public class NGRepetition extends NGDynamicGroup {
 			_itemAssociation.setValue( null, context.component() );
 		}
 
-		if( _indexAssociation != null ) {
-			_indexAssociation.setValue( null, context.component() );
-		}
+		//		FIXME: This won't work for a non-nullable primitive type (int/double etc.)
+		//		if( _indexAssociation != null ) {
+		//			_indexAssociation.setValue( null, context.component() );
+		//		}
 
 		context.elementID().removeBranch();
 
@@ -152,9 +154,10 @@ public class NGRepetition extends NGDynamicGroup {
 			_itemAssociation.setValue( null, context.component() );
 		}
 
-		if( _indexAssociation != null ) {
-			_indexAssociation.setValue( null, context.component() );
-		}
+		//		FIXME: This won't work for a non-nullable primitive type (int/double etc.)
+		//		if( _indexAssociation != null ) {
+		//			_indexAssociation.setValue( null, context.component() );
+		//		}
 
 		context.elementID().removeBranch();
 	}
