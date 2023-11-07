@@ -347,7 +347,6 @@ public class NGTemplateParser {
 			final String key = keyEnum.nextElement();
 			final NGAssociation association = declaration.associations().get( key );
 
-			// CHECKME: Replace with some yummy pattern matching once that's out of preview // Hugi 2022-10-10
 			if( association instanceof NGKeyValueAssociation ass ) {
 				sb.append( key + "=" + ass.keyPath() );
 			}

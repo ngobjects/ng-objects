@@ -128,12 +128,22 @@ public class NGPopUpButton extends NGDynamicElement {
 			// FIXME: Hacky way to get the currently selected item. We should be reusing logic from takeValuesFromRequest() here
 			final String indexValue = context.request().formValueForKey( name( context ) );
 
-			final boolean isSelected = indexValue != null && !indexValue.equals( NO_SELECTION_OPTION_VALUE ) && Integer.parseInt( indexValue ) == index;
+			boolean isSelected = false;
 
-			final String selectionString = isSelected ? " selected" : "";
+			if( indexValue != null && !indexValue.equals( NO_SELECTION_OPTION_VALUE ) && Integer.parseInt( indexValue ) == index ) {
+				isSelected = true;
+			}
+
+			if( _selectionAss != null ) {
+				if( object.equals( _selectionAss.valueInComponent( context.component() ) ) ) {
+					isSelected = true;
+				}
+			}
+
+			final String selectedMarker = isSelected ? " selected" : "";
 
 			// FIXME: We're currently always using the index as "value". We're going to want to allow the passing in of a custom value attribute through the value binding // Hugi 2023-05-01
-			response.appendContentString( "<option value=\"%s\"%s>%s</option>".formatted( index, selectionString, displayString ) );
+			response.appendContentString( "<option value=\"%s\"%s>%s</option>".formatted( index, selectedMarker, displayString ) );
 			index++;
 		}
 

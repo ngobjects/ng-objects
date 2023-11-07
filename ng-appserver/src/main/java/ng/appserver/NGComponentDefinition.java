@@ -18,7 +18,7 @@ import ng.appserver.templating.NGHTMLFormatException;
 import ng.appserver.templating.NGTemplateParser;
 
 /**
- * FIXME: We need to decide what parts of the component name/class name we're going to keep around // Hugi 2022-04-22
+ * Stores information about the structure of the component.
  */
 
 public class NGComponentDefinition {
@@ -43,8 +43,7 @@ public class NGComponentDefinition {
 	/**
 	 * The canonical name of the component definition.
 	 *
-	 * - In the case of class-based components, this will be the component's fully qualified class name
-	 * - In the case of classless component, this will be the template's filename (excluding the file's suffix)
+	 * This will never be the component's fully qualified class name (that information is available from componentClass()
 	 */
 	private final String _name;
 
@@ -146,8 +145,6 @@ public class NGComponentDefinition {
 
 	/**
 	 * @return The name of the component definition. For class-based component, this will correspond to the component class's simpleName
-	 *
-	 * FIXME: We still haven't defined what a component's name is. Is it a fully qualified class name? The component's short name? Are there namespaces? Use with care // Hugi 2023-02-09
 	 */
 	public String name() {
 		return _name;

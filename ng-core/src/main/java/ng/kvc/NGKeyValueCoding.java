@@ -192,22 +192,23 @@ public interface NGKeyValueCoding {
 	 * FIXME: The list of methods/field names to lookup is not complete // Hugi 2022-12-27
 	 */
 	private static KVCWriteBinding writeBindingForKey( final Object object, final String key ) {
-		Method method;
 
 		final String keyCapitalized = key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
 
-		// Now we try the old bean-style getMethod()
-		method = writeMethod( object, "set" + keyCapitalized );
+		// Look for the setKey() method
+		Method method = writeMethod( object, "set" + keyCapitalized );
 
 		if( method != null ) {
-			// FIXME: Here we need to create a numeric method binding, once we have that available // Hugi 2023-05-01
+			// FIXME: This is as of yet a very, very incomplete implementation of the numeric value conversion. Finish. // Hugi 2023-05-01
+			if( BigDecimal.class.isAssignableFrom( method.getParameterTypes()[0] ) ) {
+				return new NumericMethodWriteBinding( method );
+			}
+
 			return new MethodWriteBinding( method );
 		}
 
-		Field field;
-
 		// First we try for just the key ("key")
-		field = field( object, key );
+		Field field = field( object, key );
 
 		if( field != null ) {
 			// FIXME: This is as of yet a very, very incomplete implementation of the numeric value conversion. Finish. // Hugi 2023-05-01
@@ -354,7 +355,7 @@ public interface NGKeyValueCoding {
 
 	public static class MethodWriteBinding implements KVCWriteBinding {
 
-		private final Method _method;
+		protected final Method _method;
 
 		public MethodWriteBinding( Method method ) {
 			_method = method;
@@ -423,18 +424,17 @@ public interface NGKeyValueCoding {
 
 		@Override
 		public void setValueInObject( Object value, Object object ) {
-			super.setValueInObject( convertValueToFieldType( value ), object );
+			final Object convertedValue = convertValueToFieldType( value, _field.getType() );
+			super.setValueInObject( convertedValue, object );
 		}
 
-		private Object convertValueToFieldType( Object value ) {
+		public static Object convertValueToFieldType( Object value, Class<?> targetType ) {
 
 			if( value == null ) {
 				return null;
 			}
 
-			final Class<?> fieldType = _field.getType();
-
-			if( value.getClass() == fieldType ) {
+			if( value.getClass() == targetType ) {
 				// No need to perform any conversion if the value class is already correct
 				return value;
 			}
@@ -442,7 +442,7 @@ public interface NGKeyValueCoding {
 			try {
 				// We look for a method called valueOf (which all the numeric classes should have)
 				// FIXME: BigDecimal doesn't have a valueOf( String ) method so we're currently using the string constructors instead. Those constructors are deprecated though so will at some point stop working // Hugi 2023-05-01
-				final Constructor<?> valueCreationConstructor = fieldType.getConstructor( String.class );
+				final Constructor<?> valueCreationConstructor = targetType.getConstructor( String.class );
 
 				// FIXME: We're converting the value to a string before converting. Can't we do this in a more efficient manner? // Hugi 2023-05-01
 				// FIXME: We need to consider what to do about loss of scale (and other potential features of the numeric class in question)  // Hugi 2023-05-01
@@ -451,6 +451,32 @@ public interface NGKeyValueCoding {
 			catch( NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e ) {
 				throw new RuntimeException( e );
 			}
+		}
+	}
+
+	//		FIXME: Probably not needed?
+	//		public static class NumericMethodReadBinding extends MethodReadBinding {
+	//
+	//		public NumericMethodReadBinding( Method method ) {
+	//			super( method );
+	//		}
+	//
+	//		@Override
+	//		public Object valueInObject( Object object ) {
+	//			return super.valueInObject( object );
+	//		}
+	//	}
+
+	public static class NumericMethodWriteBinding extends MethodWriteBinding {
+
+		public NumericMethodWriteBinding( Method method ) {
+			super( method );
+		}
+
+		@Override
+		public void setValueInObject( Object value, Object object ) {
+			final Object converted = NumericFieldBinding.convertValueToFieldType( value, _method.getParameterTypes()[0] );
+			super.setValueInObject( converted, object );
 		}
 	}
 

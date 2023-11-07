@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -220,11 +221,11 @@ public class NGApplication {
 
 	/**
 	 * @return The fully qualified class name of the http adaptor
+	 *
+	 * CHECKME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
 	 */
 	public String adaptorClassName() {
 		return "ng.adaptor.jetty.NGAdaptorJetty";
-		// FIXME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
-		// return ng.adaptor.raw.NGAdaptorRaw.class.getName();
 	}
 
 	/**
@@ -636,7 +637,7 @@ public class NGApplication {
 
 		// First we check if this is a dynamic element
 		if( NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
-			return NGElementUtils.createElement( elementClass, name, associations, contentTemplate );
+			return createDynamicElementInstance( elementClass, name, associations, contentTemplate );
 		}
 
 		// If it's not an element, let's move on to creating a component reference instead
@@ -647,5 +648,23 @@ public class NGApplication {
 
 		// We should never end up here unless we got an incorrect/non-existent element name
 		throw new IllegalArgumentException( "I could not construct a dynamic element named '%s'".formatted( name ) );
+	}
+
+	/**
+	 * @return A new NGDynamicElement constructed using the given parameters
+	 *
+	 * CHECKME: Not sure this is the final home for this functionality. It's just a method shortcut to invoking the dynamic element's constructor via reflection.
+	 */
+	private static <E extends NGElement> E createDynamicElementInstance( final Class<E> elementClass, final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		final Class<?>[] parameterTypes = { String.class, Map.class, NGElement.class };
+		final Object[] parameters = { name, associations, contentTemplate };
+
+		try {
+			final Constructor<E> constructor = elementClass.getDeclaredConstructor( parameterTypes );
+			return constructor.newInstance( parameters );
+		}
+		catch( NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
+			throw new RuntimeException( e );
+		}
 	}
 }

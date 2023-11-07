@@ -1,7 +1,5 @@
 package ng.appserver.templating;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +9,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGElement;
 import ng.appserver.elements.AjaxUpdateContainer;
 import ng.appserver.elements.AjaxUpdateLink;
@@ -41,12 +38,12 @@ import x.junk.TestComponent;
 
 public class NGElementUtils {
 
-	public static final Logger logger = LoggerFactory.getLogger( NGElementUtils.class );
+	private static final Logger logger = LoggerFactory.getLogger( NGElementUtils.class );
 
 	/**
 	 * Packages that we look for component classes inside
 	 */
-	public static List<String> _elementPackages = new ArrayList<>();
+	private static List<String> _packages = new ArrayList<>();
 
 	/**
 	 * Classes registered to be searchable by classWithName()
@@ -94,7 +91,7 @@ public class NGElementUtils {
 	}
 
 	public static void addPackage( final String packageName ) {
-		_elementPackages.add( packageName );
+		_packages.add( packageName );
 	}
 
 	/**
@@ -118,7 +115,7 @@ public class NGElementUtils {
 		}
 		catch( ClassNotFoundException e ) {}
 
-		for( String packageName : _elementPackages ) {
+		for( String packageName : _packages ) {
 			try {
 				final String className = packageName + "." + classNameToSearchFor;
 				return Class.forName( className );
@@ -148,21 +145,5 @@ public class NGElementUtils {
 	 */
 	public static Map<String, String> tagShortcutMap() {
 		return _shortcutToClassMap;
-	}
-
-	/**
-	 * @return A new NGDynamicElement constructed using the given parameters
-	 */
-	public static <E extends NGElement> E createElement( final Class<E> elementClass, final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		final Class<?>[] parameterTypes = { String.class, Map.class, NGElement.class };
-		final Object[] parameters = { name, associations, contentTemplate };
-
-		try {
-			final Constructor<E> constructor = elementClass.getDeclaredConstructor( parameterTypes );
-			return constructor.newInstance( parameters );
-		}
-		catch( NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
-			throw new RuntimeException( e );
-		}
 	}
 }

@@ -53,9 +53,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * @return The component's name.
-	 *
-	 *  FIXME: We still haven't defined what a component's name is. Is it a fully qualified class name? The component's short name? Are there namespaces? Use with care // Hugi 2023-02-09
+	 * @return The component's name, as delivered by the component's definition
 	 */
 	public String name() {
 		return _componentDefinition.name();
@@ -272,7 +270,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		final NGElement template = _componentDefinition.template();
 
 		if( template == null ) {
-			throw new IllegalStateException( "The component " + name() + " is missing a template" );
+			throw new IllegalStateException( "The component %s has no template. You must either provide a component template file or override the component's template() method".formatted( name() ) );
 		}
 
 		return template;
