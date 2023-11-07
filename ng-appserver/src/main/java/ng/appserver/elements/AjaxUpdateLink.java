@@ -75,7 +75,7 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 
-		if( context.elementID().toString().equals( context.senderID() ) ) {
+		if( context.elementID().equals( context.senderID() ) ) {
 			logger.debug( "invokeAction() : current contextID is: " + context.contextID() );
 			logger.debug( "invokeAction() : current elementID is: " + context.elementID() );
 			logger.debug( "invokeAction() : current senderID is: " + context.senderID() );
