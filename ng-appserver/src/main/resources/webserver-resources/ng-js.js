@@ -1,3 +1,23 @@
+function invokeUpdate( id, url ) {
+	const xhttp = new XMLHttpRequest();
+	xhttp.open("GET", url, true);
+	xhttp.setRequestHeader( 'x-updatecontainerid', id )
+	
+	xhttp.onload = () => {
+		var updateContainer = document.getElementById(id);
+		
+		if( !updateContainer ) {
+			// CHECKME: WE should probably abandon the whole operation if there UC is missing
+			alert( 'No AjaxUpdateContainer on the page with id ' + id );
+		}
+
+		updateContainer.innerHTML = xhttp.responseText;
+    };
+	
+	xhttp.send();
+}
+
+/*  
 var AUC = {
 	register: function(id, options) {
 		if (!options) {
@@ -20,10 +40,9 @@ var AUL = {
 		// This is the updateContainer we're going to target
 		var updateContainer = document.getElementById(id);
 		
-		
-//		if( updateContainer ) {
-//			alert('No AjaxUpdateContainer on the page with id ' + id);
-//		}
+		if( !updateContainer ) {
+			alert( 'No AjaxUpdateContainer on the page with id ' + id );
+		}
 
 		var actionUrl = updateContainer.getAttribute('data-updateUrl');
 
@@ -33,20 +52,4 @@ var AUL = {
 		invokeUpdate( id, actionUrl );
 	}
 }
-
-function invokeUpdate( id, url ) {
-	const xhttp = new XMLHttpRequest();
-	xhttp.open("GET", url, true);
-	xhttp.setRequestHeader( 'x-updatecontainerid', id )
-	
-	xhttp.onload = () => {
-		var updateContainer = document.getElementById(id);
-		updateContainer.innerHTML = xhttp.responseText;
-    };
-	
-	xhttp.send();
-}
-
-function updateSmu( url ) {
-	invokeUpdate( 'smu', url );
-}
+*/
