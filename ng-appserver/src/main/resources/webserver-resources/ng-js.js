@@ -37,7 +37,7 @@ var AUL = {
 function invokeUpdate( id, url ) {
 	const xhttp = new XMLHttpRequest();
 	xhttp.open("GET", url, true);
-	xhttp.setRequestHeader( 'x-updatecontainerid', 'smu')
+	xhttp.setRequestHeader( 'x-updatecontainerid', id )
 	
 	xhttp.onload = () => {
 		var updateContainer = document.getElementById(id);
