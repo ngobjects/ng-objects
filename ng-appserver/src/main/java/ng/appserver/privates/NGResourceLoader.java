@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 
 public class NGResourceLoader {
 
-	public static enum ResourceType {
+	public static interface ResourceType {}
+
+	public enum StandardResourceType implements ResourceType {
 		App,
 		WebServer,
 		Public,
@@ -35,10 +37,10 @@ public class NGResourceLoader {
 	private static Map<ResourceType, List<ResourceSource>> _resourceSources = new ConcurrentHashMap<>();
 
 	static {
-		addResourceSource( ResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
-		addResourceSource( ResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
-		addResourceSource( ResourceType.Public, new JavaClasspathResourceSource( "public" ) );
-		addResourceSource( ResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
+		addResourceSource( StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
+		addResourceSource( StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
+		addResourceSource( StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
+		addResourceSource( StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
 	}
 
 	private static void addResourceSource( ResourceType type, ResourceSource source ) {
@@ -83,28 +85,28 @@ public class NGResourceLoader {
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readPublicResource( final String resourcePath ) {
-		return readResource( ResourceType.Public, resourcePath );
+		return readResource( StandardResourceType.Public, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readWebserverResource( final String resourcePath ) {
-		return readResource( ResourceType.WebServer, resourcePath );
+		return readResource( StandardResourceType.WebServer, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readAppResource( final String resourcePath ) {
-		return readResource( ResourceType.App, resourcePath );
+		return readResource( StandardResourceType.App, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readComponentResource( final String resourcePath ) {
-		return readResource( ResourceType.ComponentTemplate, resourcePath );
+		return readResource( StandardResourceType.ComponentTemplate, resourcePath );
 	}
 
 	/**
