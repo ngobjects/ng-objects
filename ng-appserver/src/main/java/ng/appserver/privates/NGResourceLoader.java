@@ -6,7 +6,9 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,7 +32,7 @@ public class NGResourceLoader {
 		ComponentTemplate;
 	}
 
-	private static Map<ResourceType, ResourceSource> map = new ConcurrentHashMap<>();
+	private static Map<ResourceType, List<ResourceSource>> _resourceSources = new ConcurrentHashMap<>();
 
 	static {
 		addResourceSource( ResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
@@ -40,7 +42,15 @@ public class NGResourceLoader {
 	}
 
 	private static void addResourceSource( ResourceType type, ResourceSource source ) {
-		map.put( type, source );
+		List<ResourceSource> sources = _resourceSources.get( type );
+
+		if( sources == null ) {
+			sources = new ArrayList<>();
+			_resourceSources.put( type, sources );
+		}
+
+		sources.add( source );
+		_resourceSources.put( type, sources );
 	}
 
 	/**
@@ -77,7 +87,24 @@ public class NGResourceLoader {
 	private static Optional<byte[]> readResource( ResourceType type, final String resourcePath ) {
 		Objects.requireNonNull( type );
 		Objects.requireNonNull( resourcePath );
-		return map.get( type ).bytesForResourceWithPath( resourcePath );
+
+		final List<ResourceSource> list = _resourceSources.get( type );
+
+		// FIXME: Ugly null check. Perhaps just add an empty list to sources instead for each resource type at startup? // Hugi 2023-11-09
+		if( list == null ) {
+			return Optional.empty();
+		}
+
+		for( ResourceSource source : list ) {
+			final Optional<byte[]> result = source.bytesForResourceWithPath( resourcePath );
+
+			// CHECKME: Should we rather iterate through all registered sources to check for duplicates?
+			if( result.isPresent() ) {
+				return result;
+			}
+		}
+
+		return Optional.empty();
 	}
 
 	/**
