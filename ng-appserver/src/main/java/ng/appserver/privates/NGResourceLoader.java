@@ -6,9 +6,13 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,53 +25,86 @@ import org.slf4j.LoggerFactory;
 
 public class NGResourceLoader {
 
-	/**
-	 * Name of the folder that stores application resources
-	 */
-	private static ResourceSource appResourcesSource = new JavaClasspathResourceSource( "app-resources" );
+	public static enum ResourceType {
+		App,
+		WebServer,
+		Public,
+		ComponentTemplate;
+	}
 
-	/**
-	 * Name of the folder that stores application resources
-	 */
-	private static ResourceSource webserverResourcesSource = new JavaClasspathResourceSource( "webserver-resources" );
+	private static Map<ResourceType, List<ResourceSource>> _resourceSources = new ConcurrentHashMap<>();
 
-	/**
-	 * Name of the folder that stores application resources
-	 */
-	private static ResourceSource publicResourcesSource = new JavaClasspathResourceSource( "public" );
+	static {
+		addResourceSource( ResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
+		addResourceSource( ResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
+		addResourceSource( ResourceType.Public, new JavaClasspathResourceSource( "public" ) );
+		addResourceSource( ResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
+	}
 
-	/**
-	 * Name of the folder that stores component templates
-	 */
-	private static ResourceSource componentResourcesSource = new JavaClasspathResourceSource( "components" );
+	private static void addResourceSource( ResourceType type, ResourceSource source ) {
+		List<ResourceSource> sources = _resourceSources.get( type );
+
+		if( sources == null ) {
+			sources = new ArrayList<>();
+			_resourceSources.put( type, sources );
+		}
+
+		sources.add( source );
+		_resourceSources.put( type, sources );
+	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readPublicResource( final String resourcePath ) {
-		Objects.requireNonNull( resourcePath );
-		return publicResourcesSource.bytesForResourceWithPath( resourcePath );
+		return readResource( ResourceType.Public, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readWebserverResource( final String resourcePath ) {
-		Objects.requireNonNull( resourcePath );
-		return webserverResourcesSource.bytesForResourceWithPath( resourcePath );
+		return readResource( ResourceType.WebServer, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readAppResource( final String resourcePath ) {
-		Objects.requireNonNull( resourcePath );
-		return appResourcesSource.bytesForResourceWithPath( resourcePath );
+		return readResource( ResourceType.App, resourcePath );
 	}
 
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
 	public static Optional<byte[]> readComponentResource( final String resourcePath ) {
+		return readResource( ResourceType.ComponentTemplate, resourcePath );
+	}
+
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
+	private static Optional<byte[]> readResource( ResourceType type, final String resourcePath ) {
+		Objects.requireNonNull( type );
 		Objects.requireNonNull( resourcePath );
-		return componentResourcesSource.bytesForResourceWithPath( resourcePath );
+
+		final List<ResourceSource> list = _resourceSources.get( type );
+
+		// FIXME: Ugly null check. Perhaps just add an empty list to sources instead for each resource type at startup? // Hugi 2023-11-09
+		if( list == null ) {
+			return Optional.empty();
+		}
+
+		for( ResourceSource source : list ) {
+			final Optional<byte[]> result = source.bytesForResourceWithPath( resourcePath );
+
+			// CHECKME: Should we rather iterate through all registered sources to check for duplicates?
+			if( result.isPresent() ) {
+				return result;
+			}
+		}
+
+		return Optional.empty();
 	}
 
 	/**
