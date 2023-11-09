@@ -7,8 +7,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,53 +23,61 @@ import org.slf4j.LoggerFactory;
 
 public class NGResourceLoader {
 
-	/**
-	 * Name of the folder that stores application resources
-	 */
-	private static ResourceSource appResourcesSource = new JavaClasspathResourceSource( "app-resources" );
+	public static enum ResourceType {
+		App,
+		WebServer,
+		Public,
+		ComponentTemplate;
+	}
 
-	/**
-	 * Name of the folder that stores application resources
-	 */
-	private static ResourceSource webserverResourcesSource = new JavaClasspathResourceSource( "webserver-resources" );
+	private static Map<ResourceType, ResourceSource> map = new ConcurrentHashMap<>();
 
-	/**
-	 * Name of the folder that stores application resources
-	 */
-	private static ResourceSource publicResourcesSource = new JavaClasspathResourceSource( "public" );
+	static {
+		addResourceSource( ResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
+		addResourceSource( ResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
+		addResourceSource( ResourceType.Public, new JavaClasspathResourceSource( "public" ) );
+		addResourceSource( ResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
+	}
 
-	/**
-	 * Name of the folder that stores component templates
-	 */
-	private static ResourceSource componentResourcesSource = new JavaClasspathResourceSource( "components" );
+	private static void addResourceSource( ResourceType type, ResourceSource source ) {
+		map.put( type, source );
+	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readPublicResource( final String resourcePath ) {
-		Objects.requireNonNull( resourcePath );
-		return publicResourcesSource.bytesForResourceWithPath( resourcePath );
+		return readResource( ResourceType.Public, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readWebserverResource( final String resourcePath ) {
-		Objects.requireNonNull( resourcePath );
-		return webserverResourcesSource.bytesForResourceWithPath( resourcePath );
+		return readResource( ResourceType.WebServer, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public static Optional<byte[]> readAppResource( final String resourcePath ) {
-		Objects.requireNonNull( resourcePath );
-		return appResourcesSource.bytesForResourceWithPath( resourcePath );
+		return readResource( ResourceType.App, resourcePath );
 	}
 
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
 	public static Optional<byte[]> readComponentResource( final String resourcePath ) {
+		return readResource( ResourceType.ComponentTemplate, resourcePath );
+	}
+
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
+	private static Optional<byte[]> readResource( ResourceType type, final String resourcePath ) {
+		Objects.requireNonNull( type );
 		Objects.requireNonNull( resourcePath );
-		return componentResourcesSource.bytesForResourceWithPath( resourcePath );
+		return map.get( type ).bytesForResourceWithPath( resourcePath );
 	}
 
 	/**
