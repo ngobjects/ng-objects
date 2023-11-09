@@ -1,7 +1,7 @@
 package ng.appserver.privates;
 
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class NGDevelopmentInstanceStopper {
 				url += "/Apps/WebObjects/SomeApp.woa/wa/ERXDirectAction/stop";
 			}
 
-			new URL( url ).openConnection().getContent();
+			new URI( url ).toURL().openConnection().getContent();
 			Thread.sleep( 1000 );
 			alreadyTriedStopping = true;
 		}
@@ -57,7 +57,7 @@ public class NGDevelopmentInstanceStopper {
 	private static boolean isNGApplicationRunningInPort( int portNumber ) {
 		final String urlString = String.format( "http://localhost:%s/wa/ng.appserver.privates.NGAdminAction/type", 1200 );
 
-		try( InputStream is = new URL( urlString ).openStream()) {
+		try( InputStream is = new URI( urlString ).toURL().openStream()) {
 			final String type = new String( is.readAllBytes() );
 			return "ng".equals( type );
 		}
