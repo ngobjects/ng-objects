@@ -56,6 +56,32 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
+	private static Optional<byte[]> readResource( ResourceType type, final String resourcePath ) {
+		Objects.requireNonNull( type );
+		Objects.requireNonNull( resourcePath );
+
+		final List<ResourceSource> list = _resourceSources.get( type );
+
+		// FIXME: Ugly null check. Perhaps just add an empty list to sources instead for each resource type at startup? // Hugi 2023-11-09
+		if( list == null ) {
+			return Optional.empty();
+		}
+
+		for( ResourceSource source : list ) {
+			final Optional<byte[]> result = source.bytesForResourceWithPath( resourcePath );
+
+			// CHECKME: Should we rather iterate through all registered sources to check for duplicates?
+			if( result.isPresent() ) {
+				return result;
+			}
+		}
+
+		return Optional.empty();
+	}
+
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
 	public static Optional<byte[]> readPublicResource( final String resourcePath ) {
 		return readResource( ResourceType.Public, resourcePath );
 	}
@@ -79,32 +105,6 @@ public class NGResourceLoader {
 	 */
 	public static Optional<byte[]> readComponentResource( final String resourcePath ) {
 		return readResource( ResourceType.ComponentTemplate, resourcePath );
-	}
-
-	/**
-	 * @return The named resource if it exists, an empty optional if not found
-	 */
-	private static Optional<byte[]> readResource( ResourceType type, final String resourcePath ) {
-		Objects.requireNonNull( type );
-		Objects.requireNonNull( resourcePath );
-
-		final List<ResourceSource> list = _resourceSources.get( type );
-
-		// FIXME: Ugly null check. Perhaps just add an empty list to sources instead for each resource type at startup? // Hugi 2023-11-09
-		if( list == null ) {
-			return Optional.empty();
-		}
-
-		for( ResourceSource source : list ) {
-			final Optional<byte[]> result = source.bytesForResourceWithPath( resourcePath );
-
-			// CHECKME: Should we rather iterate through all registered sources to check for duplicates?
-			if( result.isPresent() ) {
-				return result;
-			}
-		}
-
-		return Optional.empty();
 	}
 
 	/**
