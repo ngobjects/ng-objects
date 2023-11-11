@@ -24,7 +24,8 @@ function performSubmit( form ) {
     var data = new FormData(form);
     
     // Add extra data to form if required submission.
-    // data.append("referer","https://example.com");
+    // We can use this to submit a subset of the form fields!
+    data.append("someField","someValue");
 
 	// Obtain the form's action url for use when submitting    
 	const uri = form.getAttribute('action');
@@ -38,12 +39,13 @@ function performSubmit( form ) {
 
 	console.log( data );
 
+	/*
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-            // form.reset(); //reset form after AJAX success.
-            console.log("Done!");
+            form.reset(); //reset form after AJAX success.
         }
     }
+    */
 }
 
 /*  
