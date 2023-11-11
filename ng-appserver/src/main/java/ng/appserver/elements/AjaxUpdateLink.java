@@ -49,7 +49,15 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 			throw new IllegalStateException( "Failed to generate the href attribute for a hyperlink" );
 		}
 
-		String updateContainerID = (String)_updateContainerIDAssociation.valueInComponent( context.component() );
+		String updateContainerID;
+
+		if( _updateContainerIDAssociation != null ) {
+			updateContainerID = (String)_updateContainerIDAssociation.valueInComponent( context.component() );
+		}
+		else {
+			// FIXME: We should be passing in an actual null here not the string // Hugi 2023-11-11
+			updateContainerID = "null";
+		}
 
 		String onclick = "invokeUpdate('%s','%s');return false;".formatted( updateContainerID, context.componentActionURL() );
 
