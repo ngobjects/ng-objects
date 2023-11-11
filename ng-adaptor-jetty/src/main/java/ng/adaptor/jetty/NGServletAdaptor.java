@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.UUID;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -128,18 +126,18 @@ public class NGServletAdaptor extends HttpServlet {
 			System.out.println( ">>>>>>>>>> Multipart request detected" );
 
 			try {
-				final String string = Files.createTempFile( UUID.randomUUID().toString(), ".fileupload" ).toString();
-				System.out.println( "Multipart temp dir: " + string );
-				//				sr.setAttribute( Request.__MULTIPART_CONFIG_ELEMENT, new MultipartConfigElement( string ) );
+				// final String string = Files.createTempFile( UUID.randomUUID().toString(), ".fileupload" ).toString();
+				// System.out.println( "Multipart temp dir: " + string );
 
 				for( Part part : sr.getParts() ) {
 					//					MultiPart mp = (MultiPart)part;
-					System.out.println( "============= START PARTS =============" );
-					System.out.println( part.getClass() );
-					System.out.println( part.getContentType() );
-					System.out.println( part.getName() );
-					System.out.println( part.getSubmittedFileName() );
-					System.out.println( part.getSize() );
+					System.out.println( "============= START PART =============" );
+					System.out.println( "class: " + part.getClass() );
+					System.out.println( "name: " + part.getName() );
+					System.out.println( "contentType: " + part.getContentType() );
+					System.out.println( "submittedFilename: " + part.getSubmittedFileName() );
+					System.out.println( "size: " + part.getSize() );
+					System.out.println( "value: " + new String( part.getInputStream().readAllBytes() ) );
 
 					System.out.println( "- Headers:" );
 					for( String headerName : part.getHeaderNames() ) {
@@ -147,7 +145,7 @@ public class NGServletAdaptor extends HttpServlet {
 
 					}
 
-					System.out.println( "============= END PARTS =============" );
+					System.out.println( "============= END PART =============" );
 				}
 			}
 			catch( IOException | ServletException e ) {
