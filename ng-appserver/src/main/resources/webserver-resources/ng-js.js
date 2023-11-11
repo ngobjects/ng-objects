@@ -29,29 +29,23 @@ function performSubmit( form ) {
 	// Obtain the form's action url for use when submitting    
 	const uri = form.getAttribute('action');
 
+	// var data = '3.1.1=0&3.1.3=200&3.1.5=0&3.1.7=200';
+
     var xhr = new XMLHttpRequest();
 	xhr.open('POST',uri);
+    // xhr.setRequestHeader('content-type','application/x-www-form-urlencoded')
     xhr.send(data);
 
 	console.log( data );
 
-	/*  
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-            form.reset(); //reset form after AJAX success.
+            // form.reset(); //reset form after AJAX success.
+            console.log("Done!");
         }
     }
-    */
 }
 
-/* 
-function registerForm( form ) {
-    form.onsubmit = function(event){
-		 
-    }
-}
- */
- 
 /*  
 var AUC = {
 	register: function(id, options) {
