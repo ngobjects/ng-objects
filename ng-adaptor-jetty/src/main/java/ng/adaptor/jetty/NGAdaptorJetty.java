@@ -2,6 +2,8 @@ package ng.adaptor.jetty;
 
 import java.io.IOException;
 import java.net.BindException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHandler;
@@ -15,6 +17,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.Servlet;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
@@ -65,6 +68,18 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final Servlet servlet = new NGServletAdaptor( application );
 		final ServletHolder servletHolder = new ServletHolder();
 		servletHolder.setServlet( servlet );
+		
+		// FIXME: START EXPERIMENTAL MULTIPART HANDLER
+		final Path multipartTmpDir = Paths.get( "/Users/hugi/tmp/mp" );
+		final String location = multipartTmpDir.toString();
+		
+		long maxFileSize = 10 * 1024 * 1024; // 10 MB
+		long maxRequestSize = 10 * 1024 * 1024; // 10 MB
+		int fileSizeThreshold = 64 * 1024; // 64 KB
+		MultipartConfigElement multipartConfig = new MultipartConfigElement( location, maxFileSize, maxRequestSize, fileSizeThreshold );
+		servletHolder.getRegistration().setMultipartConfig( multipartConfig );
+		// FIXME: END EXPERIMENTAL MULTIPART HANDLER
+
 		servletHandler.addServletWithMapping( servletHolder, "/" );
 
 		try {
