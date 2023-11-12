@@ -48,6 +48,21 @@ function performSubmit( form ) {
     */
 }
 
+/*
+ Used by AjaxObserveField
+ */
+function observeDescendantFields( containerID ) {
+	const containerElement = document.getElementById( containerID );
+	const list = document.getElementsByTagName("input"); // FIXME: We need to add all field types 
+
+	for( i in list ) {
+		const item = list[i];
+		item.onchange = function() {
+			performSubmit(item.form); // FIXME: We need to perform the action bound to the AjaxUpdateContainer instead
+		};
+	}
+}
+
 /*  
 var AUC = {
 	register: function(id, options) {
