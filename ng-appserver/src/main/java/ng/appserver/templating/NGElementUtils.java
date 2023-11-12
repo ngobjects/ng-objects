@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGElement;
+import ng.appserver.elements.AjaxObserveField;
 import ng.appserver.elements.AjaxUpdateContainer;
 import ng.appserver.elements.AjaxUpdateLink;
 import ng.appserver.elements.NGActionURL;
@@ -59,6 +60,7 @@ public class NGElementUtils {
 		addClass( NGActionURL.class, "actionURL" );
 		addClass( AjaxUpdateContainer.class, "auc" );
 		addClass( AjaxUpdateLink.class, "aul" );
+		addClass( AjaxObserveField.class, "aul" );
 		addClass( NGBrowser.class, "browser" );
 		addClass( NGComponentContent.class, "content" );
 		addClass( NGConditional.class, "if" );

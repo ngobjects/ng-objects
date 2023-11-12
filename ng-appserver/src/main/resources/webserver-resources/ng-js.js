@@ -51,9 +51,9 @@ function performSubmit( form ) {
 /*
  Used by AjaxObserveField
  */
-function observeDescendantFields( containerID ) {
-	const containerElement = document.getElementById( containerID );
-	const list = document.getElementsByTagName("input"); // FIXME: We need to add all field types 
+function observeDescendantFields( containerElement) {
+	
+	const list = containerElement.getElementsByTagName("input"); // FIXME: We need to add all field types 
 
 	for( i in list ) {
 		const item = list[i];
@@ -62,6 +62,24 @@ function observeDescendantFields( containerID ) {
 		};
 	}
 }
+
+/*
+Activates observation on all fields contained by an AjaxObserveField
+ */
+ 
+function activateObservation() {
+	const list = document.getElementsByClassName( "ng-ajax-observe-field" );
+
+	for (let i = 0; i < list.length; i++) {
+		const containerElement = list[i];
+		console.log( containerElement );
+		observeDescendantFields( containerElement );
+	}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    activateObservation();
+}, false);
 
 /*  
 var AUC = {
