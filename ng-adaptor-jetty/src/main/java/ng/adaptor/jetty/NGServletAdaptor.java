@@ -121,6 +121,30 @@ public class NGServletAdaptor extends HttpServlet {
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 
+		// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
+		final Map<String, List<String>> formValuesFromServletRequest = formValues( sr.getParameterMap() );
+
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		try( final InputStream is = sr.getInputStream()) {
+			is.transferTo( bos );
+		}
+		catch( final IOException e ) {
+			throw new UncheckedIOException( "Failed to consume the HTTP request's inputstream", e );
+		}
+
+		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
+
+		// FIXME: Form value parsing should really happen within the request object, not in the adaptor // Hugi 2021-12-31
+		request._setFormValues( formValuesFromServletRequest );
+
+		// FIXME: Cookie parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
+		request._setCookieValues( cookieValues( sr.getCookies() ) );
+
+		return request;
+	}
+
+	private static void logMultipartRequest( HttpServletRequest sr ) {
 		// FIXME: Starting work on multipart request handling. Very much experimental/work in progress // Hugi 2023-04-16
 		if( sr.getContentType() != null && sr.getContentType().startsWith( "multipart/form-data" ) ) {
 			System.out.println( ">>>>>>>>>> Multipart request detected" );
@@ -153,27 +177,6 @@ public class NGServletAdaptor extends HttpServlet {
 			}
 		}
 
-		// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
-		final Map<String, List<String>> formValuesFromServletRequest = formValues( sr.getParameterMap() );
-
-		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-		try( final InputStream is = sr.getInputStream()) {
-			is.transferTo( bos );
-		}
-		catch( final IOException e ) {
-			throw new UncheckedIOException( "Failed to consume the HTTP request's inputstream", e );
-		}
-
-		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
-
-		// FIXME: Form value parsing should really happen within the request object, not in the adaptor // Hugi 2021-12-31
-		request._setFormValues( formValuesFromServletRequest );
-
-		// FIXME: Cookie parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
-		request._setCookieValues( cookieValues( sr.getCookies() ) );
-
-		return request;
 	}
 
 	/**
