@@ -166,7 +166,7 @@ public class NGResourceLoader {
 				final String resourcePathForClassLoader = resourcePath.substring( 1 );
 
 				// We're using this method to locate resources, in case there's more than one resource on the classpath with the same name
-				final Enumeration<URL> resources = NGResourceLoader.class.getClassLoader().getResources( resourcePathForClassLoader );
+				final Enumeration<URL> resources = JavaClasspathResourceSource.class.getClassLoader().getResources( resourcePathForClassLoader );
 
 				// We iterate through the resources and pick the first one to return. Then we log a warning if there are more resources with the same name.
 				while( resources.hasMoreElements() ) {

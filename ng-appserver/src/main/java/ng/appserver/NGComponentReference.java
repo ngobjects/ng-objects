@@ -78,8 +78,8 @@ public class NGComponentReference extends NGDynamicElement {
 	 * Return control to the previous component
 	 */
 	private void afterComponent( final NGContext context ) {
-		context.setComponent( context.component().parent() );
 		context.component().pushBindingValuesToParent();
+		context.setComponent( context.component().parent() );
 	}
 
 	@Override
