@@ -1,4 +1,7 @@
 package ng.appserver.privates;
 
-public interface ResourceType {
-}
+/**
+ * Categorizes resources into "types", with the frameworks providing a few standard types through StandardResourcesType
+ */
+
+public interface ResourceType {}
