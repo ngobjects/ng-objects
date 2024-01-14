@@ -25,15 +25,6 @@ import org.slf4j.LoggerFactory;
 
 public class NGResourceLoader {
 
-	public static interface ResourceType {}
-
-	public enum StandardResourceType implements ResourceType {
-		App,
-		WebServer,
-		Public,
-		ComponentTemplate;
-	}
-
 	private static Map<ResourceType, List<ResourceSource>> _resourceSources = new ConcurrentHashMap<>();
 
 	static {
