@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -33,6 +32,7 @@ import ng.plugins.NGPlugin;
 import x.junk.NGExceptionPage;
 import x.junk.NGExceptionPageDevelopment;
 import x.junk.NGSessionTimeoutPage;
+import x.junk.NGWelcomePage;
 
 /**
  * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
@@ -484,15 +484,18 @@ public class NGApplication {
 	 * @return A default response for requests to the root.
 	 */
 	public NGActionResults defaultResponse( final NGRequest request ) {
+		return pageWithName( NGWelcomePage.class, request.context() );
+		/*
 		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
 		response.appendContentString( "\n\nWould you like to see your request headers instead?\n\n" );
-
+		
 		for( Entry<String, List<String>> header : request.headers().entrySet() ) {
 			response.appendContentString( header.getKey() + " : " + header.getValue() );
 			response.appendContentString( "\n" );
 		}
-
+		
 		return response;
+		*/
 	}
 
 	/**
