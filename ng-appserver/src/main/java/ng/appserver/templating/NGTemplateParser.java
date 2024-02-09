@@ -30,12 +30,12 @@ public class NGTemplateParser {
 	private NGDynamicHTMLTag _currentDynamicTag = new NGDynamicHTMLTag();
 
 	/**
-	 * The parsed declarationString
+	 * Keeps track of declarations. Will initially contain the parsed declarationString (if present) and any inline bindings will get added here as well.
 	 */
 	private Map<String, NGDeclaration> _declarations;
 
 	/**
-	 * Keeps track of how many inline bindings have been parsed, used in the generated declaration's name
+	 * Keeps track of how many inline tags have been parsed. Used only to generate the tag declaration's name.
 	 */
 	private int _inlineBindingCount;
 
@@ -241,10 +241,11 @@ public class NGTemplateParser {
 
 		String elementName;
 
-		synchronized( this ) {
-			elementName = "_" + elementType + "_" + _inlineBindingCount;
-			_inlineBindingCount++;
-		}
+		// FIXME: Don't think we need this to be synchronized, since I don't see this being invoked concurrently?
+		//		synchronized( this ) {
+		elementName = "_" + elementType + "_" + _inlineBindingCount;
+		_inlineBindingCount++;
+		//		}
 
 		final NGDeclaration declaration = new NGDeclaration( elementName, elementType, associations );
 
