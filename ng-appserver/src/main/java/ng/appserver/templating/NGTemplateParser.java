@@ -124,12 +124,13 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
+		// FIXME: We need a way here to catch and report better the error of "no found dynamic element. The old way of catching RuntimeException feels super weird so we need to think it out // Hugi 2022-10-07
 		//		try {
 		final NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
 		_currentDynamicTag = dynamicTag;
 		_currentDynamicTag.addChildElement( element );
 		//		}
-		//		catch( RuntimeException e ) { // CHECKME: Catching RuntimeException feels super weird. Stopping it but keeping this around for a bit // Hugi 2022-10-07
+		//		catch( RuntimeException e ) {
 		//			final String templ = "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.";
 		//			throw new RuntimeException( templ.formatted( componentName( _currentDynamicTag ), prettyPrintDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
 		//		}
