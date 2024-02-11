@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.text.Format;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,6 +25,14 @@ public class NGString extends NGDynamicElement {
 	private final NGAssociation _valueWhenEmptyAssociation;
 
 	/**
+	 * A java formatter used to format the displayed value
+	 *
+	 * FIXME: I'm not sure we want to keep this around
+	 * FIXME: Should we perhaps just keep it around, and add support for DateTimeFormatter?
+	 */
+	private final NGAssociation _formatterAssociation;
+
+	/**
 	 * Indicates if we want to escape HTML values. Defaults to true
 	 */
 	private final NGAssociation _escapeHTMLAssociation;
@@ -33,6 +42,7 @@ public class NGString extends NGDynamicElement {
 		_valueAssociation = associations.get( "value" );
 		_valueWhenEmptyAssociation = associations.get( "valueWhenEmpty" );
 		_escapeHTMLAssociation = associations.get( "escapeHTML" );
+		_formatterAssociation = associations.get( "formatter" );
 
 		if( _valueAssociation == null ) {
 			throw new NGBindingConfigurationException( "[value] binding is required" );
@@ -59,7 +69,15 @@ public class NGString extends NGDynamicElement {
 				escapeHTML = (boolean)_escapeHTMLAssociation.valueInComponent( context.component() );
 			}
 
-			String string = objectValue.toString();
+			String string;
+
+			if( _formatterAssociation != null ) {
+				final Format formatter = (Format)_formatterAssociation.valueInComponent( context.component() );
+				string = formatter.format( objectValue );
+			}
+			else {
+				string = objectValue.toString();
+			}
 
 			if( escapeHTML ) {
 				string = NGHTMLUtilities.escapeHTML( string );

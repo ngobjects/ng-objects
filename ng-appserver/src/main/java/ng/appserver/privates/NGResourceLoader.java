@@ -49,7 +49,7 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	private static Optional<byte[]> readResource( ResourceType type, final String resourcePath ) {
+	private static Optional<byte[]> readResource( final ResourceType type, final String resourcePath ) {
 		Objects.requireNonNull( type );
 		Objects.requireNonNull( resourcePath );
 
