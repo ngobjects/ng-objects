@@ -233,9 +233,10 @@ public class NGExceptionPageDevelopment extends NGComponent {
 	public Throwable originalThrowable() {
 		Throwable result = exception();
 
-		while( result.getCause() != null ) {
-			result = result.getCause();
-		}
+		//		FIXME: We're missing a nice mechanism to go don the "cause" path // Hugi 2024-02-11
+		//		while( result.getCause() != null ) {
+		//			result = result.getCause();
+		//		}
 
 		return result;
 	}
