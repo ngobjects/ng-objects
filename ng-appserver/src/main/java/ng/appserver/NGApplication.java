@@ -416,8 +416,6 @@ public class NGApplication {
 		}
 
 		final Optional<byte[]> resourceBytes = resourceManager().bytesForPublicResourceNamed( resourcePath );
-		System.out.println( "resourcePath: " + resourcePath );
-		System.out.println( "resourceBytes: " + resourceBytes );
 		return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
 	}
 

@@ -144,6 +144,11 @@ public class NGResourceLoader {
 		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath ) {
 			Objects.requireNonNull( resourcePath );
 
+			// FIXME: To fix up some mess with public resources. Needs to be fixed at the origin site // Hugi 2024-02-12
+			if( resourcePath.startsWith( "/" ) ) {
+				resourcePath = resourcePath.substring( 1 );
+			}
+
 			logger.debug( "Reading resource {} ", resourcePath );
 
 			resourcePath = pathWithPrefix( resourcePath );
