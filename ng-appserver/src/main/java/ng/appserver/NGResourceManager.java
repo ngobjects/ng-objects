@@ -20,6 +20,9 @@ public class NGResourceManager {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGResourceManager.class );
 
+	// FIXME: The eventual type of cache we're going to have? (including namespaces though) // Hugi 2024-02-24
+	// private final Map<ResourceType, Map<String, Optional<byte[]>>> resourceCache = new ConcurrentHashMap<>();
+
 	/**
 	 * FIXME: Experimental caches. Resource caches should be located centrally.
 	 */

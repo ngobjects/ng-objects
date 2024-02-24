@@ -11,6 +11,8 @@ import ng.appserver.directactions.NGDirectAction;
 
 /**
  * Some administrative actions for use in development
+ *
+ * FIXME: We probably want to change this to regular ol' routes // Hugi 2024-02-25
  */
 
 public class NGAdminAction extends NGDirectAction {
