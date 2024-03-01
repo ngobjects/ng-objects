@@ -97,8 +97,8 @@
 	</head>
 	<body>
 		<div class="container">
-			<h3><wo:str value="$originalThrowable.class.name" /></h3>
-			<div class="exception-message"><wo:str value="$originalThrowable.getMessage" /> <div class="time"><wo:str value="$now" /></div></div>
+			<h3><wo:str value="$exception.class.name" /></h3>
+			<div class="exception-message"><wo:str value="$exception.message" /> <div class="time"><wo:str value="$now" /></div></div>
 			<table>
 				<tr>
 					<th>File</th>
@@ -106,7 +106,7 @@
 					<th>Method</th>
 					<th>Package</th>
 				</tr>
-				<wo:repetition list="$originalThrowable.stackTrace" item="$currentStackTraceElement">
+				<wo:repetition list="$exception.stackTrace" item="$currentStackTraceElement">
 					<wo:container elementName="tr" class="$currentRowClass">
 						<td><wo:str value="$currentStackTraceElement.fileName" /></td>
 						<td><wo:str value="$currentStackTraceElement.lineNumber" /></td>
