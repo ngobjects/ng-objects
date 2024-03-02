@@ -41,6 +41,7 @@ public class NGMimeTypeDetector {
 		return _mimeTypeMap.get( extension );
 	}
 
+	// FIXME: This map needs to be case insensitive // Hugi 2024-02-24
 	private static final Map<String, String> _mimeTypeMap = populateMimeTypeMap();
 
 	private static Map<String, String> populateMimeTypeMap() {

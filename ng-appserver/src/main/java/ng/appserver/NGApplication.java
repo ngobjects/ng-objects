@@ -416,6 +416,14 @@ public class NGApplication {
 		}
 
 		final Optional<byte[]> resourceBytes = resourceManager().bytesForPublicResourceNamed( resourcePath );
+
+		// FIXME: Shouldn't we allow the user to customize the response for a non-existent resource? // Hugi 2024-02-05
+		if( resourceBytes.isEmpty() ) {
+			final NGResponse errorResponse = new NGResponse( "public resource '" + resourcePath + "' does not exist", 404 );
+			errorResponse.setHeader( "content-type", "text/html" );
+			return errorResponse;
+		}
+
 		return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
 	}
 
@@ -488,12 +496,12 @@ public class NGApplication {
 		/*
 		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
 		response.appendContentString( "\n\nWould you like to see your request headers instead?\n\n" );
-		
+
 		for( Entry<String, List<String>> header : request.headers().entrySet() ) {
 			response.appendContentString( header.getKey() + " : " + header.getValue() );
 			response.appendContentString( "\n" );
 		}
-		
+
 		return response;
 		*/
 	}

@@ -79,7 +79,7 @@ public class NGExceptionPageDevelopment extends NGComponent {
 	 * @return First line of the stack trace, essentially the causing line.
 	 */
 	public StackTraceElement firstLineOfTrace() {
-		StackTraceElement[] stackTrace = originalThrowable().getStackTrace();
+		StackTraceElement[] stackTrace = exception().getStackTrace();
 
 		if( stackTrace.length == 0 ) {
 			return null;
@@ -225,19 +225,6 @@ public class NGExceptionPageDevelopment extends NGComponent {
 
 	public void setException( Throwable value ) {
 		_exception = value;
-	}
-
-	/**
-	 * @return The original wrapped throwable (by walking up exception.cause until we reach the top)
-	 */
-	public Throwable originalThrowable() {
-		Throwable result = exception();
-
-		while( result.getCause() != null ) {
-			result = result.getCause();
-		}
-
-		return result;
 	}
 
 	/**
