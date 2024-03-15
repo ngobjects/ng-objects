@@ -218,6 +218,7 @@ public class NGProperties {
 	 * @return true if the application is in development mode.
 	 *
 	 * FIXME: This needs a more robust and explicit implementation, see issue #6 // Hugi 2021-12-29
+	 * FIXME: This definitely needs some caching since it's invoked quite often // Hugi 2024-03-15
 	 */
 	public boolean isDevelopmentMode() {
 		return !propWOMonitorEnabled();
