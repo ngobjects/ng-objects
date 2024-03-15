@@ -211,7 +211,8 @@ public class NGApplication {
 	 */
 	protected Class<? extends NGSession> _sessionClass() {
 		try {
-			return (Class<? extends NGSession>)Class.forName( getClass().getPackageName() + ".Session" );
+			final String sessionClassName = getClass().getPackageName() + ".Session";
+			return (Class<? extends NGSession>)Class.forName( sessionClassName );
 		}
 		catch( ClassNotFoundException e ) {
 			logger.info( "Custom session class not found. Defaulting to " + NGSession.class.getName() );
