@@ -10,9 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGElement;
-import ng.appserver.elements.AjaxObserveField;
-import ng.appserver.elements.AjaxUpdateContainer;
-import ng.appserver.elements.AjaxUpdateLink;
 import ng.appserver.elements.NGActionURL;
 import ng.appserver.elements.NGBrowser;
 import ng.appserver.elements.NGComponentContent;
@@ -31,6 +28,9 @@ import ng.appserver.elements.NGSubmitButton;
 import ng.appserver.elements.NGSwitchComponent;
 import ng.appserver.elements.NGText;
 import ng.appserver.elements.NGTextField;
+import ng.appserver.elements.ajax.AjaxObserveField;
+import ng.appserver.elements.ajax.AjaxUpdateContainer;
+import ng.appserver.elements.ajax.AjaxUpdateLink;
 import x.junk.TestComponent;
 
 /**
