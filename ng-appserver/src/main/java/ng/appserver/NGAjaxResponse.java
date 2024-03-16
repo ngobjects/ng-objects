@@ -2,6 +2,10 @@ package ng.appserver;
 
 import java.util.List;
 
+/**
+ * FIXME: This class should probably not exist. Only for experimental AJAX functionality // Hugi 2024-03-16
+ */
+
 public class NGAjaxResponse extends NGResponse {
 
 	private NGContext _context;
