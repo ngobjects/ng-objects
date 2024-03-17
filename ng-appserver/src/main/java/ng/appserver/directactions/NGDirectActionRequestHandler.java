@@ -9,6 +9,7 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGParsedURI;
+import ng.appserver.templating.NGElementUtils;
 
 /**
  * FIXME: Currently requires the full class name to be specified.
@@ -34,13 +35,14 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 		}
 
 		try {
-			final Class<? extends NGDirectAction> directActionClass = (Class<? extends NGDirectAction>)Class.forName( directActionClassName.get() );
+			// FIXME: We're using the Dynamic Element class locator to find the class by the simple name. This needs redesign // Hugi 2023-03-17
+			final Class<? extends NGDirectAction> directActionClass = NGElementUtils.classWithNameNullIfNotFound( directActionClassName.get() );
 			final Constructor<? extends NGDirectAction> constructor = directActionClass.getConstructor( NGRequest.class );
 			final NGDirectAction instance = constructor.newInstance( request );
 			final NGActionResults actionResults = instance.performActionNamed( directActionMethodName.get() );
 			return actionResults.generateResponse();
 		}
-		catch( ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
+		catch( /* ClassNotFoundException |*/ InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
 			throw new RuntimeException( e );
 		}
 	}
