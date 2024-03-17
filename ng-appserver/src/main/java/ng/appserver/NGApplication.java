@@ -168,17 +168,30 @@ public class NGApplication {
 		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
 		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
-			final NGResponse response = new NGResponse();
-
-			response.setHeader( "location", "/" );
-			response.setStatus( 302 );
-			response.setHeader( "content-type", "text/html" );
-			response.setHeader( "content-length", "0" );
-			response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
-
-			return response;
+			return resetSessionCookie();
 		} );
+
+		// FIXME: This is her temporarily while we figure out a "missing slash" problem on a deployed application // Hugi 2024-03-17
+		systemRoutes.map( "/sessionCookieReset", ( request ) -> {
+			return resetSessionCookie();
+		} );
+
 		_routeTables.add( systemRoutes );
+	}
+
+	/**
+	 * FIXME: This needs cleanup. And perhaps... A better mechanism overall? // Hugi 2024-03-17
+	 */
+	private NGActionResults resetSessionCookie() {
+		final NGResponse response = new NGResponse();
+
+		response.setHeader( "location", "/" );
+		response.setStatus( 302 );
+		response.setHeader( "content-type", "text/html" );
+		response.setHeader( "content-length", "0" );
+		response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
+
+		return response;
 	}
 
 	/**
@@ -497,12 +510,12 @@ public class NGApplication {
 		/*
 		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
 		response.appendContentString( "\n\nWould you like to see your request headers instead?\n\n" );
-
+		
 		for( Entry<String, List<String>> header : request.headers().entrySet() ) {
 			response.appendContentString( header.getKey() + " : " + header.getValue() );
 			response.appendContentString( "\n" );
 		}
-
+		
 		return response;
 		*/
 	}
