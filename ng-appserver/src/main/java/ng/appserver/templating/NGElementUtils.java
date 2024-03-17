@@ -9,7 +9,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.NGElement;
 import ng.appserver.elements.NGActionURL;
 import ng.appserver.elements.NGBrowser;
 import ng.appserver.elements.NGComponentContent;
@@ -49,7 +48,7 @@ public class NGElementUtils {
 	/**
 	 * Classes registered to be searchable by classWithName()
 	 */
-	private static final List<Class<? extends NGElement>> _classes = new ArrayList<>();
+	private static final List<Class<?>> _classes = new ArrayList<>();
 
 	/**
 	 * A mapping of shortcuts to element classes. For example, mapping of <wo:str /> to <wo:NGString />
@@ -84,7 +83,7 @@ public class NGElementUtils {
 	/**
 	 * Add a class to make searchable by it's simpleName, full class name or any of the given shortcuts (for tags)
 	 */
-	public static void addClass( final Class<? extends NGElement> clazz, final String... shortcuts ) {
+	public static void addClass( final Class<?> clazz, final String... shortcuts ) {
 		_classes.add( clazz );
 
 		for( String shortcut : shortcuts ) {
@@ -99,12 +98,12 @@ public class NGElementUtils {
 	/**
 	 * @return A class matching classNameToSearch for. Searches by fully qualified class name and simpleName.
 	 */
-	private static Class classWithName( String classNameToSearchFor ) {
+	private static Class<?> classWithName( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
 		logger.debug( "Searching for class '{}'", classNameToSearchFor );
 
-		for( Class c : _classes ) {
+		for( Class<?> c : _classes ) {
 			if( c.getName().equals( classNameToSearchFor ) || c.getSimpleName().equals( classNameToSearchFor ) ) {
 				return c;
 			}
