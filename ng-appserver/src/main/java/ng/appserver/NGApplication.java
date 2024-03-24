@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.NGProperties.PropertiesSourceArgv;
+import ng.appserver.NGProperties.PropertiesSourceArguments;
 import ng.appserver.NGProperties.PropertiesSourceResource;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.appserver.routing.NGRouteTable;
@@ -89,7 +89,7 @@ public class NGApplication {
 
 		final NGProperties properties = new NGProperties();
 		properties.addAndReadResourceSource( new PropertiesSourceResource( "Properties" ) );
-		properties.addAndReadResourceSource( new PropertiesSourceArgv( args ) );
+		properties.addAndReadResourceSource( new PropertiesSourceArguments( args ) );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		redirectOutputToFilesIfOutputPathSet( properties.propWOOutputPath() );

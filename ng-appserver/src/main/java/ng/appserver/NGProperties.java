@@ -101,7 +101,7 @@ public class NGProperties {
 
 		private final String _resourceName;
 
-		public PropertiesSourceResource( String resourceName ) {
+		public PropertiesSourceResource( final String resourceName ) {
 			_resourceName = resourceName;
 		}
 
@@ -132,11 +132,11 @@ public class NGProperties {
 	/**
 	 * Generates properties by parsing the arguments passed on to the Application's startup script
 	 */
-	public static class PropertiesSourceArgv implements PropertiesSource {
+	public static class PropertiesSourceArguments implements PropertiesSource {
 
 		private final String[] _argv;
 
-		public PropertiesSourceArgv( String[] argv ) {
+		public PropertiesSourceArguments( final String[] argv ) {
 			_argv = argv;
 		}
 
