@@ -143,10 +143,10 @@ public class NGSession {
 	/**
 	 * @return Size of the page cache
 	 *
-	 * CHECKME: Temporary location for this parameter, should be settable/loaded from Properties
+	 * FIXME: Temporary location for this parameter, should be settable/loaded from Properties // Hugi 2024-023-25
 	 */
 	private int pageCacheSize() {
-		return 10;
+		return 100;
 	}
 
 	/**
