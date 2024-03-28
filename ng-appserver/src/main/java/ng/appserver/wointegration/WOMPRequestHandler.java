@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.NGResponse;
-import ng.appserver.privates.NGResourceLoader;
 
 /**
  * Responds to wotaskd/Monitor requests for:
@@ -50,7 +50,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 	private NGResponse statistics() {
 		logger.info( "Returning a statistics response. Those are weird..." );
 
-		final Optional<byte[]> bytes = NGResourceLoader.bytesForAppResource( "x-statistics-response.xml" );
+		final Optional<byte[]> bytes = NGApplication.application().resourceManager().bytesForAppResourceNamed( "x-statistics-response.xml" );
 		final byte[] b = bytes.get();
 		return new NGResponse( b, 200 );
 	}
