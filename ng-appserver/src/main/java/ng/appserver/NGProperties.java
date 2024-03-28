@@ -111,7 +111,7 @@ public class NGProperties {
 
 		@Override
 		public Map<String, String> readAll() {
-			final Optional<byte[]> propertyBytes = NGResourceLoader.readAppResource( _resourceName );
+			final Optional<byte[]> propertyBytes = NGResourceLoader.bytesForAppResource( _resourceName );
 
 			if( !propertyBytes.isPresent() ) {
 				logger.warn( "No default properties file found" );

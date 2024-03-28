@@ -50,7 +50,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 	private NGResponse statistics() {
 		logger.info( "Returning a statistics response. Those are weird..." );
 
-		final Optional<byte[]> bytes = NGResourceLoader.readAppResource( "x-statistics-response.xml" );
+		final Optional<byte[]> bytes = NGResourceLoader.bytesForAppResource( "x-statistics-response.xml" );
 		final byte[] b = bytes.get();
 		return new NGResponse( b, 200 );
 	}

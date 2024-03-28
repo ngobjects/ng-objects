@@ -39,17 +39,17 @@ public class NGResourceManager {
 
 	public Optional<byte[]> bytesForAppResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _appResourceCache, NGResourceLoader::readAppResource );
+		return bytesForAnyResource( resourceName, _appResourceCache, NGResourceLoader::bytesForAppResource );
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _webserverResourceCache, NGResourceLoader::readWebserverResource );
+		return bytesForAnyResource( resourceName, _webserverResourceCache, NGResourceLoader::bytesForWebserverResource );
 	}
 
 	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _publicResourceCache, NGResourceLoader::readPublicResource );
+		return bytesForAnyResource( resourceName, _publicResourceCache, NGResourceLoader::bytesForPublicResource );
 	}
 
 	private static Optional<byte[]> bytesForAnyResource( final String resourceName, final Map<String, Optional<byte[]>> cacheMap, Function<String, Optional<byte[]>> readFunction ) {
