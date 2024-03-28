@@ -25,16 +25,30 @@ import org.slf4j.LoggerFactory;
 
 public class NGResourceLoader {
 
+	public enum StandardNamespace {
+		App( "app" );
+
+		private String _identifier;
+
+		StandardNamespace( final String identifier ) {
+			_identifier = identifier;
+		}
+
+		public String identifier() {
+			return _identifier;
+		}
+	}
+
 	private static Map<ResourceType, List<ResourceSource>> _resourceSources = new ConcurrentHashMap<>();
 
 	static {
-		addResourceSource( StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
-		addResourceSource( StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
-		addResourceSource( StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
-		addResourceSource( StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
+		addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
+		addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
+		addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
+		addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
 	}
 
-	private static void addResourceSource( ResourceType type, ResourceSource source ) {
+	private static void addResourceSource( final String namespace, final ResourceType type, final ResourceSource source ) {
 		List<ResourceSource> sources = _resourceSources.get( type );
 
 		if( sources == null ) {
