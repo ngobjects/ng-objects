@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.privates.NGResourceLoader;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.NGHTMLFormatException;
@@ -201,7 +200,7 @@ public class NGComponentDefinition {
 
 			// If that fails, let's go for the single file html template
 			if( htmlTemplateStringOptional.isEmpty() ) {
-				final Optional<byte[]> htmlTemplate = NGResourceLoader.bytesForComponentResource( name() + ".html" );
+				final Optional<byte[]> htmlTemplate = NGApplication.application().resourceManager().bytesForComponentResourceNamed( name() + ".html" );
 
 				if( htmlTemplate.isPresent() ) {
 					htmlTemplateStringOptional = Optional.of( new String( htmlTemplate.get(), StandardCharsets.UTF_8 ) );
@@ -261,7 +260,7 @@ public class NGComponentDefinition {
 
 		final String htmlTemplateFilename = templateName + ".wo/" + templateName + "." + extension;
 
-		final Optional<byte[]> templateBytes = NGResourceLoader.bytesForComponentResource( htmlTemplateFilename );
+		final Optional<byte[]> templateBytes = NGApplication.application().resourceManager().bytesForComponentResourceNamed( htmlTemplateFilename );
 
 		if( templateBytes.isEmpty() ) {
 			return Optional.empty();

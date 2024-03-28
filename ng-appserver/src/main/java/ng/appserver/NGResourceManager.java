@@ -26,9 +26,10 @@ public class NGResourceManager {
 	/**
 	 * FIXME: Experimental caches. Resource caches should be located centrally.
 	 */
-	private final Map<String, Optional<byte[]>> _webserverResourceCache = new ConcurrentHashMap<>();
-	private final Map<String, Optional<byte[]>> _publicResourceCache = new ConcurrentHashMap<>();
 	private final Map<String, Optional<byte[]>> _appResourceCache = new ConcurrentHashMap<>();
+	private final Map<String, Optional<byte[]>> _webserverResourceCache = new ConcurrentHashMap<>();
+	private final Map<String, Optional<byte[]>> _componentResourceCache = new ConcurrentHashMap<>();
+	private final Map<String, Optional<byte[]>> _publicResourceCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Specifies if we want to use the resources cache.
@@ -45,6 +46,11 @@ public class NGResourceManager {
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
 		return bytesForAnyResource( resourceName, _webserverResourceCache, NGResourceLoader::bytesForWebserverResource );
+	}
+
+	public Optional<byte[]> bytesForComponentResourceNamed( final String resourceName ) {
+		Objects.requireNonNull( resourceName );
+		return bytesForAnyResource( resourceName, _componentResourceCache, NGResourceLoader::bytesForComponentResource );
 	}
 
 	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
