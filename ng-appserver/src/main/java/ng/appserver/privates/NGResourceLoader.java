@@ -144,7 +144,11 @@ public class NGResourceLoader {
 		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath ) {
 			Objects.requireNonNull( resourcePath );
 
-			// FIXME: To fix up some mess with public resources. Needs to be fixed at the origin site // Hugi 2024-02-12
+			// FIXME:
+			// Initially added to fix up some mess with public resources. Needs to be fixed at the origin site.
+			// So, the problem here is that resource paths really don't differentiate between "absolute" and "relative".
+			// Technically, starting the path with a slash is the right thing to do (since it's absolute and points to the root).
+			// We need to decide "the standard way" here and settle on it. Allowing both (with and without slash) feels sloppy // Hugi 2024-03-28
 			if( resourcePath.startsWith( "/" ) ) {
 				resourcePath = resourcePath.substring( 1 );
 			}
