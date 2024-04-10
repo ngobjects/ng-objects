@@ -1,6 +1,7 @@
 package x.junk;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -223,7 +224,16 @@ public class NGExceptionPageDevelopment extends NGComponent {
 		return _exception;
 	}
 
+	/**
+	 * FIXME: InvocationTargetException really just wraps the useful exception, so we show that
+	 * We might want to offer a better way to "browse" the exception's hierarchy? // Hugi 2024-04-10
+	 */
 	public void setException( Throwable value ) {
+		// InvocationTargetException really just wraps the useful exception, so show that
+		if( value instanceof InvocationTargetException ite ) {
+			_exception = ite.getTargetException();
+		}
+
 		_exception = value;
 	}
 
