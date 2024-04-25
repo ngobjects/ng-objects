@@ -229,6 +229,12 @@ public class NGExceptionPageDevelopment extends NGComponent {
 	 * We might want to offer a better way to "browse" the exception's hierarchy? // Hugi 2024-04-10
 	 */
 	public void setException( Throwable value ) {
+
+		// FIXME: This should probably not be like this. We need to figure out proper display when it comes to exception wrapping // Hugi 2024-04-25
+		while( value.getCause() != null ) {
+			value = value.getCause();
+		}
+
 		// InvocationTargetException really just wraps the useful exception, so show that
 		if( value instanceof InvocationTargetException ite ) {
 			_exception = ite.getTargetException();
