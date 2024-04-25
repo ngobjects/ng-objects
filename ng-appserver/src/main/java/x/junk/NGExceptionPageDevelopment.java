@@ -237,7 +237,7 @@ public class NGExceptionPageDevelopment extends NGComponent {
 
 		// InvocationTargetException really just wraps the useful exception, so show that
 		if( value instanceof InvocationTargetException ite ) {
-			_exception = ite.getTargetException();
+			value = ite.getTargetException();
 		}
 
 		_exception = value;
