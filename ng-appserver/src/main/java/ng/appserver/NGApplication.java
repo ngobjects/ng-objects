@@ -117,7 +117,7 @@ public class NGApplication {
 
 			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
 			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
-			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/\\b[0-9]\\b)?" ) );
+			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
 
 			// FIXME: starting the application should probably be done by the user
 			application.start();
@@ -511,12 +511,12 @@ public class NGApplication {
 		/*
 		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
 		response.appendContentString( "\n\nWould you like to see your request headers instead?\n\n" );
-		
+
 		for( Entry<String, List<String>> header : request.headers().entrySet() ) {
 			response.appendContentString( header.getKey() + " : " + header.getValue() );
 			response.appendContentString( "\n" );
 		}
-		
+
 		return response;
 		*/
 	}
