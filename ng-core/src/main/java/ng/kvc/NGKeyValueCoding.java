@@ -149,7 +149,7 @@ public interface NGKeyValueCoding {
 		}
 
 		// _isMethod() (is-prefixed, prefixed with an underscore)
-		method = readMethod( object, "_is" + key );
+		method = readMethod( object, "_is" + keyCapitalized );
 
 		if( method != null ) {
 			return new MethodReadBinding( method );
