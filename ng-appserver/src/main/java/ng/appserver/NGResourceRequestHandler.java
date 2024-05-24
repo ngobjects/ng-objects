@@ -1,5 +1,7 @@
 package ng.appserver;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import ng.appserver.privates.NGMimeTypeDetector;
@@ -55,6 +57,12 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	 * @return The resource path from the given URI
 	 */
 	private static String resourcePathFromURI( final String uri ) {
-		return uri.substring( DEFAULT_PATH.length() );
+		String pathString = uri.substring( DEFAULT_PATH.length() );
+
+		// FIXME: We might want to look a little into this URL decoding, both the the applied charset and the location of the logic // Hugi 2024-05-24
+		// This is added purely as a fix for resource loading, but URL decoding might actually (probably) have to happen at the base request handling level
+		pathString = URLDecoder.decode( pathString, StandardCharsets.UTF_8 );
+
+		return pathString;
 	}
 }
