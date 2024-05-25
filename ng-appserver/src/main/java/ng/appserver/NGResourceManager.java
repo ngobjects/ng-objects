@@ -38,24 +38,33 @@ public class NGResourceManager {
 		return NGApplication.application().cachingEnabled();
 	}
 
+	/**
+	 * @return The resource loader used by this manager
+	 *
+	 * FIXME: We're currently using a global instance, will eventually be replaced by a local instance // Hugi 2024-05-25
+	 */
+	private NGResourceLoader loader() {
+		return NGResourceLoader.instance();
+	}
+
 	public Optional<byte[]> bytesForAppResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _appResourceCache, NGResourceLoader::bytesForAppResource );
+		return bytesForAnyResource( resourceName, _appResourceCache, loader()::bytesForAppResource );
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _webserverResourceCache, NGResourceLoader::bytesForWebserverResource );
+		return bytesForAnyResource( resourceName, _webserverResourceCache, loader()::bytesForWebserverResource );
 	}
 
 	public Optional<byte[]> bytesForComponentResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _componentResourceCache, NGResourceLoader::bytesForComponentResource );
+		return bytesForAnyResource( resourceName, _componentResourceCache, loader()::bytesForComponentResource );
 	}
 
 	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _publicResourceCache, NGResourceLoader::bytesForPublicResource );
+		return bytesForAnyResource( resourceName, _publicResourceCache, loader()::bytesForPublicResource );
 	}
 
 	private static Optional<byte[]> bytesForAnyResource( final String resourceName, final Map<String, Optional<byte[]>> cacheMap, Function<String, Optional<byte[]>> readFunction ) {

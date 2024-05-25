@@ -25,6 +25,17 @@ import org.slf4j.LoggerFactory;
 
 public class NGResourceLoader {
 
+	/**
+	 * FIXME: This instance is created merely as a placeholder while we work on changing NGResourceLoader's static nature // Hugi 2024-0525
+	 */
+	@Deprecated
+	private static final NGResourceLoader _instance = new NGResourceLoader();
+
+	@Deprecated
+	public static NGResourceLoader instance() {
+		return _instance;
+	}
+
 	public enum StandardNamespace {
 		App( "app" );
 
@@ -39,16 +50,16 @@ public class NGResourceLoader {
 		}
 	}
 
-	private static Map<ResourceType, List<ResourceSource>> _resourceSources = new ConcurrentHashMap<>();
+	private Map<ResourceType, List<ResourceSource>> _resourceSources = new ConcurrentHashMap<>();
 
 	static {
-		addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
-		addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
-		addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
-		addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
+		_instance.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
+		_instance.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
+		_instance.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
+		_instance.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
 	}
 
-	private static void addResourceSource( final String namespace, final ResourceType type, final ResourceSource source ) {
+	private void addResourceSource( final String namespace, final ResourceType type, final ResourceSource source ) {
 		List<ResourceSource> sources = _resourceSources.get( type );
 
 		if( sources == null ) {
@@ -63,7 +74,7 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	private static Optional<byte[]> readResource( final ResourceType type, String resourcePath ) {
+	private Optional<byte[]> readResource( final ResourceType type, String resourcePath ) {
 		Objects.requireNonNull( type );
 		Objects.requireNonNull( resourcePath );
 
@@ -96,28 +107,28 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	public static Optional<byte[]> bytesForPublicResource( final String resourcePath ) {
+	public Optional<byte[]> bytesForPublicResource( final String resourcePath ) {
 		return readResource( StandardResourceType.Public, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	public static Optional<byte[]> bytesForWebserverResource( final String resourcePath ) {
+	public Optional<byte[]> bytesForWebserverResource( final String resourcePath ) {
 		return readResource( StandardResourceType.WebServer, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	public static Optional<byte[]> bytesForAppResource( final String resourcePath ) {
+	public Optional<byte[]> bytesForAppResource( final String resourcePath ) {
 		return readResource( StandardResourceType.App, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	public static Optional<byte[]> bytesForComponentResource( final String resourcePath ) {
+	public Optional<byte[]> bytesForComponentResource( final String resourcePath ) {
 		return readResource( StandardResourceType.ComponentTemplate, resourcePath );
 	}
 
