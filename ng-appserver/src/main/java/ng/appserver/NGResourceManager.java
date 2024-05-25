@@ -96,12 +96,19 @@ public class NGResourceManager {
 	 * FIXME: Determine if the resource exists first
 	 * FIXME: I don't feel this belongs here. URL generation and resource management are separate things
 	 */
-	public Optional<String> urlForWebserverResourceNamed( final String resourceName ) {
-		Objects.requireNonNull( resourceName );
+	public Optional<String> urlForWebserverResourceNamed( String resourcePath ) {
+		Objects.requireNonNull( resourcePath );
+
+		// Since we don't use the concept of "relative paths", we can always assume an absolute path
+		// (meaning we can remove preceding slashes and always navigate from root)
+		// FIXME: While allowing paths with and without preceding slashes may be nice, it may be *nicer* to standardize a practice of either-or // Hugi 2024-05-25
+		if( resourcePath.startsWith( "/" ) ) {
+			resourcePath = resourcePath.substring( 1 );
+		}
 
 		final StringBuilder b = new StringBuilder();
 		b.append( "/wr/" );
-		b.append( resourceName );
+		b.append( resourcePath );
 
 		return Optional.of( b.toString() );
 	}
