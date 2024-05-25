@@ -63,7 +63,7 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	private static Optional<byte[]> readResource( final ResourceType type, final String resourcePath ) {
+	private static Optional<byte[]> readResource( final ResourceType type, String resourcePath ) {
 		Objects.requireNonNull( type );
 		Objects.requireNonNull( resourcePath );
 
@@ -72,6 +72,13 @@ public class NGResourceLoader {
 		// FIXME: Ugly null check. Perhaps just add an empty list to sources instead for each resource type at startup? // Hugi 2023-11-09
 		if( list == null ) {
 			return Optional.empty();
+		}
+
+		// Since we don't use the concept of "relative paths", we can always assume an absolute path
+		// (meaning we can remove preceding slashes and always navigate from root)
+		// FIXME: While allowing paths with and without preceding slashes may be nice, it may be *nicer* to standardize a practice of either-or // Hugi 2024-05-25
+		if( resourcePath.startsWith( "/" ) ) {
+			resourcePath = resourcePath.substring( 1 );
 		}
 
 		for( ResourceSource source : list ) {
@@ -157,15 +164,6 @@ public class NGResourceLoader {
 		@Override
 		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath ) {
 			Objects.requireNonNull( resourcePath );
-
-			// FIXME:
-			// Initially added to fix up some mess with public resources. Needs to be fixed at the origin site.
-			// So, the problem here is that resource paths really don't differentiate between "absolute" and "relative".
-			// Technically, starting the path with a slash is the right thing to do (since it's absolute and points to the root).
-			// We need to decide "the standard way" here and settle on it. Allowing both (with and without slash) feels sloppy // Hugi 2024-03-28
-			if( resourcePath.startsWith( "/" ) ) {
-				resourcePath = resourcePath.substring( 1 );
-			}
 
 			logger.debug( "Reading resource {} ", resourcePath );
 
