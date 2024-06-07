@@ -61,6 +61,22 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	}
 
 	/**
+	 * @return The URL for the named resource
+	 *
+	 * FIXME: Shouldn't be static
+	 * FIXME: I don't feel this belongs here, URL generation will be dependent on the environment
+	 */
+	public static Optional<String> urlForDynamicResourceNamed( final String resourceName ) {
+		Objects.requireNonNull( resourceName );
+	
+		final StringBuilder b = new StringBuilder();
+		b.append( "/wd/" );
+		b.append( resourceName );
+	
+		return Optional.of( b.toString() );
+	}
+
+	/**
 	 * Represents a cached in-memory resource.
 	 */
 	public static record NGDynamicResource(
