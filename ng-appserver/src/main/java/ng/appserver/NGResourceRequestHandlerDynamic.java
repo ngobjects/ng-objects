@@ -19,6 +19,11 @@ import ng.appserver.privates.NGParsedURI;
 public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 
 	/**
+	 * The default path prefix for this request handler
+	 */
+	public static final String DEFAULT_PATH = "/wd/";
+
+	/**
 	 * Storage of dynamic data.
 	 *
 	 * FIXME: This is currently just a regular HashMap, so we're storing resources indefinitely if they're never "popped" (i.e. read)
@@ -68,11 +73,11 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	 */
 	public static Optional<String> urlForDynamicResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-	
+
 		final StringBuilder b = new StringBuilder();
-		b.append( "/wd/" );
+		b.append( DEFAULT_PATH );
 		b.append( resourceName );
-	
+
 		return Optional.of( b.toString() );
 	}
 

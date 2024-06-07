@@ -164,7 +164,7 @@ public class NGApplication {
 		final NGRouteTable systemRoutes = new NGRouteTable( "System routes" );
 		systemRoutes.map( NGComponentRequestHandler.DEFAULT_PATH, new NGComponentRequestHandler() );
 		systemRoutes.map( NGResourceRequestHandler.DEFAULT_PATH, new NGResourceRequestHandler() );
-		systemRoutes.map( "/wd/", new NGResourceRequestHandlerDynamic() );
+		systemRoutes.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH, new NGResourceRequestHandlerDynamic() );
 		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
 		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
