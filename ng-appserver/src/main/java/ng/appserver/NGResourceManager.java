@@ -93,10 +93,11 @@ public class NGResourceManager {
 	/**
 	 * @return The URL for the named resource
 	 *
-	 * FIXME: Determine if the resource exists first
-	 * FIXME: I don't feel this belongs here. URL generation and resource management are separate things
+	 * FIXME: Shouldn't be static
+	 * FIXME: Determine if the resource exists before generating URLs
+	 * FIXME: I don't feel this belongs here, URL generation will be dependent on the environment
 	 */
-	public Optional<String> urlForWebserverResourceNamed( String resourcePath ) {
+	public static Optional<String> urlForWebserverResourceNamed( String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
 
 		// Since we don't use the concept of "relative paths", we can always assume an absolute path
@@ -116,10 +117,10 @@ public class NGResourceManager {
 	/**
 	 * @return The URL for the named resource
 	 *
-	 * FIXME: Determine if the resource exists first
-	 * FIXME: I don't feel this belongs here. URL generation and resource management are separate things
+	 * FIXME: Shouldn't be static
+	 * FIXME: I don't feel this belongs here, URL generation will be dependent on the environment
 	 */
-	public Optional<String> urlForDynamicResourceNamed( final String resourceName ) {
+	public static Optional<String> urlForDynamicResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
 
 		final StringBuilder b = new StringBuilder();
