@@ -85,7 +85,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		}
 
 		final StringBuilder b = new StringBuilder();
-		b.append( "/wr/" );
+		b.append( DEFAULT_PATH );
 		b.append( resourcePath );
 
 		return Optional.of( b.toString() );
