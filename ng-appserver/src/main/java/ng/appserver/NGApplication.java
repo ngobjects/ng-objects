@@ -508,17 +508,6 @@ public class NGApplication {
 	 */
 	public NGActionResults defaultResponse( final NGRequest request ) {
 		return pageWithName( NGWelcomePage.class, request.context() );
-		/*
-		NGResponse response = new NGResponse( "Welcome to NGObjects!\nSorry, but I'm young and I still have no idea how to handle the default request", 404 );
-		response.appendContentString( "\n\nWould you like to see your request headers instead?\n\n" );
-
-		for( Entry<String, List<String>> header : request.headers().entrySet() ) {
-			response.appendContentString( header.getKey() + " : " + header.getValue() );
-			response.appendContentString( "\n" );
-		}
-
-		return response;
-		*/
 	}
 
 	/**
