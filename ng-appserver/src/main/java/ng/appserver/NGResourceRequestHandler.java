@@ -2,6 +2,7 @@ package ng.appserver;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 
 import ng.appserver.privates.NGMimeTypeDetector;
@@ -64,5 +65,29 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		pathString = URLDecoder.decode( pathString, StandardCharsets.UTF_8 );
 
 		return pathString;
+	}
+
+	/**
+	 * @return The URL for the named resource
+	 *
+	 * FIXME: Shouldn't be static
+	 * FIXME: Determine if the resource exists before generating URLs
+	 * FIXME: I don't feel this belongs here, URL generation will be dependent on the environment
+	 */
+	public static Optional<String> urlForWebserverResourceNamed( String resourcePath ) {
+		Objects.requireNonNull( resourcePath );
+
+		// Since we don't use the concept of "relative paths", we can always assume an absolute path
+		// (meaning we can remove preceding slashes and always navigate from root)
+		// FIXME: While allowing paths with and without preceding slashes may be nice, it may be *nicer* to standardize a practice of either-or // Hugi 2024-05-25
+		if( resourcePath.startsWith( "/" ) ) {
+			resourcePath = resourcePath.substring( 1 );
+		}
+
+		final StringBuilder b = new StringBuilder();
+		b.append( "/wr/" );
+		b.append( resourcePath );
+
+		return Optional.of( b.toString() );
 	}
 }

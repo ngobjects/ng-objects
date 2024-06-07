@@ -15,6 +15,7 @@ import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
+import ng.appserver.NGResourceRequestHandler;
 import ng.appserver.NGResourceRequestHandlerDynamic;
 import ng.appserver.NGResourceRequestHandlerDynamic.NGDynamicResource;
 import ng.appserver.NGResponse;
@@ -94,7 +95,7 @@ public class NGImage extends NGDynamicElement {
 
 		if( _filenameAssociation != null ) {
 			final String filename = (String)_filenameAssociation.valueInComponent( component );
-			final Optional<String> relativeURL = NGApplication.application().resourceManager().urlForWebserverResourceNamed( filename );
+			final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( filename );
 
 			if( relativeURL.isPresent() ) {
 				src = relativeURL.get();

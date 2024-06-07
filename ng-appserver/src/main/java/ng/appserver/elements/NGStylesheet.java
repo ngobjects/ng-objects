@@ -4,12 +4,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
+import ng.appserver.NGResourceRequestHandler;
 import ng.appserver.NGResponse;
 
 /**
@@ -35,7 +35,7 @@ public class NGStylesheet extends NGDynamicElement {
 		Objects.requireNonNull( context );
 		final NGComponent component = context.component();
 		final String filename = (String)_filenameAssociation.valueInComponent( component );
-		final Optional<String> relativeURL = NGApplication.application().resourceManager().urlForWebserverResourceNamed( filename );
+		final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( filename );
 		String urlString;
 
 		if( relativeURL.isPresent() ) {
