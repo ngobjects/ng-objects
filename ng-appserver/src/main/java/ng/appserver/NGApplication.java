@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGProperties.PropertiesSourceArguments;
 import ng.appserver.NGProperties.PropertiesSourceResource;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
+import ng.appserver.resources.NGResourceManagerDynamic;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGElementUtils;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
@@ -62,6 +63,11 @@ public class NGApplication {
 	 * Resource loading, caching and management
 	 */
 	private NGResourceManager _resourceManager;
+
+	/**
+	 * Dynamic resource loading, caching and management
+	 */
+	private NGResourceManagerDynamic _resourceManagerDynamic;
 
 	/**
 	 * A list of patterns that will be applied to URLs before they are processed by the framework
@@ -155,6 +161,7 @@ public class NGApplication {
 	 */
 	public NGApplication() {
 		_resourceManager = new NGResourceManager();
+		_resourceManagerDynamic = new NGResourceManagerDynamic();
 		_sessionStore = new NGServerSessionStore();
 
 		// The first table in the list is the "user route table"
@@ -350,6 +357,10 @@ public class NGApplication {
 
 	public NGResourceManager resourceManager() {
 		return _resourceManager;
+	}
+
+	public NGResourceManagerDynamic resourceManagerDynamic() {
+		return _resourceManagerDynamic;
 	}
 
 	public NGSessionStore sessionStore() {

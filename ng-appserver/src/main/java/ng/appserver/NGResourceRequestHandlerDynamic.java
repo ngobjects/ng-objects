@@ -1,12 +1,10 @@
 package ng.appserver;
 
-import java.io.InputStream;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 import ng.appserver.privates.NGParsedURI;
+import ng.appserver.resources.NGDynamicResource;
 
 /**
  * Missing:
@@ -23,26 +21,6 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	 */
 	public static final String DEFAULT_PATH = "/wd/";
 
-	/**
-	 * Storage of dynamic data.
-	 *
-	 * FIXME: This is currently just a regular HashMap, so we're storing resources indefinitely if they're never "popped" (i.e. read)
-	 * We're going to have to think about how best to approach a solution to this problem, since different resources might need different cache "scopes".
-	 * At first thought a request/context scoped cache sounds like a sensible default.
-	 * Other scopes could be session/application wide. Or custom? Hmm.
-	 * // Hugi 2023-02-17
-	 */
-	private static Map<String, NGDynamicResource> _cacheMap = new ConcurrentHashMap<>();
-
-	public static void push( final String cacheKey, final NGDynamicResource data ) {
-		Objects.requireNonNull( cacheKey );
-		_cacheMap.put( cacheKey, data );
-	}
-
-	public static NGDynamicResource pop( final String cacheKey ) {
-		return _cacheMap.remove( cacheKey );
-	}
-
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
 		final Optional<String> resourceID = NGParsedURI.of( request.uri() ).getStringOptional( 1 );
@@ -51,7 +29,7 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
-		final NGDynamicResource resource = pop( resourceID.get() );
+		final NGDynamicResource resource = NGApplication.application().resourceManagerDynamic().pop( resourceID.get() );
 
 		if( resource == null ) {
 			return new NGResponse( "Dynamic resource '" + resourceID.get() + "' does not exist", 404 );
@@ -80,13 +58,4 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 
 		return Optional.of( b.toString() );
 	}
-
-	/**
-	 * Represents a cached in-memory resource.
-	 */
-	public static record NGDynamicResource(
-			String filename,
-			InputStream inputStream,
-			String mimeType,
-			Long length ) {}
 }

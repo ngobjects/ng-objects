@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGComponent;
@@ -16,9 +17,9 @@ import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResourceRequestHandler;
 import ng.appserver.NGResourceRequestHandlerDynamic;
-import ng.appserver.NGResourceRequestHandlerDynamic.NGDynamicResource;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
+import ng.appserver.resources.NGDynamicResource;
 
 /**
  * An image element
@@ -131,7 +132,7 @@ public class NGImage extends NGDynamicElement {
 			}
 
 			final NGDynamicResource resource = new NGDynamicResource( resourceCacheKey, inputStream, mimeType, length );
-			NGResourceRequestHandlerDynamic.push( resourceCacheKey, resource );
+			NGApplication.application().resourceManagerDynamic().push( resourceCacheKey, resource );
 			src = NGResourceRequestHandlerDynamic.urlForDynamicResourceNamed( resourceCacheKey ).get();
 		}
 
