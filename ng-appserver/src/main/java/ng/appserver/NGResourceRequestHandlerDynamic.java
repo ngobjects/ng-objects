@@ -85,8 +85,8 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	 * Represents a cached in-memory resource.
 	 */
 	public static record NGDynamicResource(
-			InputStream inputStream,
 			String filename,
+			InputStream inputStream,
 			String mimeType,
 			Long length ) {}
 }

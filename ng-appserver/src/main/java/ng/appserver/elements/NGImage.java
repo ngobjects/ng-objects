@@ -130,7 +130,7 @@ public class NGImage extends NGDynamicElement {
 				length = (long)_dataInputStreamLengthAssociation.valueInComponent( component );
 			}
 
-			final NGDynamicResource resource = new NGDynamicResource( inputStream, resourceCacheKey, mimeType, length );
+			final NGDynamicResource resource = new NGDynamicResource( resourceCacheKey, inputStream, mimeType, length );
 			NGResourceRequestHandlerDynamic.push( resourceCacheKey, resource );
 			src = NGResourceRequestHandlerDynamic.urlForDynamicResourceNamed( resourceCacheKey ).get();
 		}
