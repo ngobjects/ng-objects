@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 
-import ng.appserver.privates.NGMimeTypeDetector;
+import ng.appserver.privates.NGMimeTypes;
 
 /**
  * Request handler for serving webserver-resources
@@ -45,7 +45,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 
 		// Extract the name of the served resource to use in the filename header
 		final String resourceName = resourcePath.substring( resourcePath.lastIndexOf( "/" ) + 1 );
-		final String mimeType = NGMimeTypeDetector.mimeTypeForResourceName( resourcePath );
+		final String mimeType = NGMimeTypes.mimeTypeForResourceName( resourcePath );
 
 		// FIXME: We need to allow some control over the headers for the returned resource, especially with regard to caching // Hugi 2023-02-17
 		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );

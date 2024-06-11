@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
  *
  * FIXME: This map needs to be extensible // Hugi 2022-04-18
  */
-public class NGMimeTypeDetector {
+public class NGMimeTypes {
 
-	private static final Logger logger = LoggerFactory.getLogger( NGMimeTypeDetector.class );
+	private static final Logger logger = LoggerFactory.getLogger( NGMimeTypes.class );
 
 	public static final String mimeTypeForResourceName( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
