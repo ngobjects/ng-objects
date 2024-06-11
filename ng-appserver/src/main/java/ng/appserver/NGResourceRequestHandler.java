@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 
-import ng.appserver.privates.NGMimeTypes;
+import ng.appserver.resources.NGMimeTypes;
 
 /**
  * Request handler for serving webserver-resources

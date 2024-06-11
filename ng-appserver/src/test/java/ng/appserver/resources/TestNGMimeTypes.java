@@ -1,10 +1,10 @@
-package ng.appserver;
+package ng.appserver.resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.privates.NGMimeTypes;
+import ng.appserver.resources.NGMimeTypes;
 
 public class TestNGMimeTypes {
 

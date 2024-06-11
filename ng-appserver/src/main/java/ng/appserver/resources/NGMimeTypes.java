@@ -1,4 +1,4 @@
-package ng.appserver.privates;
+package ng.appserver.resources;
 
 import java.util.HashMap;
 import java.util.Map;
