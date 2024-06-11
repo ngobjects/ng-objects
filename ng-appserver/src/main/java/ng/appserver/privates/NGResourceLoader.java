@@ -107,29 +107,36 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
+	private Optional<byte[]> bytesForResource( final ResourceType type, String resourcePath ) {
+		return readResource( type, resourcePath );
+	}
+
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 */
 	public Optional<byte[]> bytesForPublicResource( final String resourcePath ) {
-		return readResource( StandardResourceType.Public, resourcePath );
+		return bytesForResource( StandardResourceType.Public, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public Optional<byte[]> bytesForWebserverResource( final String resourcePath ) {
-		return readResource( StandardResourceType.WebServer, resourcePath );
+		return bytesForResource( StandardResourceType.WebServer, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public Optional<byte[]> bytesForAppResource( final String resourcePath ) {
-		return readResource( StandardResourceType.App, resourcePath );
+		return bytesForResource( StandardResourceType.App, resourcePath );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	public Optional<byte[]> bytesForComponentResource( final String resourcePath ) {
-		return readResource( StandardResourceType.ComponentTemplate, resourcePath );
+		return bytesForResource( StandardResourceType.ComponentTemplate, resourcePath );
 	}
 
 	/**
