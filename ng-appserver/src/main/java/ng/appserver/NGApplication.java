@@ -190,7 +190,7 @@ public class NGApplication {
 			return resetSessionCookie();
 		} );
 
-		return createSystemRoutes();
+		return systemRoutes;
 	}
 
 	/**
