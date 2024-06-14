@@ -54,42 +54,42 @@ public class NGResourceManager {
 	}
 
 	public Optional<byte[]> bytesForAppResourceNamed( final String resourceName ) {
-		return bytesForAnyResource( "app", resourceName, StandardResourceType.App );
+		return bytesForResource( "app", StandardResourceType.App, resourceName );
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
-		return bytesForAnyResource( "app", resourceName, StandardResourceType.WebServer );
+		return bytesForResource( "app", StandardResourceType.WebServer, resourceName );
 	}
 
 	public Optional<byte[]> bytesForComponentTemplateResourceNamed( final String resourceName ) {
-		return bytesForAnyResource( "app", resourceName, StandardResourceType.ComponentTemplate );
+		return bytesForResource( "app", StandardResourceType.ComponentTemplate, resourceName );
 	}
 
 	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
-		return bytesForAnyResource( "app", resourceName, StandardResourceType.Public );
+		return bytesForResource( "app", StandardResourceType.Public, resourceName );
 	}
 
-	private Optional<byte[]> bytesForAnyResource( final String namespace, final String resourceName, ResourceType resourceType ) {
-		Objects.requireNonNull( resourceName );
+	private Optional<byte[]> bytesForResource( final String namespace, final ResourceType resourceType, final String resourcePath ) {
+		Objects.requireNonNull( resourcePath );
 		Objects.requireNonNull( resourceType );
 
-		logger.debug( "Loading resource named {}. Caching: {}", resourceName, _cachingEnabled() );
+		logger.debug( "Loading {} resource {}::{}. Caching: {}", resourceType, namespace, resourcePath, _cachingEnabled() );
 
 		Optional<byte[]> resource;
 
 		if( _cachingEnabled() ) {
 			final Map<String, Optional<byte[]>> cacheMap = resourceCache.computeIfAbsent( resourceType, _unused -> new ConcurrentHashMap<>() );
 
-			resource = cacheMap.get( resourceName );
+			resource = cacheMap.get( resourcePath );
 
 			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
 			if( resource == null ) {
-				resource = resourceLoader().bytesForResource( namespace, resourceType, resourceName );
-				cacheMap.put( resourceName, resource );
+				resource = resourceLoader().bytesForResource( namespace, resourceType, resourcePath );
+				cacheMap.put( resourcePath, resource );
 			}
 		}
 		else {
-			resource = resourceLoader().bytesForResource( namespace, resourceType, resourceName );
+			resource = resourceLoader().bytesForResource( namespace, resourceType, resourcePath );
 		}
 
 		return resource;
