@@ -53,20 +53,25 @@ public class NGResourceManager {
 		return _resourceLoader;
 	}
 
+	public Optional<byte[]> bytesForAppResourceNamed( final String namespace, final String resourceName ) {
+		return bytesForResource( namespace, StandardResourceType.App, resourceName );
+	}
+
+	@Deprecated
 	public Optional<byte[]> bytesForAppResourceNamed( final String resourceName ) {
-		return bytesForResource( "app", StandardResourceType.App, resourceName );
+		return bytesForAppResourceNamed( StandardNamespace.App.identifier(), resourceName );
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
-		return bytesForResource( "app", StandardResourceType.WebServer, resourceName );
+		return bytesForResource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, resourceName );
 	}
 
 	public Optional<byte[]> bytesForComponentTemplateResourceNamed( final String resourceName ) {
-		return bytesForResource( "app", StandardResourceType.ComponentTemplate, resourceName );
+		return bytesForResource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, resourceName );
 	}
 
 	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
-		return bytesForResource( "app", StandardResourceType.Public, resourceName );
+		return bytesForResource( StandardNamespace.App.identifier(), StandardResourceType.Public, resourceName );
 	}
 
 	private Optional<byte[]> bytesForResource( final String namespace, final ResourceType resourceType, final String resourcePath ) {

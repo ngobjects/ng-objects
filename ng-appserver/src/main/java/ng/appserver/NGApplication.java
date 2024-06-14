@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGProperties.PropertiesSourceArguments;
 import ng.appserver.NGProperties.PropertiesSourceResource;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
+import ng.appserver.resources.NGResourceLoader.StandardNamespace;
 import ng.appserver.resources.NGResourceManager;
 import ng.appserver.resources.NGResourceManagerDynamic;
 import ng.appserver.routing.NGRouteTable;
@@ -126,7 +127,7 @@ public class NGApplication {
 			application._properties = properties;
 
 			// FIXME: We're adding the properties file here since it will use and needs application().resourceManager() to function at the moment // Hugi 2024-06-14
-			properties.addAndReadResourceSource( new PropertiesSourceResource( "Properties" ) );
+			properties.addAndReadResourceSource( new PropertiesSourceResource( StandardNamespace.App.identifier(), "Properties" ) );
 
 			application._urlRewritePatterns = new ArrayList<>();
 

@@ -97,22 +97,28 @@ public class NGProperties {
 	 */
 	public static class PropertiesSourceResource implements PropertiesSource {
 
-		private final String _resourceName;
+		private final String _namespace;
+		private final String _resourcePath;
 
-		public PropertiesSourceResource( final String resourceName ) {
-			_resourceName = resourceName;
+		public PropertiesSourceResource( final String namespace, final String resourceName ) {
+			_namespace = resourceName;
+			_resourcePath = resourceName;
+		}
+
+		public String namespace() {
+			return _resourcePath;
 		}
 
 		public String resourceName() {
-			return _resourceName;
+			return _resourcePath;
 		}
 
 		@Override
 		public Map<String, String> readAll() {
-			final Optional<byte[]> propertyBytes = NGApplication.application().resourceManager().bytesForAppResourceNamed( _resourceName );
+			final Optional<byte[]> propertyBytes = NGApplication.application().resourceManager().bytesForAppResourceNamed( _namespace, _resourcePath );
 
 			if( !propertyBytes.isPresent() ) {
-				logger.warn( "No default properties file found" );
+				logger.warn( "No default properties file found {}::{}", _namespace, _resourcePath );
 				return Collections.emptyMap();
 			}
 
