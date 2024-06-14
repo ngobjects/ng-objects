@@ -200,7 +200,7 @@ public class NGComponentDefinition {
 
 			// If that fails, let's go for the single file html template
 			if( htmlTemplateStringOptional.isEmpty() ) {
-				final Optional<byte[]> htmlTemplate = NGApplication.application().resourceManager().bytesForComponentResourceNamed( name() + ".html" );
+				final Optional<byte[]> htmlTemplate = NGApplication.application().resourceManager().bytesForComponentTemplateResourceNamed( name() + ".html" );
 
 				if( htmlTemplate.isPresent() ) {
 					htmlTemplateStringOptional = Optional.of( new String( htmlTemplate.get(), StandardCharsets.UTF_8 ) );
@@ -260,7 +260,7 @@ public class NGComponentDefinition {
 
 		final String htmlTemplateFilename = templateName + ".wo/" + templateName + "." + extension;
 
-		final Optional<byte[]> templateBytes = NGApplication.application().resourceManager().bytesForComponentResourceNamed( htmlTemplateFilename );
+		final Optional<byte[]> templateBytes = NGApplication.application().resourceManager().bytesForComponentTemplateResourceNamed( htmlTemplateFilename );
 
 		if( templateBytes.isEmpty() ) {
 			return Optional.empty();

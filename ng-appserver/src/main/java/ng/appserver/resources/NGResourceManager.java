@@ -61,7 +61,7 @@ public class NGResourceManager {
 		return bytesForAnyResource( "app", resourceName, StandardResourceType.WebServer );
 	}
 
-	public Optional<byte[]> bytesForComponentResourceNamed( final String resourceName ) {
+	public Optional<byte[]> bytesForComponentTemplateResourceNamed( final String resourceName ) {
 		return bytesForAnyResource( "app", resourceName, StandardResourceType.ComponentTemplate );
 	}
 
