@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.NGApplication;
 import ng.appserver.resources.NGResourceLoader.JavaClasspathResourceSource;
 import ng.appserver.resources.NGResourceLoader.StandardNamespace;
 
@@ -25,14 +26,16 @@ public class NGResourceManager {
 	 */
 	private NGResourceLoader _resourceLoader;
 
+	/**
+	 * Cache storing resources in-memory
+	 */
 	private final Map<ResourceType, Map<String, Optional<byte[]>>> resourceCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Specifies if we want to use the resources cache.
 	 */
 	private static boolean _cachingEnabled() {
-		//		return NGApplication.application().cachingEnabled();
-		return true;
+		return NGApplication.application().cachingEnabled();
 	}
 
 	/**
