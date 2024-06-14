@@ -38,10 +38,12 @@ public class NGMimeTypes {
 
 	public static final String mimeTypeForExtension( final String extension ) {
 		Objects.requireNonNull( extension );
-		return _mimeTypeMap.get( extension );
+
+		// CHECKME: We could use a more effective way of obtaining case insensitivity, like a case ignoring map // Hugi 2024-06-14
+		final String lowerCase = extension.toLowerCase();
+		return _mimeTypeMap.get( lowerCase );
 	}
 
-	// FIXME: This map needs to be case insensitive // Hugi 2024-02-24
 	private static final Map<String, String> _mimeTypeMap = populateMimeTypeMap();
 
 	private static Map<String, String> populateMimeTypeMap() {
