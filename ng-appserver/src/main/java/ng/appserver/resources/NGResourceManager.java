@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,25 +61,25 @@ public class NGResourceManager {
 
 	public Optional<byte[]> bytesForAppResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _appResourceCache, resourceLoader()::bytesForAppResource );
+		return bytesForAnyResource( resourceName, _appResourceCache, StandardResourceType.App );
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _webserverResourceCache, resourceLoader()::bytesForWebserverResource );
+		return bytesForAnyResource( resourceName, _webserverResourceCache, StandardResourceType.WebServer );
 	}
 
 	public Optional<byte[]> bytesForComponentResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _componentResourceCache, resourceLoader()::bytesForComponentResource );
+		return bytesForAnyResource( resourceName, _componentResourceCache, StandardResourceType.ComponentTemplate );
 	}
 
 	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _publicResourceCache, resourceLoader()::bytesForPublicResource );
+		return bytesForAnyResource( resourceName, _publicResourceCache, StandardResourceType.Public );
 	}
 
-	private static Optional<byte[]> bytesForAnyResource( final String resourceName, final Map<String, Optional<byte[]>> cacheMap, Function<String, Optional<byte[]>> readFunction ) {
+	private Optional<byte[]> bytesForAnyResource( final String resourceName, final Map<String, Optional<byte[]>> cacheMap, ResourceType resourceType ) {
 		Objects.requireNonNull( resourceName );
 
 		logger.debug( "Loading resource named {}. Caching: {}", resourceName, _cachingEnabled() );
@@ -92,12 +91,12 @@ public class NGResourceManager {
 
 			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
 			if( resource == null ) {
-				resource = readFunction.apply( resourceName );
+				resource = resourceLoader().bytesForResource( resourceType, resourceName );
 				cacheMap.put( resourceName, resource );
 			}
 		}
 		else {
-			resource = readFunction.apply( resourceName );
+			resource = resourceLoader().bytesForResource( resourceType, resourceName );
 		}
 
 		return resource;
