@@ -94,13 +94,15 @@ public class NGApplication {
 		final long startTime = System.currentTimeMillis();
 
 		final NGProperties properties = new NGProperties();
-		properties.addAndReadResourceSource( new PropertiesSourceResource( "Properties" ) );
 		properties.addAndReadResourceSource( new PropertiesSourceArguments( args ) );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		redirectOutputToFilesIfOutputPathSet( properties.propWOOutputPath() );
 
-		if( properties.isDevelopmentMode() ) {
+		// FIXME: Since we've currently got no application instance, we can't yet query the application about mode (which is a property on the applicaiton instance). Lame and needs a fix // Hugi 2024-06-14
+		final boolean isDevelopmentModeBotchedVersion = properties.propWOMonitorEnabled(); /* properties.isDevelopmentMode() */
+
+		if( isDevelopmentModeBotchedVersion ) {
 			logger.info( "========================================" );
 			logger.info( "===== Running in development mode! =====" );
 			logger.info( "========================================" );
@@ -116,8 +118,14 @@ public class NGApplication {
 		try {
 			NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
 
+			// FIXME: Assigning that unwanted global application...
+			_application = application;
+
 			// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
 			application._properties = properties;
+
+			// FIXME: We're adding the properties file here since it will use and needs application().resourceManager() to function at the moment // Hugi 2024-06-14
+			properties.addAndReadResourceSource( new PropertiesSourceResource( "Properties" ) );
 
 			application._urlRewritePatterns = new ArrayList<>();
 
@@ -133,9 +141,6 @@ public class NGApplication {
 			}
 
 			logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
-
-			// Assigning that unwanted global application...
-			_application = application;
 
 			// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
 			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath
