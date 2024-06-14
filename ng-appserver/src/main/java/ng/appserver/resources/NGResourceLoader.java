@@ -62,14 +62,13 @@ public class NGResourceLoader {
 
 		final List<ResourceSource> list = _resourceSources.get( type );
 
-		// FIXME: Ugly null check. Perhaps just add an empty list to sources instead for each resource type at startup? // Hugi 2023-11-09
 		if( list == null ) {
 			return Optional.empty();
 		}
 
-		// Since we don't use the concept of "relative paths", we can always assume an absolute path
-		// (meaning we can remove preceding slashes and always navigate from root)
-		// FIXME: While allowing paths with and without preceding slashes may be nice, it may be *nicer* to standardize a practice of either-or // Hugi 2024-05-25
+		// Since we don't have the concept of "relative paths", we can always assume an absolute path
+		// (meaning we can remove a preceding slash as we always navigate from the root)
+		// FIXME: While allowing paths with and without preceding slashes may be nice, it might be *nicer* to standardize a practice of either-or // Hugi 2024-05-25
 		if( resourcePath.startsWith( "/" ) ) {
 			resourcePath = resourcePath.substring( 1 );
 		}
@@ -77,7 +76,7 @@ public class NGResourceLoader {
 		for( ResourceSource source : list ) {
 			final Optional<byte[]> result = source.bytesForResourceWithPath( resourcePath );
 
-			// CHECKME: Should we rather iterate through all registered sources to check for duplicates?
+			// FIXME: We should (optionally?) allow iterating through all registered sources to check for duplicates // Hugi 2024-06-14
 			if( result.isPresent() ) {
 				return result;
 			}
