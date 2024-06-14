@@ -39,30 +39,31 @@ public class NGResourceLoader {
 		}
 	}
 
-	private Map<ResourceType, List<ResourceSource>> _resourceSources = new ConcurrentHashMap<>();
+	private Map<String, Map<ResourceType, List<ResourceSource>>> _allResourceSources = new ConcurrentHashMap<>();
 
 	public void addResourceSource( final String namespace, final ResourceType type, final ResourceSource source ) {
-		List<ResourceSource> sources = _resourceSources.get( type );
-
-		if( sources == null ) {
-			sources = new ArrayList<>();
-			_resourceSources.put( type, sources );
-		}
-
-		sources.add( source );
-		_resourceSources.put( type, sources );
+		_allResourceSources
+				.computeIfAbsent( namespace, _unused -> new ConcurrentHashMap<>() )
+				.computeIfAbsent( type, _unused -> new ArrayList<>() )
+				.add( source );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	private Optional<byte[]> readResource( final ResourceType type, String resourcePath ) {
-		Objects.requireNonNull( type );
+	private Optional<byte[]> readResource( final String namespace, final ResourceType resourceType, String resourcePath ) {
+		Objects.requireNonNull( resourceType );
 		Objects.requireNonNull( resourcePath );
 
-		final List<ResourceSource> list = _resourceSources.get( type );
+		final Map<ResourceType, List<ResourceSource>> sourceMapForNamespace = _allResourceSources.get( namespace );
 
-		if( list == null ) {
+		if( sourceMapForNamespace == null ) {
+			return Optional.empty();
+		}
+
+		final List<ResourceSource> sourceListForType = sourceMapForNamespace.get( resourceType );
+
+		if( sourceListForType == null ) {
 			return Optional.empty();
 		}
 
@@ -73,7 +74,7 @@ public class NGResourceLoader {
 			resourcePath = resourcePath.substring( 1 );
 		}
 
-		for( ResourceSource source : list ) {
+		for( ResourceSource source : sourceListForType ) {
 			final Optional<byte[]> result = source.bytesForResourceWithPath( resourcePath );
 
 			// FIXME: We should (optionally?) allow iterating through all registered sources to check for duplicates // Hugi 2024-06-14
@@ -88,8 +89,8 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	public Optional<byte[]> bytesForResource( final ResourceType type, String resourcePath ) {
-		return readResource( type, resourcePath );
+	public Optional<byte[]> bytesForResource( final String namespace, final ResourceType type, String resourcePath ) {
+		return readResource( namespace, type, resourcePath );
 	}
 
 	/**

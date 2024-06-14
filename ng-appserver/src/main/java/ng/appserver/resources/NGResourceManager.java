@@ -54,22 +54,22 @@ public class NGResourceManager {
 	}
 
 	public Optional<byte[]> bytesForAppResourceNamed( final String resourceName ) {
-		return bytesForAnyResource( resourceName, StandardResourceType.App );
+		return bytesForAnyResource( "app", resourceName, StandardResourceType.App );
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
-		return bytesForAnyResource( resourceName, StandardResourceType.WebServer );
+		return bytesForAnyResource( "app", resourceName, StandardResourceType.WebServer );
 	}
 
 	public Optional<byte[]> bytesForComponentResourceNamed( final String resourceName ) {
-		return bytesForAnyResource( resourceName, StandardResourceType.ComponentTemplate );
+		return bytesForAnyResource( "app", resourceName, StandardResourceType.ComponentTemplate );
 	}
 
 	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
-		return bytesForAnyResource( resourceName, StandardResourceType.Public );
+		return bytesForAnyResource( "app", resourceName, StandardResourceType.Public );
 	}
 
-	private Optional<byte[]> bytesForAnyResource( final String resourceName, ResourceType resourceType ) {
+	private Optional<byte[]> bytesForAnyResource( final String namespace, final String resourceName, ResourceType resourceType ) {
 		Objects.requireNonNull( resourceName );
 		Objects.requireNonNull( resourceType );
 
@@ -84,12 +84,12 @@ public class NGResourceManager {
 
 			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
 			if( resource == null ) {
-				resource = resourceLoader().bytesForResource( resourceType, resourceName );
+				resource = resourceLoader().bytesForResource( namespace, resourceType, resourceName );
 				cacheMap.put( resourceName, resource );
 			}
 		}
 		else {
-			resource = resourceLoader().bytesForResource( resourceType, resourceName );
+			resource = resourceLoader().bytesForResource( namespace, resourceType, resourceName );
 		}
 
 		return resource;
