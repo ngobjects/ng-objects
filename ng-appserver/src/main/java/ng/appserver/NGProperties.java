@@ -101,7 +101,7 @@ public class NGProperties {
 		private final String _resourcePath;
 
 		public PropertiesSourceResource( final String namespace, final String resourceName ) {
-			_namespace = resourceName;
+			_namespace = namespace;
 			_resourcePath = resourceName;
 		}
 
