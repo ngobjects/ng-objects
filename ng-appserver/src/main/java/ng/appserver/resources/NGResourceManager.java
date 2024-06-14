@@ -27,9 +27,9 @@ public class NGResourceManager {
 	private NGResourceLoader _resourceLoader;
 
 	/**
-	 * Cache storing resources in-memory
+	 * Cache storing resources in-memory by namespace -> resource type -> resource path
 	 */
-	private final Map<ResourceType, Map<String, Optional<byte[]>>> resourceCache = new ConcurrentHashMap<>();
+	private final Map<String, Map<ResourceType, Map<String, Optional<byte[]>>>> resourceCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Specifies if we want to use the resources cache.
@@ -75,27 +75,18 @@ public class NGResourceManager {
 	}
 
 	private Optional<byte[]> bytesForResource( final String namespace, final ResourceType resourceType, final String resourcePath ) {
+		Objects.requireNonNull( namespace );
 		Objects.requireNonNull( resourcePath );
 		Objects.requireNonNull( resourceType );
 
 		logger.debug( "Loading {} resource {}::{}. Caching: {}", resourceType, namespace, resourcePath, _cachingEnabled() );
 
-		Optional<byte[]> resource;
-
 		if( _cachingEnabled() ) {
-			final Map<String, Optional<byte[]>> cacheMap = resourceCache.computeIfAbsent( resourceType, _unused -> new ConcurrentHashMap<>() );
-
-			resource = cacheMap.get( resourcePath );
-
-			if( resource == null ) {
-				resource = resourceLoader().bytesForResource( namespace, resourceType, resourcePath );
-				cacheMap.put( resourcePath, resource );
-			}
-		}
-		else {
-			resource = resourceLoader().bytesForResource( namespace, resourceType, resourcePath );
+			final Map<ResourceType, Map<String, Optional<byte[]>>> resourceTypeMap = resourceCache.computeIfAbsent( namespace, _unused -> new ConcurrentHashMap<>() );
+			final Map<String, Optional<byte[]>> resourceMap = resourceTypeMap.computeIfAbsent( resourceType, _unused -> new ConcurrentHashMap<>() );
+			return resourceMap.computeIfAbsent( resourcePath, _unused -> resourceLoader().bytesForResource( namespace, resourceType, resourcePath ) );
 		}
 
-		return resource;
+		return resourceLoader().bytesForResource( namespace, resourceType, resourcePath );
 	}
 }
