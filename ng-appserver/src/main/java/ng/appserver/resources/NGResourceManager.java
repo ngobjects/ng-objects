@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.resources;
 
 import java.util.Map;
 import java.util.Objects;
@@ -9,10 +9,9 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.privates.NGResourceLoader;
-import ng.appserver.privates.NGResourceLoader.JavaClasspathResourceSource;
-import ng.appserver.privates.NGResourceLoader.StandardNamespace;
-import ng.appserver.privates.StandardResourceType;
+import ng.appserver.NGApplication;
+import ng.appserver.resources.NGResourceLoader.JavaClasspathResourceSource;
+import ng.appserver.resources.NGResourceLoader.StandardNamespace;
 
 /**
  * Experimental implementation of the resource manager.

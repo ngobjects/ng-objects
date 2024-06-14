@@ -1,4 +1,4 @@
-package ng.appserver.privates;
+package ng.appserver.resources;
 
 import java.io.IOException;
 import java.io.InputStream;

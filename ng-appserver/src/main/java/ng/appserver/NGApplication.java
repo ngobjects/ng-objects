@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGProperties.PropertiesSourceArguments;
 import ng.appserver.NGProperties.PropertiesSourceResource;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
+import ng.appserver.resources.NGResourceManager;
 import ng.appserver.resources.NGResourceManagerDynamic;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGElementUtils;

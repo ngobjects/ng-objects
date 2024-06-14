@@ -1,4 +1,4 @@
-package ng.appserver.privates;
+package ng.appserver.resources;
 
 /**
  * The ResourceTypes provided by default by the framework
