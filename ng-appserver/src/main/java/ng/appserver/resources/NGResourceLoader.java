@@ -41,17 +41,22 @@ public class NGResourceLoader {
 
 	private Map<String, Map<ResourceType, List<ResourceSource>>> _allResourceSources = new ConcurrentHashMap<>();
 
-	public void addResourceSource( final String namespace, final ResourceType type, final ResourceSource source ) {
+	public void addResourceSource( final String namespace, final ResourceType resourceType, final ResourceSource resourceSource ) {
+		Objects.requireNonNull( namespace );
+		Objects.requireNonNull( resourceType );
+		Objects.requireNonNull( resourceSource );
+
 		_allResourceSources
 				.computeIfAbsent( namespace, _unused -> new ConcurrentHashMap<>() )
-				.computeIfAbsent( type, _unused -> new ArrayList<>() )
-				.add( source );
+				.computeIfAbsent( resourceType, _unused -> new ArrayList<>() )
+				.add( resourceSource );
 	}
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
 	private Optional<byte[]> readResource( final String namespace, final ResourceType resourceType, String resourcePath ) {
+		Objects.requireNonNull( namespace );
 		Objects.requireNonNull( resourceType );
 		Objects.requireNonNull( resourcePath );
 
@@ -89,7 +94,7 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	public Optional<byte[]> bytesForResource( final String namespace, final ResourceType type, String resourcePath ) {
+	public Optional<byte[]> bytesForResource( final String namespace, final ResourceType type, final String resourcePath ) {
 		return readResource( namespace, type, resourcePath );
 	}
 
