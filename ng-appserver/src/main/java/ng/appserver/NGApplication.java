@@ -101,7 +101,7 @@ public class NGApplication {
 		redirectOutputToFilesIfOutputPathSet( properties.propWOOutputPath() );
 
 		// FIXME: Since we've currently got no application instance, we can't yet query the application about mode (which is a property on the applicaiton instance). Lame and needs a fix // Hugi 2024-06-14
-		final boolean isDevelopmentModeBotchedVersion = properties.propWOMonitorEnabled(); /* properties.isDevelopmentMode() */
+		final boolean isDevelopmentModeBotchedVersion = !properties.propWOMonitorEnabled(); /* properties.isDevelopmentMode() */
 
 		if( isDevelopmentModeBotchedVersion ) {
 			logger.info( "========================================" );
