@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -262,7 +263,17 @@ public interface NGKeyValueCoding {
 			while( currentClass != null ) {
 				final Method classMethod = currentClass.getMethod( key, signature );
 
-				if( classMethod.canAccess( object ) ) {
+				final boolean canAccess;
+
+				// FIXME: We're not entirely sure yet if we want to allow static invication. Meanwhile, this stands // Hugi 2024-06-14
+				if( Modifier.isStatic( classMethod.getModifiers() ) ) {
+					canAccess = classMethod.canAccess( null );
+				}
+				else {
+					canAccess = classMethod.canAccess( object );
+				}
+
+				if( canAccess ) {
 					// Method exists and is accessible on the object's class
 					// This is the happy path, where we'll immediately end up in 99% of cases
 					return classMethod;
