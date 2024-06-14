@@ -94,38 +94,6 @@ public class NGResourceLoader {
 	}
 
 	/**
-	 * @return The named resource if it exists, an empty optional if not found
-	 */
-	@Deprecated
-	public Optional<byte[]> bytesForPublicResource( final String resourcePath ) {
-		return bytesForResource( StandardResourceType.Public, resourcePath );
-	}
-
-	/**
-	 * @return The named resource if it exists, an empty optional if not found
-	 */
-	@Deprecated
-	public Optional<byte[]> bytesForWebserverResource( final String resourcePath ) {
-		return bytesForResource( StandardResourceType.WebServer, resourcePath );
-	}
-
-	/**
-	 * @return The named resource if it exists, an empty optional if not found
-	 */
-	@Deprecated
-	public Optional<byte[]> bytesForAppResource( final String resourcePath ) {
-		return bytesForResource( StandardResourceType.App, resourcePath );
-	}
-
-	/**
-	 * @return The named resource if it exists, an empty optional if not found
-	 */
-	@Deprecated
-	public Optional<byte[]> bytesForComponentResource( final String resourcePath ) {
-		return bytesForResource( StandardResourceType.ComponentTemplate, resourcePath );
-	}
-
-	/**
 	 * Represents a source of resources of any type
 	 */
 	public interface ResourceSource {
