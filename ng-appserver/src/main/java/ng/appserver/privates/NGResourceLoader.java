@@ -18,23 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utilities for reading resources
+ * Utility class for reading resources
  *
- * FIXME: Consumers should really never be going through this class directly. Resource providers should be registered with NGResourceManager and resources then loaded from there // Hugi 2023-07-08
+ * Consumers rarely use this class directly and should usually go through NGResourceManager instead, which handles caching and other general resource management
  */
 
 public class NGResourceLoader {
-
-	/**
-	 * FIXME: This instance is created merely as a placeholder while we work on changing NGResourceLoader's static nature // Hugi 2024-0525
-	 */
-	@Deprecated
-	private static final NGResourceLoader _instance = new NGResourceLoader();
-
-	@Deprecated
-	public static NGResourceLoader instance() {
-		return _instance;
-	}
 
 	public enum StandardNamespace {
 		App( "app" );
@@ -52,14 +41,7 @@ public class NGResourceLoader {
 
 	private Map<ResourceType, List<ResourceSource>> _resourceSources = new ConcurrentHashMap<>();
 
-	static {
-		_instance.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
-		_instance.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
-		_instance.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
-		_instance.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
-	}
-
-	private void addResourceSource( final String namespace, final ResourceType type, final ResourceSource source ) {
+	public void addResourceSource( final String namespace, final ResourceType type, final ResourceSource source ) {
 		List<ResourceSource> sources = _resourceSources.get( type );
 
 		if( sources == null ) {

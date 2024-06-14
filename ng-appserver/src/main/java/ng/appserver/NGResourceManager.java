@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.privates.NGResourceLoader;
+import ng.appserver.privates.NGResourceLoader.JavaClasspathResourceSource;
+import ng.appserver.privates.NGResourceLoader.StandardNamespace;
+import ng.appserver.privates.StandardResourceType;
 
 /**
  * Experimental implementation of the resource manager.
@@ -19,6 +22,11 @@ import ng.appserver.privates.NGResourceLoader;
 public class NGResourceManager {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGResourceManager.class );
+
+	/**
+	 * The resource loader that handles locating and loading of resources to be managed by this resource manager
+	 */
+	private NGResourceLoader _resourceLoader;
 
 	// FIXME: The eventual type of cache we're going to have? (including namespaces though) // Hugi 2024-02-24
 	// private final Map<ResourceType, Map<String, Optional<byte[]>>> resourceCache = new ConcurrentHashMap<>();
@@ -40,31 +48,37 @@ public class NGResourceManager {
 
 	/**
 	 * @return The resource loader used by this manager
-	 *
-	 * FIXME: We're currently using a global instance, will eventually be replaced by a local instance // Hugi 2024-05-25
 	 */
-	private NGResourceLoader loader() {
-		return NGResourceLoader.instance();
+	private NGResourceLoader resourceLoader() {
+		if( _resourceLoader == null ) {
+			_resourceLoader = new NGResourceLoader();
+			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
+			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
+			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
+			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
+		}
+
+		return _resourceLoader;
 	}
 
 	public Optional<byte[]> bytesForAppResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _appResourceCache, loader()::bytesForAppResource );
+		return bytesForAnyResource( resourceName, _appResourceCache, resourceLoader()::bytesForAppResource );
 	}
 
 	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _webserverResourceCache, loader()::bytesForWebserverResource );
+		return bytesForAnyResource( resourceName, _webserverResourceCache, resourceLoader()::bytesForWebserverResource );
 	}
 
 	public Optional<byte[]> bytesForComponentResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _componentResourceCache, loader()::bytesForComponentResource );
+		return bytesForAnyResource( resourceName, _componentResourceCache, resourceLoader()::bytesForComponentResource );
 	}
 
 	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
 		Objects.requireNonNull( resourceName );
-		return bytesForAnyResource( resourceName, _publicResourceCache, loader()::bytesForPublicResource );
+		return bytesForAnyResource( resourceName, _publicResourceCache, resourceLoader()::bytesForPublicResource );
 	}
 
 	private static Optional<byte[]> bytesForAnyResource( final String resourceName, final Map<String, Optional<byte[]>> cacheMap, Function<String, Optional<byte[]>> readFunction ) {
