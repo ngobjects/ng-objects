@@ -87,7 +87,6 @@ public class NGResourceManager {
 
 			resource = cacheMap.get( resourcePath );
 
-			// FIXME: Applies to both non-existing and un-cached resources. Add an "I already checked this, it doesn't exist" resource cache entry
 			if( resource == null ) {
 				resource = resourceLoader().bytesForResource( namespace, resourceType, resourcePath );
 				cacheMap.put( resourcePath, resource );
