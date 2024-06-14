@@ -78,9 +78,7 @@ public class NGResourceManager {
 		Optional<byte[]> resource;
 
 		if( _cachingEnabled() ) {
-			final Map<String, Optional<byte[]>> cacheMap = resourceCache.computeIfAbsent( resourceType, s -> {
-				return new ConcurrentHashMap<>();
-			} );
+			final Map<String, Optional<byte[]>> cacheMap = resourceCache.computeIfAbsent( resourceType, _unused -> new ConcurrentHashMap<>() );
 
 			resource = cacheMap.get( resourceName );
 
