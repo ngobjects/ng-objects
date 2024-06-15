@@ -130,8 +130,6 @@ public class NGApplication {
 			// FIXME: Here, the properties from the file will override the command line properties. We need to re-apply the CLI arguments, which should have precedence (awaits the coming Properties overhaul) // Hugi 2024-06-15
 			properties.addAndReadResourceSource( new PropertiesSourceResource( StandardNamespace.App.identifier(), "Properties" ) );
 
-			application._urlRewritePatterns = new ArrayList<>();
-
 			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
 			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
 			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
@@ -171,6 +169,7 @@ public class NGApplication {
 		_resourceManager = new NGResourceManager();
 		_resourceManagerDynamic = new NGResourceManagerDynamic();
 		_sessionStore = new NGServerSessionStore();
+		_urlRewritePatterns = new ArrayList<>();
 
 		// The first table in the list is the "user route table"
 		_routeTables.add( new NGRouteTable( "User routes" ) );
