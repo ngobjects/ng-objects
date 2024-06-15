@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication;
 import ng.appserver.resources.NGResourceLoader.JavaClasspathResourceSource;
-import ng.appserver.resources.NGResourceLoader.StandardNamespace;
 
 /**
  * Experimental implementation of the resource manager.

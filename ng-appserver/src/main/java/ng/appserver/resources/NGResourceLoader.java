@@ -26,20 +26,6 @@ import org.slf4j.LoggerFactory;
 
 public class NGResourceLoader {
 
-	public enum StandardNamespace {
-		App( "app" );
-
-		private String _identifier;
-
-		StandardNamespace( final String identifier ) {
-			_identifier = identifier;
-		}
-
-		public String identifier() {
-			return _identifier;
-		}
-	}
-
 	private Map<String, Map<ResourceType, List<ResourceSource>>> _allResourceSources = new ConcurrentHashMap<>();
 
 	public void addResourceSource( final String namespace, final ResourceType resourceType, final ResourceSource resourceSource ) {
