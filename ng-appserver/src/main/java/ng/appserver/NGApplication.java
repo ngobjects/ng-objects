@@ -134,6 +134,13 @@ public class NGApplication {
 			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
 			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
 
+			// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
+			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath
+			_application.loadPlugins();
+
+			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
+			NGElementUtils.addPackage( applicationClass.getPackageName() );
+
 			// FIXME: starting the application should probably be done by the user
 			application.start();
 
@@ -142,13 +149,6 @@ public class NGApplication {
 			}
 
 			logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
-
-			// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
-			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath
-			_application.loadPlugins();
-
-			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
-			NGElementUtils.addPackage( applicationClass.getPackageName() );
 
 			return (E)application;
 		}
@@ -238,15 +238,20 @@ public class NGApplication {
 	/**
 	 * @return The class to use when constructing a new session. By default we look for a class named "Session" in the same package as the application class
 	 */
+	@SuppressWarnings("unchecked")
 	protected Class<? extends NGSession> _sessionClass() {
+		final String sessionClassName = getClass().getPackageName() + ".Session";
+		Class<? extends NGSession> sessionClass;
+
 		try {
-			final String sessionClassName = getClass().getPackageName() + ".Session";
-			return (Class<? extends NGSession>)Class.forName( sessionClassName );
+			sessionClass = (Class<? extends NGSession>)Class.forName( sessionClassName );
 		}
 		catch( ClassNotFoundException e ) {
-			logger.info( "Custom session class not found. Defaulting to " + NGSession.class.getName() );
-			return NGSession.class;
+			logger.info( "Custom session class '{}' not found. Defaulting to '{}'", sessionClassName, NGSession.class.getName() );
+			sessionClass = NGSession.class;
 		}
+
+		return sessionClass;
 	}
 
 	/**
