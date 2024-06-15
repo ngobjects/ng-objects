@@ -141,8 +141,8 @@ public class NGApplication {
 			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
 			NGElementUtils.addPackage( applicationClass.getPackageName() );
 
-			// FIXME: starting the application should probably be done by the user
-			application.start();
+			// FIXME: Eventually the adaptor startup should probably be done by the user
+			application.createAdaptor().start( application );
 
 			if( properties.propWOLifebeatEnabled() ) {
 				NGDefaultLifeBeatThread.start( application._properties );
@@ -226,13 +226,6 @@ public class NGApplication {
 					logger.info( "Loading plugin {}", plugin.getClass().getName() );
 					plugin.load( this );
 				} );
-	}
-
-	/**
-	 * Starts the adaptor
-	 */
-	private void start() {
-		createAdaptor().start( this );
 	}
 
 	/**
