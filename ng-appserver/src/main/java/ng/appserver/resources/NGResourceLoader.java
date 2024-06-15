@@ -222,8 +222,8 @@ public class NGResourceLoader {
 				final Path filePath = _basePath.resolve( resourcePath );
 				return Optional.of( Files.newInputStream( filePath ) );
 			}
-			catch( IOException e1 ) {
-				throw new RuntimeException( e1 );
+			catch( final IOException ioException ) {
+				throw new UncheckedIOException( ioException );
 			}
 		}
 	}
