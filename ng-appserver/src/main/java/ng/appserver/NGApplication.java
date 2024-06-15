@@ -127,6 +127,7 @@ public class NGApplication {
 			application._properties = properties;
 
 			// FIXME: We're adding the properties file here since it will use and needs application().resourceManager() to function at the moment // Hugi 2024-06-14
+			// FIXME: Here, the properties from the file will override the command line properties. We need to re-apply the CLI arguments, which should have precedence (awaits the coming Properties overhaul) // Hugi 2024-06-15
 			properties.addAndReadResourceSource( new PropertiesSourceResource( StandardNamespace.App.identifier(), "Properties" ) );
 
 			application._urlRewritePatterns = new ArrayList<>();
