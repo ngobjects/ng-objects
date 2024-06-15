@@ -53,27 +53,69 @@ public class NGResourceManager {
 		return _resourceLoader;
 	}
 
-	public Optional<byte[]> bytesForAppResourceNamed( final String namespace, final String resourceName ) {
-		return bytesForResource( namespace, StandardResourceType.App, resourceName );
+	/**
+	 * @return The specified app resource
+	 */
+	public Optional<byte[]> bytesForAppResourceNamed( final String namespace, final String resourcePath ) {
+		return bytesForResource( namespace, StandardResourceType.App, resourcePath );
 	}
 
+	/**
+	 * @return The specified app resource by searching in all namespaces
+	 */
 	@Deprecated
-	public Optional<byte[]> bytesForAppResourceNamed( final String resourceName ) {
-		return bytesForAppResourceNamed( StandardNamespace.App.identifier(), resourceName );
+	public Optional<byte[]> bytesForAppResourceNamed( final String resourcePath ) {
+		return bytesForResourceSearchingAllNamespaces( StandardResourceType.App, resourcePath );
 	}
 
-	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourceName ) {
-		return bytesForResource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, resourceName );
+	/**
+	 * @return The specified webserver resource
+	 */
+	public Optional<byte[]> bytesForWebserverResourceNamed( final String namespace, final String resourcePath ) {
+		return bytesForResource( namespace, StandardResourceType.WebServer, resourcePath );
 	}
 
-	public Optional<byte[]> bytesForComponentTemplateResourceNamed( final String resourceName ) {
-		return bytesForResource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, resourceName );
+	/**
+	 * @return The specified webserver resource by searching in all namespaces
+	 */
+	@Deprecated
+	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourcePath ) {
+		return bytesForResourceSearchingAllNamespaces( StandardResourceType.WebServer, resourcePath );
 	}
 
-	public Optional<byte[]> bytesForPublicResourceNamed( final String resourceName ) {
-		return bytesForResource( StandardNamespace.App.identifier(), StandardResourceType.Public, resourceName );
+	/**
+	 * @return The specified component template resource
+	 */
+	public Optional<byte[]> bytesForComponentTemplateResourceNamed( final String namespace, final String resourcePath ) {
+		return bytesForResource( namespace, StandardResourceType.ComponentTemplate, resourcePath );
 	}
 
+	/**
+	 * @return The specified component template resource by searching in all namespaces
+	 */
+	@Deprecated
+	public Optional<byte[]> bytesForComponentTemplateResourceNamed( final String resourcePath ) {
+		return bytesForResourceSearchingAllNamespaces( StandardResourceType.ComponentTemplate, resourcePath );
+	}
+
+	/**
+	 * @return The specified public resource
+	 */
+	public Optional<byte[]> bytesForPublicResourceNamed( final String namespace, final String resourcePath ) {
+		return bytesForResource( StandardNamespace.App.identifier(), StandardResourceType.Public, resourcePath );
+	}
+
+	/**
+	 * @return The specified public resource resource by searching in all namespaces
+	 */
+	@Deprecated
+	public Optional<byte[]> bytesForPublicResourceNamed( final String resourcePath ) {
+		return bytesForResourceSearchingAllNamespaces( StandardResourceType.Public, resourcePath );
+	}
+
+	/**
+	 * @return The bytes for the named resource, looking for a cached copy first if caching is enabled (i.e. if we're in production mode)
+	 */
 	private Optional<byte[]> bytesForResource( final String namespace, final ResourceType resourceType, final String resourcePath ) {
 		Objects.requireNonNull( namespace );
 		Objects.requireNonNull( resourcePath );
@@ -82,11 +124,28 @@ public class NGResourceManager {
 		logger.debug( "Loading {} resource {}::{}. Caching: {}", resourceType, namespace, resourcePath, _cachingEnabled() );
 
 		if( _cachingEnabled() ) {
-			final Map<ResourceType, Map<String, Optional<byte[]>>> resourceTypeMap = resourceCache.computeIfAbsent( namespace, _unused -> new ConcurrentHashMap<>() );
-			final Map<String, Optional<byte[]>> resourceMap = resourceTypeMap.computeIfAbsent( resourceType, _unused -> new ConcurrentHashMap<>() );
-			return resourceMap.computeIfAbsent( resourcePath, _unused -> resourceLoader().bytesForResource( namespace, resourceType, resourcePath ) );
+			return resourceCache
+					.computeIfAbsent( namespace, _unused -> new ConcurrentHashMap<>() )
+					.computeIfAbsent( resourceType, _unused -> new ConcurrentHashMap<>() )
+					.computeIfAbsent( resourcePath, _unused -> resourceLoader().bytesForResource( namespace, resourceType, resourcePath ) );
 		}
 
 		return resourceLoader().bytesForResource( namespace, resourceType, resourcePath );
+	}
+
+	/**
+	 * @return bytes for the specified resource by searching all namespaces
+	 */
+	@Deprecated
+	private Optional<byte[]> bytesForResourceSearchingAllNamespaces( final ResourceType resourceType, final String resourcePath ) {
+		for( String namespace : resourceLoader().namespaces() ) {
+			final Optional<byte[]> resourceBytes = bytesForResource( namespace, resourceType, resourcePath );
+
+			if( !resourceBytes.isEmpty() ) {
+				return resourceBytes;
+			}
+		}
+
+		return Optional.empty();
 	}
 }
