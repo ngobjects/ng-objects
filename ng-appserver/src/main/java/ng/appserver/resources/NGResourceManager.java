@@ -102,7 +102,7 @@ public class NGResourceManager {
 	 * @return The specified public resource
 	 */
 	public Optional<byte[]> bytesForPublicResourceNamed( final String namespace, final String resourcePath ) {
-		return bytesForResource( StandardNamespace.App.identifier(), StandardResourceType.Public, resourcePath );
+		return bytesForResource( namespace, StandardResourceType.Public, resourcePath );
 	}
 
 	/**
