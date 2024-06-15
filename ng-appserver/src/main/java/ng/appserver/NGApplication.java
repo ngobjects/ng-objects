@@ -314,6 +314,17 @@ public class NGApplication {
 	}
 
 	/**
+	 * @return true if we want to enable caches
+	 *
+	 * FIXME: This is not here to stay. It's just nice to have a single location to refer to for now, rather than always using isDevelopmentMode() // Hugi 2022-10-19
+	 * FIXME: While this is temporary, note that it's not best for performance to check properties every time this method is invoked. We should be caching the result. Just not doing it now, since we're still consolidating caching // Hugi 2023-03-10
+	 */
+	@Deprecated
+	public boolean cachingEnabled() {
+		return !isDevelopmentMode();
+	}
+
+	/**
 	 * @return The named component, where [componentName] can be either the component's simple class name or full class name.
 	 */
 	public NGComponent pageWithName( final String componentName, final NGContext context ) {
@@ -351,17 +362,6 @@ public class NGApplication {
 	@Deprecated
 	public static NGApplication application() {
 		return _application;
-	}
-
-	/**
-	 * @return true if we want to enable caches
-	 *
-	 * FIXME: This is not here to stay. It's just nice to have a single location to refer to for now, rather than always using isDevelopmentMode() // Hugi 2022-10-19
-	 * FIXME: While this is temporary, note that it's not best for performance to check properties every time this method is invoked. We should be caching the result. Just not doing it now, since we're still consolidating caching // Hugi 2023-03-10
-	 */
-	@Deprecated
-	public boolean cachingEnabled() {
-		return !isDevelopmentMode();
 	}
 
 	public NGResourceManager resourceManager() {
