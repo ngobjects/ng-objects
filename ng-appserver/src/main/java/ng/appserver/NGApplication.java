@@ -232,12 +232,7 @@ public class NGApplication {
 	 * Starts the adaptor
 	 */
 	private void start() {
-		try {
-			createAdaptor().start( this );
-		}
-		catch( final Exception e ) {
-			throw new RuntimeException( e );
-		}
+		createAdaptor().start( this );
 	}
 
 	/**
