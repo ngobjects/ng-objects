@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
@@ -87,6 +88,11 @@ public class NGRouteTable {
 		map( pattern, routeHandler );
 	}
 
+	public void map( final String pattern, final Supplier<NGActionResults> supplier ) {
+		final SupplierRouteHandler routeHandler = new SupplierRouteHandler( supplier );
+		map( pattern, routeHandler );
+	}
+
 	public void mapComponent( final String pattern, final Class<? extends NGComponent> componentClass ) {
 		final ComponentRouteHandler routeHandler = new ComponentRouteHandler( componentClass );
 		map( pattern, routeHandler );
@@ -126,6 +132,19 @@ public class NGRouteTable {
 		@Override
 		public NGResponse handleRequest( NGRequest request ) {
 			return _function.apply( request ).generateResponse();
+		}
+	}
+
+	public static class SupplierRouteHandler extends NGRequestHandler {
+		private Supplier<NGActionResults> _supplier;
+
+		public SupplierRouteHandler( final Supplier<NGActionResults> supplier ) {
+			_supplier = supplier;
+		}
+
+		@Override
+		public NGResponse handleRequest( NGRequest request ) {
+			return _supplier.get().generateResponse();
 		}
 	}
 
