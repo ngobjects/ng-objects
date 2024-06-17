@@ -30,7 +30,6 @@ import ng.appserver.elements.NGTextField;
 import ng.appserver.elements.ajax.AjaxObserveField;
 import ng.appserver.elements.ajax.AjaxUpdateContainer;
 import ng.appserver.elements.ajax.AjaxUpdateLink;
-import x.junk.TestComponent;
 
 /**
  * An abomination of a class that serves as a repository for temporary hacky stuff
@@ -77,7 +76,6 @@ public class NGElementUtils {
 		addClass( NGSwitchComponent.class, "switch" );
 		addClass( NGText.class, "text" );
 		addClass( NGTextField.class, "textfield" );
-		addClass( TestComponent.class );
 	}
 
 	/**
