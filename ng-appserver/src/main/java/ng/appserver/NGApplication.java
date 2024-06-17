@@ -544,6 +544,11 @@ public class NGApplication {
 				logger.info( "Rewrote: {}", request.uri() );
 			}
 		}
+
+		// FIXME: Currently required to handle a little fun with how WO adaptor URLs are structured and how we rewrite them. Investigate if we can fix this at a more sane level // Hugi 2024-06-17
+		if( request.uri().isEmpty() ) {
+			request.setURI( "/" );
+		}
 	}
 
 	/**
