@@ -43,9 +43,14 @@ public class NGImage extends NGDynamicElement {
 	private final NGAssociation _dataInputStreamLengthAssociation;
 
 	/**
-	 * For keeping the filename of the image
+	 * The filename of an image resource
 	 */
 	private final NGAssociation _filenameAssociation;
+
+	/**
+	 * The namespace of an image supplied via [filename]
+	 */
+	private final NGAssociation _namespaceAssociation;
 
 	/**
 	 * The src of the image. We include this as a separate association so we can check if it's bound (if filename is missing)
@@ -66,6 +71,7 @@ public class NGImage extends NGDynamicElement {
 		super( null, null, null );
 		_additionalAssociations = new HashMap<>( associations );
 		_filenameAssociation = _additionalAssociations.remove( "filename" );
+		_namespaceAssociation = _additionalAssociations.remove( "namespace" ); // FIXME: We'll probably want to include 'frameworkName' as a deprecated binding name for use when porting older templates // Hugi 2024-06-17
 		_srcAssociation = _additionalAssociations.remove( "src" );
 		_dataAssociation = _additionalAssociations.remove( "data" );
 		_dataInputStreamAssociation = _additionalAssociations.remove( "dataInputStream" );
