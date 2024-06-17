@@ -344,6 +344,7 @@ public class NGApplication {
 	/**
 	 * @return A new instance of [componentClass] in the given [context]
 	 */
+	@SuppressWarnings("unchecked") // Our cast to the component class is fine
 	public <E extends NGComponent> E pageWithName( final Class<E> componentClass, final NGContext context ) {
 		Objects.requireNonNull( componentClass, "'componentClass' must not be null. I can't create components from nothing." );
 		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
