@@ -14,6 +14,8 @@ import ng.appserver.NGResponse;
 
 /**
  * For embedding stylesheets in components
+ *
+ * FIXME: Missing namespace handling // Hugi 2024-06-17
  */
 
 public class NGJavaScript extends NGDynamicElement {
@@ -35,7 +37,7 @@ public class NGJavaScript extends NGDynamicElement {
 		Objects.requireNonNull( context );
 		final NGComponent component = context.component();
 		final String filename = (String)_filenameAssociation.valueInComponent( component );
-		final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( filename );
+		final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( null, filename );
 		String urlString;
 
 		if( relativeURL.isPresent() ) {

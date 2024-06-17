@@ -101,7 +101,7 @@ public class NGImage extends NGDynamicElement {
 
 		if( _filenameAssociation != null ) {
 			final String filename = (String)_filenameAssociation.valueInComponent( component );
-			final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( filename );
+			final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( null, filename );
 
 			if( relativeURL.isPresent() ) {
 				src = relativeURL.get();

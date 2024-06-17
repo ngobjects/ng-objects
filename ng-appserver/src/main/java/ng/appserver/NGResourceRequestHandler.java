@@ -9,6 +9,8 @@ import ng.appserver.resources.NGMimeTypes;
 
 /**
  * Request handler for serving webserver-resources
+ *
+ * FIXME: Missing namespace handling // Hugi 2024-06-17
  */
 
 public class NGResourceRequestHandler extends NGRequestHandler {
@@ -73,8 +75,9 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	 * FIXME: Shouldn't be static
 	 * FIXME: Determine if the resource exists before generating URLs
 	 * FIXME: I don't feel this belongs here, URL generation will be dependent on the environment
+	 * FIXME: Missing namespace handling // Hugi 2024-06-17
 	 */
-	public static Optional<String> urlForWebserverResourceNamed( String resourcePath ) {
+	public static Optional<String> urlForWebserverResourceNamed( String namespace, String resourcePath ) {
 		Objects.requireNonNull( resourcePath );
 
 		// Since we don't use the concept of "relative paths", we can always assume an absolute path
