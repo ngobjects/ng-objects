@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>is.rebbi</groupId>
 	<artifactId>ng-testapp</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<name>nb-testapp</name>
 	<build>
 		<plugins>
@@ -22,12 +22,12 @@
 		<dependency>
 			<groupId>is.rebbi</groupId>
 			<artifactId>ng-appserver</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>is.rebbi</groupId>
 			<artifactId>ng-adaptor-jetty</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
