@@ -31,6 +31,7 @@ import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGElementUtils;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
+import ng.classes.NGClassManager;
 import ng.plugins.NGPlugin;
 import x.junk.NGExceptionPage;
 import x.junk.NGExceptionPageDevelopment;
@@ -60,6 +61,11 @@ public class NGApplication {
 	 * Session storage and coordination
 	 */
 	private NGSessionStore _sessionStore;
+
+	/**
+	 * Handles dynamic locating of classes used
+	 */
+	private NGClassManager _classManager;
 
 	/**
 	 * Resource loading, caching and management
@@ -166,6 +172,7 @@ public class NGApplication {
 	 * Construct an application with no properties (and no property loading)
 	 */
 	public NGApplication() {
+		_classManager = new NGClassManager();
 		_resourceManager = new NGResourceManager();
 		_resourceManagerDynamic = new NGResourceManagerDynamic();
 		_sessionStore = new NGServerSessionStore();
