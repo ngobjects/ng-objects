@@ -21,7 +21,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger( WOMPRequestHandler.class );
 
-	public static final String KEY = "womp";
+	public static final String DEFAULT_PATH = "/womp/instanceRequest";
 
 	/**
 	 * FIXME: Currently just checking for substrings in the requests's XML content. We should be properly deserializing.

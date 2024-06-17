@@ -195,7 +195,7 @@ public class NGApplication {
 		systemRoutes.map( NGResourceRequestHandler.DEFAULT_PATH + "*", new NGResourceRequestHandler() );
 		systemRoutes.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH + "*", new NGResourceRequestHandlerDynamic() );
 		systemRoutes.map( NGDirectActionRequestHandler.DEFAULT_PATH + "*", new NGDirectActionRequestHandler() );
-		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
+		systemRoutes.map( WOMPRequestHandler.DEFAULT_PATH, new WOMPRequestHandler() );
 		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
 			return resetSessionCookie();
 		} );
