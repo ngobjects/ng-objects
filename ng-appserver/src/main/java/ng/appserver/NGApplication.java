@@ -190,6 +190,7 @@ public class NGApplication {
 	private NGRouteTable createSystemRoutes() {
 		// Then we add the "system route table"
 		final NGRouteTable systemRoutes = new NGRouteTable( "System routes" );
+		systemRoutes.map( "/", this::defaultResponse );
 		systemRoutes.map( NGComponentRequestHandler.DEFAULT_PATH + "*", new NGComponentRequestHandler() );
 		systemRoutes.map( NGResourceRequestHandler.DEFAULT_PATH + "*", new NGResourceRequestHandler() );
 		systemRoutes.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH + "*", new NGResourceRequestHandlerDynamic() );
@@ -386,24 +387,16 @@ public class NGApplication {
 		try {
 			rewriteURL( request );
 
-			final NGResponse response;
+			final NGRequestHandler requestHandler = handlerForURL( request.uri() );
 
-			// FIXME: Handle the case of no default request handler gracefully // Hugi 2021-12-29
-			if( request.parsedURI().length() == 0 ) {
-				response = defaultResponse( request ).generateResponse();
+			if( requestHandler == null ) {
+				return noHandlerResponse( request );
 			}
-			else {
-				final NGRequestHandler requestHandler = handlerForURL( request.uri() );
 
-				if( requestHandler == null ) {
-					return noHandlerResponse( request );
-				}
+			final NGResponse response = requestHandler.handleRequest( request );
 
-				response = requestHandler.handleRequest( request );
-
-				if( response == null ) {
-					throw new NullPointerException( String.format( "'%s' returned a null response. That's just rude.", requestHandler.getClass().getName() ) );
-				}
+			if( response == null ) {
+				throw new NullPointerException( String.format( "'%s' returned a null response. That's just rude.", requestHandler.getClass().getName() ) );
 			}
 
 			// FIXME: Doesn't feel like the place to set the session ID in the response, but let's do it anyway :D // Hugi 2023-01-10
