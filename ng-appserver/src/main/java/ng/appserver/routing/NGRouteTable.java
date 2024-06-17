@@ -67,7 +67,12 @@ public class NGRouteTable {
 	 * FIXME: We're currently only checking if the pattern starts with the given pattern. We want some real pattern matching here // Hugi 2021-12-30
 	 */
 	private static boolean matches( final String pattern, final String uri ) {
-		return uri.startsWith( pattern );
+		if( pattern.endsWith( "*" ) ) {
+			final String patternWithoutWildcard = pattern.substring( 0, pattern.length() - 1 );
+			return uri.startsWith( patternWithoutWildcard );
+		}
+
+		return pattern.equals( uri );
 	}
 
 	public void map( final String pattern, final NGRequestHandler requestHandler ) {

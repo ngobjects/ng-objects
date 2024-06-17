@@ -190,10 +190,10 @@ public class NGApplication {
 	private NGRouteTable createSystemRoutes() {
 		// Then we add the "system route table"
 		final NGRouteTable systemRoutes = new NGRouteTable( "System routes" );
-		systemRoutes.map( NGComponentRequestHandler.DEFAULT_PATH, new NGComponentRequestHandler() );
-		systemRoutes.map( NGResourceRequestHandler.DEFAULT_PATH, new NGResourceRequestHandler() );
-		systemRoutes.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH, new NGResourceRequestHandlerDynamic() );
-		systemRoutes.map( "/wa/", new NGDirectActionRequestHandler() );
+		systemRoutes.map( NGComponentRequestHandler.DEFAULT_PATH + "*", new NGComponentRequestHandler() );
+		systemRoutes.map( NGResourceRequestHandler.DEFAULT_PATH + "*", new NGResourceRequestHandler() );
+		systemRoutes.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH + "*", new NGResourceRequestHandlerDynamic() );
+		systemRoutes.map( NGDirectActionRequestHandler.DEFAULT_PATH + "*", new NGDirectActionRequestHandler() );
 		systemRoutes.map( "/womp/", new WOMPRequestHandler() );
 		systemRoutes.map( "/sessionCookieReset/", ( request ) -> {
 			return resetSessionCookie();

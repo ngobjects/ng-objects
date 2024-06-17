@@ -18,6 +18,11 @@ import ng.appserver.templating.NGElementUtils;
 
 public class NGDirectActionRequestHandler extends NGRequestHandler {
 
+	/**
+	 * The default path prefix for this request handler
+	 */
+	public static final String DEFAULT_PATH = "/wa/";
+
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
 		final NGParsedURI parsedURI = NGParsedURI.of( request.uri() );
