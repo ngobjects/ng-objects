@@ -11,7 +11,6 @@ import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
@@ -59,26 +58,26 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final ContextHandlerCollection contexts = new ContextHandlerCollection();
 		server.setHandler( contexts );
 
-		final ContextHandler context = new ServletContextHandler( "/" );
+		final ServletContextHandler servletContextHandler = new ServletContextHandler( "/" );
 
 		final ServletHandler servletHandler = new ServletHandler();
-		context.setHandler( servletHandler );
-		contexts.addHandler( context );
+		servletContextHandler.setHandler( servletHandler );
+		contexts.addHandler( servletContextHandler );
 
 		final Servlet servlet = new NGServletAdaptor( application );
 		final ServletHolder servletHolder = new ServletHolder();
 		servletHolder.setServlet( servlet );
-		
-		// FIXME: START EXPERIMENTAL MULTIPART HANDLER
+
+		// FIXME: START EXPERIMENTAL MULTIPART HANDLER =======================================================================
 		final Path multipartTmpDir = Paths.get( "/Users/hugi/tmp/mp" );
 		final String location = multipartTmpDir.toString();
-		
+
 		long maxFileSize = 10 * 1024 * 1024; // 10 MB
 		long maxRequestSize = 10 * 1024 * 1024; // 10 MB
 		int fileSizeThreshold = 64 * 1024; // 64 KB
 		MultipartConfigElement multipartConfig = new MultipartConfigElement( location, maxFileSize, maxRequestSize, fileSizeThreshold );
 		servletHolder.getRegistration().setMultipartConfig( multipartConfig );
-		// FIXME: END EXPERIMENTAL MULTIPART HANDLER
+		// FIXME: END EXPERIMENTAL MULTIPART HANDLER =========================================================================
 
 		servletHandler.addServletWithMapping( servletHolder, "/" );
 
