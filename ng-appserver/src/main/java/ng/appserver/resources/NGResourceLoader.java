@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -105,7 +106,26 @@ public class NGResourceLoader {
 			}
 		}
 
-		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath );
+		public default Optional<InputStream> inputStreamForResourceWithPath( String resourcePath ) {
+			final Optional<Callable<InputStream>> provider = inputStreamProviderForResourceWithPath( resourcePath );
+
+			if( provider.isEmpty() ) {
+				return Optional.empty();
+			}
+
+			try {
+				final InputStream inputStream = provider.get().call();
+				return Optional.of( inputStream );
+			}
+			catch( IOException e ) {
+				throw new UncheckedIOException( e );
+			}
+			catch( Exception e ) {
+				throw new RuntimeException( e );
+			}
+		}
+
+		public Optional<Callable<InputStream>> inputStreamProviderForResourceWithPath( String resourcePath );
 	}
 
 	/**
@@ -126,7 +146,7 @@ public class NGResourceLoader {
 		}
 
 		@Override
-		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath ) {
+		public Optional<Callable<InputStream>> inputStreamProviderForResourceWithPath( String resourcePath ) {
 			Objects.requireNonNull( resourcePath );
 
 			logger.debug( "Reading resource {} ", resourcePath );
@@ -164,12 +184,7 @@ public class NGResourceLoader {
 				return Optional.empty();
 			}
 
-			try {
-				return Optional.of( resourceURL.openStream() );
-			}
-			catch( final IOException ioException ) {
-				throw new UncheckedIOException( ioException );
-			}
+			return Optional.of( resourceURL::openStream );
 		}
 
 		/**
@@ -211,6 +226,12 @@ public class NGResourceLoader {
 			catch( final IOException ioException ) {
 				throw new UncheckedIOException( ioException );
 			}
+		}
+
+		@Override
+		public Optional<Callable<InputStream>> inputStreamProviderForResourceWithPath( String resourcePath ) {
+			// TODO Auto-generated method stub
+			return Optional.empty();
 		}
 	}
 
