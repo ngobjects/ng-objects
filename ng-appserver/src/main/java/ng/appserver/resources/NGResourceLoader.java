@@ -43,7 +43,7 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
-	private Optional<byte[]> readResource( final String namespace, final ResourceType resourceType, String resourcePath ) {
+	public Optional<byte[]> bytesForResource( final String namespace, final ResourceType resourceType, String resourcePath ) {
 		Objects.requireNonNull( namespace );
 		Objects.requireNonNull( resourceType );
 		Objects.requireNonNull( resourcePath );
@@ -77,13 +77,6 @@ public class NGResourceLoader {
 		}
 
 		return Optional.empty();
-	}
-
-	/**
-	 * @return The named resource if it exists, an empty optional if not found
-	 */
-	public Optional<byte[]> bytesForResource( final String namespace, final ResourceType type, final String resourcePath ) {
-		return readResource( namespace, type, resourcePath );
 	}
 
 	/**
