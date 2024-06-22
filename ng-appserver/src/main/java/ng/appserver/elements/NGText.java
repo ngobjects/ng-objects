@@ -14,7 +14,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 
 /**
- * FIXME: This should be a text area. implement
+ * A text area
  */
 
 public class NGText extends NGDynamicElement {

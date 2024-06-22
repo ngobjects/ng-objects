@@ -7,7 +7,7 @@ import java.util.Set;
 public class NGContext {
 
 	/**
-	 * Contains the list of AjaxUpdateContainer IDs that encapuslate the element currently being rendered
+	 * Contains the list of AjaxUpdateContainer IDs that encapsulate the element currently being rendered
 	 *
 	 * FIXME: This is a temporary hack while we're developing the AJAX functionality // Hugi 2024-03-16
 	 */
