@@ -1,10 +1,8 @@
 package ng.appserver.resources;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -13,7 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -43,7 +40,23 @@ public class NGResourceLoader {
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
 	 */
+	@Deprecated
 	public Optional<byte[]> bytesForResource( final String namespace, final ResourceType resourceType, String resourcePath ) {
+		Optional<NGResource> resource = obtainResource( namespace, resourceType, resourcePath );
+
+		if( !resource.isPresent() ) {
+			return Optional.empty();
+		}
+
+		return Optional.of( resource.get().bytes() );
+	}
+
+	/**
+	 * @return The named resource if it exists, an empty optional if not found
+	 *
+	 * FIXME: This method is badly named on purpose until we find the appropriate final name // Hugi 2024-06-22
+	 */
+	public Optional<NGResource> obtainResource( final String namespace, final ResourceType resourceType, String resourcePath ) {
 		Objects.requireNonNull( namespace );
 		Objects.requireNonNull( resourceType );
 		Objects.requireNonNull( resourcePath );
@@ -68,7 +81,7 @@ public class NGResourceLoader {
 		}
 
 		for( ResourceSource source : sourceListForType ) {
-			final Optional<byte[]> result = source.bytesForResourceWithPath( resourcePath );
+			final Optional<NGResource> result = source.resourceWithPath( resourcePath );
 
 			// FIXME: We should (optionally?) allow iterating through all registered sources to check for duplicates // Hugi 2024-06-14
 			if( result.isPresent() ) {
@@ -85,40 +98,16 @@ public class NGResourceLoader {
 	public interface ResourceSource {
 
 		public default Optional<byte[]> bytesForResourceWithPath( String resourcePath ) {
-			final Optional<InputStream> iso = inputStreamForResourceWithPath( resourcePath );
+			final Optional<NGResource> resource = resourceWithPath( resourcePath );
 
-			if( iso.isEmpty() ) {
+			if( resource.isEmpty() ) {
 				return Optional.empty();
 			}
 
-			try( InputStream is = iso.get()) {
-				return Optional.of( is.readAllBytes() );
-			}
-			catch( IOException e ) {
-				throw new UncheckedIOException( e );
-			}
+			return Optional.of( resource.get().bytes() );
 		}
 
-		public default Optional<InputStream> inputStreamForResourceWithPath( String resourcePath ) {
-			final Optional<Callable<InputStream>> provider = inputStreamProviderForResourceWithPath( resourcePath );
-
-			if( provider.isEmpty() ) {
-				return Optional.empty();
-			}
-
-			try {
-				final InputStream inputStream = provider.get().call();
-				return Optional.of( inputStream );
-			}
-			catch( IOException e ) {
-				throw new UncheckedIOException( e );
-			}
-			catch( Exception e ) {
-				throw new RuntimeException( e );
-			}
-		}
-
-		public Optional<Callable<InputStream>> inputStreamProviderForResourceWithPath( String resourcePath );
+		public Optional<NGResource> resourceWithPath( String resourcePath );
 	}
 
 	/**
@@ -139,7 +128,7 @@ public class NGResourceLoader {
 		}
 
 		@Override
-		public Optional<Callable<InputStream>> inputStreamProviderForResourceWithPath( String resourcePath ) {
+		public Optional<NGResource> resourceWithPath( String resourcePath ) {
 			Objects.requireNonNull( resourcePath );
 
 			logger.debug( "Reading resource {} ", resourcePath );
@@ -177,7 +166,7 @@ public class NGResourceLoader {
 				return Optional.empty();
 			}
 
-			return Optional.of( resourceURL::openStream );
+			return Optional.of( NGResource.of( resourceURL::openStream ) );
 		}
 
 		/**
@@ -206,25 +195,23 @@ public class NGResourceLoader {
 		}
 
 		@Override
-		public Optional<InputStream> inputStreamForResourceWithPath( String resourcePath ) {
-			Objects.requireNonNull( resourcePath );
-
-			logger.debug( "Reading resource {} ", resourcePath );
-
-			try {
-				// The path to the actual file on disk
-				final Path filePath = _basePath.resolve( resourcePath );
-				return Optional.of( Files.newInputStream( filePath ) );
-			}
-			catch( final IOException ioException ) {
-				throw new UncheckedIOException( ioException );
-			}
-		}
-
-		@Override
-		public Optional<Callable<InputStream>> inputStreamProviderForResourceWithPath( String resourcePath ) {
-			// TODO Auto-generated method stub
-			return Optional.empty();
+		public Optional<NGResource> resourceWithPath( String resourcePath ) {
+			// FIXME: We still haven't implemented resource loading from the file system in our "new resource world" // Hugi 2024-06-22
+			throw new RuntimeException( "Not implemented yet" );
+			//			Objects.requireNonNull( resourcePath );
+			//
+			//			logger.debug( "Reading resource {} ", resourcePath );
+			//
+			//			try {
+			//				// The path to the actual file on disk
+			//				final Path filePath = _basePath.resolve( resourcePath );
+			//				return Optional.of( NGResource.of( Files::newInputStream( filePath ) ) );
+			//			}
+			//			catch( final IOException ioException ) {
+			//				throw new UncheckedIOException( ioException );
+			//			}
+			//			// TODO Auto-generated method stub
+			//			return Optional.empty();
 		}
 	}
 
