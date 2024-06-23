@@ -68,6 +68,7 @@ public class NGConditional extends NGDynamicGroup {
 		Boolean conditionAsBoolean = _NGUtilities.isTruthy( condition );
 
 		if( _negateAssociation != null ) {
+			// FIXME: Are we going to allow this binding to check for "truthyness" instead of doing a strict boolean check? Whichever we decide, this needs to be consistent across elements // Hugi 2024-06-23
 			final Boolean negate = (Boolean)_negateAssociation.valueInComponent( context.component() );
 
 			if( negate ) {
