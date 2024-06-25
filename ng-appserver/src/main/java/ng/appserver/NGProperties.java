@@ -1,6 +1,5 @@
 package ng.appserver;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
@@ -15,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ng.appserver.resources.NGResource;
 
 /**
  * Handles properties loading
@@ -115,7 +116,7 @@ public class NGProperties {
 
 		@Override
 		public Map<String, String> readAll() {
-			final Optional<byte[]> propertyBytes = NGApplication.application().resourceManager().bytesForAppResourceNamed( _namespace, _resourcePath );
+			final Optional<NGResource> propertyBytes = NGApplication.application().resourceManager().obtainAppResource( _namespace, _resourcePath );
 
 			if( !propertyBytes.isPresent() ) {
 				logger.warn( "No default properties file found {}::{}", _namespace, _resourcePath );
@@ -124,7 +125,7 @@ public class NGProperties {
 
 			try {
 				final Properties p = new Properties();
-				p.load( new ByteArrayInputStream( propertyBytes.get() ) );
+				p.load( propertyBytes.get().inputStream() ); // FIXME: WE should probably close this stream. Look into once resource loading is done // Hugi 2024-06-25
 				return (Map)p;
 			}
 			catch( IOException e ) {

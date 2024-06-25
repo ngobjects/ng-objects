@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGProperties.PropertiesSourceArguments;
 import ng.appserver.NGProperties.PropertiesSourceResource;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
+import ng.appserver.resources.NGResource;
 import ng.appserver.resources.NGResourceManager;
 import ng.appserver.resources.NGResourceManagerDynamic;
 import ng.appserver.resources.StandardNamespace;
@@ -442,16 +443,17 @@ public class NGApplication {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
-		final Optional<byte[]> resourceBytes = resourceManager().bytesForPublicResourceNamed( resourcePath );
+		// FIXME: We've not decided what to do about namespacing and public resources // Hugi 2024-06-26
+		final Optional<NGResource> resource = resourceManager().obtainPublicResource( resourcePath );
 
 		// FIXME: Shouldn't we allow the user to customize the response for a non-existent resource? // Hugi 2024-02-05
-		if( resourceBytes.isEmpty() ) {
+		if( resource.isEmpty() ) {
 			final NGResponse errorResponse = new NGResponse( "public resource '" + resourcePath + "' does not exist", 404 );
 			errorResponse.setHeader( "content-type", "text/html" );
 			return errorResponse;
 		}
 
-		return NGResourceRequestHandler.responseForResource( resourceBytes, resourcePath );
+		return NGResourceRequestHandler.responseForResource( Optional.of( resource.get().bytes() ), resourcePath );
 	}
 
 	/**

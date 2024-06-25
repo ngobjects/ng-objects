@@ -39,20 +39,6 @@ public class NGResourceLoader {
 
 	/**
 	 * @return The named resource if it exists, an empty optional if not found
-	 */
-	@Deprecated
-	public Optional<byte[]> bytesForResource( final String namespace, final ResourceType resourceType, String resourcePath ) {
-		Optional<NGResource> resource = obtainResource( namespace, resourceType, resourcePath );
-
-		if( !resource.isPresent() ) {
-			return Optional.empty();
-		}
-
-		return Optional.of( resource.get().bytes() );
-	}
-
-	/**
-	 * @return The named resource if it exists, an empty optional if not found
 	 *
 	 * FIXME: This method is badly named on purpose until we find the appropriate final name // Hugi 2024-06-22
 	 */

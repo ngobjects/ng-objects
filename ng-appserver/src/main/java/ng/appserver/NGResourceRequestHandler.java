@@ -36,6 +36,8 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		return responseForResource( resourceBytes, resourcePath );
 	}
 
+	// FIXME: Replace (or at least accompany) with an NGResource-invoking method // Hugi 2024-06-26
+	@Deprecated
 	public static NGResponse responseForResource( Optional<byte[]> resourceBytes, final String resourcePath ) {
 
 		// FIXME: Shouldn't we allow the user to customize the response for a non-existent resource? // Hugi 2021-12-06
