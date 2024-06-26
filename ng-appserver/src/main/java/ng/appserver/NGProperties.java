@@ -1,6 +1,7 @@
 package ng.appserver;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -125,7 +126,11 @@ public class NGProperties {
 
 			try {
 				final Properties p = new Properties();
-				p.load( propertyBytes.get().inputStream() ); // FIXME: WE should probably close this stream. Look into once resource loading is done // Hugi 2024-06-25
+
+				try( final InputStream is = propertyBytes.get().inputStream()) {
+					p.load( is );
+				}
+
 				return (Map)p;
 			}
 			catch( IOException e ) {
