@@ -123,6 +123,9 @@ public class NGRequest extends NGMessage {
 		_formValues = formValues;
 	}
 
+	/**
+	 * FIXME: This method should probably be called "url" rather than "uri" // Hugi 2024-06-29
+	 */
 	public String uri() {
 		return _uri;
 	}
