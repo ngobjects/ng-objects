@@ -203,12 +203,19 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This needs cleanup. And perhaps... A better mechanism overall? // Hugi 2024-03-17
+	 * FIXME: This needs a better mechanism overall // Hugi 2024-03-17
 	 */
 	private NGActionResults resetSessionCookie() {
+		return resetSessionCookieWithRedirectToURL( "/" );
+	}
+
+	/**
+	 * FIXME: This method should not exist, it's currently used by subclasses as a workaround for some bad session management // Hugi 2024-06-29
+	 */
+	protected NGActionResults resetSessionCookieWithRedirectToURL( final String url ) {
 		final NGResponse response = new NGResponse();
 
-		response.setHeader( "location", "/" );
+		response.setHeader( "location", url );
 		response.setStatus( 302 );
 		response.setHeader( "content-type", "text/html" );
 		response.setHeader( "content-length", "0" );
