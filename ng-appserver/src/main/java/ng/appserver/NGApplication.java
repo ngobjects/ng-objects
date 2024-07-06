@@ -197,8 +197,7 @@ public class NGApplication {
 		systemRoutes.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH + "*", new NGResourceRequestHandlerDynamic() );
 		systemRoutes.map( NGDirectActionRequestHandler.DEFAULT_PATH + "*", new NGDirectActionRequestHandler() );
 		systemRoutes.map( WOMPRequestHandler.DEFAULT_PATH, new WOMPRequestHandler() );
-		systemRoutes.map( "/sessionCookieReset/", this::resetSessionCookie );
-		systemRoutes.map( "/sessionCookieReset", this::resetSessionCookie ); // FIXME: This is her temporarily while we figure out a "missing slash" problem on a deployed application // Hugi 2024-03-17
+		systemRoutes.map( "/sessionCookieReset", this::resetSessionCookie );
 		return systemRoutes;
 	}
 
