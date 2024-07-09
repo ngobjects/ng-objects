@@ -69,11 +69,34 @@ public class NGProperties {
 	}
 
 	/**
-	 * Add a property source and read the provided properties
+	 * Add a property source that will override all previously inserted resource sources
+	 *
+	 * FIXME: This will eventually be refactored, just starting out the work on prioritizing resource sources // Hugi 2024-07-09
 	 */
-	public void addAndReadResourceSource( final PropertiesSource source ) {
+	public void addAndReadSourceHighestPriority( final PropertiesSource source ) {
 		_sources.add( source );
-		putAll( source.readAll() );
+		_readAllSources();
+	}
+
+	/**
+	 * Add a property source at the very back, i.e. it's properties will be overridden by all previously inserted resource sources
+	 *
+	 * FIXME: This will eventually be refactored, just starting out the work on prioritizing resource sources // Hugi 2024-07-09
+	 */
+	public void addAndReadSourceLowestPriority( final PropertiesSource source ) {
+		_sources.add( 0, source );
+		_readAllSources();
+	}
+
+	/**
+	 * Read all the property sources and apply their properties
+	 */
+	private void _readAllSources() {
+		_allProperties.clear();
+
+		for( PropertiesSource propertiesSource : sources() ) {
+			putAll( propertiesSource.readAll() );
+		}
 	}
 
 	public static interface PropertiesSource {

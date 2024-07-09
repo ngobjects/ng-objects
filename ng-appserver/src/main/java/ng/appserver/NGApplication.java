@@ -103,7 +103,7 @@ public class NGApplication {
 		final long startTime = System.currentTimeMillis();
 
 		final NGProperties properties = new NGProperties();
-		properties.addAndReadResourceSource( new PropertiesSourceArguments( args ) );
+		properties.addAndReadSourceHighestPriority( new PropertiesSourceArguments( args ) );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		redirectOutputToFilesIfOutputPathSet( properties.propWOOutputPath() );
@@ -122,7 +122,7 @@ public class NGApplication {
 			logger.info( "=======================================" );
 		}
 
-		logger.info( "===== Properties =====\n" + properties._propertiesMapAsString() );
+		logger.info( "===== Properties from arguments =====\n" + properties._propertiesMapAsString() );
 
 		try {
 			NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
@@ -134,8 +134,9 @@ public class NGApplication {
 			application._properties = properties;
 
 			// FIXME: We're adding the properties file here since it will use and needs application().resourceManager() to function at the moment // Hugi 2024-06-14
-			// FIXME: Here, the properties from the file will override the command line properties. We need to re-apply the CLI arguments, which should have precedence (awaits the coming Properties overhaul) // Hugi 2024-06-15
-			properties.addAndReadResourceSource( new PropertiesSourceResource( StandardNamespace.App.identifier(), "Properties" ) );
+			properties.addAndReadSourceLowestPriority( new PropertiesSourceResource( StandardNamespace.App.identifier(), "Properties" ) );
+
+			logger.info( "===== Properties after loading application properties =====\n" + properties._propertiesMapAsString() );
 
 			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
 			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
