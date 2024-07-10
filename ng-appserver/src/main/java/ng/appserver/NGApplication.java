@@ -404,6 +404,9 @@ public class NGApplication {
 			// FIXME: Doesn't feel like the place to set the session ID in the response, but let's do it anyway :D // Hugi 2023-01-10
 			addSessionCookieToResponse( request, response );
 
+			// FIXME: Same thought here. dispatchRequest() just doesn't feel like the place for session management // Hugi 2024-07-10
+			touchSessionIfPresentAndNotTerminating( request );
+
 			return response;
 		}
 		catch( final NGSessionRestorationException e ) {
@@ -418,6 +421,11 @@ public class NGApplication {
 		}
 	}
 
+	/**
+	 * Add the sessionID cookie (if present in request) to the given response or, if the session is marked for termination, delete the session cookie
+	 *
+	 * FIXME: This might be a prime location to perform a session cookie deletion if (a) no sessionID is present or (b) no session is available for the given sessionID // Hugi 2024-07-10
+	 */
 	private void addSessionCookieToResponse( final NGRequest request, final NGResponse response ) {
 		final String sessionID = request._sessionID();
 
@@ -431,10 +439,20 @@ public class NGApplication {
 					// CHECKME: This might be a better location to ask session storage to dispose of a terminated session.
 				}
 				else {
-					session.touch(); // CHECKME: Probably the wrong location to do this, since this is now a cookie method... // Hugi 2023-08-27
 					response.addCookie( createSessionCookie( sessionID, (int)session.timeOut().toSeconds() ) );
 				}
 			}
+		}
+	}
+
+	/**
+	 * "touch" the requests's session, i.e. indicate we're still working with it, granting it life for an additional [sessionTimeout] seconds
+	 */
+	private void touchSessionIfPresentAndNotTerminating( final NGRequest request ) {
+		final NGSession session = request.existingSession();
+
+		if( session != null && !session.shouldTerminate() ) {
+			session.touch();
 		}
 	}
 
