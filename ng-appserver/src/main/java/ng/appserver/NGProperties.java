@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +27,9 @@ import ng.appserver.resources.NGResource;
  * FIXME: Properties need to get updated when a loaded Properties file is changed // Hugi 2023-02-22
  * FIXME: Properties should be typesafe // Hugi 2023-07-15
  * FIXME: Properties need default values // Hugi 2023-07-15
+ * FIXME: Properties need watching for changes (allowing us to trigger logic when properties change, like switching loggers, flushing caches etc.) // Hugi 2024-07-10
+ * FIXME: Property files loaded from resource/file need a preview feature in the control UI // Hugi 2024-07-10
+ * FIXME: Configuration for different deployment modes should be previewable as well in the UI // Hugi 2024-07-10
  */
 
 public class NGProperties {
@@ -102,6 +106,8 @@ public class NGProperties {
 	public static interface PropertiesSource {
 
 		public Map<String, String> readAll();
+
+		public String description();
 	}
 
 	/**
@@ -114,6 +120,16 @@ public class NGProperties {
 		@Override
 		public Map<String, String> readAll() {
 			return _properties;
+		}
+
+		@Override
+		public String description() {
+			return "Properties set in source";
+		}
+
+		@Override
+		public String toString() {
+			return "PropertiesSourceCode [_properties=" + _properties + "]";
 		}
 	}
 
@@ -159,6 +175,16 @@ public class NGProperties {
 			catch( IOException e ) {
 				throw new UncheckedIOException( e );
 			}
+		}
+
+		@Override
+		public String description() {
+			return "Resource file %s:%s".formatted( namespace(), resourcePath() );
+		}
+
+		@Override
+		public String toString() {
+			return "PropertiesSourceResource [_namespace=" + _namespace + ", _resourcePath=" + _resourcePath + "]";
 		}
 	}
 
@@ -207,6 +233,16 @@ public class NGProperties {
 			}
 
 			return m;
+		}
+
+		@Override
+		public String description() {
+			return "Properties from command line arguments";
+		}
+
+		@Override
+		public String toString() {
+			return "PropertiesSourceArguments [_argv=" + Arrays.toString( _argv ) + "]";
 		}
 	}
 
