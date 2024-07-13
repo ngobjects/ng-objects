@@ -1,5 +1,6 @@
 package ng.appserver.elements;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import ng.appserver.privates._NGUtilities;
 
 /**
  * FIXME: This is still a very basic experimental implementation // Hugi 2023-05-01
+ * FIXME: Add support for <optgroup> // Hugi 2024-07-13
  */
 
 public class NGPopUpButton extends NGDynamicElement {
@@ -40,6 +42,13 @@ public class NGPopUpButton extends NGDynamicElement {
 	private final NGAssociation _indexAss;
 
 	/**
+	 * FIXME: We might want to offer the opportunity to replace the entire "selections" association in the target component, instead of modifying the existing collection // Hugi 2024-07-13
+	 */
+	private final NGAssociation _selectionsAss;
+
+	private final NGAssociation _multipleAss;
+
+	/**
 	 * Pass-through attributes
 	 */
 	private final Map<String, NGAssociation> _additionalAssociations;
@@ -55,6 +64,10 @@ public class NGPopUpButton extends NGDynamicElement {
 		_disabledAss = _additionalAssociations.remove( "disabled" );
 		_nameAss = _additionalAssociations.remove( "name" );
 		_indexAss = _additionalAssociations.remove( "index" );
+
+		// For multiselect
+		_selectionsAss = _additionalAssociations.remove( "selections" );
+		_multipleAss = _additionalAssociations.remove( "multiple" );
 	}
 
 	@Override
@@ -63,26 +76,50 @@ public class NGPopUpButton extends NGDynamicElement {
 			final String name = name( context );
 			final List<String> valuesFromRequest = request.formValuesForKey( name );
 
+			// FIXME: We might have to handle probably have to handle "empty" for the multiple case
 			if( !valuesFromRequest.isEmpty() ) {
-
-				// If multiple form values are present for the same field name, the potential for an error condition is probably high enough to just go ahead and fail.
-				if( valuesFromRequest.size() > 1 ) {
-					throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( valuesFromRequest.size(), name, valuesFromRequest ) );
-				}
-
-				final String stringValueFromRequest = valuesFromRequest.get( 0 );
-
-				// If nothing is selected, we push null to the selection
-				if( NO_SELECTION_OPTION_VALUE.equals( stringValueFromRequest ) ) {
-					_selectionAss.setValue( null, context.component() );
+				if( multiple( context ) ) {
+					takeMultipleValuesFromRequest( context, name, valuesFromRequest );
 				}
 				else {
-					final int selectionIndex = Integer.parseInt( stringValueFromRequest );
-					final List<?> list = list( context );
-					final Object selectedItem = list.get( selectionIndex );
-					_selectionAss.setValue( selectedItem, context.component() );
+					takeSingleValueFromRequest( context, name, valuesFromRequest );
 				}
 			}
+		}
+	}
+
+	private void takeMultipleValuesFromRequest( final NGContext context, final String name, final List<String> valuesFromRequest ) {
+
+		// FIXME: We might want to offer th user the opportunity that we modify the original collection instead of passing in a new one // Hugi 2024-07-13
+		final List<?> list = list( context );
+
+		final List selectedItems = new ArrayList<>();
+
+		for( String index : valuesFromRequest ) {
+			selectedItems.add( list.get( Integer.parseInt( index ) ) );
+		}
+
+		_selectionsAss.setValue( selectedItems, context.component() );
+	}
+
+	private void takeSingleValueFromRequest( final NGContext context, final String name, final List<String> valuesFromRequest ) {
+
+		// If multiple form values are present for the same field name, the potential for an error condition is probably high enough to just go ahead and fail.
+		if( valuesFromRequest.size() > 1 ) {
+			throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( valuesFromRequest.size(), name, valuesFromRequest ) );
+		}
+
+		final String stringValueFromRequest = valuesFromRequest.get( 0 );
+
+		// If nothing is selected, we push null to the selection
+		if( NO_SELECTION_OPTION_VALUE.equals( stringValueFromRequest ) ) {
+			_selectionAss.setValue( null, context.component() );
+		}
+		else {
+			final int selectionIndex = Integer.parseInt( stringValueFromRequest );
+			final List<?> list = list( context );
+			final Object selectedItem = list.get( selectionIndex );
+			_selectionAss.setValue( selectedItem, context.component() );
 		}
 	}
 
@@ -94,6 +131,10 @@ public class NGPopUpButton extends NGDynamicElement {
 		attributes.put( "name", name( context ) );
 
 		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
+
+		if( multiple( context ) ) {
+			attributes.put( "multiple", "true" );
+		}
 
 		if( disabled( context ) ) {
 			attributes.put( "disabled", "" );
@@ -122,18 +163,24 @@ public class NGPopUpButton extends NGDynamicElement {
 
 			final Object displayString = _displayStringAss.valueInComponent( context.component() );
 
-			// FIXME: Hacky way to get the currently selected item. We should be reusing logic from takeValuesFromRequest() here
-			final String indexValue = context.request().formValueForKey( name( context ) );
-
 			boolean isSelected = false;
 
-			if( indexValue != null && !indexValue.equals( NO_SELECTION_OPTION_VALUE ) && Integer.parseInt( indexValue ) == index ) {
-				isSelected = true;
+			// FIXME: Hacky way to get the currently selected item. We should be reusing logic from takeValuesFromRequest() here
+			if( multiple( context ) ) {
+				final List<String> selectedIndexes = context.request().formValuesForKey( name( context ) );
+				isSelected = selectedIndexes.contains( String.valueOf( index ) );
 			}
+			else {
+				final String indexValue = context.request().formValueForKey( name( context ) );
 
-			if( _selectionAss != null ) {
-				if( object.equals( _selectionAss.valueInComponent( context.component() ) ) ) {
+				if( indexValue != null && !indexValue.equals( NO_SELECTION_OPTION_VALUE ) && Integer.parseInt( indexValue ) == index ) {
 					isSelected = true;
+				}
+
+				if( _selectionAss != null ) {
+					if( object.equals( _selectionAss.valueInComponent( context.component() ) ) ) {
+						isSelected = true;
+					}
 				}
 			}
 
@@ -153,6 +200,17 @@ public class NGPopUpButton extends NGDynamicElement {
 	private boolean disabled( final NGContext context ) {
 		if( _disabledAss != null ) {
 			return _NGUtilities.isTruthy( _disabledAss.valueInComponent( context.component() ) );
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return True if the field is disabled
+	 */
+	private boolean multiple( final NGContext context ) {
+		if( _multipleAss != null ) {
+			return _NGUtilities.isTruthy( _multipleAss.valueInComponent( context.component() ) );
 		}
 
 		return false;
