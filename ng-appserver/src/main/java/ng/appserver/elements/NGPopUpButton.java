@@ -39,8 +39,6 @@ public class NGPopUpButton extends NGDynamicElement {
 
 	private final NGAssociation _indexAss;
 
-	private final NGAssociation _valueAss;
-
 	/**
 	 * Pass-through attributes
 	 */
@@ -57,7 +55,6 @@ public class NGPopUpButton extends NGDynamicElement {
 		_disabledAss = _additionalAssociations.remove( "disabled" );
 		_nameAss = _additionalAssociations.remove( "name" );
 		_indexAss = _additionalAssociations.remove( "index" );
-		_valueAss = _additionalAssociations.remove( "value" );
 	}
 
 	@Override
