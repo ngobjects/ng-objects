@@ -13,10 +13,12 @@ import ng.appserver.privates.NGHTMLUtilities;
 
 public class AjaxUpdateContainer extends NGDynamicGroup {
 
+	public NGAssociation _elementNameAssociation;
 	public NGAssociation _idAssociation;
 
 	public AjaxUpdateContainer( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( name, associations, template );
+		_elementNameAssociation = associations.get( "elementName" );
 		_idAssociation = associations.get( "id" );
 	}
 
@@ -34,7 +36,14 @@ public class AjaxUpdateContainer extends NGDynamicGroup {
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		final String id = id( context );
 		final StringBuilder b = new StringBuilder();
-		b.append( NGHTMLUtilities.createElementStringWithAttributes( "div", Map.of( "id", id ), false ) );
+
+		String elementName = "div";
+
+		if( _elementNameAssociation != null ) {
+			elementName = (String)_elementNameAssociation.valueInComponent( context.component() );
+		}
+
+		b.append( NGHTMLUtilities.createElementStringWithAttributes( elementName, Map.of( "id", id ), false ) );
 		response.appendContentString( b.toString() );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</div>" );
