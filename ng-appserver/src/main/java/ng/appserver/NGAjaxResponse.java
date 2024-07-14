@@ -16,17 +16,17 @@ public class NGAjaxResponse extends NGResponse {
 
 	@Override
 	public void appendContentString( String stringToAppend ) {
-		if( shouldAppendToResponse( _context ) ) {
-			super.appendContentString( stringToAppend );
-		}
+		//		if( shouldAppendToResponse( _context ) ) {
+		super.appendContentString( stringToAppend );
+		//		}
 	}
 
 	/**
 	 * @return true if the context is currently working inside an updateContainer meant to be updated.
-	 * 
+	 *
 	 * FIXME: The best solution would be to not invoke appendToResponse() at all on components outside the rendering scope. Introduce conditional rendering in NGElement? // Hugi 2024-05-08
 	 */
-	private boolean shouldAppendToResponse( NGContext context ) {
+	public static boolean shouldAppendToResponse( NGContext context ) {
 		final List<String> ucHeader = context.request().headers().get( "x-updatecontainerid" );
 
 		if( ucHeader != null && !ucHeader.isEmpty() ) {

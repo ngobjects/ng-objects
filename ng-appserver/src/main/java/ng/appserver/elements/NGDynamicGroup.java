@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGActionResults;
+import ng.appserver.NGAjaxResponse;
 import ng.appserver.NGAssociation;
+import ng.appserver.NGComponentReference;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.elements.ajax.AjaxUpdateContainer;
 
 /**
  * A common superclass for dynamic elements that have multiple children in our template element tree
@@ -47,7 +50,12 @@ public class NGDynamicGroup extends NGDynamicElement {
 			context.elementID().addBranch();
 
 			for( final NGElement child : children() ) {
-				child.appendToResponse( response, context );
+				if( NGAjaxResponse.shouldAppendToResponse( context ) || child instanceof NGComponentContent || child instanceof NGConditional || child instanceof NGSwitchComponent || child instanceof NGRepetition || child instanceof NGComponentReference || child instanceof AjaxUpdateContainer ) {
+					child.appendToResponse( response, context );
+				}
+				else if( child instanceof NGDynamicGroup dg ) {
+					dg.appendChildrenToResponse( response, context );
+				}
 				context.elementID().increment();
 			}
 
