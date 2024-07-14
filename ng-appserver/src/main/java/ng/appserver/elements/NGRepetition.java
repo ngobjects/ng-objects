@@ -16,7 +16,7 @@ import ng.appserver.NGResponse;
  * FIXME: Only partially implemented // Hugi 2023-05-01
  */
 
-public class NGRepetition extends NGDynamicGroup {
+public class NGRepetition extends NGDynamicGroup implements NGStructuralElement {
 
 	/**
 	 * The number of iterations to do
@@ -112,6 +112,11 @@ public class NGRepetition extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+		appendStructureToResponse( response, context );
+	}
+
+	@Override
+	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 
 		context.elementID().addBranch();
 

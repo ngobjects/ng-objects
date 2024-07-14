@@ -11,7 +11,7 @@ import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
-public class NGComponentContent extends NGDynamicElement {
+public class NGComponentContent extends NGDynamicElement implements NGStructuralElement {
 
 	public NGComponentContent( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
@@ -19,6 +19,11 @@ public class NGComponentContent extends NGDynamicElement {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+		appendStructureToResponse( response, context );
+	}
+
+	@Override
+	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 		final NGComponent component = context.component();
 
 		if( component.contentElement() != null ) {

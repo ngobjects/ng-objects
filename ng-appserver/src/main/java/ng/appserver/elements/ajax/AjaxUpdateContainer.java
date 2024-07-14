@@ -32,16 +32,23 @@ public class AjaxUpdateContainer extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-
-		final String id = (String)_idAssociation.valueInComponent( context.component() );
-		context.updateContainerIDs.add( id );
-
+		final String id = id( context );
 		final StringBuilder b = new StringBuilder();
-
 		b.append( NGHTMLUtilities.createElementStringWithAttributes( "div", Map.of( "id", id ), false ) );
 		response.appendContentString( b.toString() );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</div>" );
+	}
+
+	public String id( NGContext context ) {
+		return (String)_idAssociation.valueInComponent( context.component() );
+	}
+
+	@Override
+	protected void appendChildrenToResponse( NGResponse response, NGContext context ) {
+		final String id = id( context );
+		context.updateContainerIDs.add( id );
+		super.appendChildrenToResponse( response, context );
 		context.updateContainerIDs.remove( id );
 	}
 }

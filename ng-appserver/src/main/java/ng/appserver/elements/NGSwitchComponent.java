@@ -22,7 +22,7 @@ import ng.appserver.NGResponse;
  * Original author from Project Wonder: ak
  */
 
-public class NGSwitchComponent extends NGDynamicElement {
+public class NGSwitchComponent extends NGDynamicElement implements NGStructuralElement {
 
 	/**
 	 * Component name
@@ -128,6 +128,11 @@ public class NGSwitchComponent extends NGDynamicElement {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+		appendStructureToResponse( response, context );
+	}
+
+	@Override
+	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 		final String name = componentName( context.component() );
 		final String id = _elementNameInContext( name, context );
 

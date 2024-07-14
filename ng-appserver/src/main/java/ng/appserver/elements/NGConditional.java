@@ -15,7 +15,7 @@ import ng.appserver.privates._NGUtilities;
  * Container element that will only render it's contained content if the binding [condition] evaluates to true.
  */
 
-public class NGConditional extends NGDynamicGroup {
+public class NGConditional extends NGDynamicGroup implements NGStructuralElement {
 
 	/**
 	 * The condition this conditional evaluates
@@ -55,6 +55,11 @@ public class NGConditional extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
+		appendStructureToResponse( response, context );
+	}
+
+	@Override
+	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 		if( conditionInContext( context ) ) {
 			appendChildrenToResponse( response, context );
 		}

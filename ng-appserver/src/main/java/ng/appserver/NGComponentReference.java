@@ -4,11 +4,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
+import ng.appserver.elements.NGStructuralElement;
+
 /**
  * NGComponentReference holds a reference to a component being rendered in the template tree.
  */
 
-public class NGComponentReference extends NGDynamicElement {
+public class NGComponentReference extends NGDynamicElement implements NGStructuralElement {
 
 	/**
 	 * Holds a reference to the fully qualified class name of the component we're going to render
@@ -83,7 +85,12 @@ public class NGComponentReference extends NGDynamicElement {
 	}
 
 	@Override
-	public void appendToResponse( final NGResponse response, final NGContext context ) {
+	public void appendToResponse( NGResponse response, NGContext context ) {
+		appendStructureToResponse( response, context );
+	}
+
+	@Override
+	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 		beforeComponent( context );
 		context.component().appendToResponse( response, context );
 		afterComponent( context );
