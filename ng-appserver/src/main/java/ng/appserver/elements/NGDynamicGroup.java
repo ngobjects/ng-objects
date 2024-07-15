@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGAjaxResponse;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
@@ -48,7 +47,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 			context.elementID().addBranch();
 
 			for( final NGElement child : children() ) {
-				if( NGAjaxResponse.shouldAppendToResponse( context ) ) {
+				if( shouldAppendToResponseInContext( context ) ) {
 					child.appendToResponse( response, context );
 				}
 				else if( child instanceof NGDynamicGroup dg ) {
@@ -57,9 +56,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 				else if( child instanceof NGStructuralElement dg ) {
 					dg.appendStructureToResponse( response, context );
 				}
-				else {
-					System.out.println( "NORENDER: " + child.getClass() );
-				}
+
 				context.elementID().increment();
 			}
 
@@ -125,6 +122,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 	private static List<NGElement> childrenFromTemplate( final NGElement contentTemplate ) {
 
 		// Null represents an empty container tag (i.e. no children).
+		// FIXME: Eliminate this check. The rendering engine should be using an empty list
 		if( contentTemplate == null ) {
 			return Collections.emptyList();
 		}
@@ -136,5 +134,29 @@ public class NGDynamicGroup extends NGDynamicElement {
 
 		// If template is any other element, it's an only child.
 		return List.of( contentTemplate );
+	}
+
+	/**
+	 * @return true if the context is currently working inside an updateContainer meant to be updated.
+	 *
+	 * FIXME: We should probably be caching some of this operation. Even if this isn't heavy, it's going to get invoked for every element on the page // Hugi 20224-07-15
+	 */
+	private static boolean shouldAppendToResponseInContext( final NGContext context ) {
+
+		// The list of containers to update is passed in to the request as a header
+		final List<String> containerIDsToUpdate = context.request().headersForKey( "x-updatecontainerid" );
+
+		// If no containers are specified, we're doing a full page render, so always perform appendToResponse()
+		if( containerIDsToUpdate.isEmpty() ) {
+			return true;
+		}
+
+		for( final String id : containerIDsToUpdate ) {
+			if( context.updateContainerIDs.contains( id ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
