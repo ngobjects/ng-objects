@@ -140,7 +140,7 @@ public class NGDynamicGroup extends NGDynamicElement {
 	 * @return true if the context is currently working inside an updateContainer meant to be updated.
 	 *
 	 * FIXME: We should probably be caching some of this operation. Even if this isn't heavy, it's going to get invoked for every element on the page // Hugi 20224-07-15
-	 * FIXME: We can make this more exact/performant by rendering structure only for the branch containing the updateContainer(s) we're actually argeting // Hugi 2024-07-16
+	 * FIXME: We can make this more exact/performant by rendering structure only for the branch(es) containing the updateContainer(s) we're actually targeting // Hugi 2024-07-16
 	 */
 	private static boolean shouldAppendToResponseInContext( final NGContext context ) {
 
