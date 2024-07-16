@@ -15,26 +15,31 @@ public class NGKeyValueAssociation extends NGAssociation {
 
 	/**
 	 * FIXME: We should be conducting a more thorough syntax check for every "disallowed" character // Hugi 2024-06-25
+	 * FIXME: This check really belongs with KVC, not the association // Hugi 2024-07-16
 	 */
 	private static void validateKeyPath( final String keyPath ) {
 		if( keyPath == null ) {
-			throw new NGAssociationConstructionException( "An association's keyPath can't be null" );
+			throw new NGAssociationConstructionException( "[keyPath] can't be null" );
 		}
 
 		if( keyPath.isEmpty() ) {
-			throw new NGAssociationConstructionException( "An association's keyPath can't be an empty string" );
+			throw new NGAssociationConstructionException( "[keyPath] can't be an empty string" );
 		}
 
 		if( keyPath.startsWith( "." ) ) {
-			throw new NGAssociationConstructionException( "An association's keyPath can't start with a period." );
+			throw new NGAssociationConstructionException( "[keyPath] can't start with a period." );
 		}
 
 		if( keyPath.endsWith( "." ) ) {
-			throw new NGAssociationConstructionException( "An association's keyPath can't end with a period." );
+			throw new NGAssociationConstructionException( "[keyPath] can't end with a period." );
 		}
 
-		if( keyPath.contains( "@" ) ) {
-			throw new NGAssociationConstructionException( "Our keyPaths don't support keypath operators (keys prefixed with '@')" );
+		if( keyPath.contains( ".@" ) ) {
+			throw new NGAssociationConstructionException( "[keyPath] doesn't support operators (keys prefixed with '@')" );
+		}
+
+		if( keyPath.contains( ".." ) ) {
+			throw new NGAssociationConstructionException( "[keyPath] can't contain two (or more) consecutive periods" );
 		}
 	}
 
