@@ -242,7 +242,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		// (i.e. the page was a result of a component action invocation, or generates some stateful URLs that reference it)
 		// But we don't currently have a way to check for that. So hasSession() it is.
 		if( context().hasSession() ) {
-			context().session().savePage( context().contextID(), this );
+			context().session().pageCache().savePage( context().contextID(), this );
 		}
 
 		return response;

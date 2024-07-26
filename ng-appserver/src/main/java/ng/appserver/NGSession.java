@@ -2,8 +2,6 @@ package ng.appserver;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -50,7 +48,7 @@ public class NGSession {
 	/**
 	 * In the case of component actions, stores the currently active page instance by contextID.
 	 */
-	public Map<String, NGComponent> _pageCache = new LinkedHashMap<>();
+	private NGPageCache _pageCache = new NGPageCache();
 
 	public NGSession() {
 		this( UUID.randomUUID().toString() );
@@ -141,46 +139,9 @@ public class NGSession {
 	}
 
 	/**
-	 * @return Size of the page cache
-	 *
-	 * FIXME: Temporary location for this parameter, should be settable/loaded from Properties // Hugi 2024-023-25
+	 * @return The session's page cache
 	 */
-	private int pageCacheSize() {
-		return 100;
-	}
-
-	/**
-	 * Saves the given page in the page cache
-	 */
-	public void savePage( final String contextID, final NGComponent component ) {
-		logger.debug( "Saving page {} in cache with contextID {} ", component.getClass(), contextID );
-		_pageCache.put( contextID, component );
-
-		// If the page cache size has been reached, remove the oldest entry
-		if( _pageCache.size() > pageCacheSize() ) {
-			// Since the page cache is a LinkedHashMap (which maintains insertion order), the first entry should be the oldest one
-			final String oldestEntryKey = _pageCache.keySet().iterator().next();
-
-			// Bye bye
-			_pageCache.remove( oldestEntryKey );
-			logger.debug( "Popped contextID {} from page cache", component.getClass(), oldestEntryKey );
-		}
-	}
-
-	/**
-	 * Retrieves the page with the given contextID from the page cache
-	 */
-	public NGComponent restorePageFromCache( final String contextID ) {
-		logger.debug( "Restoring page from cache with contextID: " + contextID );
-		return _pageCache.get( contextID );
-	}
-
-	/**
-	 * Moves the given page to the front of the page cache
-	 */
-	public void retainPageWithContextIDInCache( final String contextID ) {
-		logger.debug( "Retaining contextID {} in cache", contextID );
-		final NGComponent component = _pageCache.remove( contextID );
-		_pageCache.put( contextID, component );
+	public NGPageCache pageCache() {
+		return _pageCache;
 	}
 }

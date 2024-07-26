@@ -61,7 +61,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 
 		// Now let's try to restore the page from the cache, using the contextID provided by the URL
-		final NGComponent originalPage = session.restorePageFromCache( originatingContextID );
+		final NGComponent originalPage = session.pageCache().restorePageFromCache( originatingContextID );
 
 		// No page found in cache. If this happens, the page has probably been pushed out of the session's page cache.
 		if( originalPage == null ) {
@@ -69,7 +69,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 
 		// Since we're working with the page we can safely assume it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
-		session.retainPageWithContextIDInCache( originatingContextID );
+		session.pageCache().retainPageWithContextIDInCache( originatingContextID );
 
 		logger.debug( "Page restored from cache is: " + originalPage.getClass() );
 
