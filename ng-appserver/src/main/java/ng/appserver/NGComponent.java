@@ -226,7 +226,6 @@ public class NGComponent implements NGElement, NGActionResults {
 		context().setPage( this );
 		context().setComponent( this );
 
-		// FIXME: We should only be constructing an AjaxResponse if the request is an AjaxRequest
 		final NGResponse response = new NGResponse();
 		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
 
