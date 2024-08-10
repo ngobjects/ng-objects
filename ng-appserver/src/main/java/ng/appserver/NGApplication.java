@@ -462,14 +462,16 @@ public class NGApplication {
 	 * CHECKME: This currently incorporates a very experimental "public resources" handler, essentially a plain web server. This is not final // Hugi 2023-07-20
 	 */
 	private NGResponse noHandlerResponse( final NGRequest request ) {
+
+		// FIXME: We've not decided what to do about namespacing and public resources // Hugi 2024-06-26
+		final String namespace = "app";
 		final String resourcePath = request.uri();
 
 		if( resourcePath.isEmpty() ) {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
-		// FIXME: We've not decided what to do about namespacing and public resources // Hugi 2024-06-26
-		final Optional<NGResource> resource = resourceManager().obtainPublicResource( resourcePath );
+		final Optional<NGResource> resource = resourceManager().obtainPublicResource( namespace, resourcePath );
 
 		// FIXME: Shouldn't we allow the user to customize the response for a non-existent resource? // Hugi 2024-02-05
 		if( resource.isEmpty() ) {

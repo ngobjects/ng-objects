@@ -97,14 +97,6 @@ public class NGResourceManager {
 	}
 
 	/**
-	 * @return The specified public resource resource by searching in all namespaces
-	 */
-	@Deprecated
-	public Optional<NGResource> obtainPublicResource( final String resourcePath ) {
-		return obtainResourceSearchingAllNamespaces( StandardResourceType.Public, resourcePath );
-	}
-
-	/**
 	 * @return The bytes for the named resource, looking for a cached copy first if caching is enabled (i.e. if we're in production mode)
 	 */
 	private Optional<NGResource> obtainResource( final String namespace, final ResourceType resourceType, final String resourcePath ) {
