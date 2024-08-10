@@ -9,6 +9,7 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.NGResponse;
+import ng.appserver.resources.NGResource;
 
 /**
  * Responds to wotaskd/Monitor requests for:
@@ -51,8 +52,8 @@ public class WOMPRequestHandler extends NGRequestHandler {
 	private NGResponse statistics() {
 		logger.info( "Returning a statistics response. Those are weird..." );
 
-		final Optional<byte[]> bytes = NGApplication.application().resourceManager().bytesForAppResourceNamed( "x-statistics-response.xml" );
-		final byte[] b = bytes.get();
+		final Optional<NGResource> resource = NGApplication.application().resourceManager().obtainAppResource( "app", "x-statistics-response.xml" );
+		final byte[] b = resource.get().bytes();
 		return new NGResponse( b, 200 );
 	}
 

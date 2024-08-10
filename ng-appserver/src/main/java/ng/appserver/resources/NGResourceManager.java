@@ -68,14 +68,6 @@ public class NGResourceManager {
 	}
 
 	/**
-	 * @return The specified app resource by searching in all namespaces
-	 */
-	@Deprecated
-	public Optional<byte[]> bytesForAppResourceNamed( final String resourcePath ) {
-		return bytesForResourceSearchingAllNamespaces( StandardResourceType.App, resourcePath );
-	}
-
-	/**
 	 * @return The specified webserver resource
 	 */
 	public Optional<NGResource> obtainWebserverResource( final String namespace, final String resourcePath ) {
