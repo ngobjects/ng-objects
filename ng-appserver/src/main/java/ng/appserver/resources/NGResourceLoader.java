@@ -83,16 +83,6 @@ public class NGResourceLoader {
 	 */
 	public interface ResourceSource {
 
-		public default Optional<byte[]> bytesForResourceWithPath( String resourcePath ) {
-			final Optional<NGResource> resource = resourceWithPath( resourcePath );
-
-			if( resource.isEmpty() ) {
-				return Optional.empty();
-			}
-
-			return Optional.of( resource.get().bytes() );
-		}
-
 		public Optional<NGResource> resourceWithPath( String resourcePath );
 	}
 
