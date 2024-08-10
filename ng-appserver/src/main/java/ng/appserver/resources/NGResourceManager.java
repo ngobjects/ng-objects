@@ -82,14 +82,6 @@ public class NGResourceManager {
 	}
 
 	/**
-	 * @return The specified component template resource by searching in all namespaces
-	 */
-	@Deprecated
-	public Optional<byte[]> bytesForComponentTemplateResourceNamed( final String resourcePath ) {
-		return bytesForResourceSearchingAllNamespaces( StandardResourceType.ComponentTemplate, resourcePath );
-	}
-
-	/**
 	 * @return The specified public resource
 	 */
 	public Optional<NGResource> obtainPublicResource( final String namespace, final String resourcePath ) {
@@ -117,20 +109,6 @@ public class NGResourceManager {
 	}
 
 	/**
-	 * @return bytes for the specified resource by searching all namespaces
-	 */
-	@Deprecated
-	private Optional<byte[]> bytesForResourceSearchingAllNamespaces( final ResourceType resourceType, final String resourcePath ) {
-		final Optional<NGResource> resource = obtainResourceSearchingAllNamespaces( resourceType, resourcePath );
-
-		if( !resource.isEmpty() ) {
-			return Optional.of( resource.get().bytes() );
-		}
-
-		return Optional.empty();
-	}
-
-	/**
 	 * @return the specified resource by searching all namespaces
 	 */
 	@Deprecated
@@ -141,6 +119,20 @@ public class NGResourceManager {
 			if( !resource.isEmpty() ) {
 				return resource;
 			}
+		}
+
+		return Optional.empty();
+	}
+
+	/**
+	 * @return The specified component template resource by searching in all namespaces
+	 */
+	@Deprecated
+	public Optional<byte[]> bytesForComponentTemplateResourceNamed( final String resourcePath ) {
+		final Optional<NGResource> resource = obtainResourceSearchingAllNamespaces( StandardResourceType.ComponentTemplate, resourcePath );
+
+		if( !resource.isEmpty() ) {
+			return Optional.of( resource.get().bytes() );
 		}
 
 		return Optional.empty();
