@@ -44,7 +44,7 @@ public class NGResourceManager {
 		if( _resourceLoader == null ) {
 			_resourceLoader = new NGResourceLoader();
 
-			// FIXME: These are the "unnamespaced" resource locations we started ou with. They'll still work fine, but we'll need to consider their future // Hugi 2024-06-19
+			// FIXME: These are the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future // Hugi 2024-06-19
 			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
 			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
 			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
@@ -128,13 +128,7 @@ public class NGResourceManager {
 	 * @return The specified component template resource by searching in all namespaces
 	 */
 	@Deprecated
-	public Optional<byte[]> bytesForComponentTemplateResourceNamed( final String resourcePath ) {
-		final Optional<NGResource> resource = obtainResourceSearchingAllNamespaces( StandardResourceType.ComponentTemplate, resourcePath );
-
-		if( !resource.isEmpty() ) {
-			return Optional.of( resource.get().bytes() );
-		}
-
-		return Optional.empty();
+	public Optional<NGResource> obtainComponentTemplateResourceSearchingAllNamespaces( final String resourcePath ) {
+		return obtainResourceSearchingAllNamespaces( StandardResourceType.ComponentTemplate, resourcePath );
 	}
 }

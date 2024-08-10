@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.resources.NGResource;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.NGHTMLFormatException;
@@ -200,10 +201,10 @@ public class NGComponentDefinition {
 
 			// If that fails, let's go for the single file html template
 			if( htmlTemplateStringOptional.isEmpty() ) {
-				final Optional<byte[]> htmlTemplate = NGApplication.application().resourceManager().bytesForComponentTemplateResourceNamed( name() + ".html" );
+				final Optional<NGResource> htmlTemplate = NGApplication.application().resourceManager().obtainComponentTemplateResourceSearchingAllNamespaces( name() + ".html" );
 
 				if( htmlTemplate.isPresent() ) {
-					htmlTemplateStringOptional = Optional.of( new String( htmlTemplate.get(), StandardCharsets.UTF_8 ) );
+					htmlTemplateStringOptional = Optional.of( new String( htmlTemplate.get().bytes(), StandardCharsets.UTF_8 ) );
 				}
 			}
 
@@ -260,12 +261,12 @@ public class NGComponentDefinition {
 
 		final String htmlTemplateFilename = templateName + ".wo/" + templateName + "." + extension;
 
-		final Optional<byte[]> templateBytes = NGApplication.application().resourceManager().bytesForComponentTemplateResourceNamed( htmlTemplateFilename );
+		final Optional<NGResource> templateBytes = NGApplication.application().resourceManager().obtainComponentTemplateResourceSearchingAllNamespaces( htmlTemplateFilename );
 
 		if( templateBytes.isEmpty() ) {
 			return Optional.empty();
 		}
 
-		return Optional.of( new String( templateBytes.get(), StandardCharsets.UTF_8 ) );
+		return Optional.of( new String( templateBytes.get().bytes(), StandardCharsets.UTF_8 ) );
 	}
 }
