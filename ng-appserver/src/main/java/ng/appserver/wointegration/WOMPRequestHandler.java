@@ -63,13 +63,14 @@ public class WOMPRequestHandler extends NGRequestHandler {
 	private static NGResponse terminate() {
 		logger.info( "Terminating application by request from wotaskd..." );
 
-		logger.info( "Sending willStop..." );
+		logger.info( "Sençding willStop..." );
 		NGDefaultLifeBeatThread._lifebeatThread.sendMessage( NGDefaultLifeBeatThread._lifebeatThread._messageGenerator._willStop );
 		logger.info( "Sent willstop." );
 
 		// We perform the shutdown in a thread that executes after we've returned the response to the client.
 		// This ensures the application has the opportunity to submit a response to wotaskd before shutting down.
 		// Not that pretty but does the job.
+		// FIMXE: The entire shutdown process should probably be in a shutdown hook // Hugi 2024-08-10
 		new Thread( () -> {
 			try {
 				Thread.sleep( 1000 );
@@ -84,11 +85,12 @@ public class WOMPRequestHandler extends NGRequestHandler {
 		logger.info( "sending command response to wotaskd" );
 
 		final NGResponse response = new NGResponse();
-		response.setContentString( "<instanceResponse type=\"NSDictionary\">\n"
-				+ "	<commandInstanceResponse type=\"NSDictionary\">\n"
-				+ "		<success type=\"NSString\">YES</success>\n"
-				+ "	</commandInstanceResponse>\n"
-				+ "</instanceResponse>" );
+		response.setContentString( """
+				<instanceResponse type="NSDictionary">
+					<commandInstanceResponse type="NSDictionary">
+						<success type="NSString">YES</success>
+					</commandInstanceResponse>
+				</instanceResponse>""" );
 		return response;
 	}
 }
