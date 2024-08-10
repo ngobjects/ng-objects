@@ -478,7 +478,7 @@ public class NGApplication {
 			return errorResponse;
 		}
 
-		return NGResourceRequestHandler.responseForResource( Optional.of( resource.get().bytes() ), resourcePath );
+		return NGResourceRequestHandler.responseForResource( resource.get(), resourcePath );
 	}
 
 	/**

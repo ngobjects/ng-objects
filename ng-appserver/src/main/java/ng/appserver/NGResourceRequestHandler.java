@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import ng.appserver.resources.NGMimeTypes;
+import ng.appserver.resources.NGResource;
 
 /**
  * Request handler for serving webserver-resources
@@ -22,37 +23,36 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {
+
+		// FIXME: We're still missing the actual namespace, so we just hardcode the app namespace for now // Hugi 2024-08-10
+		final String namespace = "app";
 		final String resourcePath = resourcePathFromURI( request.uri() );
 
 		if( resourcePath.isEmpty() ) {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
-		// FIXME: We want this to work with streams, not byte arrays.
-		// To make this work, we'll have to cache a wrapper class for the resource; that wrapper must give us a "stream provider", not an actual stream, since we'll be consuming the stream of a cached resource multiple times.
-		// Hugi 2023-02-17
-		final Optional<byte[]> resourceBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( resourcePath );
+		final Optional<NGResource> resource = NGApplication.application().resourceManager().obtainWebserverResource( namespace, resourcePath );
 
-		return responseForResource( resourceBytes, resourcePath );
-	}
-
-	// FIXME: Replace (or at least accompany) with an NGResource-invoking method // Hugi 2024-06-26
-	@Deprecated
-	public static NGResponse responseForResource( Optional<byte[]> resourceBytes, final String resourcePath ) {
-
-		// FIXME: Shouldn't we allow the user to customize the response for a non-existent resource? // Hugi 2021-12-06
-		if( resourceBytes.isEmpty() ) {
-			final NGResponse errorResponse = new NGResponse( "webserver resource '" + resourcePath + "' does not exist", 404 );
+		// FIXME: We need to allow the user to customize the response for a non-existent resource // Hugi 2021-12-06
+		if( resource.isEmpty() ) {
+			final NGResponse errorResponse = new NGResponse( "webserver resource '%s' does not exist".formatted( resourcePath ), 404 );
 			errorResponse.setHeader( "content-type", "text/html" );
 			return errorResponse;
 		}
+
+		return responseForResource( resource.get(), resourcePath );
+	}
+
+	@Deprecated
+	public static NGResponse responseForResource( final NGResource resource, final String resourcePath ) {
 
 		// Extract the name of the served resource to use in the filename header
 		final String resourceName = resourcePath.substring( resourcePath.lastIndexOf( "/" ) + 1 );
 		final String mimeType = NGMimeTypes.mimeTypeForResourceName( resourcePath );
 
 		// FIXME: We need to allow some control over the headers for the returned resource, especially with regard to caching // Hugi 2023-02-17
-		final NGResponse response = new NGResponse( resourceBytes.get(), 200 );
+		final NGResponse response = new NGResponse( resource.bytes(), 200 );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName ) );
 		response.setHeader( "Content-Type", mimeType );
 		return response;

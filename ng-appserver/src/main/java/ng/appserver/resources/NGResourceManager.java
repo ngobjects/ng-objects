@@ -83,14 +83,6 @@ public class NGResourceManager {
 	}
 
 	/**
-	 * @return The specified webserver resource by searching in all namespaces
-	 */
-	@Deprecated
-	public Optional<byte[]> bytesForWebserverResourceNamed( final String resourcePath ) {
-		return bytesForResourceSearchingAllNamespaces( StandardResourceType.WebServer, resourcePath );
-	}
-
-	/**
 	 * @return The specified component template resource
 	 */
 	public Optional<NGResource> obtainComponentTemplateResource( final String namespace, final String resourcePath ) {
