@@ -332,39 +332,6 @@ public class NGApplication {
 	}
 
 	/**
-	 * @return The named component, where [componentName] can be either the component's simple class name or full class name.
-	 */
-	public NGComponent pageWithName( final String componentName, final NGContext context ) {
-		Objects.requireNonNull( componentName, "'componentName' must not be null. I can't create components from nothing." );
-		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
-
-		final NGComponentDefinition definition = _componentDefinition( componentName, Collections.emptyList() );
-		return pageWithName( definition, context );
-	}
-
-	/**
-	 * @return A new instance of [componentClass] in the given [context]
-	 */
-	@SuppressWarnings("unchecked") // Our cast to the component class is fine
-	public <E extends NGComponent> E pageWithName( final Class<E> componentClass, final NGContext context ) {
-		Objects.requireNonNull( componentClass, "'componentClass' must not be null. I can't create components from nothing." );
-		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
-
-		final NGComponentDefinition definition = _componentDefinition( componentClass, Collections.emptyList() );
-		return (E)pageWithName( definition, context );
-	}
-
-	/**
-	 * @return A new instance of [componentDefinition] in the given [context]
-	 */
-	private NGComponent pageWithName( final NGComponentDefinition componentDefinition, final NGContext context ) {
-		Objects.requireNonNull( componentDefinition );
-		Objects.requireNonNull( context );
-
-		return componentDefinition.componentInstanceInContext( context );
-	}
-
-	/**
 	 * @return The global NGApplication instance.
 	 */
 	@Deprecated
@@ -632,6 +599,39 @@ public class NGApplication {
 	 */
 	public void terminate() {
 		System.exit( 0 );
+	}
+
+	/**
+	 * @return The named component, where [componentName] can be either the component's simple class name or full class name.
+	 */
+	public NGComponent pageWithName( final String componentName, final NGContext context ) {
+		Objects.requireNonNull( componentName, "'componentName' must not be null. I can't create components from nothing." );
+		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
+
+		final NGComponentDefinition definition = _componentDefinition( componentName, Collections.emptyList() );
+		return pageWithName( definition, context );
+	}
+
+	/**
+	 * @return A new instance of [componentClass] in the given [context]
+	 */
+	@SuppressWarnings("unchecked") // Our cast to the component class is fine
+	public <E extends NGComponent> E pageWithName( final Class<E> componentClass, final NGContext context ) {
+		Objects.requireNonNull( componentClass, "'componentClass' must not be null. I can't create components from nothing." );
+		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
+
+		final NGComponentDefinition definition = _componentDefinition( componentClass, Collections.emptyList() );
+		return (E)pageWithName( definition, context );
+	}
+
+	/**
+	 * @return A new instance of [componentDefinition] in the given [context]
+	 */
+	private NGComponent pageWithName( final NGComponentDefinition componentDefinition, final NGContext context ) {
+		Objects.requireNonNull( componentDefinition );
+		Objects.requireNonNull( context );
+
+		return componentDefinition.componentInstanceInContext( context );
 	}
 
 	/**
