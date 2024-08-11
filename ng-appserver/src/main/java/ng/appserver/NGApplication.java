@@ -562,9 +562,9 @@ public class NGApplication {
 			final Matcher matcher = pattern.matcher( request.uri() );
 
 			if( matcher.find() ) {
-				logger.info( "Rewriting: {}", request.uri() );
+				logger.debug( "Rewriting: {}", request.uri() );
 				request.setURI( request.uri().substring( matcher.group().length() ) );
-				logger.info( "Rewrote: {}", request.uri() );
+				logger.debug( "Rewrote: {}", request.uri() );
 			}
 		}
 
