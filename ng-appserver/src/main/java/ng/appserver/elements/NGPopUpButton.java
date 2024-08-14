@@ -17,7 +17,6 @@ import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.privates._NGUtilities;
 
 /**
- * FIXME: This is still a very basic experimental implementation // Hugi 2023-05-01
  * FIXME: Add support for <optgroup> // Hugi 2024-07-13
  */
 

@@ -12,8 +12,7 @@ import ng.appserver.privates.NGParsedURI;
 import ng.appserver.templating.NGElementUtils;
 
 /**
- * FIXME: Currently requires the full class name to be specified.
- * FIXME: We're going to want to cache both action classes and action methods
+ * CHECKME: We need to cache both action classes and methods // Hugi 2024-08-14
  */
 
 public class NGDirectActionRequestHandler extends NGRequestHandler {

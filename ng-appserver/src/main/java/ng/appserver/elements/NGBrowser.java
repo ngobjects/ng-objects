@@ -6,7 +6,8 @@ import ng.appserver.NGAssociation;
 import ng.appserver.NGElement;
 
 /**
- * FIXME: This should be a select element for multiple selection. Implement. Also, not sure about this name... // Hugi 2023-09-25
+ * FIXME: The implementation for multiple selection should be moved here from NGPopUpButton // Hugi 2024-08-14
+ * FIXME: Both this class and NGPopUpButton should probably be renamed to something like NGSelect/NGSelectMultiple to better reflect the HTML element they represents // Hugi 2024-08-14
  */
 
 public class NGBrowser extends NGPopUpButton {

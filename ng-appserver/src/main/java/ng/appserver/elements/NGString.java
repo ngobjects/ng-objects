@@ -27,8 +27,17 @@ public class NGString extends NGDynamicElement {
 	/**
 	 * A java formatter used to format the displayed value
 	 *
-	 * FIXME: I'm not sure we want to keep this around
-	 * FIXME: Should we perhaps just keep it around, and add support for DateTimeFormatter?
+	 * FIXME:
+	 * Instead of accepting a java.text.Format here we need to handle this in a way that accepts other formatter types,
+	 * java.time.format.DateTimeFormatter being the most obvious example.
+	 *
+	 * Our best course of action is probably to introduce our own formatter object that can wrap other formatters,
+	 * along with a "formatter wrapping shop" object that looks up and wraps different formatter types.
+	 *
+	 * It should probably also be the role of that "wrapper" factory to cache formatters for reuse, in case we decide to create formatters ourselves based on
+	 * date/number format strings, like WOString does. Whether or not to do that is a different question (although it's probably sensible WRT porting older templates).
+	 * // Hugi-2024-08-14
+	 *
 	 */
 	private final NGAssociation _formatterAssociation;
 
