@@ -9,11 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication;
-import ng.appserver.resources.NGResourceLoader.JavaClasspathResourceSource;
 
 /**
- * Experimental implementation of the resource manager.
- * I'm not sure that this class should exist to begin with. It should be the responsibility of the bundle to locate resources.
+ * Manages static resources and resource caching
  */
 
 public class NGResourceManager {
@@ -23,7 +21,7 @@ public class NGResourceManager {
 	/**
 	 * The resource loader that handles locating and loading of resources to be managed by this resource manager
 	 */
-	private NGResourceLoader _resourceLoader;
+	private NGResourceLoader _resourceLoader = new NGResourceLoader();
 
 	/**
 	 * Cache storing resources in-memory by namespace -> resource type -> resource path
@@ -40,23 +38,7 @@ public class NGResourceManager {
 	/**
 	 * @return The resource loader used by this manager
 	 */
-	private NGResourceLoader resourceLoader() {
-		if( _resourceLoader == null ) {
-			_resourceLoader = new NGResourceLoader();
-
-			// FIXME: These are the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future // Hugi 2024-06-19
-			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
-			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
-			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
-			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
-
-			// "app" namespace defined
-			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "ng/app/app-resources" ) );
-			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/app/webserver-resources" ) );
-			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "ng/app/public" ) );
-			_resourceLoader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/app/components" ) );
-		}
-
+	public NGResourceLoader resourceLoader() {
 		return _resourceLoader;
 	}
 
