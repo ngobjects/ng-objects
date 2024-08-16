@@ -3,6 +3,7 @@ package ng.appserver.resources;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -76,6 +77,13 @@ public class NGResourceLoader {
 		}
 
 		return Optional.empty();
+	}
+
+	/**
+	 * @return Every namespace registered with the loader
+	 */
+	public Set<String> namespaces() {
+		return _allResourceSources.keySet();
 	}
 
 	/**
@@ -154,11 +162,9 @@ public class NGResourceLoader {
 	}
 
 	/**
-	 * Wraps loading of resources from a
+	 * Handles loading of resources from a file system directory
 	 */
 	public static class FileSystemDirectoryResourceSource implements ResourceSource {
-
-		private static final Logger logger = LoggerFactory.getLogger( FileSystemDirectoryResourceSource.class );
 
 		/**
 		 * The directory we're going to locate resources in
@@ -172,26 +178,11 @@ public class NGResourceLoader {
 
 		@Override
 		public Optional<NGResource> resourceWithPath( String resourcePath ) {
-			// FIXME: We still haven't implemented resource loading from the file system in our "new resource world" // Hugi 2024-06-22
-			throw new RuntimeException( "Not implemented yet" );
-			//			Objects.requireNonNull( resourcePath );
-			//
-			//			logger.debug( "Reading resource {} ", resourcePath );
-			//
-			//			try {
-			//				// The path to the actual file on disk
-			//				final Path filePath = _basePath.resolve( resourcePath );
-			//				return Optional.of( NGResource.of( Files::newInputStream( filePath ) ) );
-			//			}
-			//			catch( final IOException ioException ) {
-			//				throw new UncheckedIOException( ioException );
-			//			}
-			//			// TODO Auto-generated method stub
-			//			return Optional.empty();
-		}
-	}
+			Objects.requireNonNull( resourcePath );
 
-	public Set<String> namespaces() {
-		return _allResourceSources.keySet();
+			// The path to the actual file on disk
+			final Path filePath = _basePath.resolve( resourcePath );
+			return Optional.of( NGResource.of( () -> Files.newInputStream( filePath ) ) );
+		}
 	}
 }
