@@ -149,7 +149,7 @@ public class NGApplication {
 
 			// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
 			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath
-			_application.loadPlugins();
+			application.loadPlugins();
 
 			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
 			NGElementUtils.addPackage( applicationClass.getPackageName() );
