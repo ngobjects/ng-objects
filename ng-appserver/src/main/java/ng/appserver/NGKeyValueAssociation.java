@@ -16,6 +16,7 @@ public class NGKeyValueAssociation extends NGAssociation {
 	/**
 	 * FIXME: We should be conducting a more thorough syntax check for every "disallowed" character // Hugi 2024-06-25
 	 * FIXME: This check really belongs with KVC, not the association // Hugi 2024-07-16
+	 * FIXME: KeyPath validation can really be dependent on the targeted object, so we might have to delegate this based on a keyPath element's capabilities (for example, a String key in a map could be whatever) // Hugi 2024-09-21
 	 */
 	private static void validateKeyPath( final String keyPath ) {
 		if( keyPath == null ) {
