@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.properties;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.NGApplication;
 import ng.appserver.resources.NGResource;
 
 /**

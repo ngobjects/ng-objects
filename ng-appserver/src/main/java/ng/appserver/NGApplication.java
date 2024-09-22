@@ -21,9 +21,10 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.NGProperties.PropertiesSourceArguments;
-import ng.appserver.NGProperties.PropertiesSourceResource;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
+import ng.appserver.properties.NGProperties;
+import ng.appserver.properties.NGProperties.PropertiesSourceArguments;
+import ng.appserver.properties.NGProperties.PropertiesSourceResource;
 import ng.appserver.resources.NGResource;
 import ng.appserver.resources.NGResourceLoader;
 import ng.appserver.resources.NGResourceLoader.JavaClasspathResourceSource;

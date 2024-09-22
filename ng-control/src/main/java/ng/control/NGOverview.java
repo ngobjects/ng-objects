@@ -7,8 +7,8 @@ import java.util.List;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
-import ng.appserver.NGProperties.PropertiesSource;
 import ng.appserver.NGSession;
+import ng.appserver.properties.NGProperties.PropertiesSource;
 
 public class NGOverview extends NGComponent {
 
