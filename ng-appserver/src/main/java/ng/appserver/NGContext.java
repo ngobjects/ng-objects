@@ -14,6 +14,22 @@ public class NGContext {
 	public Set<String> updateContainerIDs = new HashSet<>();
 
 	/**
+	 * Stores the ID of the context that originated the creation of this context.
+	 *
+	 * FIXME: We're currently storing this here only while we develop the new partial page caching mechanism, will probably end up somewhere else  // Hugi 2024-09-28
+	 */
+	public String originatingContextID;
+
+	/**
+	 * ID of the update container targeted with this request
+	 *
+	 * FIXME: Temp location while we develop the partial page caching mechanism, will probably end up somewhere else  // Hugi 2024-09-28
+	 */
+	public String targetedUpdateContainerID() {
+		return request().headerForKey( "x-updatecontainerid" );
+	}
+
+	/**
 	 * The request that initiated the creation of this context
 	 */
 	private final NGRequest _request;

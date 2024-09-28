@@ -27,8 +27,8 @@ public class NGPageCache {
 	/**
 	 * Saves the given page in the page cache
 	 */
-	public void savePage( final String contextID, final NGComponent component ) {
-		logger.debug( "Saving page {} in cache with contextID {} ", component.getClass(), contextID );
+	public void savePage( final String contextID, final NGComponent component, final String originatingContextID, final String updateContainerID ) {
+		logger.debug( "Saving page '{}' in cache with contextID '{}' originating from context '{}', updateContainerID '{}'", component.getClass(), contextID, originatingContextID, updateContainerID );
 
 		// A little sanity check since if we're storing the same contextID twice, we're probably on our way to do something horrible
 		if( _cacheMap.containsKey( contextID ) ) {

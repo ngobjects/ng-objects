@@ -240,8 +240,10 @@ public class NGComponent implements NGElement, NGActionResults {
 		// Actually, we should only have to save the page instance if we're currently in some way involved in component actions
 		// (i.e. the page was a result of a component action invocation, or generates some stateful URLs that reference it)
 		// But we don't currently have a way to check for that. So hasSession() it is.
+		//
+		// FIXME: This feels like the wrong place to store the page. Not yet sure where it *should* be but my gut has a feeling // Hugi 2024-09-28
 		if( context().hasSession() ) {
-			context().session().pageCache().savePage( context().contextID(), this );
+			context().session().pageCache().savePage( context().contextID(), this, context().originatingContextID, context().targetedUpdateContainerID() );
 		}
 
 		return response;
