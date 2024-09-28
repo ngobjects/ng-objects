@@ -48,6 +48,8 @@ public class NGDynamicGroup extends NGDynamicElement {
 
 			for( final NGElement child : children() ) {
 				if( shouldAppendToResponseInContext( context ) ) {
+					// FIXME: Keeping this just for reference for now. Looks butt-ugly at the moment, but being able to display the elementID tree while debugging is kind of useful, so we want to build something from this // Hugi 2024-09-28
+					// response.appendContentString( "<span style=\"background-color: red; display: inline-block; width: 100px; overflow-x: hidden\">%s</span>".formatted( context.elementID() ) );
 					child.appendToResponse( response, context );
 				}
 				else if( child instanceof NGDynamicGroup dg ) {
