@@ -84,10 +84,12 @@ public class NGForm extends NGDynamicGroup {
 				return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 			}
 			else {
+				// In this case, a button in the form was targeted, so we  keep on looking down the tree, allowing NGSubmitButton's invokeAction() logic to catch the click
+				// CHECKME: This currently feels redundant, since this method will currently end up invoking invokeChildrenAction() anyway. But I like having this explicit while we're still fleshing out the design (which still needs improvement) // Hugi 2024-09-28
 				return super.invokeAction( request, context );
 			}
 		}
 
-		return null;
+		return super.invokeAction( request, context );
 	}
 }
