@@ -29,6 +29,12 @@ public class NGPageCache {
 	 */
 	public void savePage( final String contextID, final NGComponent component ) {
 		logger.debug( "Saving page {} in cache with contextID {} ", component.getClass(), contextID );
+
+		// A little sanity check since if we're storing the same contextID twice, we're probably on our way to do something horrible
+		if( _cacheMap.containsKey( contextID ) ) {
+			throw new IllegalStateException( "Attempted to overwrite page cache key '%s' with component '%s'".formatted( contextID, component.name() ) );
+		}
+
 		_cacheMap.put( contextID, component );
 
 		// If the page cache size has been reached, remove the oldest entry
