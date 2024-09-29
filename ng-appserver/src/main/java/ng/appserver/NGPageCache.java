@@ -6,6 +6,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The page cache is used by stateful actions to store instances of previously rendered components
+ */
+
 public class NGPageCache {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGPageCache.class );
@@ -26,16 +30,21 @@ public class NGPageCache {
 
 	/**
 	 * Saves the given page in the page cache
+	 *
+	 * @param contextID The ID of the context being stored, used as a key to identify/retrieve the cache entry
+	 * @param page The page associated with the given context
+	 * @param originatingContextID The ID of the context that initiated the creation of the given context. In the case of partial page updates, this key is used to associate the cache entry with the actual key
+	 * @param updateContainerID The ID of the update container targeted with the given request. We only need one cached copy for each update container (since an area's content will never get used once it's been replaced)
 	 */
-	public void savePage( final String contextID, final NGComponent component, final String originatingContextID, final String updateContainerID ) {
-		logger.debug( "Saving page '{}' in cache with contextID '{}' originating from context '{}', updateContainerID '{}'", component.getClass(), contextID, originatingContextID, updateContainerID );
+	public void savePage( final String contextID, final NGComponent page, final String originatingContextID, final String updateContainerID ) {
+		logger.debug( "Saving page '{}' in cache with contextID '{}' originating from context '{}', updateContainerID '{}'", page.getClass(), contextID, originatingContextID, updateContainerID );
 
 		// A little sanity check since if we're storing the same contextID twice, we're probably on our way to do something horrible
 		if( _cacheMap.containsKey( contextID ) ) {
-			throw new IllegalStateException( "Attempted to overwrite page cache key '%s' with component '%s'".formatted( contextID, component.name() ) );
+			throw new IllegalStateException( "Attempted to overwrite page cache key '%s' with component '%s'".formatted( contextID, page.name() ) );
 		}
 
-		_cacheMap.put( contextID, component );
+		_cacheMap.put( contextID, page );
 
 		// If the page cache size has been reached, remove the oldest entry
 		if( _cacheMap.size() > pageCacheSize() ) {
@@ -44,12 +53,12 @@ public class NGPageCache {
 
 			// Bye bye
 			_cacheMap.remove( oldestEntryKey );
-			logger.debug( "Popped contextID {} from page cache", component.getClass(), oldestEntryKey );
+			logger.debug( "Popped contextID {} from page cache", page.getClass(), oldestEntryKey );
 		}
 	}
 
 	/**
-	 * Retrieves the page with the given contextID from the page cache
+	 * @return The cached page instance with the given contextID
 	 */
 	public NGComponent restorePageFromCache( final String contextID ) {
 		logger.debug( "Restoring page from cache with contextID: " + contextID );
@@ -57,7 +66,7 @@ public class NGPageCache {
 	}
 
 	/**
-	 * Moves the given page to the front of the page cache
+	 * Moves the page associated with the given contextID to the top of the page cache
 	 */
 	public void retainPageWithContextIDInCache( final String contextID ) {
 		logger.debug( "Retaining contextID {} in cache", contextID );
