@@ -10,6 +10,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The page cache is used by stateful actions to store instances of previously rendered components
+ *
+ * FIXME: Evacuate all children from page cache when parent is evacuated // Hugi 2024-09-30
+ * FIXME: Retain parent entry when a child entry is retained // Hugi 2024-09-30
+ * FIXME: The stored map should probably only contain root entries, using a different map to map to "all entries" // Hugi 2024-09-30
  */
 
 public class NGPageCache {
