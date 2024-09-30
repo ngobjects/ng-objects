@@ -7,11 +7,13 @@ import java.util.List;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
+import ng.appserver.NGPageCache.NGPageCacheEntry;
 import ng.appserver.NGSession;
 import ng.appserver.properties.NGProperties.PropertiesSource;
 
 public class NGOverview extends NGComponent {
 
+	public NGPageCacheEntry currentCacheEntry;
 	public NGSession currentSession;
 	public Object currentPropertyKey;
 

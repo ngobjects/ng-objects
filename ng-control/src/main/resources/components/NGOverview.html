@@ -1,4 +1,24 @@
 <wo:NGControlWrapper>
+	<h2>Page cache</h2>
+	<table>
+		<tr>
+			<th>contextID</th>
+			<th>Page</th>
+			<th>originatingContextID</th>
+			<th>updateContainerID</th>
+			<th>Children</th>
+		</tr>
+		<wo:repetition list="$session.pageCache.cacheMap.sequencedValues" item="$currentCacheEntry">
+			<tr>
+				<td><wo:str value="$currentCacheEntry.contextID" /></td>
+				<td><wo:str value="$currentCacheEntry.page.name" /></td>
+				<td><wo:str value="$currentCacheEntry.originatingContextID" /></td>
+				<td><wo:str value="$currentCacheEntry.updateContainerID" /></td>
+				<td><wo:str value="$currentCacheEntry.children.size" /></td>
+			</tr>
+		</wo:repetition>
+	</table>
+
 	<h2>Sessions</h2>
 	<table>
 		<tr>
