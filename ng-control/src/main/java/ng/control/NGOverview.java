@@ -14,6 +14,7 @@ import ng.appserver.properties.NGProperties.PropertiesSource;
 public class NGOverview extends NGComponent {
 
 	public NGPageCacheEntry currentCacheEntry;
+	public NGPageCacheEntry currentChildEntry;
 	public NGSession currentSession;
 	public Object currentPropertyKey;
 

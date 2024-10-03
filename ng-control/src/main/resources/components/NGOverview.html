@@ -2,20 +2,32 @@
 	<h2>Page cache</h2>
 	<table>
 		<tr>
+			<th></th>
 			<th>contextID</th>
 			<th>Page</th>
 			<th>originatingContextID</th>
 			<th>updateContainerID</th>
 			<th>Children</th>
 		</tr>
-		<wo:repetition list="$session.pageCache.cacheMap.sequencedValues" item="$currentCacheEntry">
+		<wo:repetition list="$session.pageCache.cacheMap.sequencedValues.reversed" item="$currentCacheEntry">
 			<tr>
+				<td></td>
 				<td><wo:str value="$currentCacheEntry.contextID" /></td>
 				<td><wo:str value="$currentCacheEntry.page.name" /></td>
 				<td><wo:str value="$currentCacheEntry.originatingContextID" /></td>
 				<td><wo:str value="$currentCacheEntry.updateContainerID" /></td>
 				<td><wo:str value="$currentCacheEntry.children.size" /></td>
 			</tr>
+			<wo:repetition list="$currentCacheEntry.children.sequencedValues.reversed" item="$currentChildEntry">
+				<tr>
+					<td> - </td>
+					<td><wo:str value="$currentChildEntry.contextID" /></td>
+					<td><wo:str value="$currentChildEntry.page.name" /></td>
+					<td><wo:str value="$currentChildEntry.originatingContextID" /></td>
+					<td><wo:str value="$currentChildEntry.updateContainerID" /></td>
+					<td><wo:str value="$currentChildEntry.children.size" /></td>
+				</tr>
+			</wo:repetition>
 		</wo:repetition>
 	</table>
 
