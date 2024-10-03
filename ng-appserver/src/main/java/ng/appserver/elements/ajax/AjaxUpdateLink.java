@@ -35,6 +35,7 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 		// Not exactly pretty, but let's work with this a little
 		_additionalAssociations = new HashMap<>( associations );
 		_additionalAssociations.remove( "action" );
+		_additionalAssociations.remove( "updateContainerID" );
 	}
 
 	@Override
