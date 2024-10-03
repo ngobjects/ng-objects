@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The page cache is used by stateful actions to store instances of previously rendered components
+ *
+ * FIXME: We should probably have separate cache entry types for full pages/partial pages. Going to wait with it a bit while we're at the design stage // Hugi 2024-10-03
+ * FIXME: On the same note, a page fragment cache entry should probably just reference it's parent's page instance. Page fragments should always be referencing the same instance anyway // Hugi 2024-10-03
  */
 
 public class NGPageCache {
@@ -19,10 +22,10 @@ public class NGPageCache {
 	 * Represents a single entry in the page cache, along with it's "child entries"
 	 * "Child entries" currently means entries generated for update containers within the same page, meaning they can be thrown out with their parent.
 	 */
-	public record NGPageCacheEntry( String contextID, NGComponent page, String originatingContextID, String updateContainerID, Map<String, NGPageCacheEntry> children ) {
+	public record NGPageCacheEntry( String contextID, NGComponent page, String originatingContextID, String updateContainerID, NGPageCacheEntry parent, Map<String, NGPageCacheEntry> children ) {
 
-		public NGPageCacheEntry( String contextID, NGComponent page, String originatingContextID, String updateContainerID ) {
-			this( contextID, page, originatingContextID, updateContainerID, new LinkedHashMap<>() );
+		public NGPageCacheEntry( String contextID, NGComponent page, String originatingContextID, NGPageCacheEntry parent, String updateContainerID ) {
+			this( contextID, page, originatingContextID, updateContainerID, parent, new LinkedHashMap<>() );
 		}
 
 		/**
@@ -31,6 +34,19 @@ public class NGPageCache {
 		public boolean isPartial() {
 			// FIXME: nulls are not nice. A full page update should probably be represented by explicit values for both the originating context and the updateContainer // Hugi 2024-09-30
 			return originatingContextID != null && updateContainerID != null;
+		}
+
+		/**
+		 * @return The root page cache entry (i.e. if this is a partial page update, returns the cache entry for the actual page this fragment is on)
+		 */
+		public NGPageCacheEntry rootEntry() {
+			NGPageCacheEntry root = this;
+
+			while( root.parent() != null ) {
+				root = root.parent();
+			}
+
+			return root;
 		}
 	}
 
@@ -71,12 +87,12 @@ public class NGPageCache {
 			throw new IllegalStateException( "Attempted to overwrite page cache key '%s' with component '%s'".formatted( contextID, page.name() ) );
 		}
 
-		final NGPageCacheEntry cacheEntry = new NGPageCacheEntry( contextID, page, originatingContextID, updateContainerID );
+		final NGPageCacheEntry parentEntry = _allEntries.get( originatingContextID );
+		final NGPageCacheEntry cacheEntry = new NGPageCacheEntry( contextID, page, originatingContextID, parentEntry, updateContainerID );
 
 		// In case of partial updates, the cache entry will get stored with it's parent entry, keyed by the ID of the updateContainer
 		if( cacheEntry.isPartial() ) {
-			final NGPageCacheEntry parentEntry = _cacheMap.get( originatingContextID );
-			parentEntry.children().put( cacheEntry.updateContainerID(), cacheEntry );
+			cacheEntry.rootEntry().children().put( cacheEntry.updateContainerID(), cacheEntry );
 		}
 		else {
 			_cacheMap.put( contextID, cacheEntry );
@@ -117,7 +133,7 @@ public class NGPageCache {
 
 		final NGPageCacheEntry cacheEntry = _allEntries.get( contextID );
 
-		// FIXME: This is probably the place to throw a page restoration error instead // Hugi 2024-09-30
+		// FIXME: This might actually be the right place to throw a page restoration error // Hugi 2024-09-30
 		if( cacheEntry == null ) {
 			throw new IllegalStateException( "No cached page was found for contextID '%s'".formatted( contextID ) );
 		}
@@ -135,9 +151,8 @@ public class NGPageCache {
 		final NGPageCacheEntry cacheEntry = _allEntries.get( contextID );
 
 		if( cacheEntry.isPartial() ) {
-			logger.debug( "contextID '{}' is partial, so we'll retain it's parent '{}' instead", cacheEntry.contextID(), cacheEntry.originatingContextID() );
-			final NGPageCacheEntry rootEntry = _cacheMap.get( cacheEntry.originatingContextID() );
-			retainRootEntry( rootEntry );
+			logger.debug( "contextID '{}' is partial, so we'll retain it's root entry '{}' instead", cacheEntry.contextID(), cacheEntry.originatingContextID() );
+			retainRootEntry( cacheEntry.rootEntry() );
 		}
 		else {
 			retainRootEntry( cacheEntry );
