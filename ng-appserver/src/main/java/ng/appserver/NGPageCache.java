@@ -87,7 +87,14 @@ public class NGPageCache {
 			throw new IllegalStateException( "Attempted to overwrite page cache key '%s' with component '%s'".formatted( contextID, page.name() ) );
 		}
 
-		final NGPageCacheEntry parentEntry = _allEntries.get( originatingContextID );
+		// Represents the containing page, if this is a partial page update
+		NGPageCacheEntry parentEntry = null;
+
+		// FIXME: This method of registering the "parent" kind of sucks. Tackle once we migrate to a typed cache (see FIXME in class header) // Hugi 2024-10-03
+		if( originatingContextID != null && updateContainerID != null ) {
+			parentEntry = _allEntries.get( originatingContextID );
+		}
+
 		final NGPageCacheEntry cacheEntry = new NGPageCacheEntry( contextID, page, originatingContextID, parentEntry, updateContainerID );
 
 		// In case of partial updates, the cache entry will get stored with it's parent entry, keyed by the ID of the updateContainer
