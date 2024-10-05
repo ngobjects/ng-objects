@@ -28,14 +28,9 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 
 	public AjaxUpdateLink( String name, Map<String, NGAssociation> associations, NGElement element ) {
 		super( name, associations, element );
-		_actionAssociation = associations.get( "action" );
-		_updateContainerIDAssociation = associations.get( "updateContainerID" );
-
-		// Now we collect the associations that we've already consumed and keep the rest around, to add to the image as attributes
-		// Not exactly pretty, but let's work with this a little
 		_additionalAssociations = new HashMap<>( associations );
-		_additionalAssociations.remove( "action" );
-		_additionalAssociations.remove( "updateContainerID" );
+		_actionAssociation = _additionalAssociations.remove( "action" );
+		_updateContainerIDAssociation = _additionalAssociations.remove( "updateContainerID" );
 	}
 
 	@Override
