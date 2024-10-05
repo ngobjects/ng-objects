@@ -4,7 +4,7 @@
  * 
  * FIXME: Currently, null can be passed in as an id parameter. Invoking an action without a resulting update feels like such a special situation (WRT caching, rendering and other handling on the server side) that this might warrant a separate function // Hugi 2024-10-05    
  */
-function invokeUpdate( id, url ) {
+function ajaxUpdateLinkClick( url, id ) {
 	const xhttp = new XMLHttpRequest();
 	xhttp.open("GET", url, true);
 	xhttp.setRequestHeader( 'x-updatecontainerid', id )

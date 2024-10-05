@@ -37,7 +37,7 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 
-		final String onclick = "invokeUpdate(%s,'%s');return false;".formatted( updateContainerIDParameter( context ), context.componentActionURL() );
+		final String onclick = "ajaxUpdateLinkClick('%s',%s);return false;".formatted( context.componentActionURL(), updateContainerIDParameter( context ) );
 
 		final Map<String, String> attributes = new HashMap<>();
 		attributes.put( "href", "#" );
