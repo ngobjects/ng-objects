@@ -1,18 +1,22 @@
+/**
+ * Invoked by AjaxUpdateLink.
+ * Initiates a GET request to the given URL and updates the container identified by 'id' with the returned response content.
+ * 
+ * FIXME: Currently, null can be passed in as an id parameter. Invoking an action without a resulting update feels like such a special situation (WRT caching, rendering and other handling on the server side) that this might warrant a separate function // Hugi 2024-10-05    
+ */
 function invokeUpdate( id, url ) {
 	const xhttp = new XMLHttpRequest();
 	xhttp.open("GET", url, true);
 	xhttp.setRequestHeader( 'x-updatecontainerid', id )
 
-	// FIXME: ugly as all hell, just here for some testing
-	if( id != 'null') {
+	if( id ) {
+		var updateContainer = document.getElementById(id);
+		
+		if( !updateContainer ) {
+			alert( 'No AjaxUpdateContainer on the page with id ' + id );
+		}
+
 		xhttp.onload = () => {
-			var updateContainer = document.getElementById(id);
-			
-			if( !updateContainer ) {
-				// CHECKME: WE should probably abandon the whole operation if there UC is missing
-				alert( 'No AjaxUpdateContainer on the page with id ' + id );
-			}
-	
 			updateContainer.innerHTML = xhttp.responseText;
 	    };
 	}

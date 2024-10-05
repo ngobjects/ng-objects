@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
+import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
@@ -31,34 +32,18 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 		_additionalAssociations = new HashMap<>( associations );
 		_actionAssociation = _additionalAssociations.remove( "action" );
 		_updateContainerIDAssociation = _additionalAssociations.remove( "updateContainerID" );
+
+		if( _actionAssociation == null ) {
+			throw new NGBindingConfigurationException( "[action] is a required binding" );
+		}
 	}
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 
-		String href = null;
+		final String onclick = "invokeUpdate(%s,'%s');return false;".formatted( updateContainerIDParameter( context ), context.componentActionURL() );
 
-		if( _actionAssociation != null ) {
-			href = context.componentActionURL();
-		}
-
-		if( href == null ) {
-			throw new IllegalStateException( "Failed to generate the href attribute for a hyperlink" );
-		}
-
-		String updateContainerID;
-
-		if( _updateContainerIDAssociation != null ) {
-			updateContainerID = (String)_updateContainerIDAssociation.valueInComponent( context.component() );
-		}
-		else {
-			// FIXME: We should be passing in an actual null here not the string // Hugi 2023-11-11
-			updateContainerID = "null";
-		}
-
-		String onclick = "invokeUpdate('%s','%s');return false;".formatted( updateContainerID, context.componentActionURL() );
-
-		StringBuilder startTag = new StringBuilder( "<a href=\"#\" onclick=\"%s\"".formatted( onclick ) );
+		final StringBuilder startTag = new StringBuilder( "<a href=\"#\" onclick=\"%s\"".formatted( onclick ) );
 
 		if( !_additionalAssociations.isEmpty() ) {
 			startTag.append( " " );
@@ -75,6 +60,18 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 		response.appendContentString( startTag.toString() );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</a>" );
+	}
+
+	/**
+	 * @return The id of the updateContainer
+	 */
+	private String updateContainerIDParameter( NGContext context ) {
+		if( _updateContainerIDAssociation != null ) {
+			final String updateContainerID = (String)_updateContainerIDAssociation.valueInComponent( context.component() );
+			return "'%s'".formatted( updateContainerID );
+		}
+
+		return "null";
 	}
 
 	@Override
