@@ -3,9 +3,6 @@ package ng.appserver.elements.ajax;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGBindingConfigurationException;
@@ -14,16 +11,15 @@ import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.elements.NGDynamicGroup;
+import ng.appserver.privates.NGHTMLUtilities;
 
 public class AjaxUpdateLink extends NGDynamicGroup {
-
-	private static final Logger logger = LoggerFactory.getLogger( AjaxUpdateLink.class );
 
 	private final NGAssociation _actionAssociation;
 	private final NGAssociation _updateContainerIDAssociation;
 
 	/**
-	 * For storing associations that aren't part of the component's basic associations
+	 * Stores associations that get passed through to the generated tag as attributes
 	 */
 	private final Map<String, NGAssociation> _additionalAssociations;
 
@@ -43,21 +39,14 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 
 		final String onclick = "invokeUpdate(%s,'%s');return false;".formatted( updateContainerIDParameter( context ), context.componentActionURL() );
 
-		final StringBuilder startTag = new StringBuilder( "<a href=\"#\" onclick=\"%s\"".formatted( onclick ) );
+		final Map<String, String> attributes = new HashMap<>();
+		attributes.put( "href", "#" );
+		attributes.put( "onclick", onclick );
 
-		if( !_additionalAssociations.isEmpty() ) {
-			startTag.append( " " );
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
-			_additionalAssociations.forEach( ( name, ass ) -> {
-				startTag.append( " " );
-				startTag.append( name );
-				startTag.append( "=" );
-				startTag.append( "\"" + ass.valueInComponent( context.component() ) + "\"" );
-			} );
-		}
-
-		startTag.append( ">" );
-		response.appendContentString( startTag.toString() );
+		final String htmlString = NGHTMLUtilities.createElementStringWithAttributes( "a", attributes, false );
+		response.appendContentString( htmlString );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</a>" );
 	}
@@ -78,11 +67,7 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 
 		if( context.elementID().equals( context.senderID() ) ) {
-			if( _actionAssociation != null ) {
-				NGActionResults result = (NGActionResults)_actionAssociation.valueInComponent( context.component() );
-				logger.debug( "Action result is: " + result );
-				return result;
-			}
+			return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 		}
 
 		return null;
