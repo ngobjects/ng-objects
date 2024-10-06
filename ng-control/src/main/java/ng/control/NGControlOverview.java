@@ -11,7 +11,7 @@ import ng.appserver.NGPageCache.NGPageCacheEntry;
 import ng.appserver.NGSession;
 import ng.appserver.properties.NGProperties.PropertiesSource;
 
-public class NGOverview extends NGComponent {
+public class NGControlOverview extends NGComponent {
 
 	public NGPageCacheEntry currentCacheEntry;
 	public NGPageCacheEntry currentChildEntry;
@@ -20,7 +20,7 @@ public class NGOverview extends NGComponent {
 
 	public PropertiesSource currentPropertySource;
 
-	public NGOverview( NGContext context ) {
+	public NGControlOverview( NGContext context ) {
 		super( context );
 	}
 
