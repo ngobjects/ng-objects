@@ -24,6 +24,11 @@ function ajaxUpdateLinkClick( url, id ) {
 	xhttp.send();
 }
 
+/**
+ * WIP; AjaxObserveField
+ * 
+ * Submits an observed field's form every time a change is observed
+ */
 function performSubmit( form ) {
     var data = new FormData(form);
     
@@ -52,8 +57,10 @@ function performSubmit( form ) {
     */
 }
 
-/*
- Used by AjaxObserveField
+/**
+ * WIP; AjaxObserveField
+ * 
+ * Observes all input fields contained witin the given element
  */
 function observeDescendantFields( containerElement) {
 	
@@ -67,10 +74,11 @@ function observeDescendantFields( containerElement) {
 	}
 }
 
-/*
-Activates observation on all fields contained by an AjaxObserveField
+/**
+ * WIP; AjaxObserveField
+ * 
+ * Activates observation on all fields contained by an AjaxObserveField
  */
- 
 function activateObservation() {
 	const list = document.getElementsByClassName( "ng-ajax-observe-field" );
 
@@ -81,43 +89,12 @@ function activateObservation() {
 	}
 }
 
+/**
+ * WIP; AjaxObserveField
+ * Activates AjaxObserveField observation on page load.
+ * 
+ * FIXME: This isn't currently enough, we're going to have to initiate observation every time page is modified/the DOM model changes 
+ */
 document.addEventListener('DOMContentLoaded', function() {
     activateObservation();
 }, false);
-
-/*  
-var AUC = {
-	register: function(id, options) {
-		if (!options) {
-			options = {};
-		}
-		eval(id + "Update = function() {AjaxUpdateContainer.update(id, options) }");
-	}
-}
-
-var AUL = {
-	update: function(id, options, elementID, queryParams) {
-		
-		// Just some logging. For fun.
-		console.log( "===== Clicked AjaxUpdateLink =====")
-		console.log( "id: " + id );
-		console.log( "options: " + options );
-		console.log( "elementID: " + elementID );
-		console.log( "queryParams: " + queryParams );
-		
-		// This is the updateContainer we're going to target
-		var updateContainer = document.getElementById(id);
-		
-		if( !updateContainer ) {
-			alert( 'No AjaxUpdateContainer on the page with id ' + id );
-		}
-
-		var actionUrl = updateContainer.getAttribute('data-updateUrl');
-
-		// We cleverly replace the elementID on the UC to the clicked link's element ID
-		actionUrl = actionUrl.replace(/[^\/]+$/, elementID);
-		actionUrl = actionUrl + '?_u=' + id;
-		invokeUpdate( id, actionUrl );
-	}
-}
-*/
