@@ -227,9 +227,9 @@ public class NGComponent implements NGElement, NGActionResults {
 		context().setComponent( this );
 
 		// At this point, the context's elementID might be off.
-		// For eaxmple, we might have ended up here by clicking/activating a hyperlink in invokeAction in the same context.
-		// In that case we'll be in the middle of that component's elementID tree, so we have to start out clean
-		// and reset the elementID before entering the appendToResponse() stage.
+		// For example, we might have ended up here by clicking/activating a hyperlink in invokeAction in the same context.
+		// In that case, the context's elementID will still be somewhere in the middle of that component's element tree,
+		// so we have to start out clean and reset the elementID before entering appendToResponse().
 		context()._resetElementID();
 
 		// Now let's create a new response and append ourselves to it
@@ -237,14 +237,11 @@ public class NGComponent implements NGElement, NGActionResults {
 		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
 		appendToResponse( response, context() );
 
-		// If we have a session, we're going to have to assume our page instance has to be saved
-		// Actually, we should only have to save the page instance if we're currently in some way involved in component actions
-		// (i.e. the page was a result of a component action invocation, or generates some stateful URLs that reference it)
-		// But we don't currently have a way to check for that. So hasSession() it is.
+		// So, we've generated the page, and it's ready to return. Now we let the context tell us whether it should be stored in the page cache for future reference.
 		//
-		// FIXME: This feels like the wrong place to store the page. Not yet sure where it *should* be but my gut has a feeling // Hugi 2024-09-28
-		if( context().hasSession() ) {
-			context().session().pageCache().savePage( context().contextID(), this, context()._originatingContextID, context().targetedUpdateContainerID() );
+		// CHECKME: This *still* feels a little like the wrong place to stash the page in the cache. Not yet sure where it *should* be but my gut *still* has a feeling // Hugi 2024-09-28
+		if( context()._shouldSaveInPageCache() ) {
+			context().session().pageCache().savePage( context().contextID(), this, context()._originatingContextID(), context().targetedUpdateContainerID() );
 		}
 
 		return response;
