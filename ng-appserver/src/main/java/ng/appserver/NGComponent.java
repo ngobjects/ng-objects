@@ -226,14 +226,15 @@ public class NGComponent implements NGElement, NGActionResults {
 		context().setPage( this );
 		context().setComponent( this );
 
-		final NGResponse response = new NGResponse();
-		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
-
 		// At this point, the context's elementID might be off.
-		// For example, if we ended up here by clicking/activating a hyperlink in invokeAction, we'll be in the middle of that component's elementID tree)
-		// So we have to start out clean and reset the elementID before entering our forced appendToResponse() stage.
+		// For eaxmple, we might have ended up here by clicking/activating a hyperlink in invokeAction in the same context.
+		// In that case we'll be in the middle of that component's elementID tree, so we have to start out clean
+		// and reset the elementID before entering the appendToResponse() stage.
 		context()._resetElementID();
 
+		// Now let's create a new response and append ourselves to it
+		final NGResponse response = new NGResponse();
+		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
 		appendToResponse( response, context() );
 
 		// If we have a session, we're going to have to assume our page instance has to be saved
