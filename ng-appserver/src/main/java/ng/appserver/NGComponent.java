@@ -243,7 +243,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		//
 		// FIXME: This feels like the wrong place to store the page. Not yet sure where it *should* be but my gut has a feeling // Hugi 2024-09-28
 		if( context().hasSession() ) {
-			context().session().pageCache().savePage( context().contextID(), this, context().originatingContextID, context().targetedUpdateContainerID() );
+			context().session().pageCache().savePage( context().contextID(), this, context()._originatingContextID, context().targetedUpdateContainerID() );
 		}
 
 		return response;

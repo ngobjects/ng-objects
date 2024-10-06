@@ -49,7 +49,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		final String originatingContextID = componentPart.substring( 0, firstPeriodIndex );
 
 		// FIXME: WIP. Not sure the context itself should actually be keeping track of the originating context, but we need this currently for the partial page caching mechanism // Hugi 2024-09-28
-		context.originatingContextID = originatingContextID;
+		context._setOriginatingContextID( originatingContextID );
 
 		// The sending element ID consists of everything after the first period.
 		final String senderIDString = componentPart.substring( firstPeriodIndex + 1 );

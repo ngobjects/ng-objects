@@ -14,13 +14,6 @@ public class NGContext {
 	public Set<String> updateContainerIDs = new HashSet<>();
 
 	/**
-	 * Stores the ID of the context that originated the creation of this context.
-	 *
-	 * FIXME: We're currently storing this here only while we develop the new partial page caching mechanism, will probably end up somewhere else  // Hugi 2024-09-28
-	 */
-	public String originatingContextID;
-
-	/**
 	 * ID of the update container targeted with this request
 	 *
 	 * FIXME: Temp location while we develop the partial page caching mechanism, will probably end up somewhere else  // Hugi 2024-09-28
@@ -38,6 +31,15 @@ public class NGContext {
 	 * This context's uniqueID within it's session
 	 */
 	private String _contextID;
+
+	/**
+	 * Stores the ID of the context that originated the creation of this context.
+	 * Will currently be null if it's the first context in a series of transactions.
+	 * Serves the stateful page caching mechanism to track origin of partial pages.
+	 *
+	 * CHECKME: Still under consideration. Getting this out of the context itself might be nice // Hugi 2024-09-28
+	 */
+	public String _originatingContextID;
 
 	/**
 	 * The page level component
@@ -179,6 +181,13 @@ public class NGContext {
 	 */
 	public boolean currentElementIsSender() {
 		return elementID().equals( senderID() );
+	}
+
+	/**
+	 * Set the ID of the context that originated the creation of this context.
+	 */
+	public void _setOriginatingContextID( String value ) {
+		_originatingContextID = value;
 	}
 
 	/**
