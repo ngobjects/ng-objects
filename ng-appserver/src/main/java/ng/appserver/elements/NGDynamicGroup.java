@@ -16,7 +16,7 @@ import ng.appserver.NGResponse;
  * A common superclass for dynamic elements that have multiple children in our template element tree
  */
 
-public class NGDynamicGroup extends NGDynamicElement {
+public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElement {
 
 	/**
 	 * The elements of this DynamicGroup
@@ -42,6 +42,11 @@ public class NGDynamicGroup extends NGDynamicElement {
 		appendChildrenToResponse( response, context );
 	}
 
+	@Override
+	public void appendStructureToResponse( NGResponse response, NGContext context ) {
+		appendChildrenToResponse( response, context );
+	}
+
 	protected void appendChildrenToResponse( NGResponse response, NGContext context ) {
 		if( !_children.isEmpty() ) {
 			context.elementID().addBranch();
@@ -51,9 +56,6 @@ public class NGDynamicGroup extends NGDynamicElement {
 					// FIXME: Keeping this just for reference for now. Looks butt-ugly at the moment, but being able to display the elementID tree while debugging is kind of useful, so we want to build something from this // Hugi 2024-09-28
 					// response.appendContentString( "<span style=\"background-color: red; display: inline-block; width: 100px; overflow-x: hidden\">%s</span>".formatted( context.elementID() ) );
 					child.appendToResponse( response, context );
-				}
-				else if( child instanceof NGDynamicGroup dg ) {
-					dg.appendChildrenToResponse( response, context );
 				}
 				else if( child instanceof NGStructuralElement dg ) {
 					dg.appendStructureToResponse( response, context );

@@ -18,7 +18,7 @@ import ng.appserver.NGResponse;
  * FIXME: Only partially implemented // Hugi 2023-05-01
  */
 
-public class NGRepetition extends NGDynamicGroup implements NGStructuralElement {
+public class NGRepetition extends NGDynamicGroup {
 
 	/**
 	 * The number of iterations to do
