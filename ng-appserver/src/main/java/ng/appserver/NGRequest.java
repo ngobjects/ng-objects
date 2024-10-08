@@ -54,11 +54,6 @@ public class NGRequest extends NGMessage {
 	private Map<String, List<String>> _cookieValues;
 
 	/**
-	 * Holds a newly created sessionID
-	 */
-	private String _newlyCreatedSessionID;
-
-	/**
 	 * The request's session
 	 */
 	private NGSession _session;
@@ -146,52 +141,62 @@ public class NGRequest extends NGMessage {
 	 * @return This request's sessionID. Null if no sessionID is present.
 	 */
 	public String _sessionID() {
-		if( _newlyCreatedSessionID != null ) {
-			return _newlyCreatedSessionID;
+		if( _session != null ) {
+			return _session.sessionID();
 		}
 
 		return _sessionIDFromCookie();
 	}
 
 	/**
-	 * @return An ID for an existing sessionID, if one was submitted by the client, null if the client submitted no session ID
+	 * @return The sessionID submitted by the client, if any. null if no sessionID was present in the request.
 	 */
 	private String _sessionIDFromCookie() {
 		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
 	}
 
 	/**
-	 * @return This context's session, creating a session if none is present.
+	 * @return This request's session, creating a new session if no session is present. Throws NGSessionRestorationException if a sessionID is present but no corresponding session is found.
 	 */
 	public NGSession session() {
+		return _session( true, true );
+	}
+
+	/**
+	 * @return This request's session, null if no session present. Throws NGSessionRestorationException if a sessionID is present but no corresponding session is found.
+	 *
+	 * FIXME: We might actually want to throw on a missing sessionID here. Decide soon, otherwise this will get really annoying upon a change // Hugi 2024-10-08
+	 */
+	public NGSession existingSession() {
+		return _session( false, false );
+	}
+
+	/**
+	 * @return A session for this request.
+	 *
+	 * @param createIfMissing If true, we'll create a new session if no session (or sessionID) is present.
+	 * @param throwIfIDPresentButNoCorrespondingSessionFound If true, will throw an NGSessionRestorationException if a sessionID is present but no corresponding session is found.
+	 */
+	private NGSession _session( boolean createIfMissing, boolean throwIfIDPresentButNoCorrespondingSessionFound ) {
 		if( _session == null ) {
-			// OK, we have no session. First, let's see if the request has some session information, so we can restore an existing session
+			// OK, we have no session. Check the request for a sessionID and see if we have one to restore.
 			if( _sessionIDFromCookie() != null ) {
 				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _sessionIDFromCookie() );
 
-				// No session found, we enter the emergency phase
-				// FIXME: We need to handle the case of a non-existent session better // Hugi 2023-01-10
-				if( _session == null ) {
-					logger.warn( "No session found with id '{}'", _sessionIDFromCookie() );
+				// No session found, loudly notify the user
+				if( _session == null && throwIfIDPresentButNoCorrespondingSessionFound ) {
+					logger.debug( "No session found with id '{}'", _sessionIDFromCookie() );
 					throw new NGSessionRestorationException( this );
 				}
 			}
 			else {
-				_session = NGApplication.application().createSessionForRequest( this );
-				_newlyCreatedSessionID = _session.sessionID();
-				NGApplication.application().sessionStore().storeSession( _session );
+				if( createIfMissing ) {
+					_session = NGApplication.application().createSessionForRequest( this );
+					NGApplication.application().sessionStore().storeSession( _session );
+				}
 			}
 		}
 
-		return _session;
-	}
-
-	/**
-	 * @return This context's session, or null if no session is present.
-	 *
-	 * FIXME: This currently really only checks if session() has been invoked. We probably need to do a little deeper checking than this // Hugi 2023-01-07
-	 */
-	public NGSession existingSession() {
 		return _session;
 	}
 
@@ -279,6 +284,6 @@ public class NGRequest extends NGMessage {
 
 	@Override
 	public String toString() {
-		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _headers=" + headers() + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _sessionID=" + _newlyCreatedSessionID + ", _session=" + _session + "]";
+		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _headers=" + headers() + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _session=" + _session + "]";
 	}
 }
