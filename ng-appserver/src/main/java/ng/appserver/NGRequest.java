@@ -119,20 +119,30 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
+	 * @return the request's URL
 	 * FIXME: This method should probably be called "url" rather than "uri" // Hugi 2024-06-29
 	 */
 	public String uri() {
 		return _uri;
 	}
 
+	/**
+	 * FIXME: This should really not be settable, NGRequest wants to be immutable // Hugi 2024-08-10
+	 */
 	public void setURI( final String uri ) {
 		_uri = uri;
 	}
 
+	/**
+	 * @return The request's method
+	 */
 	public String method() {
 		return _method;
 	}
 
+	/**
+	 * FIXME: This should really not be settable, NGRequest wants to be immutable // Hugi 2024-08-10
+	 */
 	public void setMethod( final String method ) {
 		_method = method;
 	}
