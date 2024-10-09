@@ -28,6 +28,7 @@ import ng.appserver.elements.NGSwitchComponent;
 import ng.appserver.elements.NGText;
 import ng.appserver.elements.NGTextField;
 import ng.appserver.elements.ajax.AjaxObserveField;
+import ng.appserver.elements.ajax.AjaxSubmitButton;
 import ng.appserver.elements.ajax.AjaxUpdateContainer;
 import ng.appserver.elements.ajax.AjaxUpdateLink;
 
@@ -59,6 +60,7 @@ public class NGElementUtils {
 		addClass( AjaxUpdateContainer.class, "auc" );
 		addClass( AjaxUpdateLink.class, "aul" );
 		addClass( AjaxObserveField.class, "aof" );
+		addClass( AjaxSubmitButton.class, "asb" );
 		addClass( NGBrowser.class, "browser" );
 		addClass( NGComponentContent.class, "content" );
 		addClass( NGConditional.class, "if" );

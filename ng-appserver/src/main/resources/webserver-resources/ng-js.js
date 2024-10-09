@@ -25,6 +25,48 @@ function ajaxUpdateLinkClick( url, id ) {
 }
 
 /**
+ * Invoked on the click of an AjaxSubmitButton
+ * 
+ * @param button The button clicked to submit the form
+ * @param updateContainerID The ID of an update container to display the returned HTML
+ */
+function ajaxSubmitButtonClick(button,updateContainerID) {
+
+	// The form we are submitting is always the clicked button's containing form
+	var form = button.form;
+
+	// The URL we'll be targeting is the form's action URL.
+	// Just like with regular forms, deciding which button was actually clicked is based on the element name of the button.
+	// Due to this The name of the button gets added to the request's query parameters below.
+	var url = form.action;
+	
+	// Get the values from the form to submit and wrap them in URLSearchParams for x-www-form-urlencoded
+	var params = new URLSearchParams(new FormData(form));
+	
+	// Since JS won't add the name of the clicked button to the request's parameters for us
+	// (as is usually done by a regular form submit using an input type="submit"),
+	// we add the button's name to the submitted values ourselves, allowing the framework to determine the pressed button.
+	params.append(button.name,button.value);
+
+	// The update container that will be targeted by the update
+	// FIXME: Allow form submission without a specified updateContainer 
+	var updateContainer = document.getElementById(updateContainerID);
+
+	fetch(url, {
+	  method: form.method,
+	  body: params,
+	  headers: {
+	    'Content-Type': 'application/x-www-form-urlencoded',
+	    'x-updatecontainerid': updateContainerID
+	  }
+	})
+	.then(response => response.text() )
+	.then(text => {
+		updateContainer.innerHTML = text;
+	});
+}
+
+/**
  * WIP; AjaxObserveField
  * 
  * Submits an observed field's form every time a change is observed
