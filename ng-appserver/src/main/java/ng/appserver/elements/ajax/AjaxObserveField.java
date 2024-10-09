@@ -16,7 +16,7 @@ public class AjaxObserveField extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		response.appendContentString( "<div class=\"ng-ajax-observe-field\">" );
+		response.appendContentString( "<div class=\"ng-observe-descendant-fields\">" );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</div>" );
 	}

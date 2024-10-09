@@ -80,7 +80,7 @@ function observeDescendantFields( containerElement) {
  * Activates observation on all fields contained by an AjaxObserveField
  */
 function activateObservation() {
-	const list = document.getElementsByClassName( "ng-ajax-observe-field" );
+	const list = document.getElementsByClassName( "ng-observe-descendant-fields" );
 
 	for (let i = 0; i < list.length; i++) {
 		const containerElement = list[i];
