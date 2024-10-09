@@ -503,6 +503,12 @@ public class NGApplication {
 	 */
 	public NGActionResults exceptionResponse( final Throwable throwable, final NGContext context ) {
 
+		// FIXME: The originating context might have been an Ajax request, meaning the exception page won't render squat, which isn't helpful.
+		// We should(a) not render the exception pace in the original context where the exception happened and/or (b) have a better,
+		// more generic mechanism to ignore the context's updateContainers (in other words, we need a better way to control rendering from the server side)
+		// Hugi 2024-10-09
+		context.forceFullUpdate = true;
+
 		final boolean isDevelopmentMode = isDevelopmentMode();
 
 		// If we're in development mode, we want to show some extra nice debugging information (sources, caches, context info etc.)

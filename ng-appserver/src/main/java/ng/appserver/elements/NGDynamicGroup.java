@@ -148,7 +148,13 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 	 */
 	private static boolean shouldAppendToResponseInContext( final NGContext context ) {
 
+		// FIXME: Dont' forget; this is a temporary reprieve // Hugi 2024-10-09
+		if( context.forceFullUpdate ) {
+			return true;
+		}
+
 		// The list of containers to update is passed in to the request as a header
+		// FIXME: Get this from the context (or wherever we eventually decide to store response generation parameters) // Hugi 2024-10-09
 		final List<String> containerIDsToUpdate = context.request().headersForKey( "x-updatecontainerid" );
 
 		// If no containers are specified, we're doing a full page render, so always perform appendToResponse()
