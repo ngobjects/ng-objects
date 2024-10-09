@@ -53,9 +53,21 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 
 			for( final NGElement child : children() ) {
 				if( shouldAppendToResponseInContext( context ) ) {
-					// FIXME: Keeping this just for reference for now. Looks butt-ugly at the moment, but being able to display the elementID tree while debugging is kind of useful, so we want to build something from this // Hugi 2024-09-28
-					// response.appendContentString( "<span style=\"background-color: red; display: inline-block; width: 100px; overflow-x: hidden\">%s</span>".formatted( context.elementID() ) );
+					// FIXME: Certainly butt-ugly element display of some element debugging info, but being able to display the elementID tree while debugging is kind of useful, so we want to build something from this // Hugi 2024-09-28
+					final boolean appendElementTreeDebugInfo = false;
+
+					if( appendElementTreeDebugInfo ) {
+						final String elementDebugWrapper = """
+								<span style="border: 1px solid red; margin: 0px; padding: 0px"><span style="margin: 0px; padding: 0px; background-color: rgba(255,0,0,0.5); overflow-x: hidden; font-size: 10px">%s</span>
+								""".formatted( context.elementID() + " : " + child.getClass().getSimpleName() );
+						response.appendContentString( elementDebugWrapper );
+					}
+
 					child.appendToResponse( response, context );
+
+					if( appendElementTreeDebugInfo ) {
+						response.appendContentString( "</span>" );
+					}
 				}
 				else if( child instanceof NGStructuralElement dg ) {
 					dg.appendStructureToResponse( response, context );
