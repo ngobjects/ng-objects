@@ -17,11 +17,12 @@ public class NGKeyValueCodingSupport {
 	 *
 	 * FIXME: Currently only using exact keys, missing all the KVC method name munging, strip prefixes (underbar, "get") etc. // Hugi 2024-10-10
 	 * FIXME: Altogether experimental, we'll have to have a better look at this design-wise // Hugi 2024-10-10
+	 * FIXME: We're probably going to want a separate method that can check instances as well (for example, applicable when we add support for rseolving keys on Maps) // Hugi 2024-10-10
 	 */
-	public static List<String> availableKeyPaths( Object object ) {
+	public static List<String> availableKeyPaths( final Class<?> objectClass ) {
 		final List<String> result = new ArrayList<>();
 
-		for( Method method : object.getClass().getMethods() ) {
+		for( Method method : objectClass.getClass().getMethods() ) {
 			if( method.getParameterCount() == 0 ) {
 				if( !method.getReturnType().isAssignableFrom( Void.class ) ) {
 					result.add( method.getName() );
@@ -29,7 +30,7 @@ public class NGKeyValueCodingSupport {
 			}
 		}
 
-		for( Field field : object.getClass().getFields() ) {
+		for( Field field : objectClass.getClass().getFields() ) {
 			result.add( field.getName() );
 		}
 
@@ -39,17 +40,16 @@ public class NGKeyValueCodingSupport {
 	/**
 	 * @return A list of suggestions for the given key when trying to apply it to the given object. Really just a list of the object's available keys, ordered by the edit distance from the proposed key
 	 */
-	public static List<String> suggestions( Object object, String proposedKey ) {
+	public static List<String> suggestions( final Object object, final String proposedKey ) {
 
 		record Suggestion( int distance, String key ) {}
 
-		return availableKeyPaths( object )
+		return availableKeyPaths( object.getClass() )
 				.stream()
 				.map( key -> new Suggestion( distanceLevenshtein( key, proposedKey ), key ) )
 				.sorted( Comparator.comparing( Suggestion::distance ) )
 				.map( Suggestion::key )
 				.toList();
-
 	}
 
 	/**
