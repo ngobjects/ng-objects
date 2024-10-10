@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -18,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.Servlet;
+import jakarta.websocket.server.ServerEndpointConfig;
+import ng.adaptor.jetty.experimental.websockets.NGWebSocketEndpoint;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.privates.NGDevelopmentInstanceStopper;
@@ -80,6 +83,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 		// FIXME: END EXPERIMENTAL MULTIPART HANDLER =========================================================================
 
 		servletHandler.addServletWithMapping( servletHolder, "/" );
+
+		// FIXME: Experimental WebSocket support. Currently just for playing around // Hugi 2024-10-10
+		JakartaWebSocketServletContainerInitializer.configure( servletContextHandler, ( context, container ) -> {
+			ServerEndpointConfig endpointConfig = ServerEndpointConfig.Builder.create( NGWebSocketEndpoint.class, "/ng-websocket" ).build();
+			container.addEndpoint( endpointConfig );
+		} );
+		// FIXME: Experimental WebSocket support // Hugi 2024-10-10
 
 		try {
 			server.start();
