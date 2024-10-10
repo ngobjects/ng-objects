@@ -463,8 +463,8 @@ public class NGApplication {
 		final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
 		sessionCookie.setMaxAge( maxAge );
 		sessionCookie.setPath( "/" ); // FIXME: We probably want this to be configurable // Hugi 2023-02-06
-		// sessionCookie.setDomain( sessionID ) // FIXME: Implement // Hugi 2023-01-11
-		// sessionCookie.setSameSite( "Strict" ) // FIXME: Add once we have Servlet API 6 // Hugi 2023-02-06
+		sessionCookie.setSameSite( "Lax" );
+		// sessionCookie.setDomain( ... ) // FIXME: Implement // Hugi 2023-01-11
 		// sessionCookie.setSecure( ... ) // FIXME: We also might want this to be configurable... Sending session cookies over HTTP isn't exactly brilliant in a production setting // Hugi 2023-02-06
 		return sessionCookie;
 	}
