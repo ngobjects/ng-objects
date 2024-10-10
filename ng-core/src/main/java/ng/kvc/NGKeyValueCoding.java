@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 import ng.NGRuntimeException;
@@ -82,8 +83,20 @@ public interface NGKeyValueCoding {
 			final KVCReadBinding kvcBinding = readBindingForKey( object, key );
 
 			if( kvcBinding == null ) {
-				String message = String.format( "Unable to resolve key '%s' against class '%s'", key, object.getClass().getName() );
-				throw new UnknownKeyException( message );
+				final StringBuilder message = new StringBuilder();
+				message.append( String.format( "Unable to resolve key '%s' against class '%s'.", key, object.getClass().getName() ) );
+
+				final List<String> suggestions = NGKeyValueCodingSupport.suggestions( object, key );
+
+				if( suggestions.isEmpty() ) {
+					message.append( "The given object has no exposed keys" );
+				}
+				else {
+					message.append( " Did you mean '%s'?".formatted( suggestions.get( 0 ) ) );
+
+				}
+
+				throw new UnknownKeyException( message.toString() );
 			}
 
 			return kvcBinding.valueInObject( object );
