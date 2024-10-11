@@ -4,10 +4,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ng.appserver.NGAssociation;
 import ng.appserver.NGComponent;
+import ng.appserver.NGContext;
 
 public class NGHTMLUtilities {
+
+	private static final Logger logger = LoggerFactory.getLogger( NGHTMLUtilities.class );
 
 	public static String createElementStringWithAttributes( final String elementName, final Map<String, String> attributes, boolean close ) {
 		Objects.requireNonNull( elementName );
@@ -67,5 +73,52 @@ public class NGHTMLUtilities {
 				.replace( ">", "&gt;" )
 				.replace( "\"", "&quot;" )
 				.replace( "'", "&#39;" );
+	}
+
+	/**
+	 * @return The namespace association from the given association map.
+	 *
+	 * FIXME:
+	 * Temp method for checking for the old style "framework" binding that will inevitably be present while old templates are being ported from WO.
+	 * Represents a missing feature. We need a better way to map and document element API structure in source to allow for binding deprecation of this kind.
+	 * Oh, and allow for multiple binding names that map to the same association. And allow for binding deprecation levels ("warn", "fail" etc.)
+	 * Hugi 2024-10-11
+	 */
+	public static NGAssociation namespaceAssociation( final Map<String, NGAssociation> associations ) {
+		Objects.requireNonNull( associations );
+
+		NGAssociation a = associations.get( "namespace" );
+
+		if( a != null ) {
+			return a;
+		}
+
+		a = associations.get( "framework" );
+
+		if( a != null ) {
+			logger.warn( "Found [framework] binding. You should be using [namespace]" );
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return The value of the namespace association in the given context.
+	 *
+	 * FIXME: Yet another temp fix that represents a couple of missing features:
+	 *
+	 * - Default association values
+	 * - Reusable/Global/Shared associations, i.e. associations that behave the same in different elements. Many elements have the same or similar attributes or attribute combinations, an example being elements that reference resources (using [filename], [namespace], [data] etc.)
+	 *
+	 *  Hugi 20214-10-11
+	 */
+	public static String namespaceInContext( final NGContext context, final NGAssociation namespaceAssociation ) {
+
+		// [namespace] is not bound. Use default namespace
+		if( namespaceAssociation == null ) {
+			return "app";
+		}
+
+		return (String)namespaceAssociation.valueInComponent( context.component() );
 	}
 }
