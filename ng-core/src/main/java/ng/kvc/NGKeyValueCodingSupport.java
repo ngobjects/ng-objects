@@ -22,7 +22,7 @@ public class NGKeyValueCodingSupport {
 	public static List<String> availableKeyPaths( final Class<?> objectClass ) {
 		final List<String> result = new ArrayList<>();
 
-		for( Method method : objectClass.getClass().getMethods() ) {
+		for( Method method : objectClass.getMethods() ) {
 			if( method.getParameterCount() == 0 ) {
 				if( !method.getReturnType().isAssignableFrom( Void.class ) ) {
 					result.add( method.getName() );
@@ -30,7 +30,7 @@ public class NGKeyValueCodingSupport {
 			}
 		}
 
-		for( Field field : objectClass.getClass().getFields() ) {
+		for( Field field : objectClass.getFields() ) {
 			result.add( field.getName() );
 		}
 
