@@ -11,20 +11,22 @@ import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResourceRequestHandler;
 import ng.appserver.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 
 /**
  * For embedding stylesheets in components
- *
- * FIXME: Missing namespace handling // Hugi 2024-06-17
  */
 
 public class NGJavaScript extends NGDynamicElement {
 
 	private final NGAssociation _filenameAssociation;
 
+	private final NGAssociation _namespaceAssociation;
+
 	public NGJavaScript( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
 		_filenameAssociation = associations.get( "filename" );
+		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( associations, true );
 
 		if( _filenameAssociation == null ) {
 			throw new IllegalArgumentException( "'filename' is a required binding" );
@@ -37,7 +39,9 @@ public class NGJavaScript extends NGDynamicElement {
 		Objects.requireNonNull( context );
 		final NGComponent component = context.component();
 		final String filename = (String)_filenameAssociation.valueInComponent( component );
-		final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( null, filename );
+		final String namespace = NGHTMLUtilities.namespaceInContext( context, _namespaceAssociation );
+
+		final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( namespace, filename );
 		String urlString;
 
 		if( relativeURL.isPresent() ) {
