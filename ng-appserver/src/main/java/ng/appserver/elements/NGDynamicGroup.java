@@ -166,18 +166,15 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 		}
 
 		// The list of containers to update is passed in to the request as a header
-		// FIXME: Get this from the context (or wherever we eventually decide to store response generation parameters) // Hugi 2024-10-09
-		final List<String> containerIDsToUpdate = context.request().headersForKey( "x-updatecontainerid" );
+		final String containerIDToUpdate = context.targetedUpdateContainerID();
 
 		// If no containers are specified, we're doing a full page render, so always perform appendToResponse()
-		if( containerIDsToUpdate.isEmpty() ) {
+		if( containerIDToUpdate == null ) {
 			return true;
 		}
 
-		for( final String id : containerIDsToUpdate ) {
-			if( context.updateContainerIDs.contains( id ) ) {
-				return true;
-			}
+		if( context.updateContainerIDs.contains( containerIDToUpdate ) ) {
+			return true;
 		}
 
 		return false;
