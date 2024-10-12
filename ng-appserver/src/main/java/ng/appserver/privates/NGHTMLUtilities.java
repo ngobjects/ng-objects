@@ -84,16 +84,16 @@ public class NGHTMLUtilities {
 	 * Oh, and allow for multiple binding names that map to the same association. And allow for binding deprecation levels ("warn", "fail" etc.)
 	 * Hugi 2024-10-11
 	 */
-	public static NGAssociation namespaceAssociation( final Map<String, NGAssociation> associations ) {
+	public static NGAssociation namespaceAssociation( final Map<String, NGAssociation> associations, boolean removeAssociation ) {
 		Objects.requireNonNull( associations );
 
-		NGAssociation a = associations.get( "namespace" );
+		NGAssociation a = removeAssociation ? associations.remove( "namespace" ) : associations.get( "namespace" );
 
 		if( a != null ) {
 			return a;
 		}
 
-		a = associations.get( "framework" );
+		a = removeAssociation ? associations.remove( "framework" ) : associations.get( "framework" );
 
 		if( a != null ) {
 			logger.warn( "Found [framework] binding. You should be using [namespace]" );
