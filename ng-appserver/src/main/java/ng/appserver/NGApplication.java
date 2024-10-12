@@ -167,7 +167,6 @@ public class NGApplication {
 			return (E)application;
 		}
 		catch( final Exception e ) {
-			// CHECKME: We're going to want to check for/identify certain error conditions an respond to them with an explanation, rather than silently exploding // Hugi 2022-10-22
 			e.printStackTrace();
 			System.exit( -1 );
 
@@ -374,10 +373,8 @@ public class NGApplication {
 				throw new NullPointerException( String.format( "'%s' returned a null response. That's just rude.", requestHandler.getClass().getName() ) );
 			}
 
-			// FIXME: Doesn't feel like the place to set the session ID in the response, but let's do it anyway :D // Hugi 2023-01-10
+			// FIXME: This is not the right place for session ID management // Hugi 2024-10-12
 			addSessionCookieToResponse( request, response );
-
-			// FIXME: Same thought here. dispatchRequest() just doesn't feel like the place for session management // Hugi 2024-07-10
 			touchSessionIfPresentAndNotTerminating( request );
 
 			return response;
@@ -405,7 +402,7 @@ public class NGApplication {
 		if( sessionID != null ) {
 			final NGSession session = request.existingSession();
 
-			if( session != null ) { // FIXME: existingSession() isn't really a reliable way to get the session (at least not yet)  // Hugi 2023-01-11
+			if( session != null ) {
 				if( session.shouldTerminate() ) {
 					// If the session is terminating, delete the client side session cookie
 					response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
