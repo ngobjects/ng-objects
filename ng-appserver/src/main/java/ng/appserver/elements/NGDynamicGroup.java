@@ -144,8 +144,8 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 		}
 
 		// If the contained template is another DynamicGroup, "unwrap it", i.e. just steal it's kids.
-		if( contentTemplate instanceof NGDynamicGroup dg ) {
-			return dg.children();
+		if( contentTemplate.getClass().equals( NGDynamicGroup.class ) ) {
+			return ((NGDynamicGroup)contentTemplate).children();
 		}
 
 		// If template is any other element, it's an only child.
