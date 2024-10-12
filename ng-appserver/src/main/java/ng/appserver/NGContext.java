@@ -11,7 +11,7 @@ public class NGContext {
 	 *
 	 * FIXME: This is a temporary hack while we're developing the AJAX functionality // Hugi 2024-03-16
 	 */
-	public Set<String> updateContainerIDs = new HashSet<>();
+	public Set<String> containingUpdateContainerIDs = new HashSet<>();
 
 	/**
 	 * ID of the update container targeted with this request

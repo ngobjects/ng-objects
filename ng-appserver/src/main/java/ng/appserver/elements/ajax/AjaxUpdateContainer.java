@@ -56,8 +56,8 @@ public class AjaxUpdateContainer extends NGDynamicGroup {
 	@Override
 	protected void appendChildrenToResponse( NGResponse response, NGContext context ) {
 		final String id = id( context );
-		context.updateContainerIDs.add( id );
+		context.containingUpdateContainerIDs.add( id );
 		super.appendChildrenToResponse( response, context );
-		context.updateContainerIDs.remove( id );
+		context.containingUpdateContainerIDs.remove( id );
 	}
 }

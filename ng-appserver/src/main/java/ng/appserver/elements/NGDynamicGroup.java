@@ -173,7 +173,7 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 			return true;
 		}
 
-		if( context.updateContainerIDs.contains( containerIDToUpdate ) ) {
+		if( context.containingUpdateContainerIDs.contains( containerIDToUpdate ) ) {
 			return true;
 		}
 
