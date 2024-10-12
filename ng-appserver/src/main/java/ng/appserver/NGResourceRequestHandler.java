@@ -10,8 +10,6 @@ import ng.appserver.resources.NGResource;
 
 /**
  * Request handler for serving webserver-resources
- *
- * FIXME: Missing namespace handling // Hugi 2024-06-17
  */
 
 public class NGResourceRequestHandler extends NGRequestHandler {
@@ -24,26 +22,57 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {
 
-		// FIXME: We're still missing the actual namespace, so we just hardcode the app namespace for now // Hugi 2024-08-10
-		final String namespace = "app";
-		final String resourcePath = resourcePathFromURI( request.uri() );
+		final String url = request.uri();
+
+		// FIXME: Some horrid URL parsing. We need to get choppin' on making NGParsedURI more usable for parsing like this // Hugi 2024-10-12
+		int firstSlashIndex = DEFAULT_PATH.length();
+		int secondSlashIndex = url.indexOf( '/', firstSlashIndex );
+
+		String namespace = url.substring( firstSlashIndex, secondSlashIndex );
+
+		if( namespace.isEmpty() ) {
+			return new NGResponse( "No resource namespace specified", 400 );
+		}
+
+		String resourcePath = url.substring( secondSlashIndex + 1 );
 
 		if( resourcePath.isEmpty() ) {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
+		// FIXME:
+		// Look into and standardize this decoding later, both the the applied charset and the location of the logic.
+		// Added as a fix for resource loading, but URL decoding probably needs to happen at the base request handling level
+		// Hugi 2024-05-24
+		namespace = URLDecoder.decode( namespace, StandardCharsets.UTF_8 );
+		resourcePath = URLDecoder.decode( resourcePath, StandardCharsets.UTF_8 );
+
 		final Optional<NGResource> resource = NGApplication.application().resourceManager().obtainWebserverResource( namespace, resourcePath );
 
-		// FIXME: We need to allow the user to customize the response for a non-existent resource // Hugi 2021-12-06
 		if( resource.isEmpty() ) {
-			final NGResponse errorResponse = new NGResponse( "webserver resource '%s' does not exist".formatted( resourcePath ), 404 );
-			errorResponse.setHeader( "content-type", "text/html" );
-			return errorResponse;
+			return responseForNonExistentResource( namespace, resourcePath );
 		}
 
 		return responseForResource( resource.get(), resourcePath );
 	}
 
+	/**
+	 * @return The response served when an identified resource doesn't exist
+	 *
+	 * FIXME: Shouldn't be static and doesn't belong here // Hugi 2024-10-12
+	 * FIXME: Allow the user to customize the response for a non-existent resource // Hugi 2024-10-11
+	 */
+	private static NGResponse responseForNonExistentResource( final String namespace, final String resourcePath ) {
+		final NGResponse errorResponse = new NGResponse( "webserver resource '%s':'%s' does not exist".formatted( namespace, resourcePath ), 404 );
+		errorResponse.setHeader( "content-type", "text/html" );
+		return errorResponse;
+	}
+
+	/**
+	 * @return Response for serving the given resource
+	 *
+	 * FIXME: Shouldn't be static and doesn't belong here // Hugi 2024-10-12
+	 */
 	@Deprecated
 	public static NGResponse responseForResource( final NGResource resource, final String resourcePath ) {
 
@@ -59,31 +88,16 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	}
 
 	/**
-	 * @return The resource path from the given URI
-	 */
-	private static String resourcePathFromURI( final String uri ) {
-		String pathString = uri.substring( DEFAULT_PATH.length() );
-
-		// FIXME: We might want to look a little into this URL decoding, both the the applied charset and the location of the logic // Hugi 2024-05-24
-		// This is added purely as a fix for resource loading, but URL decoding might actually (probably) have to happen at the base request handling level
-		pathString = URLDecoder.decode( pathString, StandardCharsets.UTF_8 );
-
-		return pathString;
-	}
-
-	/**
 	 * @return The URL for the named resource
 	 *
-	 * FIXME: Shouldn't be static
-	 * FIXME: Determine if the resource exists before generating URLs
-	 * FIXME: I don't feel this belongs here, URL generation will be dependent on the environment
-	 * FIXME: Missing namespace handling // Hugi 2024-06-17
+	 * FIXME: Shouldn't be static and doesn't belong here. Should end up as a part of a forthcoming standard route URL generation mechanism // Hugi 2024-10-12
+	 * FIXME: Determine if the resource exists before generating URLs // Hugi 2024-10-12
 	 */
 	public static Optional<String> urlForWebserverResourceNamed( String namespace, String resourcePath ) {
+		Objects.requireNonNull( namespace );
 		Objects.requireNonNull( resourcePath );
 
-		// Since we don't use the concept of "relative paths", we can always assume an absolute path
-		// (meaning we can remove preceding slashes and always navigate from root)
+		// Since we don't use the concept of "relative paths", we can always assume an absolute path (meaning we can remove preceding slashes and always navigate from root)
 		// FIXME: While allowing paths with and without preceding slashes may be nice, it may be *nicer* to standardize a practice of either-or // Hugi 2024-05-25
 		if( resourcePath.startsWith( "/" ) ) {
 			resourcePath = resourcePath.substring( 1 );
@@ -91,8 +105,9 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 
 		final StringBuilder b = new StringBuilder();
 		b.append( DEFAULT_PATH );
+		b.append( namespace );
+		b.append( '/' );
 		b.append( resourcePath );
-
 		return Optional.of( b.toString() );
 	}
 }
