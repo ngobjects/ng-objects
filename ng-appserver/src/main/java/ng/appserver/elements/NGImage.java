@@ -125,7 +125,6 @@ public class NGImage extends NGDynamicElement {
 			if( _dataAssociation != null ) {
 				byte[] bytes = (byte[])_dataAssociation.valueInComponent( component );
 
-				// FIXME: I'm absolutely not sure that this is a sensible way to handle the case of us being handed empty data
 				if( bytes == null ) {
 					bytes = new byte[] {};
 				}
