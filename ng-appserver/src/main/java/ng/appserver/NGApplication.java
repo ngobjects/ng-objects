@@ -304,7 +304,7 @@ public class NGApplication {
 	 *
 	 * FIXME: This belongs in a routing related class // Hugi 2022-10-16
 	 */
-	public NGRequestHandler handlerForURL( String url ) {
+	private NGRequestHandler handlerForURL( String url ) {
 		for( NGRouteTable routeTable : _routeTables ) {
 			final NGRequestHandler handler = routeTable.handlerForURL( url );
 
