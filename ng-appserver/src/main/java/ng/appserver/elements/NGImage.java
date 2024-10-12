@@ -71,7 +71,7 @@ public class NGImage extends NGDynamicElement {
 		super( null, null, null );
 		_additionalAssociations = new HashMap<>( associations );
 		_filenameAssociation = _additionalAssociations.remove( "filename" );
-		_namespaceAssociation = _additionalAssociations.remove( "namespace" ); // FIXME: We'll probably want to include 'frameworkName' as a deprecated binding name for use when porting older templates // Hugi 2024-06-17
+		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( associations, true );
 		_srcAssociation = _additionalAssociations.remove( "src" );
 		_dataAssociation = _additionalAssociations.remove( "data" );
 		_dataInputStreamAssociation = _additionalAssociations.remove( "dataInputStream" );
@@ -101,7 +101,8 @@ public class NGImage extends NGDynamicElement {
 
 		if( _filenameAssociation != null ) {
 			final String filename = (String)_filenameAssociation.valueInComponent( component );
-			final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( null, filename );
+			final String namespace = NGHTMLUtilities.namespaceInContext( context, _namespaceAssociation );
+			final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( namespace, filename );
 
 			if( relativeURL.isPresent() ) {
 				src = relativeURL.get();
