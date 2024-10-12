@@ -380,14 +380,14 @@ public class NGApplication {
 			return response;
 		}
 		catch( final NGSessionRestorationException e ) {
-			return handleSessionRestorationException( e ).generateResponse();
+			return responseForSessionRestorationException( e ).generateResponse();
 		}
 		catch( final NGPageRestorationException e ) {
-			return handlePageRestorationException( e ).generateResponse();
+			return responseForPageRestorationException( e ).generateResponse();
 		}
 		catch( final Throwable throwable ) {
 			handleException( throwable );
-			return exceptionResponse( throwable, request.context() ).generateResponse();
+			return responseForException( throwable, request.context() ).generateResponse();
 		}
 	}
 
@@ -478,7 +478,7 @@ public class NGApplication {
 	 *
 	 * @return The page to return to the user when a session restoration error occurs.
 	 */
-	protected NGActionResults handleSessionRestorationException( final NGSessionRestorationException exception ) {
+	protected NGActionResults responseForSessionRestorationException( final NGSessionRestorationException exception ) {
 		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context within a dead session feels weird // Hugi 2023-01-11
 		nextPage.setException( exception );
 		return nextPage;
@@ -491,14 +491,14 @@ public class NGApplication {
 	 * FIXME: Create a nicer response for this // Hugi 2023-02-10
 	 * FIXME: This is the component action request handler leaking into the generic application // Hugi 2023-07-01
 	 */
-	protected NGActionResults handlePageRestorationException( final NGPageRestorationException exception ) {
+	protected NGActionResults responseForPageRestorationException( final NGPageRestorationException exception ) {
 		return new NGResponse( exception.getMessage(), 404 );
 	}
 
 	/**
 	 * @return The response generated when an exception occurs
 	 */
-	public NGActionResults exceptionResponse( final Throwable throwable, final NGContext context ) {
+	public NGActionResults responseForException( final Throwable throwable, final NGContext context ) {
 
 		// FIXME: The originating context might have been an Ajax request, meaning the exception page won't render squat, which isn't helpful.
 		// We should(a) not render the exception pace in the original context where the exception happened and/or (b) have a better,
