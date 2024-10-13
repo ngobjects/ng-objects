@@ -195,7 +195,7 @@ public class NGTemplateParser {
 						currentBuffer = valueBuffer;
 					}
 					else if( currentBuffer == valueBuffer ) {
-						associations.put( keyBuffer.toString().trim(), parseInlineAssociation( valueBuffer ) );
+						associations.put( keyBuffer.toString().trim(), associationForInlineBindingValue( valueBuffer ) );
 						currentBuffer = keyBuffer;
 					}
 					currentBuffer.setLength( 0 );
@@ -214,7 +214,7 @@ public class NGTemplateParser {
 
 		if( keyBuffer.length() > 0 ) {
 			if( valueBuffer.length() > 0 ) {
-				associations.put( keyBuffer.toString().trim(), parseInlineAssociation( valueBuffer ) );
+				associations.put( keyBuffer.toString().trim(), associationForInlineBindingValue( valueBuffer ) );
 			}
 			else {
 				throw new NGHTMLFormatException( "'" + tag + "' defines a key but no value." );
@@ -254,7 +254,7 @@ public class NGTemplateParser {
 		return declaration;
 	}
 
-	private static NGAssociation parseInlineAssociation( final StringBuilder valueBuffer ) throws NGHTMLFormatException {
+	private static NGAssociation associationForInlineBindingValue( final StringBuilder valueBuffer ) throws NGHTMLFormatException {
 		Objects.requireNonNull( valueBuffer );
 
 		String value = valueBuffer.toString().trim();
@@ -268,7 +268,7 @@ public class NGTemplateParser {
 				value = value.substring( 0, value.length() - 1 );
 			}
 			else {
-				throw new NGHTMLFormatException( valueBuffer + " starts with quote but does not end with one." );
+				throw new NGHTMLFormatException( value + " starts with quote but does not end with one." );
 			}
 
 			if( value.startsWith( "$" ) ) {
