@@ -25,33 +25,9 @@ public class NGAssociationFactory {
 		NGAssociation association = null;
 
 		String quotedString = quotedStrings.get( associationValue );
-		// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
 		if( quotedString != null ) {
-			int backslashIndex = quotedString.indexOf( '\\' );
-			if( backslashIndex != -1 ) {
-				StringBuilder sb = new StringBuilder( quotedString );
-				int length = sb.length();
-				for( int i = backslashIndex; i < length; i++ ) {
-					char ch = sb.charAt( i );
-					if( ch == '\\' && i < length ) {
-						char nextCh = sb.charAt( i + 1 );
-						if( nextCh == 'n' ) {
-							sb.replace( i, i + 2, "\n" );
-						}
-						else if( nextCh == 'r' ) {
-							sb.replace( i, i + 2, "\r" );
-						}
-						else if( nextCh == 't' ) {
-							sb.replace( i, i + 2, "\t" );
-						}
-						else {
-							sb.replace( i, i + 2, String.valueOf( nextCh ) );
-						}
-						length--;
-					}
-				}
-				quotedString = sb.toString();
-			}
+			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
+			quotedString = applyEscapes( quotedString );
 			association = NGAssociationFactory.constantValueAssociationWithValue( quotedString );
 		}
 		else if( isNumeric( associationValue ) ) {
@@ -79,6 +55,42 @@ public class NGAssociationFactory {
 		}
 
 		return association;
+	}
+
+	/**
+	 * @return The given string with escape sequences \r, \n and \t converted to what they represent
+	 */
+	private static String applyEscapes( String string ) {
+		int backslashIndex = string.indexOf( '\\' );
+
+		if( backslashIndex != -1 ) {
+			StringBuilder sb = new StringBuilder( string );
+			int length = sb.length();
+
+			for( int i = backslashIndex; i < length; i++ ) {
+				char ch = sb.charAt( i );
+				if( ch == '\\' && i < length ) {
+					char nextCh = sb.charAt( i + 1 );
+					if( nextCh == 'n' ) {
+						sb.replace( i, i + 2, "\n" );
+					}
+					else if( nextCh == 'r' ) {
+						sb.replace( i, i + 2, "\r" );
+					}
+					else if( nextCh == 't' ) {
+						sb.replace( i, i + 2, "\t" );
+					}
+					else {
+						sb.replace( i, i + 2, String.valueOf( nextCh ) );
+					}
+					length--;
+				}
+			}
+
+			string = sb.toString();
+		}
+		
+		return string;
 	}
 
 	static boolean isNumeric( String string ) {
