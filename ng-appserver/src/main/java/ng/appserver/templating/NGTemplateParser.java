@@ -239,14 +239,7 @@ public class NGTemplateParser {
 			elementType = NGGenericContainer.class.getSimpleName();
 		}
 
-		String elementName;
-
-		// FIXME: Don't think we need this to be synchronized, since I don't see this being invoked concurrently?
-		//		synchronized( this ) {
-		elementName = "_" + elementType + "_" + _inlineBindingCount;
-		_inlineBindingCount++;
-		//		}
-
+		final String elementName = "_%s_%s".formatted( elementType,_inlineBindingCount++ );
 		final NGDeclaration declaration = new NGDeclaration( elementName, elementType, associations );
 
 		_declarations.put( elementName, declaration );
