@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.resources.NGResource;
 import ng.appserver.templating.NGDeclarationFormatException;
-import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.NGHTMLFormatException;
 import ng.appserver.templating.NGTemplateParser;
 
