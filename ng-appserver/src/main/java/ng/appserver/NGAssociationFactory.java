@@ -22,16 +22,15 @@ public class NGAssociationFactory {
 		Objects.requireNonNull( associationValue );
 		Objects.requireNonNull( quotedStrings );
 
-		NGAssociation association = null;
-
 		String quotedString = quotedStrings.get( associationValue );
 
 		if( quotedString != null ) {
 			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
 			quotedString = applyEscapes( quotedString );
-			association = NGAssociationFactory.constantValueAssociationWithValue( quotedString );
+			return NGAssociationFactory.constantValueAssociationWithValue( quotedString );
 		}
-		else if( isNumeric( associationValue ) ) {
+
+		if( isNumeric( associationValue ) ) {
 			final Number number;
 
 			if( associationValue != null && associationValue.contains( "." ) ) {
@@ -41,19 +40,18 @@ public class NGAssociationFactory {
 				number = Integer.parseInt( associationValue );
 			}
 
-			association = NGAssociationFactory.constantValueAssociationWithValue( number );
-		}
-		else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
-			association = NGConstantValueAssociation.TRUE;
-		}
-		else if( "false".equalsIgnoreCase( associationValue ) || "no".equalsIgnoreCase( associationValue ) || "nil".equalsIgnoreCase( associationValue ) || "null".equalsIgnoreCase( associationValue ) ) {
-			association = NGConstantValueAssociation.FALSE;
-		}
-		else {
-			association = NGAssociationFactory.associationWithKeyPath( associationValue );
+			return NGAssociationFactory.constantValueAssociationWithValue( number );
 		}
 
-		return association;
+		if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
+			return NGConstantValueAssociation.TRUE;
+		}
+
+		if( "false".equalsIgnoreCase( associationValue ) || "no".equalsIgnoreCase( associationValue ) || "nil".equalsIgnoreCase( associationValue ) || "null".equalsIgnoreCase( associationValue ) ) {
+			return NGConstantValueAssociation.FALSE;
+		}
+
+		return NGAssociationFactory.associationWithKeyPath( associationValue );
 	}
 
 	/**
