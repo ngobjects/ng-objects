@@ -124,7 +124,10 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
-		// FIXME: We need a way here to catch and report better the error of "no found dynamic element. The old way of catching RuntimeException feels super weird so we need to think it out // Hugi 2022-10-07
+		// FIXME:
+		// That old try/catch gets to stay for a bit, since we still haven't designed a way to catch and report no found dynamic element
+		// The methods componentName() and prettyPrintDeclaration() are getting deleted on 2024-10-13, in case you want to have a look at them for reference when encountering this in the future
+		// Hugi 2024-10-13
 		//		try {
 		final NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
 		_currentDynamicTag = dynamicTag;
@@ -298,75 +301,6 @@ public class NGTemplateParser {
 
 		final NGAssociation association = NGAssociationFactory.associationWithValue( value, quotedStrings );
 		bindings.put( key, association );
-	}
-
-	private static boolean isInline( final NGDynamicHTMLTag tag ) {
-		Objects.requireNonNull( tag );
-
-		String name = tag.name();
-		return name != null && name.startsWith( "_" ) && name.length() > 1 && name.indexOf( '_', 1 ) != -1;
-	}
-
-	/**
-	 * @return This goofiness reparses back out inline binding names
-	 */
-	private static String componentName( final NGDynamicHTMLTag tag ) {
-		Objects.requireNonNull( tag );
-
-		String name = tag.name();
-
-		if( name == null ) {
-			return "[none]";
-		}
-
-		if( isInline( tag ) ) {
-			int secondUnderscoreIndex = name.indexOf( '_', 1 );
-
-			if( secondUnderscoreIndex != -1 ) {
-				return name.substring( 1, secondUnderscoreIndex );
-			}
-		}
-
-		return name;
-	}
-
-	/**
-	 * @return A pretty string representation of an NGDeclaration for debug logging
-	 */
-	private static String prettyPrintDeclaration( final NGDeclaration declaration ) {
-
-		if( declaration == null ) {
-			return "[none]";
-		}
-
-		final StringBuilder sb = new StringBuilder();
-		sb.append( "Component Type = " + declaration.type() );
-		sb.append( ", Bindings = { " );
-
-		final Enumeration<String> keyEnum = Collections.enumeration( declaration.associations().keySet() );
-
-		while( keyEnum.hasMoreElements() ) {
-			final String key = keyEnum.nextElement();
-			final NGAssociation association = declaration.associations().get( key );
-
-			if( association instanceof NGKeyValueAssociation ass ) {
-				sb.append( key + "=" + ass.keyPath() );
-			}
-			else if( association instanceof NGConstantValueAssociation ass ) {
-				sb.append( key + "='" + ass.valueInComponent( null ) + "'" );
-			}
-			else {
-				sb.append( key + "=" + association );
-			}
-
-			if( keyEnum.hasMoreElements() ) {
-				sb.append( ", " );
-			}
-		}
-
-		sb.append( " }" );
-
-		return sb.toString();
 	}
 
 	/**
