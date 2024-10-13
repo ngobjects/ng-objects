@@ -224,13 +224,6 @@ public class NGTemplateParser {
 
 		String elementType = elementTypeBuffer.toString();
 
-		// "Tag shortcutting" was originally performed here but is now performed when the dynamic element is constructed. Leaving this in for reference for now // Hugi 2023-04-14
-		// final String shortcutType = NGElementUtils.tagShortcutMap().get( elementType );
-		//
-		// if( shortcutType != null ) {
-		//		elementType = shortcutType;
-		// }
-
 		if( elementType.startsWith( NGHTMLParser.WO_REPLACEMENT_MARKER ) ) {
 			// Acts only on tags, where we have "dynamified" inside the tag parser
 			// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
