@@ -104,7 +104,7 @@ public class NGTemplateParser {
 			}
 
 			if( colonIndex != -1 ) {
-				final NGDeclaration declaration = parseInlineBindings( parsedString, colonIndex );
+				final NGDeclaration declaration = parseInlineBindings( parsedString, colonIndex, _inlineBindingCount++ );
 				_declarations.put( declaration.name(), declaration );
 				parsedString = "<wo name = \"" + declaration.name() + "\"";
 			}
@@ -145,7 +145,7 @@ public class NGTemplateParser {
 		_currentDynamicTag.addChildElement( parsedString );
 	}
 
-	private NGDeclaration parseInlineBindings( final String tag, final int colonIndex ) throws NGHTMLFormatException {
+	private static NGDeclaration parseInlineBindings( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {
 
 		final StringBuilder keyBuffer = new StringBuilder();
 		final StringBuilder valueBuffer = new StringBuilder();
@@ -240,7 +240,7 @@ public class NGTemplateParser {
 			elementType = NGGenericContainer.class.getSimpleName();
 		}
 
-		final String declarationName = "_%s_%s".formatted( elementType,_inlineBindingCount++ );
+		final String declarationName = "_%s_%s".formatted( elementType,nextInlineBindingNumber );
 		return new NGDeclaration( declarationName, elementType, associations );
 	}
 
