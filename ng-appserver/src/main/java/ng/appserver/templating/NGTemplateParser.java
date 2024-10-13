@@ -93,7 +93,7 @@ public class NGTemplateParser {
 	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException {
 
 		if( allowInlineBindings() ) {
-			int spaceIndex = parsedString.indexOf( ' ' );
+			final int spaceIndex = parsedString.indexOf( ' ' );
 			int colonIndex;
 
 			if( spaceIndex != -1 ) {
@@ -104,7 +104,8 @@ public class NGTemplateParser {
 			}
 
 			if( colonIndex != -1 ) {
-				NGDeclaration declaration = parseInlineBindings( parsedString, colonIndex );
+				final NGDeclaration declaration = parseInlineBindings( parsedString, colonIndex );
+				_declarations.put( declaration.name(), declaration );
 				parsedString = "<wo name = \"" + declaration.name() + "\"";
 			}
 		}
@@ -239,12 +240,8 @@ public class NGTemplateParser {
 			elementType = NGGenericContainer.class.getSimpleName();
 		}
 
-		final String elementName = "_%s_%s".formatted( elementType,_inlineBindingCount++ );
-		final NGDeclaration declaration = new NGDeclaration( elementName, elementType, associations );
-
-		_declarations.put( elementName, declaration );
-
-		return declaration;
+		final String declarationName = "_%s_%s".formatted( elementType,_inlineBindingCount++ );
+		return new NGDeclaration( declarationName, elementType, associations );
 	}
 
 	private static NGAssociation associationForInlineBindingValue( final StringBuilder valueBuffer ) throws NGHTMLFormatException {
