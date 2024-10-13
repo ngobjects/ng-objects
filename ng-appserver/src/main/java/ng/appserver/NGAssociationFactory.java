@@ -25,13 +25,13 @@ public class NGAssociationFactory {
 		NGAssociation association = null;
 
 		String quotedString = quotedStrings.get( associationValue );
+
 		if( quotedString != null ) {
 			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
 			quotedString = applyEscapes( quotedString );
 			association = NGAssociationFactory.constantValueAssociationWithValue( quotedString );
 		}
 		else if( isNumeric( associationValue ) ) {
-			// CHECKME: This value conversion feels a little odd to perform here // Hugi 2023-07-01
 			final Number number;
 
 			if( associationValue != null && associationValue.contains( "." ) ) {
@@ -43,7 +43,6 @@ public class NGAssociationFactory {
 
 			association = NGAssociationFactory.constantValueAssociationWithValue( number );
 		}
-		// CHECKME: I'm not a fan of interpreting strings as booleans // Hugi 2023-07-01
 		else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
 			association = NGConstantValueAssociation.TRUE;
 		}
