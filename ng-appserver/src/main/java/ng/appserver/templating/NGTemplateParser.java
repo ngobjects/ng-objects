@@ -236,7 +236,7 @@ public class NGTemplateParser {
 			// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
 			// as the elementName binding
 			elementType = elementType.replaceAll( NGHTMLParser.WO_REPLACEMENT_MARKER, "" );
-			associations.put( "elementName", NGAssociationFactory.associationWithValue( elementType ) );
+			associations.put( "elementName", NGAssociationFactory.constantValueAssociationWithValue( elementType ) );
 			elementType = NGGenericContainer.class.getSimpleName();
 		}
 

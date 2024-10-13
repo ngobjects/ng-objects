@@ -265,7 +265,7 @@ public class NGDeclarationParser {
 				}
 				quotedString = sb.toString();
 			}
-			association = NGAssociationFactory.associationWithValue( quotedString );
+			association = NGAssociationFactory.constantValueAssociationWithValue( quotedString );
 		}
 		else if( isNumeric( associationValue ) ) {
 			// CHECKME: This value conversion feels a little odd to perform here // Hugi 2023-07-01
@@ -278,7 +278,7 @@ public class NGDeclarationParser {
 				number = Integer.parseInt( associationValue );
 			}
 
-			association = NGAssociationFactory.associationWithValue( number );
+			association = NGAssociationFactory.constantValueAssociationWithValue( number );
 		}
 		// CHECKME: I'm not a fan of interpreting strings as booleans // Hugi 2023-07-01
 		else if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {

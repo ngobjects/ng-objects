@@ -2,7 +2,7 @@ package ng.appserver;
 
 public class NGAssociationFactory {
 
-	public static NGAssociation associationWithValue( Object obj ) {
+	public static NGAssociation constantValueAssociationWithValue( Object obj ) {
 		return new NGConstantValueAssociation( obj );
 	}
 
