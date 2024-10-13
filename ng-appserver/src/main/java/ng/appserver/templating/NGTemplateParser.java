@@ -114,9 +114,9 @@ public class NGTemplateParser {
 	}
 
 	public void didParseClosingWebObjectTag( final String parsedString ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
-		final NGDynamicHTMLTag dynamicTag = _currentDynamicTag.parentTag();
+		final NGDynamicHTMLTag parentDynamicTag = _currentDynamicTag.parentTag();
 
-		if( dynamicTag == null ) {
+		if( parentDynamicTag == null ) {
 			final String message = "<%s> Unbalanced WebObject tags. Either there is an extra closing </WEBOBJECT> tag in the html template, or one of the opening <WEBOBJECT ...> tag has a typo (extra spaces between a < sign and a WEBOBJECT tag ?).".formatted( getClass().getName() );
 			throw new NGHTMLFormatException( message );
 		}
@@ -127,7 +127,7 @@ public class NGTemplateParser {
 		// Hugi 2024-10-13
 		//		try {
 		final NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
-		_currentDynamicTag = dynamicTag;
+		_currentDynamicTag = parentDynamicTag;
 		_currentDynamicTag.addChildElement( element );
 		//		}
 		//		catch( RuntimeException e ) {
