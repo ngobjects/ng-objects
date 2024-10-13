@@ -43,7 +43,7 @@ public class ExampleComponent extends NGComponent {
 	}
 
 	public byte[] testImage3Data() {
-		return application().resourceManager().bytesForAppResourceNamed( "test-image-3.jpg" ).get();
+		return application().resourceManager().obtainAppResource( "app", "test-image-3.jpg" ).get().bytes();
 	}
 
 	public NGActionResults testAction() {

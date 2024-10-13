@@ -91,7 +91,7 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 
 		final Map<String, NGAssociation> image4Ass = new HashMap<>();
 		System.out.println( "Hahaha" );
-		image4Ass.put( "data", new NGConstantValueAssociation( application().resourceManager().bytesForWebserverResourceNamed( "test-image-4.jpg" ).get() ) );
+		image4Ass.put( "data", new NGConstantValueAssociation( application().resourceManager().obtainWebserverResource( "app", "test-image-4.jpg" ).get().bytes() ) );
 		image4Ass.put( "mimeType", new NGConstantValueAssociation( "image/jpeg" ) );
 		image4Ass.put( "width", new NGConstantValueAssociation( 300 ) );
 		hyperlink.children().add( new NGImage( "wat?", image4Ass, null ) );

@@ -30,8 +30,10 @@ public class Application extends NGApplication {
 		} );
 
 		routeTable().map( "/response-image", ( request ) -> {
+			final byte[] bytes = application().resourceManager().obtainWebserverResource( "app", "test-image-4.jpg" ).get().bytes();
+
 			NGResponse response = new NGResponse();
-			response.setContentBytes( application().resourceManager().bytesForWebserverResourceNamed( "test-image-4.jpg" ).get() );
+			response.setContentBytes( bytes );
 			response.setHeader( "content-type", "image/jpeg" );
 			return response;
 		} );

@@ -14,6 +14,7 @@ public class DirectAction extends NGDirectAction {
 		super( request );
 	}
 
+	@Override
 	public NGActionResults defaultAction() {
 		return new NGResponse( "Great success!", 200 );
 	}
@@ -36,7 +37,7 @@ public class DirectAction extends NGDirectAction {
 	}
 
 	public NGActionResults imageAction() {
-		final byte[] imageBytes = NGApplication.application().resourceManager().bytesForWebserverResourceNamed( "test-image-1.jpg" ).get();
+		final byte[] imageBytes = NGApplication.application().resourceManager().obtainWebserverResource( "app", "test-image-1.jpg" ).get().bytes();
 		final NGResponse response = new NGResponse( imageBytes, 200 );
 		response.setHeader( "content-type", "image/jpeg" );
 		return response;
