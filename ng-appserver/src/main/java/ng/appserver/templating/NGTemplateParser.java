@@ -195,7 +195,7 @@ public class NGTemplateParser {
 						currentBuffer = valueBuffer;
 					}
 					else if( currentBuffer == valueBuffer ) {
-						parseInlineAssociation( keyBuffer, valueBuffer, associations );
+						associations.put( keyBuffer.toString().trim(), parseInlineAssociation( valueBuffer ) );
 						currentBuffer = keyBuffer;
 					}
 					currentBuffer.setLength( 0 );
@@ -214,7 +214,7 @@ public class NGTemplateParser {
 
 		if( keyBuffer.length() > 0 ) {
 			if( valueBuffer.length() > 0 ) {
-				parseInlineAssociation( keyBuffer, valueBuffer, associations );
+				associations.put( keyBuffer.toString().trim(), parseInlineAssociation( valueBuffer ) );
 			}
 			else {
 				throw new NGHTMLFormatException( "'" + tag + "' defines a key but no value." );
@@ -254,12 +254,9 @@ public class NGTemplateParser {
 		return declaration;
 	}
 
-	private static void parseInlineAssociation( final StringBuilder keyBuffer, final StringBuilder valueBuffer, final Map<String, NGAssociation> bindings ) throws NGHTMLFormatException {
-		Objects.requireNonNull( keyBuffer );
+	private static NGAssociation parseInlineAssociation( final StringBuilder valueBuffer ) throws NGHTMLFormatException {
 		Objects.requireNonNull( valueBuffer );
-		Objects.requireNonNull( bindings );
 
-		final String key = keyBuffer.toString().trim();
 		String value = valueBuffer.toString().trim();
 
 		final Map<String, String> quotedStrings;
@@ -295,8 +292,7 @@ public class NGTemplateParser {
 			quotedStrings = new HashMap<>();
 		}
 
-		final NGAssociation association = NGAssociationFactory.associationWithValue( value, quotedStrings );
-		bindings.put( key, association );
+		return NGAssociationFactory.associationWithValue( value, quotedStrings );
 	}
 
 	/**
