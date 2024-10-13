@@ -213,7 +213,7 @@ public class NGDeclarationParser {
 					throw new NGDeclarationFormatException( "Missing value in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 
-				final NGAssociation association = NGDeclarationParser._associationWithKey( value, _quotedStrings );
+				final NGAssociation association = NGDeclarationParser.associationWithValue( value, _quotedStrings );
 				final String quotedString = _quotedStrings.get( key );
 
 				if( quotedString != null ) {
@@ -231,7 +231,7 @@ public class NGDeclarationParser {
 	/**
 	 * CHECKME: Doesn't this belong in NGAssociationFactory? // Hugi 2022-04-27
 	 */
-	public static NGAssociation _associationWithKey( String associationValue, Map<String, String> quotedStrings ) {
+	public static NGAssociation associationWithValue( String associationValue, Map<String, String> quotedStrings ) {
 		Objects.requireNonNull( associationValue );
 		Objects.requireNonNull( quotedStrings );
 

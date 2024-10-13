@@ -296,7 +296,7 @@ public class NGTemplateParser {
 			quotedStrings = new HashMap<>();
 		}
 
-		final NGAssociation association = NGDeclarationParser._associationWithKey( value, quotedStrings );
+		final NGAssociation association = NGDeclarationParser.associationWithValue( value, quotedStrings );
 		bindings.put( key, association );
 	}
 
