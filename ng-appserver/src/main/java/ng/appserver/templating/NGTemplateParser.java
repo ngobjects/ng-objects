@@ -121,19 +121,9 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
-		// FIXME:
-		// That old try/catch gets to stay for a bit, since we still haven't designed a way to catch and report no found dynamic element
-		// The methods componentName() and prettyPrintDeclaration() are getting deleted on 2024-10-13, in case you want to have a look at them for reference when encountering this in the future
-		// Hugi 2024-10-13
-		//		try {
 		final NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
 		_currentDynamicTag = parentDynamicTag;
 		_currentDynamicTag.addChildElement( element );
-		//		}
-		//		catch( RuntimeException e ) {
-		//			final String templ = "Unable to load the component named '%s' with the declaration %s. Make sure the .wo folder is where it's supposed to be and the name is spelled correctly.";
-		//			throw new RuntimeException( templ.formatted( componentName( _currentDynamicTag ), prettyPrintDeclaration( _declarations.get( _currentDynamicTag.name() ) ) ), e );
-		//		}
 	}
 
 	public void didParseComment( final String parsedString ) {
