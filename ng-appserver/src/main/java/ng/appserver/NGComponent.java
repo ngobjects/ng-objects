@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import ng.appserver.elements.NGDynamicGroup;
+import ng.appserver.elements.NGStructuralElement;
 import ng.kvc.NGKeyValueCoding;
 
 /**
@@ -259,7 +261,16 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		template().appendToResponse( response, context );
+
+		final NGElement template = template();
+
+		// FIXME: We're duplicating some logic here from NGDynamicGroup so we're going to have to do some cleanup // Hugi 2024-10-15
+		if( NGDynamicGroup.shouldAppendToResponseInContext( context ) ) {
+			template.appendToResponse( response, context );
+		}
+		else if( template instanceof NGStructuralElement se ) {
+			se.appendStructureToResponse( response, context );
+		}
 	}
 
 	/**

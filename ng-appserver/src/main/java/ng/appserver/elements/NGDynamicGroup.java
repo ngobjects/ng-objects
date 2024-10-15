@@ -157,8 +157,9 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 	 *
 	 * FIXME: We should probably be caching some of this operation. Even if this isn't heavy, it's going to get invoked for every element on the page // Hugi 20224-07-15
 	 * FIXME: We can make this more exact/performant by rendering structure only for the branch(es) containing the updateContainer(s) we're actually targeting // Hugi 2024-07-16
+	 * FIXME: This method probably belongs on the context. Maybe. We're starting to accumulate some API cruft so we need to think through this whole "decide what to render"-thing to make sure it's totally nice and awesome // Hugi 2024-10-15
 	 */
-	private static boolean shouldAppendToResponseInContext( final NGContext context ) {
+	public static boolean shouldAppendToResponseInContext( final NGContext context ) {
 
 		// FIXME: Dont' forget; this is a temporary reprieve // Hugi 2024-10-09
 		if( context.forceFullUpdate ) {
