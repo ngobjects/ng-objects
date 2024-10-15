@@ -14,15 +14,6 @@ public class NGContext {
 	public Set<String> containingUpdateContainerIDs = new HashSet<>();
 
 	/**
-	 * ID of the update container targeted with this request
-	 *
-	 * FIXME: Temp location while we develop the partial page caching mechanism, will probably end up somewhere else  // Hugi 2024-09-28
-	 */
-	public String targetedUpdateContainerID() {
-		return request().headerForKey( "x-updatecontainerid" );
-	}
-
-	/**
 	 * FIXME: Yet another temporary testhack while we experiment with methods to control partial page updates on the server side // Hugi 2024-10-09
 	 */
 	public boolean forceFullUpdate;
@@ -242,6 +233,19 @@ public class NGContext {
 	 */
 	public String componentActionURL() {
 		return NGComponentRequestHandler.DEFAULT_PATH + contextID() + "." + elementID();
+	}
+
+	/**
+	 * ID of the update container targeted with this request
+	 *
+	 * FIXME:
+	 * Should be replaced with a variable, preferably set at the context's construction.
+	 * That also means we need to make the context's construction a little more formal, since any request handler should be able to request partial rendering (and it should be straight forward).
+	 * In any case, this functionality will probably end up in a separate rendering context that's been begging to be created for a while.
+	 * // Hugi 2024-10-15  
+	 */
+	public String targetedUpdateContainerID() {
+		return request().headerForKey( "x-updatecontainerid" );
 	}
 
 	@Override
