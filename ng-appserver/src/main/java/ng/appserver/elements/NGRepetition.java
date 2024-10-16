@@ -113,11 +113,6 @@ public class NGRepetition extends NGDynamicGroup {
 	}
 
 	@Override
-	public void appendToResponse( NGResponse response, NGContext context ) {
-		appendStructureToResponse( response, context );
-	}
-
-	@Override
 	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 
 		context.elementID().addBranch();
