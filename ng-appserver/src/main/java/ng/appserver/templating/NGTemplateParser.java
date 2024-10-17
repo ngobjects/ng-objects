@@ -105,7 +105,7 @@ public class NGTemplateParser {
 			}
 
 			if( colonIndex != -1 ) {
-				final NGDeclaration declaration = parseInlineBindings( parsedString, colonIndex, _inlineBindingCount++ );
+				final NGDeclaration declaration = parseInlineTag( parsedString, colonIndex, _inlineBindingCount++ );
 				_declarations.put( declaration.name(), declaration );
 				parsedString = "<wo name = \"" + declaration.name() + "\"";
 			}
@@ -171,7 +171,7 @@ public class NGTemplateParser {
 		throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
 	}
 
-	private static NGDeclaration parseInlineBindings( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {
+	private static NGDeclaration parseInlineTag( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {
 
 		final StringBuilder keyBuffer = new StringBuilder();
 		final StringBuilder valueBuffer = new StringBuilder();
