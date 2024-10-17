@@ -277,8 +277,7 @@ public class NGTemplateParser {
 			else {
 				value = value.replaceAll( "\\\\\\$", "\\$" );
 				value = value.replaceAll( "\\\"", "\"" );
-				quotedStrings = new HashMap<>();
-				quotedStrings.put( "_WODP_0", value );
+				quotedStrings = Map.of( "_WODP_0", value );
 				value = "_WODP_0";
 			}
 		}
