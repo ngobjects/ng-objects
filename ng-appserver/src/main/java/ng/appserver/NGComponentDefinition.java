@@ -213,7 +213,7 @@ public class NGComponentDefinition {
 				return NO_ELEMENT;
 			}
 
-			return NGTemplateParser.parse( htmlTemplateStringOptional.get(), wodStringOptional.orElse( "" ) );
+			return new NGTemplateParser( htmlTemplateStringOptional.get(), wodStringOptional.orElse( "" ) ).parse();
 		}
 		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );

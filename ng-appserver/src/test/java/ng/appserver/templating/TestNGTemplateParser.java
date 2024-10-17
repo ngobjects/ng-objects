@@ -19,7 +19,7 @@ public class TestNGTemplateParser {
 		try {
 			Map<String, NGAssociation> associations = Map.of( "value", new NGConstantValueAssociation( "smu" ) );
 			NGElement expected = new NGString( null, associations, null );
-			NGElement result = NGTemplateParser.parse( "<wo:str value=\"smu\" />", "" );
+			NGElement result = new NGTemplateParser( "<wo:str value=\"smu\" />", "" ).parse();
 			assertEquals( expected, result );
 		}
 		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {

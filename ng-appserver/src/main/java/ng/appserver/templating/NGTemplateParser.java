@@ -45,16 +45,15 @@ public class NGTemplateParser {
 	 */
 	private final String _declarationString;
 
-	private NGTemplateParser( final String htmlString, final String declarationString ) {
+	public NGTemplateParser( final String htmlString, final String declarationString ) {
+		Objects.requireNonNull( htmlString );
+		Objects.requireNonNull( declarationString );
+
 		_htmlString = htmlString;
 		_declarationString = declarationString;
 	}
 
-	public static NGElement parse( final String htmlString, final String declarationString ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
-		return new NGTemplateParser( htmlString, declarationString ).parse();
-	}
-
-	private NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+	public NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
 
 		// Somewhat ugly hack to prevent the template parser from returning a null template for an empty HTML String (which is not what we want)
 		if( _htmlString.isEmpty() ) {
