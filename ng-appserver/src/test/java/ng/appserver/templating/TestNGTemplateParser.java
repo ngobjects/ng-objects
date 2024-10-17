@@ -3,7 +3,6 @@ package ng.appserver.templating;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ public class TestNGTemplateParser {
 		try {
 			Map<String, NGAssociation> associations = Map.of( "value", new NGConstantValueAssociation( "smu" ) );
 			NGElement expected = new NGString( null, associations, null );
-			NGElement result = NGTemplateParser.parse( "<wo:str value=\"smu\" />", "", Collections.emptyList() );
+			NGElement result = NGTemplateParser.parse( "<wo:str value=\"smu\" />", "" );
 			assertEquals( expected, result );
 		}
 		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {

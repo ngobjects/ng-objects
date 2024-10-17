@@ -1,6 +1,7 @@
 package ng.appserver.templating;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -125,13 +126,13 @@ public class NGDynamicHTMLTag {
 		_children.add( stringOrElement );
 	}
 
-	public NGElement dynamicElement( final Map<String, NGDeclaration> declarations, final List<String> languages ) throws NGDeclarationFormatException, ClassNotFoundException {
+	public NGElement dynamicElement( final Map<String, NGDeclaration> declarations ) throws NGDeclarationFormatException, ClassNotFoundException {
 		final NGDeclaration declaration = declarations.get( declarationName() );
 
 		if( declaration == null ) {
 			throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named '%s'".formatted( declarationName() ) );
 		}
 
-		return NGApplication.dynamicElementWithName( declaration.type(), declaration.associations(), template(), languages );
+		return NGApplication.dynamicElementWithName( declaration.type(), declaration.associations(), template(), Collections.emptyList() );
 	}
 }

@@ -1,7 +1,6 @@
 package ng.appserver.templating;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
@@ -46,19 +45,13 @@ public class NGTemplateParser {
 	 */
 	private final String _declarationString;
 
-	/**
-	 * List of languages. Used when constructing element instances for the template.
-	 */
-	private final List<String> _languages;
-
-	private NGTemplateParser( final String htmlString, final String declarationString, final List<String> languages ) {
+	private NGTemplateParser( final String htmlString, final String declarationString ) {
 		_htmlString = htmlString;
 		_declarationString = declarationString;
-		_languages = languages;
 	}
 
-	public static NGElement parse( final String htmlString, final String declarationString, final List<String> languages ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
-		return new NGTemplateParser( htmlString, declarationString, languages ).parse();
+	public static NGElement parse( final String htmlString, final String declarationString ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+		return new NGTemplateParser( htmlString, declarationString ).parse();
 	}
 
 	private NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
@@ -122,7 +115,7 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
-		final NGElement element = _currentDynamicTag.dynamicElement( _declarations, _languages );
+		final NGElement element = _currentDynamicTag.dynamicElement( _declarations );
 		_currentDynamicTag = parentDynamicTag;
 		_currentDynamicTag.addChildElement( element );
 	}

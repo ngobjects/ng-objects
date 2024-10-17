@@ -2,7 +2,6 @@ package ng.appserver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -214,7 +213,7 @@ public class NGComponentDefinition {
 				return NO_ELEMENT;
 			}
 
-			return NGTemplateParser.parse( htmlTemplateStringOptional.get(), wodStringOptional.orElse( "" ), Collections.emptyList() );
+			return NGTemplateParser.parse( htmlTemplateStringOptional.get(), wodStringOptional.orElse( "" ) );
 		}
 		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );
