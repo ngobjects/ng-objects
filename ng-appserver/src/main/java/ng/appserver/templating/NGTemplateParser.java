@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.StringTokenizer;
 
 import ng.appserver.NGAssociation;
 import ng.appserver.NGAssociationFactory;
@@ -110,7 +111,7 @@ public class NGTemplateParser {
 			}
 		}
 
-		_currentDynamicTag = new NGDynamicHTMLTag( parsedString, _currentDynamicTag );
+		_currentDynamicTag = new NGDynamicHTMLTag( extractDeclarationName( parsedString ), _currentDynamicTag );
 	}
 
 	public void didParseClosingWebObjectTag( final String parsedString ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
@@ -133,6 +134,41 @@ public class NGTemplateParser {
 
 	public void didParseText( final String parsedString ) {
 		_currentDynamicTag.addChildElement( parsedString );
+	}
+
+	/**
+	 * @return The declaration name (name attribute) from the given dynamic tag
+	 */
+	private static String extractDeclarationName( final String tagPart ) throws NGHTMLFormatException {
+		Objects.requireNonNull( tagPart );
+
+		final StringTokenizer st1 = new StringTokenizer( tagPart, "=" );
+
+		if( st1.countTokens() != 2 ) {
+			throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', name=... attribute not found".formatted( tagPart ) );
+		}
+
+		st1.nextToken();
+		String s1 = st1.nextToken();
+
+		int i = s1.indexOf( '"' );
+
+		// Go here if the attribute name is unquoted
+		if( i != -1 ) {
+			// this is where we go if the name attribute is quoted
+			int j = s1.lastIndexOf( '"' );
+
+			if( j > i ) {
+				return s1.substring( i + 1, j );
+			}
+		}
+		else {
+			// Assume an unquoted name attributes
+			final StringTokenizer st2 = new StringTokenizer( s1 );
+			return st2.nextToken();
+		}
+
+		throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
 	}
 
 	private static NGDeclaration parseInlineBindings( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {
