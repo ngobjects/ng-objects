@@ -18,7 +18,11 @@ public class NGAssociationFactory {
 		return new NGKeyValueAssociation( keyPath );
 	}
 
-	public static NGAssociation associationWithValue( String associationValue, Map<String, String> quotedStrings ) {
+	/**
+	 * FIXME: This method has been deprecated and it's functionality will be moved into the parser itself // Hugi 2024-10-17
+	 */
+	@Deprecated
+	public static NGAssociation associationWithValue( final String associationValue, final Map<String, String> quotedStrings ) {
 		Objects.requireNonNull( associationValue );
 		Objects.requireNonNull( quotedStrings );
 
@@ -26,8 +30,19 @@ public class NGAssociationFactory {
 
 		if( quotedString != null ) {
 			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
+			// FIXME: This conversion should probably be happening in the parser. And we should validate the escape behavior and define it as either/or // Hugi 2024-10-17
 			quotedString = applyEscapes( quotedString );
-			return NGAssociationFactory.constantValueAssociationWithValue( quotedString );
+			return associationWithValue( quotedString, true );
+		}
+
+		return associationWithValue( associationValue, false );
+	}
+
+	public static NGAssociation associationWithValue( final String associationValue, final boolean quoted ) {
+		Objects.requireNonNull( associationValue );
+
+		if( quoted ) {
+			return NGAssociationFactory.constantValueAssociationWithValue( associationValue );
 		}
 
 		if( isNumeric( associationValue ) ) {
@@ -86,7 +101,7 @@ public class NGAssociationFactory {
 
 			string = sb.toString();
 		}
-		
+
 		return string;
 	}
 
