@@ -14,6 +14,7 @@ import ng.appserver.resources.NGResource;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGHTMLFormatException;
 import ng.appserver.templating.NGTemplateParser;
+import ng.appserver.templating.NGTemplateParserProxy;
 
 /**
  * Stores information about the structure of the component.
@@ -213,7 +214,7 @@ public class NGComponentDefinition {
 				return NO_ELEMENT;
 			}
 
-			return new NGTemplateParser( htmlTemplateStringOptional.get(), wodStringOptional.orElse( "" ) ).parse();
+			return new NGTemplateParserProxy( htmlTemplateStringOptional.get(), wodStringOptional.orElse( "" ) ).parse();
 		}
 		catch( NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );
