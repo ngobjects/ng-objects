@@ -29,19 +29,19 @@ public class NGAssociationFactory {
 		String quotedString = quotedStrings.get( associationValue );
 
 		if( quotedString != null ) {
-			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
-			// FIXME: This conversion should probably be happening in the parser. And we should validate the escape behavior and define it as either/or // Hugi 2024-10-17
-			quotedString = applyEscapes( quotedString );
 			return associationWithValue( quotedString, true );
 		}
 
 		return associationWithValue( associationValue, false );
 	}
 
-	public static NGAssociation associationWithValue( final String associationValue, final boolean quoted ) {
+	public static NGAssociation associationWithValue( String associationValue, final boolean quoted ) {
 		Objects.requireNonNull( associationValue );
 
 		if( quoted ) {
+			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
+			// FIXME: I kind of feel like this doesn't exactly belong here. And we should validate the escape behavior and define it as either/or // Hugi 2024-10-17
+			associationValue = applyEscapes( associationValue );
 			return NGAssociationFactory.constantValueAssociationWithValue( associationValue );
 		}
 
