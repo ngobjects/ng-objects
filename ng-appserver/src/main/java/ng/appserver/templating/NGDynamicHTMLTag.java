@@ -20,7 +20,7 @@ public class NGDynamicHTMLTag {
 	/**
 	 * Name of the tag (i.e. the value of the 'name' attribute, that links to the declaration
 	 */
-	private final String _name;
+	private final String _declarationName;
 
 	/**
 	 * Parent tag
@@ -34,18 +34,18 @@ public class NGDynamicHTMLTag {
 
 	public NGDynamicHTMLTag() {
 		_parentTag = null;
-		_name = null;
+		_declarationName = null;
 	}
 
 	public NGDynamicHTMLTag( final String declarationName, final NGDynamicHTMLTag parentTag ) throws NGHTMLFormatException {
 		Objects.requireNonNull( declarationName );
 
 		_parentTag = parentTag;
-		_name = declarationName;
+		_declarationName = declarationName;
 	}
 
-	public String name() {
-		return _name;
+	public String declarationName() {
+		return _declarationName;
 	}
 
 	public NGDynamicHTMLTag parentTag() {
@@ -67,13 +67,13 @@ public class NGDynamicHTMLTag {
 			final NGElement onlyElement = childElements.get( 0 );
 
 			if( onlyElement instanceof NGComponentReference ) {
-				return new NGDynamicGroup( _name, null, onlyElement );
+				return new NGDynamicGroup( declarationName(), null, onlyElement );
 			}
 
 			return onlyElement;
 		}
 
-		return new NGDynamicGroup( _name, null, childElements );
+		return new NGDynamicGroup( declarationName(), null, childElements );
 	}
 
 	/**
@@ -126,10 +126,10 @@ public class NGDynamicHTMLTag {
 	}
 
 	public NGElement dynamicElement( final Map<String, NGDeclaration> declarations, final List<String> languages ) throws NGDeclarationFormatException, ClassNotFoundException {
-		final NGDeclaration declaration = declarations.get( name() );
+		final NGDeclaration declaration = declarations.get( declarationName() );
 
 		if( declaration == null ) {
-			throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named '%s'".formatted( name() ) );
+			throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named '%s'".formatted( declarationName() ) );
 		}
 
 		return NGApplication.dynamicElementWithName( declaration.type(), declaration.associations(), template(), languages );

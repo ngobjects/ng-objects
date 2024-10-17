@@ -82,7 +82,7 @@ public class NGTemplateParser {
 
 		new NGHTMLParser( this, _htmlString ).parseHTML();
 
-		final String currentDynamicTagName = _currentDynamicTag.name();
+		final String currentDynamicTagName = _currentDynamicTag.declarationName();
 
 		if( currentDynamicTagName != null ) {
 			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( currentDynamicTagName ) );
