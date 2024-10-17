@@ -1,6 +1,5 @@
 package ng.appserver;
 
-import java.util.Map;
 import java.util.Objects;
 
 public class NGAssociationFactory {
@@ -16,23 +15,6 @@ public class NGAssociationFactory {
 		}
 
 		return new NGKeyValueAssociation( keyPath );
-	}
-
-	/**
-	 * FIXME: This method has been deprecated and it's functionality will be moved into the parser itself // Hugi 2024-10-17
-	 */
-	@Deprecated
-	public static NGAssociation associationWithValue( final String associationValue, final Map<String, String> quotedStrings ) {
-		Objects.requireNonNull( associationValue );
-		Objects.requireNonNull( quotedStrings );
-
-		String quotedString = quotedStrings.get( associationValue );
-
-		if( quotedString != null ) {
-			return associationWithValue( quotedString, true );
-		}
-
-		return associationWithValue( associationValue, false );
 	}
 
 	public static NGAssociation associationWithValue( String associationValue, final boolean quoted ) {

@@ -5,8 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-import ng.appserver.NGAssociation;
-import ng.appserver.NGAssociationFactory;
+import ng.appserver.templating.NGDeclaration.NGBindingValue;
 
 public class NGDeclarationParser {
 
@@ -161,19 +160,19 @@ public class NGDeclarationParser {
 				throw new NGDeclarationFormatException( "Missing element name for declaration:\n" + declarationHeader + " " + declarationBody );
 			}
 
-			final Map<String, NGAssociation> associations = _associationsForDictionaryString( declarationHeader, declarationBody );
-			final NGDeclaration declaration = new NGDeclaration( tagName, type, associations );
+			final Map<String, NGBindingValue> bindings = _bindingsForDictionaryString( declarationHeader, declarationBody );
+			final NGDeclaration declaration = new NGDeclaration( false, tagName, type, bindings );
 			declarations.put( tagName, declaration );
 		}
 
 		return declarations;
 	}
 
-	private Map<String, NGAssociation> _associationsForDictionaryString( String declarationHeader, String declarationBody ) throws NGDeclarationFormatException {
+	private Map<String, NGBindingValue> _bindingsForDictionaryString( String declarationHeader, String declarationBody ) throws NGDeclarationFormatException {
 		Objects.requireNonNull( declarationHeader );
 		Objects.requireNonNull( declarationBody );
 
-		final Map<String, NGAssociation> associations = new HashMap<>();
+		final Map<String, NGBindingValue> bindings = new HashMap<>();
 		String trimmedDeclarationBody = declarationBody.trim();
 
 		if( !trimmedDeclarationBody.startsWith( "{" ) && !trimmedDeclarationBody.endsWith( "}" ) ) {
@@ -183,14 +182,14 @@ public class NGDeclarationParser {
 		int declarationBodyLength = trimmedDeclarationBody.length();
 
 		if( declarationBodyLength <= 2 ) {
-			return associations;
+			return bindings;
 		}
 
 		trimmedDeclarationBody = trimmedDeclarationBody.substring( 1, declarationBodyLength - 1 ).trim();
 
-		final String[] bindings = trimmedDeclarationBody.split( ";" );
+		final String[] bindingStrings = trimmedDeclarationBody.split( ";" );
 
-		for( String binding : bindings ) {
+		for( String binding : bindingStrings ) {
 			binding = binding.trim();
 
 			if( binding.length() != 0 ) {
@@ -200,31 +199,37 @@ public class NGDeclarationParser {
 					throw new NGDeclarationFormatException( "Invalid line. No equal in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 
-				final String key = binding.substring( 0, equalsIndex ).trim();
+				String key = binding.substring( 0, equalsIndex ).trim();
 
 				if( key.length() == 0 ) {
 					throw new NGDeclarationFormatException( "Missing binding in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 
-				final String value = binding.substring( equalsIndex + 1 ).trim();
+				String value = binding.substring( equalsIndex + 1 ).trim();
 
 				if( value.length() == 0 ) {
 					throw new NGDeclarationFormatException( "Missing value in line:\n" + binding + "\nfor declaration:\n" + declarationHeader + " " + declarationBody );
 				}
 
-				final NGAssociation association = NGAssociationFactory.associationWithValue( value, _quotedStrings );
-				final String quotedString = _quotedStrings.get( key );
+				final String quotedKey = _quotedStrings.get( key );
+				boolean keyIsQuoted = quotedKey != null;
 
-				if( quotedString != null ) {
-					associations.put( quotedString, association );
+				if( keyIsQuoted ) {
+					key = quotedKey;
 				}
-				else {
-					associations.put( key, association );
+
+				final String quotedValue = _quotedStrings.get( value );
+				boolean valueIsQuoted = quotedValue != null;
+
+				if( valueIsQuoted ) {
+					value = quotedValue;
 				}
+
+				bindings.put( key, new NGBindingValue( valueIsQuoted, value ) );
 			}
 		}
 
-		return associations;
+		return bindings;
 	}
 
 	private static Map<String, String> _rawDeclarationsWithoutComment( String declarationStr ) {

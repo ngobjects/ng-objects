@@ -7,12 +7,11 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 
 import ng.appserver.NGApplication;
-import ng.appserver.NGAssociation;
-import ng.appserver.NGAssociationFactory;
 import ng.appserver.NGElement;
 import ng.appserver.elements.NGGenericContainer;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHTMLCommentString;
+import ng.appserver.templating.NGDeclaration.NGBindingValue;
 
 /**
  * The primary entry point for component parsing
@@ -175,7 +174,7 @@ public class NGTemplateParser {
 		final StringBuilder keyBuffer = new StringBuilder();
 		final StringBuilder valueBuffer = new StringBuilder();
 		final StringBuilder elementTypeBuffer = new StringBuilder();
-		final Map<String, NGAssociation> associations = new HashMap<>();
+		final Map<String, NGBindingValue> bindings = new HashMap<>();
 
 		StringBuilder currentBuffer = elementTypeBuffer;
 		boolean changeBuffers = false;
@@ -221,7 +220,7 @@ public class NGTemplateParser {
 						currentBuffer = valueBuffer;
 					}
 					else if( currentBuffer == valueBuffer ) {
-						associations.put( keyBuffer.toString().trim(), associationForInlineBindingValue( valueBuffer.toString().trim() ) );
+						bindings.put( keyBuffer.toString().trim(), new NGBindingValue( false, valueBuffer.toString().trim() ) );
 						currentBuffer = keyBuffer;
 					}
 					currentBuffer.setLength( 0 );
@@ -240,7 +239,7 @@ public class NGTemplateParser {
 
 		if( keyBuffer.length() > 0 ) {
 			if( valueBuffer.length() > 0 ) {
-				associations.put( keyBuffer.toString().trim(), associationForInlineBindingValue( valueBuffer.toString().trim() ) );
+				bindings.put( keyBuffer.toString().trim(), new NGBindingValue( false, valueBuffer.toString().trim() ) );
 			}
 			else {
 				throw new NGHTMLFormatException( "'" + tag + "' defines a key but no value." );
@@ -254,50 +253,12 @@ public class NGTemplateParser {
 			// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
 			// as the elementName binding
 			elementType = elementType.replaceAll( NGHTMLParser.WO_REPLACEMENT_MARKER, "" );
-			associations.put( "elementName", NGAssociationFactory.constantValueAssociationWithValue( elementType ) );
+			bindings.put( "elementName", new NGBindingValue( true, elementType ) );
 			elementType = NGGenericContainer.class.getSimpleName();
 		}
 
 		final String declarationName = "_%s_%s".formatted( elementType, nextInlineBindingNumber );
-		return new NGDeclaration( declarationName, elementType, associations );
-	}
-
-	private static NGAssociation associationForInlineBindingValue( String value ) throws NGHTMLFormatException {
-		Objects.requireNonNull( value );
-
-		final Map<String, String> quotedStrings;
-
-		if( value.startsWith( "\"" ) ) {
-			value = value.substring( 1 );
-
-			if( value.endsWith( "\"" ) ) {
-				value = value.substring( 0, value.length() - 1 );
-			}
-			else {
-				throw new NGHTMLFormatException( value + " starts with quote but does not end with one." );
-			}
-
-			if( value.startsWith( "$" ) ) {
-				value = value.substring( 1 );
-
-				if( value.endsWith( "VALID" ) ) {
-					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
-				}
-
-				quotedStrings = new HashMap<>();
-			}
-			else {
-				value = value.replaceAll( "\\\\\\$", "\\$" );
-				value = value.replaceAll( "\\\"", "\"" );
-				quotedStrings = Map.of( "_WODP_0", value );
-				value = "_WODP_0";
-			}
-		}
-		else {
-			quotedStrings = new HashMap<>();
-		}
-
-		return NGAssociationFactory.associationWithValue( value, quotedStrings );
+		return new NGDeclaration( true, declarationName, elementType, bindings );
 	}
 
 	/**
