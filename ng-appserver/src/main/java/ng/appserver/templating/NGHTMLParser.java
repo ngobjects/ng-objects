@@ -51,7 +51,7 @@ public class NGHTMLParser {
 		_contentText = new StringBuilder( 128 );
 	}
 
-	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
+	public void parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException {
 		_stackDict = new HashMap<>();
 
 		final NGStringTokenizer templateTokenizer = new NGStringTokenizer( _unparsedTemplate, "<" );
@@ -261,7 +261,7 @@ public class NGHTMLParser {
 		didParseOpeningWebObjectTag();
 	}
 
-	private void endOfWebObjectTag( String token ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+	private void endOfWebObjectTag( String token ) throws NGDeclarationFormatException, NGHTMLFormatException {
 		didParseText();
 		_contentText.append( token );
 		didParseClosingWebObjectTag();
@@ -285,7 +285,7 @@ public class NGHTMLParser {
 		}
 	}
 
-	private void didParseClosingWebObjectTag() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+	private void didParseClosingWebObjectTag() throws NGDeclarationFormatException, NGHTMLFormatException {
 		logger.debug( "Parsed Closing WebObject ({}) : {}", _contentText.length(), _contentText );
 
 		if( _contentText.length() > 0 ) {

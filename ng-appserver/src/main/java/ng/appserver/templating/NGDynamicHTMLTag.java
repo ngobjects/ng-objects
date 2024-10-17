@@ -126,7 +126,7 @@ public class NGDynamicHTMLTag {
 		_children.add( stringOrElement );
 	}
 
-	public NGElement dynamicElement( final Map<String, NGDeclaration> declarations ) throws NGDeclarationFormatException, ClassNotFoundException {
+	public NGElement dynamicElement( final Map<String, NGDeclaration> declarations ) throws NGDeclarationFormatException {
 		final NGDeclaration declaration = declarations.get( declarationName() );
 
 		if( declaration == null ) {

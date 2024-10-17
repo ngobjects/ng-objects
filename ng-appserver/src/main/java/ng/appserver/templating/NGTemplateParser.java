@@ -53,7 +53,7 @@ public class NGTemplateParser {
 		_declarationString = declarationString;
 	}
 
-	public NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+	public NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException {
 
 		// Somewhat ugly hack to prevent the template parser from returning a null template for an empty HTML String (which is not what we want)
 		if( _htmlString.isEmpty() ) {
@@ -65,7 +65,7 @@ public class NGTemplateParser {
 		return parseHTML();
 	}
 
-	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
+	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException {
 
 		new NGHTMLParser( this, _htmlString ).parseHTML();
 
@@ -101,7 +101,7 @@ public class NGTemplateParser {
 		_currentDynamicTag = new NGDynamicHTMLTag( extractDeclarationName( parsedString ), _currentDynamicTag );
 	}
 
-	public void didParseClosingWebObjectTag( final String parsedString ) throws NGDeclarationFormatException, NGHTMLFormatException, ClassNotFoundException {
+	public void didParseClosingWebObjectTag( final String parsedString ) throws NGDeclarationFormatException, NGHTMLFormatException {
 		final NGDynamicHTMLTag parentDynamicTag = _currentDynamicTag.parentTag();
 
 		if( parentDynamicTag == null ) {

@@ -22,7 +22,7 @@ public class TestNGTemplateParser {
 			NGElement result = new NGTemplateParser( "<wo:str value=\"smu\" />", "" ).parse();
 			assertEquals( expected, result );
 		}
-		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
+		catch( NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );
 		}
 	}
@@ -39,7 +39,7 @@ public class TestNGTemplateParser {
 				NGElement result = NGTemplateParser.parse( "<wo:if condition=\"$true\">Content text</wo:if>", "", Collections.emptyList() );
 				assertEquals( expected, result );
 			}
-			catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
+			catch( NGDeclarationFormatException | NGHTMLFormatException e ) {
 				throw new RuntimeException( e );
 			}
 		}

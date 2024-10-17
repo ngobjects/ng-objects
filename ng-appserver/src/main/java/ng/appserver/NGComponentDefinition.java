@@ -215,7 +215,7 @@ public class NGComponentDefinition {
 
 			return new NGTemplateParser( htmlTemplateStringOptional.get(), wodStringOptional.orElse( "" ) ).parse();
 		}
-		catch( ClassNotFoundException | NGDeclarationFormatException | NGHTMLFormatException e ) {
+		catch( NGDeclarationFormatException | NGHTMLFormatException e ) {
 			throw new RuntimeException( e );
 		}
 	}
