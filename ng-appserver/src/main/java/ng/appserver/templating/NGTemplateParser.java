@@ -1,10 +1,12 @@
 package ng.appserver.templating;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGAssociationFactory;
 import ng.appserver.NGElement;
@@ -109,7 +111,7 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
-		final NGElement element = _currentDynamicTag.dynamicElement( _declarations );
+		final NGElement element = dynamicElement( _currentDynamicTag, _declarations );
 		_currentDynamicTag = parentDynamicTag;
 		_currentDynamicTag.addChildElement( element );
 	}
@@ -156,6 +158,16 @@ public class NGTemplateParser {
 		}
 
 		throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
+	}
+
+	private static NGElement dynamicElement( NGDynamicHTMLTag tag, final Map<String, NGDeclaration> declarations ) throws NGDeclarationFormatException {
+		final NGDeclaration declaration = declarations.get( tag.declarationName() );
+
+		if( declaration == null ) {
+			throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named '%s'".formatted( tag.declarationName() ) );
+		}
+
+		return NGApplication.dynamicElementWithName( declaration.type(), declaration.associations(), tag.template(), Collections.emptyList() );
 	}
 
 	private static NGDeclaration parseInlineTag( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {
