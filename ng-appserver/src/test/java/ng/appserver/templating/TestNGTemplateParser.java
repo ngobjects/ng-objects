@@ -1,6 +1,7 @@
 package ng.appserver.templating;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collections;
 import java.util.Map;
@@ -44,4 +45,32 @@ public class TestNGTemplateParser {
 			}
 		}
 		*/
+
+	@Test
+	public void testExtractDeclarationNameWithQuotes() {
+		try {
+			String declarationName = NGTemplateParser.extractDeclarationName( "<wo name = \"_NGString_4\"" );
+			assertEquals( "_NGString_4", declarationName );
+
+			String declarationName2 = NGTemplateParser.extractDeclarationName( "<wo name=\"bleble\"" );
+			assertEquals( "bleble", declarationName2 );
+		}
+		catch( NGHTMLFormatException e ) {
+			fail();
+		}
+	}
+
+	@Test
+	public void testExtractDeclarationNameWithoutQuotes() {
+		try {
+			String declarationName = NGTemplateParser.extractDeclarationName( "<wo name=_NGString_4" );
+			assertEquals( "_NGString_4", declarationName );
+
+			String declarationName2 = NGTemplateParser.extractDeclarationName( "<wo name=bleble" );
+			assertEquals( "bleble", declarationName2 );
+		}
+		catch( NGHTMLFormatException e ) {
+			fail();
+		}
+	}
 }

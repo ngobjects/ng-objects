@@ -139,7 +139,7 @@ public class NGTemplateParser {
 	/**
 	 * @return The declaration name (name attribute) from the given dynamic tag
 	 */
-	private static String extractDeclarationName( final String tagPart ) throws NGHTMLFormatException {
+	static String extractDeclarationName( final String tagPart ) throws NGHTMLFormatException {
 		Objects.requireNonNull( tagPart );
 
 		final StringTokenizer st1 = new StringTokenizer( tagPart, "=" );
