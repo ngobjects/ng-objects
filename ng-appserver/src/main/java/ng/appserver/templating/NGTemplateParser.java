@@ -61,14 +61,9 @@ public class NGTemplateParser {
 			return new NGHTMLBareString( "" );
 		}
 
-		parseDeclarations();
-		return parseHTML();
-	}
+		_declarations = NGDeclarationParser.declarationsWithString( _declarationString );
 
-	private void parseDeclarations() throws NGDeclarationFormatException {
-		if( _declarationString != null ) {
-			_declarations = NGDeclarationParser.declarationsWithString( _declarationString );
-		}
+		return parseHTML();
 	}
 
 	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException, ClassNotFoundException {
