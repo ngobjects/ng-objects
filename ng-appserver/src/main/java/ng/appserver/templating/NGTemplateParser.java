@@ -186,7 +186,7 @@ public class NGTemplateParser {
 						currentBuffer = valueBuffer;
 					}
 					else if( currentBuffer == valueBuffer ) {
-						associations.put( keyBuffer.toString().trim(), associationForInlineBindingValue( valueBuffer ) );
+						associations.put( keyBuffer.toString().trim(), associationForInlineBindingValue( valueBuffer.toString().trim() ) );
 						currentBuffer = keyBuffer;
 					}
 					currentBuffer.setLength( 0 );
@@ -205,7 +205,7 @@ public class NGTemplateParser {
 
 		if( keyBuffer.length() > 0 ) {
 			if( valueBuffer.length() > 0 ) {
-				associations.put( keyBuffer.toString().trim(), associationForInlineBindingValue( valueBuffer ) );
+				associations.put( keyBuffer.toString().trim(), associationForInlineBindingValue( valueBuffer.toString().trim() ) );
 			}
 			else {
 				throw new NGHTMLFormatException( "'" + tag + "' defines a key but no value." );
@@ -223,14 +223,12 @@ public class NGTemplateParser {
 			elementType = NGGenericContainer.class.getSimpleName();
 		}
 
-		final String declarationName = "_%s_%s".formatted( elementType,nextInlineBindingNumber );
+		final String declarationName = "_%s_%s".formatted( elementType, nextInlineBindingNumber );
 		return new NGDeclaration( declarationName, elementType, associations );
 	}
 
-	private static NGAssociation associationForInlineBindingValue( final StringBuilder valueBuffer ) throws NGHTMLFormatException {
-		Objects.requireNonNull( valueBuffer );
-
-		String value = valueBuffer.toString().trim();
+	private static NGAssociation associationForInlineBindingValue( String value ) throws NGHTMLFormatException {
+		Objects.requireNonNull( value );
 
 		final Map<String, String> quotedStrings;
 
