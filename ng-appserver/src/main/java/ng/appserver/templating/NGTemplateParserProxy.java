@@ -59,7 +59,7 @@ public class NGTemplateParserProxy {
 		return NGApplication.dynamicElementWithName( declaration.type(), toAssociations( declaration ), template( tag ), Collections.emptyList() );
 	}
 
-	public static Map<String, NGAssociation> toAssociations( NGDeclaration declaration ) {
+	private static Map<String, NGAssociation> toAssociations( NGDeclaration declaration ) {
 		final Map<String, NGAssociation> associations = new HashMap<>();
 
 		for( Entry<String, NGBindingValue> entry : declaration.bindings().entrySet() ) {
@@ -84,7 +84,7 @@ public class NGTemplateParserProxy {
 		}
 	}
 
-	public static NGAssociation bindingValueForInlineBindingString( String value ) throws NGHTMLFormatException {
+	private static NGAssociation bindingValueForInlineBindingString( String value ) throws NGHTMLFormatException {
 		Objects.requireNonNull( value );
 
 		if( value.startsWith( "\"" ) ) {
@@ -120,7 +120,7 @@ public class NGTemplateParserProxy {
 	 * @return The tag's template
 	 * @throws NGDeclarationFormatException
 	 */
-	public static NGElement template( NGDynamicHTMLTag tag ) throws NGDeclarationFormatException {
+	private static NGElement template( NGDynamicHTMLTag tag ) throws NGDeclarationFormatException {
 
 		if( tag.children() == null ) {
 			return null;
