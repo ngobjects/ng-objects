@@ -6,6 +6,6 @@ public record PBasicNode( NGDynamicHTMLTag tag, NGDeclaration declaration ) impl
 
 	public PBasicNode {
 		Objects.requireNonNull( tag );
-		//		Objects.requireNonNull( declaration );
+		Objects.requireNonNull( declaration );
 	}
 }

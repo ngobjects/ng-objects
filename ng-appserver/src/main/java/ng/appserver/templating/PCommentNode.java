@@ -1,14 +1,10 @@
 package ng.appserver.templating;
 
-public class PCommentNode implements PNode {
+import java.util.Objects;
 
-	private final String _value;
+public record PCommentNode( String value ) implements PNode {
 
-	public PCommentNode( final String value ) {
-		_value = value;
-	}
-
-	public String value() {
-		return _value;
+	public PCommentNode {
+		Objects.requireNonNull( value );
 	}
 }

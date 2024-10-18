@@ -1,14 +1,10 @@
 package ng.appserver.templating;
 
-public class PHTMLNode implements PNode {
+import java.util.Objects;
 
-	private final String _value;
+public record PHTMLNode( String value ) implements PNode {
 
-	public PHTMLNode( final String value ) {
-		_value = value;
-	}
-
-	public String value() {
-		return _value;
+	public PHTMLNode {
+		Objects.requireNonNull( value );
 	}
 }
