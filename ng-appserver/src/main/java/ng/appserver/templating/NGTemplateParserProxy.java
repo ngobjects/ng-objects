@@ -46,9 +46,10 @@ public class NGTemplateParserProxy {
 			case PGroupNode n -> new NGDynamicGroup( null, null, template( n.tag() ) );
 			case PHTMLNode n -> new NGHTMLBareString( n.value() );
 			case PCommentNode n -> new NGHTMLCommentString( n.value() );
+			/*
 			default -> {
 				throw new IllegalStateException( "Unhandled node type: " + node );
-			}
+			}*/
 		};
 
 		return element;

@@ -1,5 +1,3 @@
 package ng.appserver.templating;
 
-public interface PNode {
-
-}
+public sealed interface PNode permits PBasicNode, PGroupNode, PHTMLNode, PCommentNode {}
