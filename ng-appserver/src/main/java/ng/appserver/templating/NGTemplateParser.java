@@ -106,16 +106,16 @@ public class NGTemplateParser {
 
 		final PNode node = node( _currentDynamicTag, _declarations );
 		_currentDynamicTag = parentDynamicTag;
-		_currentDynamicTag.addChildElement( node );
+		_currentDynamicTag.addChild( node );
 	}
 
 	public void didParseComment( final String parsedString ) {
 		PCommentNode commentString = new PCommentNode( parsedString );
-		_currentDynamicTag.addChildElement( commentString );
+		_currentDynamicTag.addChild( commentString );
 	}
 
 	public void didParseText( final String parsedString ) {
-		_currentDynamicTag.addChildElement( parsedString );
+		_currentDynamicTag.addChild( parsedString );
 	}
 
 	/**

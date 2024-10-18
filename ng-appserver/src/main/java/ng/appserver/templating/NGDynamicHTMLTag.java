@@ -21,7 +21,7 @@ public class NGDynamicHTMLTag {
 	private final NGDynamicHTMLTag _parentTag;
 
 	/**
-	 * Children of this tag. This list contains a mix of (java) strings and NGElements.
+	 * Children of this tag. This list contains a mix of (java) strings and PNodes
 	 */
 	private List<Object> _children;
 
@@ -49,7 +49,7 @@ public class NGDynamicHTMLTag {
 		return _children;
 	}
 
-	public void addChildElement( final Object stringOrElement ) {
+	public void addChild( final Object stringOrElement ) {
 		Objects.requireNonNull( stringOrElement );
 
 		if( _children == null ) {
