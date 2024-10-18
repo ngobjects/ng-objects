@@ -1,16 +1,10 @@
 package ng.appserver.templating;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-import ng.appserver.NGApplication;
-import ng.appserver.NGElement;
-import ng.appserver.elements.NGGenericContainer;
-import ng.appserver.elements.NGHTMLBareString;
-import ng.appserver.elements.NGHTMLCommentString;
 import ng.appserver.templating.NGDeclaration.NGBindingValue;
 
 /**
@@ -54,11 +48,11 @@ public class NGTemplateParser {
 		_declarationString = declarationString;
 	}
 
-	public NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException {
+	public PNode parse() throws NGDeclarationFormatException, NGHTMLFormatException {
 
 		// Somewhat ugly hack to prevent the template parser from returning a null template for an empty HTML String (which is not what we want)
 		if( _htmlString.isEmpty() ) {
-			return new NGHTMLBareString( "" );
+			return new PHTMLNode( "" );
 		}
 
 		_declarations = NGDeclarationParser.declarationsWithString( _declarationString );
@@ -66,7 +60,7 @@ public class NGTemplateParser {
 		return parseHTML();
 	}
 
-	private NGElement parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException {
+	private PNode parseHTML() throws NGHTMLFormatException, NGDeclarationFormatException {
 
 		new NGHTMLParser( this, _htmlString ).parseHTML();
 
@@ -76,7 +70,7 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( currentDynamicTagName ) );
 		}
 
-		return _currentDynamicTag.template();
+		return new PGroupNode( _currentDynamicTag );
 	}
 
 	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException {
@@ -110,13 +104,13 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
-		final NGElement element = dynamicElement( _currentDynamicTag, _declarations );
+		final PNode node = node( _currentDynamicTag, _declarations );
 		_currentDynamicTag = parentDynamicTag;
-		_currentDynamicTag.addChildElement( element );
+		_currentDynamicTag.addChildElement( node );
 	}
 
 	public void didParseComment( final String parsedString ) {
-		NGHTMLCommentString commentString = new NGHTMLCommentString( parsedString );
+		PCommentNode commentString = new PCommentNode( parsedString );
 		_currentDynamicTag.addChildElement( commentString );
 	}
 
@@ -159,14 +153,14 @@ public class NGTemplateParser {
 		throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
 	}
 
-	private static NGElement dynamicElement( NGDynamicHTMLTag tag, final Map<String, NGDeclaration> declarations ) throws NGDeclarationFormatException {
+	public static PNode node( NGDynamicHTMLTag tag, final Map<String, NGDeclaration> declarations ) throws NGDeclarationFormatException {
 		final NGDeclaration declaration = declarations.get( tag.declarationName() );
 
 		if( declaration == null ) {
 			throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named '%s'".formatted( tag.declarationName() ) );
 		}
 
-		return NGApplication.dynamicElementWithName( declaration.type(), declaration.associations(), tag.template(), Collections.emptyList() );
+		return new PBasicNode( tag, declaration );
 	}
 
 	private static NGDeclaration parseInlineTag( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {
@@ -252,9 +246,11 @@ public class NGTemplateParser {
 			// Acts only on tags, where we have "dynamified" inside the tag parser
 			// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
 			// as the elementName binding
-			elementType = elementType.replaceAll( NGHTMLParser.WO_REPLACEMENT_MARKER, "" );
-			bindings.put( "elementName", new NGBindingValue( true, elementType ) );
-			elementType = NGGenericContainer.class.getSimpleName();
+
+			// FIXME: Fix up in "New parser world"
+			//			elementType = elementType.replaceAll( NGHTMLParser.WO_REPLACEMENT_MARKER, "" );
+			//			bindings.put( "elementName", new NGBindingValue( true, elementType ) );
+			//			elementType = NGGenericContainer.class.getSimpleName();
 		}
 
 		final String declarationName = "_%s_%s".formatted( elementType, nextInlineBindingNumber );
