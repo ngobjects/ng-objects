@@ -58,4 +58,9 @@ public class NGDynamicHTMLTag {
 
 		_children.add( stringOrElement );
 	}
+
+	@Override
+	public String toString() {
+		return "NGDynamicHTMLTag [_declarationName=" + _declarationName + ",  _children=" + _children + "]";
+	}
 }
