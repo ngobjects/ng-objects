@@ -9,8 +9,6 @@ import ng.appserver.templating.NGDeclaration.NGBindingValue;
 
 /**
  * The primary entry point for component parsing
- *
- * FIXME: Identify bug that caused me to have to add a space (or any other character) before the starting <span> generic container in NGExceptionPage
  */
 
 public class NGTemplateParser {

@@ -102,7 +102,7 @@
 			<wo:if condition="$showSource">
 			<div class="filename-container"><strong><wo:str value="$firstLineOfTrace.fileName" /></strong></div>
 	<div class="src-container">
-	<wo:repetition list="$lines" item="$currentSourceLine" index="$currentSourceLineIndex"> <wo:container elementName="span" class="$sourceLineClass"><span><wo:str value="$currentActualLineNumber" /></span> <wo:str value="$currentSourceLine" /></wo:container></wo:repetition>
+	<wo:repetition list="$lines" item="$currentSourceLine" index="$currentSourceLineIndex"><wo:container elementName="span" class="$sourceLineClass"><span><wo:str value="$currentActualLineNumber" /></span> <wo:str value="$currentSourceLine" /></wo:container></wo:repetition>
 	</div>
 			</wo:if>
 			<table>
