@@ -10,10 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.NGApplication.NGElementNotFoundException;
 import ng.appserver.resources.NGResource;
 import ng.appserver.templating.NGDeclarationFormatException;
 import ng.appserver.templating.NGHTMLFormatException;
-import ng.appserver.templating.NGTemplateParser;
 import ng.appserver.templating.NGTemplateParserProxy;
 
 /**
@@ -132,7 +132,8 @@ public class NGComponentDefinition {
 		final NGComponentDefinition newComponentDefinition = new NGComponentDefinition( componentName, componentClass );
 
 		if( newComponentDefinition.isClassless() && !newComponentDefinition.hasTemplate() ) {
-			throw new IllegalArgumentException( "Component '%s' does not exist (a component must have either a class or a template, usually both)".formatted( componentName ) );
+			// FIXME: I'm not sure we really want to throw this particular exception here - or if we want to throw at all, and allow the construction of an "empty" component definition. Decicisions, decisions... // Hugi 2024-10-19
+			throw new NGElementNotFoundException( "Component '%s' does not exist (a component must have either a class or a template, usually both)".formatted( componentName ), componentName );
 		}
 
 		if( _cachingEnabled() ) {

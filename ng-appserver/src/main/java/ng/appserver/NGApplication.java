@@ -737,7 +737,21 @@ public class NGApplication {
 		}
 
 		// We should never end up here unless we got an incorrect/non-existent element name
-		throw new IllegalArgumentException( "I could not construct a dynamic element named '%s'".formatted( name ) );
+		throw new NGElementNotFoundException( "I could not construct a dynamic element named '%s'".formatted( name ), name );
+	}
+
+	public static class NGElementNotFoundException extends RuntimeException {
+
+		private final String _elementName;
+
+		public NGElementNotFoundException( final String message, final String elementName ) {
+			super( message );
+			_elementName = elementName;
+		}
+
+		public String elementName() {
+			return _elementName;
+		}
 	}
 
 	/**
