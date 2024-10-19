@@ -180,7 +180,7 @@ public class NGTemplateParser {
 			else if( inQuote && ch == '\\' ) {
 				index++;
 				if( index == length ) {
-					throw new NGHTMLFormatException( "'" + tag + "' has a '\\' as the last character." );
+					throw new NGHTMLFormatException( "'%s' has a '\\' as the last character.".formatted( tag ) );
 				}
 				if( tag.charAt( index ) == '\"' ) {
 					currentBuffer.append( "\"" );
@@ -222,7 +222,7 @@ public class NGTemplateParser {
 		}
 
 		if( inQuote ) {
-			throw new NGHTMLFormatException( "'" + tag + "' has a quote left open." );
+			throw new NGHTMLFormatException( "'%s' has a quote left open.".formatted( tag ) );
 		}
 
 		if( keyBuffer.length() > 0 ) {
@@ -230,7 +230,7 @@ public class NGTemplateParser {
 				bindings.put( keyBuffer.toString().trim(), new NGBindingValue( false, valueBuffer.toString().trim() ) );
 			}
 			else {
-				throw new NGHTMLFormatException( "'" + tag + "' defines a key but no value." );
+				throw new NGHTMLFormatException( "'%s' defines a key but no value.".formatted( tag ) );
 			}
 		}
 
