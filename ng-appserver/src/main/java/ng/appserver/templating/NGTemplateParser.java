@@ -75,25 +75,26 @@ public class NGTemplateParser {
 
 	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException {
 
-		if( allowInlineBindings() ) {
-			final int spaceIndex = parsedString.indexOf( ' ' );
-			int colonIndex;
+		final int spaceIndex = parsedString.indexOf( ' ' );
+		int colonIndex;
 
-			if( spaceIndex != -1 ) {
-				colonIndex = parsedString.substring( 0, spaceIndex ).indexOf( ':' );
-			}
-			else {
-				colonIndex = parsedString.indexOf( ':' );
-			}
-
-			if( colonIndex != -1 ) {
-				final NGDeclaration declaration = parseInlineTag( parsedString, colonIndex, _inlineBindingCount++ );
-				_declarations.put( declaration.name(), declaration );
-				parsedString = "<wo name = \"" + declaration.name() + "\"";
-			}
+		if( spaceIndex != -1 ) {
+			colonIndex = parsedString.substring( 0, spaceIndex ).indexOf( ':' );
+		}
+		else {
+			colonIndex = parsedString.indexOf( ':' );
 		}
 
-		_currentDynamicTag = new NGDynamicHTMLTag( extractDeclarationName( parsedString ), _currentDynamicTag );
+		final boolean isInlineTag = colonIndex != -1;
+
+		if( isInlineTag ) {
+			final NGDeclaration declaration = parseInlineTag( parsedString, colonIndex, _inlineBindingCount++ );
+			_declarations.put( declaration.name(), declaration );
+			_currentDynamicTag = new NGDynamicHTMLTag( declaration.name(), _currentDynamicTag );
+		}
+		else {
+			_currentDynamicTag = new NGDynamicHTMLTag( extractDeclarationName( parsedString ), _currentDynamicTag );
+		}
 	}
 
 	public void didParseClosingWebObjectTag( final String parsedString ) throws NGDeclarationFormatException, NGHTMLFormatException {
@@ -255,12 +256,5 @@ public class NGTemplateParser {
 
 		final String declarationName = "_%s_%s".formatted( elementType, nextInlineBindingNumber );
 		return new NGDeclaration( true, declarationName, elementType, bindings );
-	}
-
-	/**
-	 * Indicates if inline bindings (<wo: ...> tags in the HTML) are allowed. Obviously, this defaults to true.
-	 */
-	private static boolean allowInlineBindings() {
-		return true;
 	}
 }
