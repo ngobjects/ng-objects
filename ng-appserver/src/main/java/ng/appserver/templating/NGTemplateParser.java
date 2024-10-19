@@ -98,7 +98,7 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
-		final PNode node = node( _currentDynamicTag, _declarations );
+		final PNode node = dynamicTagToNode( _currentDynamicTag, _declarations );
 		_currentDynamicTag = parentDynamicTag;
 		_currentDynamicTag.addChild( node );
 	}
@@ -147,7 +147,7 @@ public class NGTemplateParser {
 		throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
 	}
 
-	public static PNode node( NGDynamicHTMLTag tag, final Map<String, NGDeclaration> declarations ) throws NGDeclarationFormatException {
+	private static PNode dynamicTagToNode( NGDynamicHTMLTag tag, final Map<String, NGDeclaration> declarations ) throws NGDeclarationFormatException {
 		final NGDeclaration declaration = declarations.get( tag.declarationName() );
 
 		if( declaration == null ) {
