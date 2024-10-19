@@ -48,11 +48,6 @@ public class NGTemplateParser {
 
 	public PNode parse() throws NGDeclarationFormatException, NGHTMLFormatException {
 
-		// Somewhat ugly hack to prevent the template parser from returning a null template for an empty HTML String (which is not what we want)
-		if( _htmlString.isEmpty() ) {
-			return new PHTMLNode( "" );
-		}
-
 		_declarations = NGDeclarationParser.declarationsWithString( _declarationString );
 
 		return parseHTML();
