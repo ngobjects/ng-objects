@@ -18,7 +18,7 @@ public class NGDynamicHTMLTag {
 	/**
 	 * Parent tag
 	 */
-	private final NGDynamicHTMLTag _parentTag;
+	private final NGDynamicHTMLTag _parent;
 
 	/**
 	 * Children of this tag. This list contains a mix of (java) strings and PNodes
@@ -26,14 +26,14 @@ public class NGDynamicHTMLTag {
 	private List<Object> _children;
 
 	public NGDynamicHTMLTag() {
-		_parentTag = null;
+		_parent = null;
 		_declarationName = null;
 	}
 
 	public NGDynamicHTMLTag( final String declarationName, final NGDynamicHTMLTag parentTag ) throws NGHTMLFormatException {
 		Objects.requireNonNull( declarationName );
 
-		_parentTag = parentTag;
+		_parent = parentTag;
 		_declarationName = declarationName;
 	}
 
@@ -41,8 +41,8 @@ public class NGDynamicHTMLTag {
 		return _declarationName;
 	}
 
-	public NGDynamicHTMLTag parentTag() {
-		return _parentTag;
+	public NGDynamicHTMLTag parent() {
+		return _parent;
 	}
 
 	public List<Object> children() {

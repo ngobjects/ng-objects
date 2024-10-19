@@ -91,7 +91,7 @@ public class NGTemplateParser {
 	}
 
 	public void didParseClosingWebObjectTag( final String parsedString ) throws NGDeclarationFormatException, NGHTMLFormatException {
-		final NGDynamicHTMLTag parentDynamicTag = _currentDynamicTag.parentTag();
+		final NGDynamicHTMLTag parentDynamicTag = _currentDynamicTag.parent();
 
 		if( parentDynamicTag == null ) {
 			final String message = "<%s> Unbalanced WebObject tags. Either there is an extra closing </WEBOBJECT> tag in the html template, or one of the opening <WEBOBJECT ...> tag has a typo (extra spaces between a < sign and a WEBOBJECT tag ?).".formatted( getClass().getName() );
