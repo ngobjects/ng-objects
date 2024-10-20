@@ -13,7 +13,7 @@ public class NGDynamicHTMLTag {
 	/**
 	 * Name of the tag (i.e. the value of the 'name' attribute, that links to the declaration
 	 */
-	private final String _declarationName;
+	private final NGDeclaration _declaration;
 
 	/**
 	 * Parent tag
@@ -27,18 +27,19 @@ public class NGDynamicHTMLTag {
 
 	public NGDynamicHTMLTag() {
 		_parent = null;
-		_declarationName = null;
+		_declaration = null;
 	}
 
-	public NGDynamicHTMLTag( final String declarationName, final NGDynamicHTMLTag parentTag ) throws NGHTMLFormatException {
-		Objects.requireNonNull( declarationName );
+	public NGDynamicHTMLTag( final NGDeclaration declaration, final NGDynamicHTMLTag parentTag ) throws NGHTMLFormatException {
+		Objects.requireNonNull( declaration );
 
 		_parent = parentTag;
-		_declarationName = declarationName;
+		_declaration = declaration;
 	}
 
+	@Deprecated
 	public String declarationName() {
-		return _declarationName;
+		return _declaration.name();
 	}
 
 	public NGDynamicHTMLTag parent() {
@@ -59,8 +60,20 @@ public class NGDynamicHTMLTag {
 		_children.add( stringOrElement );
 	}
 
+	/**
+	 * @return true if the given tag is the root of the element tree.
+	 *
+	 * FIXME:
+	 * The implementation of this kind of sucks. The only tag in the tree without a declaration is currently the root tag
+	 * We should probably introduce another specific marker for the root tage, or give it a different type. Just anything else than a null check, that's just a consequence of an implementation detail.
+	 * // Hugi 2024-10-20
+	 */
+	public boolean isRoot() {
+		return _declaration == null;
+	}
+
 	@Override
 	public String toString() {
-		return "NGDynamicHTMLTag [_declarationName=" + _declarationName + ",  _children=" + _children + "]";
+		return "NGDynamicHTMLTag [_declaration=" + _declaration + ",  _children=" + _children + "]";
 	}
 }

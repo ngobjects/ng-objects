@@ -57,10 +57,8 @@ public class NGTemplateParser {
 
 		new NGHTMLParser( this, _htmlString ).parseHTML();
 
-		final String currentDynamicTagName = _currentDynamicTag.declarationName();
-
-		if( currentDynamicTagName != null ) {
-			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( currentDynamicTagName ) );
+		if( !_currentDynamicTag.isRoot() ) {
+			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( _currentDynamicTag.declarationName() ) );
 		}
 
 		return new PGroupNode( _currentDynamicTag );
@@ -83,10 +81,12 @@ public class NGTemplateParser {
 		if( isInlineTag ) {
 			final NGDeclaration declaration = parseInlineTag( parsedString, colonIndex, _inlineBindingCount++ );
 			_declarations.put( declaration.name(), declaration );
-			_currentDynamicTag = new NGDynamicHTMLTag( declaration.name(), _currentDynamicTag );
+			_currentDynamicTag = new NGDynamicHTMLTag( declaration, _currentDynamicTag );
 		}
 		else {
-			_currentDynamicTag = new NGDynamicHTMLTag( extractDeclarationName( parsedString ), _currentDynamicTag );
+			final String declarationName = extractDeclarationName( parsedString );
+			final NGDeclaration declaration = _declarations.get( declarationName );
+			_currentDynamicTag = new NGDynamicHTMLTag( declaration, _currentDynamicTag );
 		}
 	}
 

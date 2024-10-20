@@ -165,13 +165,13 @@ public class NGTemplateParserProxy {
 			final NGElement onlyElement = childElements.get( 0 );
 
 			if( onlyElement instanceof NGComponentReference ) {
-				return new NGDynamicGroup( tag.declarationName(), null, onlyElement );
+				return new NGDynamicGroup( null, null, onlyElement );
 			}
 
 			return onlyElement;
 		}
 
-		return new NGDynamicGroup( tag.declarationName(), null, childElements );
+		return new NGDynamicGroup( null, null, childElements );
 	}
 
 	/**
