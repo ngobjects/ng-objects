@@ -47,16 +47,16 @@ public class NGTemplateParserProxy {
 
 	private static NGElement toDynamicElement( final PNode node ) throws NGDeclarationFormatException {
 		return switch( node ) {
-			case PBasicNode n -> toDynamicElement( n.tag(), n.declaration() );
+			case PBasicNode n -> toDynamicElement( n.tag() );
 			case PGroupNode n -> new NGDynamicGroup( null, null, template( n.tag() ) );
 			case PHTMLNode n -> new NGHTMLBareString( n.value() );
 			case PCommentNode n -> new NGHTMLCommentString( n.value() );
 		};
 	}
 
-	private static NGElement toDynamicElement( final NGDynamicHTMLTag tag, final NGDeclaration declaration ) throws NGDeclarationFormatException {
+	private static NGElement toDynamicElement( final NGDynamicHTMLTag tag ) throws NGDeclarationFormatException {
 		try {
-			return NGApplication.dynamicElementWithName( declaration.type(), toAssociations( declaration ), template( tag ), Collections.emptyList() );
+			return NGApplication.dynamicElementWithName( tag.declaration().type(), toAssociations( tag.declaration() ), template( tag ), Collections.emptyList() );
 		}
 		catch( NGElementNotFoundException e ) {
 			// FIXME:
@@ -70,7 +70,7 @@ public class NGTemplateParserProxy {
 							<a href="%s" style="padding: 10px; border: 2px solid rgba(50,50,200,0.6); box-shadow: 4px 4px 1px red; background-color: rgba(0,0,200,0.5); border-radius: 4px; text-decoration: none; color: white">
 								Can't find an element/component '<strong>%s</strong>'. Would you like to create it?
 							</a>
-							""".formatted( context.componentActionURL(), declaration.type() );
+							""".formatted( context.componentActionURL(), tag.declaration().type() );
 					response.appendContentString( s );
 				};
 
@@ -101,9 +101,10 @@ public class NGTemplateParserProxy {
 
 		if( declaration.isInline() ) {
 			try {
-				return bindingValueForInlineBindingString( bindingValue.value() );
+				return associationForInlineBindingString( bindingValue.value() );
 			}
 			catch( NGHTMLFormatException e ) {
+				// FIXME: Don't throw RuntimeException here. Awaits cleanup of inline binding association construction // Hugi 2024-10-20
 				throw new RuntimeException( e );
 			}
 		}
@@ -112,7 +113,7 @@ public class NGTemplateParserProxy {
 		}
 	}
 
-	private static NGAssociation bindingValueForInlineBindingString( String value ) throws NGHTMLFormatException {
+	private static NGAssociation associationForInlineBindingString( String value ) throws NGHTMLFormatException {
 		Objects.requireNonNull( value );
 
 		if( value.startsWith( "\"" ) ) {

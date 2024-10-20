@@ -255,7 +255,7 @@ public class NGHTMLParser {
 		return token;
 	}
 
-	private void startOfWebObjectTag( String token ) throws NGHTMLFormatException {
+	private void startOfWebObjectTag( String token ) throws NGHTMLFormatException, NGDeclarationFormatException {
 		didParseText();
 		_contentText.append( token );
 		didParseOpeningWebObjectTag();
@@ -276,7 +276,7 @@ public class NGHTMLParser {
 		}
 	}
 
-	private void didParseOpeningWebObjectTag() throws NGHTMLFormatException {
+	private void didParseOpeningWebObjectTag() throws NGHTMLFormatException, NGDeclarationFormatException {
 		logger.debug( "Parsed Opening WebObject ({}) : {}", _contentText.length(), _contentText );
 
 		if( _contentText.length() > 0 ) {

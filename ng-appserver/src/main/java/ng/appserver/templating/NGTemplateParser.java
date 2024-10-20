@@ -58,13 +58,13 @@ public class NGTemplateParser {
 		new NGHTMLParser( this, _htmlString ).parseHTML();
 
 		if( !_currentDynamicTag.isRoot() ) {
-			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( _currentDynamicTag.declarationName() ) );
+			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( _currentDynamicTag.declaration().name() ) );
 		}
 
 		return new PGroupNode( _currentDynamicTag );
 	}
 
-	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException {
+	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException, NGDeclarationFormatException {
 
 		final int spaceIndex = parsedString.indexOf( ' ' );
 		int colonIndex;
@@ -80,12 +80,18 @@ public class NGTemplateParser {
 
 		if( isInlineTag ) {
 			final NGDeclaration declaration = parseInlineTag( parsedString, colonIndex, _inlineBindingCount++ );
-			_declarations.put( declaration.name(), declaration );
+			// FIXME: It's become unnecessary for us to store an inline tag's declaration with the original parsed declarations. Just leaving this in while we're still refactoring // Hugi 2024-10-20
+			// _declarations.put( declaration.name(), declaration );
 			_currentDynamicTag = new NGDynamicHTMLTag( declaration, _currentDynamicTag );
 		}
 		else {
 			final String declarationName = extractDeclarationName( parsedString );
 			final NGDeclaration declaration = _declarations.get( declarationName );
+
+			if( declaration == null ) {
+				throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named '%s'".formatted( declarationName ) );
+			}
+
 			_currentDynamicTag = new NGDynamicHTMLTag( declaration, _currentDynamicTag );
 		}
 	}
@@ -98,7 +104,7 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
-		final PNode node = dynamicTagToNode( _currentDynamicTag, _declarations );
+		final PNode node = dynamicTagToNode( _currentDynamicTag );
 		_currentDynamicTag = parentDynamicTag;
 		_currentDynamicTag.addChild( node );
 	}
@@ -147,14 +153,8 @@ public class NGTemplateParser {
 		throw new NGHTMLFormatException( "Can't initialize dynamic tag '%s', no 'name' attribute found".formatted( tagPart ) );
 	}
 
-	private static PNode dynamicTagToNode( NGDynamicHTMLTag tag, final Map<String, NGDeclaration> declarations ) throws NGDeclarationFormatException {
-		final NGDeclaration declaration = declarations.get( tag.declarationName() );
-
-		if( declaration == null ) {
-			throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named '%s'".formatted( tag.declarationName() ) );
-		}
-
-		return new PBasicNode( tag, declaration );
+	private static PNode dynamicTagToNode( NGDynamicHTMLTag tag ) throws NGDeclarationFormatException {
+		return new PBasicNode( tag );
 	}
 
 	private static NGDeclaration parseInlineTag( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {

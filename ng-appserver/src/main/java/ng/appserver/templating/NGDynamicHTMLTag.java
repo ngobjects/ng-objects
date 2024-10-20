@@ -37,9 +37,8 @@ public class NGDynamicHTMLTag {
 		_declaration = declaration;
 	}
 
-	@Deprecated
-	public String declarationName() {
-		return _declaration.name();
+	public NGDeclaration declaration() {
+		return _declaration;
 	}
 
 	public NGDynamicHTMLTag parent() {
