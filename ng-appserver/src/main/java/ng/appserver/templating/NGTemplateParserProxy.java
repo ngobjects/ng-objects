@@ -8,11 +8,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
+import ng.appserver.NGApplication.NGElementNotFoundException;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGAssociationFactory;
 import ng.appserver.NGComponentReference;
+import ng.appserver.NGContext;
 import ng.appserver.NGElement;
+import ng.appserver.NGRequest;
+import ng.appserver.NGResponse;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHTMLCommentString;
@@ -40,19 +45,46 @@ public class NGTemplateParserProxy {
 		return toDynamicElement( pNode );
 	}
 
-	private static NGElement toDynamicElement( PNode node ) throws NGDeclarationFormatException {
-		NGElement element = switch( node ) {
+	private static NGElement toDynamicElement( final PNode node ) throws NGDeclarationFormatException {
+		return switch( node ) {
 			case PBasicNode n -> toDynamicElement( n.tag(), n.declaration() );
 			case PGroupNode n -> new NGDynamicGroup( null, null, template( n.tag() ) );
 			case PHTMLNode n -> new NGHTMLBareString( n.value() );
 			case PCommentNode n -> new NGHTMLCommentString( n.value() );
 		};
-
-		return element;
 	}
 
-	private static NGElement toDynamicElement( NGDynamicHTMLTag tag, NGDeclaration declaration ) throws NGDeclarationFormatException {
-		return NGApplication.dynamicElementWithName( declaration.type(), toAssociations( declaration ), template( tag ), Collections.emptyList() );
+	private static NGElement toDynamicElement( final NGDynamicHTMLTag tag, final NGDeclaration declaration ) throws NGDeclarationFormatException {
+		try {
+			return NGApplication.dynamicElementWithName( declaration.type(), toAssociations( declaration ), template( tag ), Collections.emptyList() );
+		}
+		catch( NGElementNotFoundException e ) {
+			// FIXME:
+			// Very experimental functionality at the moment and definitely does not belong with the parser part of the framework.
+			// But since it's definitely something we want to add ad some point, I'm keeping it for reference
+			// Hugi 2024-10-19
+			return new NGElement() {
+				@Override
+				public void appendToResponse( NGResponse response, NGContext context ) {
+					String s = """
+							<a href="%s" style="padding: 10px; border: 2px solid rgba(50,50,200,0.6); box-shadow: 4px 4px 1px red; background-color: rgba(0,0,200,0.5); border-radius: 4px; text-decoration: none; color: white">
+								Can't find an element/component '<strong>%s</strong>'. Would you like to create it?
+							</a>
+							""".formatted( context.componentActionURL(), declaration.type() );
+					response.appendContentString( s );
+				};
+
+				@Override
+				public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+
+					if( context.currentElementIsSender() ) {
+						System.out.println( "Let's create that component!" );
+					}
+
+					return NGElement.super.invokeAction( request, context );
+				}
+			};
+		}
 	}
 
 	private static Map<String, NGAssociation> toAssociations( NGDeclaration declaration ) {
