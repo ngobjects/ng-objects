@@ -21,6 +21,7 @@ import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGJavaScript;
 import ng.appserver.elements.NGPopUpButton;
 import ng.appserver.elements.NGRepetition;
+import ng.appserver.elements.NGResourceURL;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGSubmitButton;
@@ -74,6 +75,7 @@ public class NGElementUtils {
 		addClass( NGJavaScript.class, "script" );
 		addClass( NGPopUpButton.class, "popUpButton" ); // CHECKME: We might want to consider just naming this "popup"
 		addClass( NGRepetition.class, "repetition" );
+		addClass( NGResourceURL.class, "resourceURL" );
 		addClass( NGSubmitButton.class, "submit" );
 		addClass( NGStylesheet.class, "stylesheet" );
 		addClass( NGSwitchComponent.class, "switch" );
