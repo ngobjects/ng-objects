@@ -36,6 +36,7 @@ import ng.appserver.elements.ajax.AjaxUpdateLink;
  * An abomination of a class that serves as a repository for temporary hacky stuff
  */
 
+@Deprecated
 public class NGElementUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGElementUtils.class );
