@@ -1,0 +1,13 @@
+<wo:NGControlWrapper>
+	<wo:if condition="$errorMessage.length">
+		<div class="alert alert-danger">
+			<wo:str value="$errorMessage" />
+		</div>
+	</wo:if>
+	<wo:if condition="$environmentPasswordIsSet">
+		<wo:form>
+			<label>Enter password</label><br>
+			<wo:textfield value="$password" /> <wo:submit action="$login" value="Login" />
+		</wo:form>
+	</wo:if>
+</wo:NGControlWrapper>

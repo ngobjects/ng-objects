@@ -7,6 +7,6 @@ public class NGControlPlugin extends NGPlugin {
 
 	@Override
 	public void load( NGApplication application ) {
-		application.routeTable().mapComponent( "/control", NGControlOverview.class );
+		application.routeTable().mapComponent( "/control", NGControlLogin.class );
 	}
 }
