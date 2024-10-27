@@ -56,16 +56,16 @@ public class NGLifebeatThread extends Thread {
 		private byte[] _willCrash;
 		private byte[] _versionRequest;
 
-		public MessageGenerator( final String _appName, final String _localhostName, final int _appPort ) {
+		public MessageGenerator( final String appName, final String localhostName, final int appPort ) {
 			final String preString = "GET /cgi-bin/WebObjects/wotaskd.woa/wlb?";
-			final String postString = "&" + _appName + "&" + _localhostName + "&" + _appPort + " HTTP/1.1\r\n\r\n";
+			final String postString = "&" + appName + "&" + localhostName + "&" + appPort + " HTTP/1.1\r\n\r\n";
 			final String versionString = WOMPRequestHandler.KEY + "://queryVersion";
 
-			_hasStarted = (preString + "hasStarted" + postString).getBytes( StandardCharsets.UTF_8 );
-			_lifebeat = (preString + "lifebeat" + postString).getBytes( StandardCharsets.UTF_8 );
-			_willStop = (preString + "willStop" + postString).getBytes( StandardCharsets.UTF_8 );
-			_willCrash = (preString + "willCrash" + postString).getBytes( StandardCharsets.UTF_8 );
-			_versionRequest = versionString.getBytes( StandardCharsets.UTF_8 );
+			_hasStarted = (preString + "hasStarted" + postString).getBytes();
+			_lifebeat = (preString + "lifebeat" + postString).getBytes();
+			_willStop = (preString + "willStop" + postString).getBytes();
+			_willCrash = (preString + "willCrash" + postString).getBytes();
+			_versionRequest = versionString.getBytes();
 		}
 	}
 
