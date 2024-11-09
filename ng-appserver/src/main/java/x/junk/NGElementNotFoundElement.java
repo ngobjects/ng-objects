@@ -46,24 +46,32 @@ public class NGElementNotFoundElement implements NGElement {
 			final String packageName = NGApplication.application().getClass().getPackageName() + ".elements";
 			final String elementName = request.formValueForKey( "elementName" );
 			final String elementString = """
-							package %s;
+					package %s;
 
-							import ng.appserver.NGContext;
-							import ng.appserver.NGElement;
-							import ng.appserver.NGResponse;
+					import java.util.Map;
 
-							/**
-							 * Your new element
-							 */
+					import ng.appserver.NGAssociation;
+					import ng.appserver.NGContext;
+					import ng.appserver.NGDynamicElement;
+					import ng.appserver.NGElement;
+					import ng.appserver.NGResponse;
 
-							public class %s implements NGElement {
+					/**
+					 * Your new element
+					 */
 
-								@Override
-								public void appendToResponse( final NGResponse response, final NGContext context ) {
-									response.appendContentString( "Congratulations on your new element!" );
-								}
-							}
-					""".formatted( packageName, elementName, elementName );
+					public class %s extends NGDynamicElement {
+
+						public %s( String name, Map<String, NGAssociation> associations, NGElement contentTemplate ) {
+							super( null, null, null );
+						}
+
+						@Override
+						public void appendToResponse( final NGResponse response, final NGContext context ) {
+							response.appendContentString( "Congratulations on your new element!" );
+						}
+					}
+										""".formatted( packageName, elementName, elementName, elementName );
 
 			final Path root = Paths.get( "." ).normalize().toAbsolutePath();
 			final Path dirPath = Paths.get( root.toString(), "src", "main", "java", "smu", "elements" ); // FIXME: Split the package name elements into corresponding directories
