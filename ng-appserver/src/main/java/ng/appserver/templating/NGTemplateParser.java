@@ -108,8 +108,7 @@ public class NGTemplateParser {
 	}
 
 	public void didParseComment( final String parsedString ) {
-		PCommentNode commentString = new PCommentNode( parsedString );
-		_currentDynamicTag.addChild( commentString );
+		_currentDynamicTag.addChild( new PCommentNode( parsedString ) );
 	}
 
 	public void didParseText( final String parsedString ) {
