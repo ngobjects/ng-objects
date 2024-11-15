@@ -128,6 +128,7 @@ public class NGTemplateParserProxy {
 	 */
 	private static NGElement template( NGDynamicHTMLTag tag ) throws NGDeclarationFormatException {
 
+		// FIXME: Children should never really be null. I'm still hesitant to replace it with an empty list though, since in my mind that represents an empty container tag. Food for thought... // Hugi 2024-11-15
 		if( tag.children() == null ) {
 			return null;
 		}
@@ -135,7 +136,7 @@ public class NGTemplateParserProxy {
 		final List<PNode> childNodes = combineAndWrapBareStrings( tag.children() );
 		final List<NGElement> childElements = new ArrayList<>();
 
-		for( PNode pNode : childNodes ) {
+		for( final PNode pNode : childNodes ) {
 			childElements.add( toDynamicElement( pNode ) );
 		}
 
@@ -153,8 +154,8 @@ public class NGTemplateParserProxy {
 	}
 
 	/**
-	 * Iterates through the list, combining adjacent strings and wrapping them in NGHTMLBareStrings
-	 * Other elements get added directly to the element list.
+	 * Iterates through the list, combining adjacent strings before wrapping them in a PHTMLNode
+	 * Other nodes just get added to the list.
 	 */
 	private static List<PNode> combineAndWrapBareStrings( List<Object> children ) {
 		final List<PNode> childElements = new ArrayList<>( children.size() );
