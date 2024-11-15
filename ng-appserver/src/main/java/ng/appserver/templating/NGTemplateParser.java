@@ -26,7 +26,7 @@ public class NGTemplateParser {
 	/**
 	 * Keeps track of how many inline tags have been parsed. Used only to generate the tag declaration's name.
 	 */
-	private int _inlineBindingCount;
+	private int _inlineTagCount;
 
 	/**
 	 * The template's HTML string
@@ -79,7 +79,7 @@ public class NGTemplateParser {
 		final boolean isInlineTag = colonIndex != -1;
 
 		if( isInlineTag ) {
-			final NGDeclaration declaration = parseInlineTag( parsedString, colonIndex, _inlineBindingCount++ );
+			final NGDeclaration declaration = parseDeclarationFromInlineTag( parsedString, colonIndex, _inlineTagCount++ );
 			// FIXME: It's become unnecessary for us to store an inline tag's declaration with the original parsed declarations. Just leaving this in while we're still refactoring // Hugi 2024-10-20
 			// _declarations.put( declaration.name(), declaration );
 			_currentDynamicTag = new NGDynamicHTMLTag( declaration, _currentDynamicTag );
@@ -157,7 +157,7 @@ public class NGTemplateParser {
 		return new PBasicNode( tag );
 	}
 
-	private static NGDeclaration parseInlineTag( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {
+	private static NGDeclaration parseDeclarationFromInlineTag( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {
 
 		final StringBuilder keyBuffer = new StringBuilder();
 		final StringBuilder valueBuffer = new StringBuilder();
