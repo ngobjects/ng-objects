@@ -78,22 +78,20 @@ public class NGTemplateParser {
 
 		final boolean isInlineTag = colonIndex != -1;
 
+		final NGDeclaration declaration;
+
 		if( isInlineTag ) {
-			final NGDeclaration declaration = parseDeclarationFromInlineTag( parsedString, colonIndex, _inlineTagCount++ );
-			// FIXME: It's become unnecessary for us to store an inline tag's declaration with the original parsed declarations. Just leaving this in while we're still refactoring // Hugi 2024-10-20
-			// _declarations.put( declaration.name(), declaration );
-			_currentDynamicTag = new NGDynamicHTMLTag( declaration, _currentDynamicTag );
+			declaration = parseDeclarationFromInlineTag( parsedString, colonIndex, _inlineTagCount++ );
 		}
 		else {
 			final String declarationName = extractDeclarationName( parsedString );
-			final NGDeclaration declaration = _declarations.get( declarationName );
+			declaration = _declarations.get( declarationName );
 
 			if( declaration == null ) {
 				throw new NGDeclarationFormatException( "No declaration for dynamic element (or component) named '%s'".formatted( declarationName ) );
 			}
-
-			_currentDynamicTag = new NGDynamicHTMLTag( declaration, _currentDynamicTag );
 		}
+		_currentDynamicTag = new NGDynamicHTMLTag( declaration, _currentDynamicTag );
 	}
 
 	public void didParseClosingWebObjectTag( final String parsedString ) throws NGDeclarationFormatException, NGHTMLFormatException {
