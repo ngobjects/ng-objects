@@ -73,87 +73,87 @@ public class NGHTMLParser {
 				}
 
 				switch( parserState ) {
-				case Outside:
-					if( token != null ) {
-						if( token.startsWith( ">" ) ) {
-							token = token.substring( 1 );
+					case Outside:
+						if( token != null ) {
+							if( token.startsWith( ">" ) ) {
+								token = token.substring( 1 );
+							}
+							_contentText.append( token );
 						}
-						_contentText.append( token );
-					}
-					token = templateTokenizer.nextToken( ">" );
-					int tagIndex;
+						token = templateTokenizer.nextToken( ">" );
+						int tagIndex;
 
-					// parses non wo: tags for dynamic bindings
-					if( _parseStandardTags() ) {
-						token = checkStandardTagForInlineBindings( token );
-					}
+						// parses non wo: tags for dynamic bindings
+						if( _parseStandardTags() ) {
+							token = checkStandardTagForInlineBindings( token );
+						}
 
-					final String tagLowerCase = token.toLowerCase();
+						final String tagLowerCase = token.toLowerCase();
 
-					if( tagLowerCase.startsWith( WEBOBJECT_START_TAG ) || tagLowerCase.startsWith( WO_COLON_START_TAG ) || tagLowerCase.startsWith( WO_START_TAG ) ) {
-						if( token.endsWith( "/" ) ) {
-							startOfWebObjectTag( token.substring( 0, token.length() - 1 ) );
-							endOfWebObjectTag( "/" );
+						if( tagLowerCase.startsWith( WEBOBJECT_START_TAG ) || tagLowerCase.startsWith( WO_COLON_START_TAG ) || tagLowerCase.startsWith( WO_START_TAG ) ) {
+							if( token.endsWith( "/" ) ) {
+								startOfWebObjectTag( token.substring( 0, token.length() - 1 ) );
+								endOfWebObjectTag( "/" );
+							}
+							else {
+								startOfWebObjectTag( token );
+							}
+						}
+						else if( (tagIndex = tagLowerCase.indexOf( WEBOBJECT_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_COLON_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_START_TAG )) > 1 ) {
+							_contentText.append( token.substring( 0, token.lastIndexOf( "<" ) ) );
+							if( token.endsWith( "/" ) ) {
+								startOfWebObjectTag( token.substring( tagIndex, token.length() - 1 ) );
+								endOfWebObjectTag( "/" );
+							}
+							else {
+								startOfWebObjectTag( token.substring( tagIndex, token.length() ) );
+							}
+						}
+						else if( tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.startsWith( WO_COLON_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
+							endOfWebObjectTag( token );
+						}
+						else if( tagLowerCase.startsWith( NGHTMLParser.JS_START_TAG ) ) {
+							didParseText();
+							_contentText.append( token );
+							_contentText.append( '>' );
+							flag = false;
+						}
+						else if( tagLowerCase.startsWith( NGHTMLParser.JS_END_TAG ) ) {
+							didParseText();
+							_contentText.append( token );
+							_contentText.append( '>' );
+							flag = true;
+						}
+						else if( token.startsWith( "<!--" ) && flag ) {
+							didParseText();
+							_contentText.append( token );
+							if( token.endsWith( "--" ) ) {
+								_contentText.append( '>' );
+								didParseComment();
+							}
+							else {
+								_contentText.append( '>' );
+								parserState = ParserState.InsideComment;
+							}
 						}
 						else {
-							startOfWebObjectTag( token );
+							_contentText.append( token );
+							_contentText.append( '>' );
 						}
-					}
-					else if( (tagIndex = tagLowerCase.indexOf( WEBOBJECT_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_COLON_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_START_TAG )) > 1 ) {
-						_contentText.append( token.substring( 0, token.lastIndexOf( "<" ) ) );
-						if( token.endsWith( "/" ) ) {
-							startOfWebObjectTag( token.substring( tagIndex, token.length() - 1 ) );
-							endOfWebObjectTag( "/" );
-						}
-						else {
-							startOfWebObjectTag( token.substring( tagIndex, token.length() ) );
-						}
-					}
-					else if( tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.startsWith( WO_COLON_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
-						endOfWebObjectTag( token );
-					}
-					else if( tagLowerCase.startsWith( NGHTMLParser.JS_START_TAG ) ) {
-						didParseText();
+						break;
+
+					case InsideComment:
+						token = templateTokenizer.nextToken( ">" );
 						_contentText.append( token );
 						_contentText.append( '>' );
-						flag = false;
-					}
-					else if( tagLowerCase.startsWith( NGHTMLParser.JS_END_TAG ) ) {
-						didParseText();
-						_contentText.append( token );
-						_contentText.append( '>' );
-						flag = true;
-					}
-					else if( token.startsWith( "<!--" ) && flag ) {
-						didParseText();
-						_contentText.append( token );
 						if( token.endsWith( "--" ) ) {
-							_contentText.append( '>' );
 							didParseComment();
+							parserState = ParserState.Outside;
 						}
-						else {
-							_contentText.append( '>' );
-							parserState = ParserState.InsideComment;
-						}
-					}
-					else {
-						_contentText.append( token );
-						_contentText.append( '>' );
-					}
-					break;
+						break;
 
-				case InsideComment:
-					token = templateTokenizer.nextToken( ">" );
-					_contentText.append( token );
-					_contentText.append( '>' );
-					if( token.endsWith( "--" ) ) {
-						didParseComment();
-						parserState = ParserState.Outside;
-					}
-					break;
-
-				default:
-					break;
+					default:
+						break;
 				}
 				token = null;
 				if( parserState == ParserState.Outside ) {
@@ -177,82 +177,6 @@ public class NGHTMLParser {
 		didParseText();
 
 		_stackDict = null;
-	}
-
-	/**
-	 * This method is invoked to parse dynamic bindings in standard tags.
-	 *
-	 * CHECKME: In the original Wonder version, this would catch any exception that happened and return the original token.
-	 * I think we should rather try to fix the exceptions as they occur (that is, if we decide to actually support this feature)
-	 *
-	 * @return A rewritten token if it has an inline binding or a closing tag, if it belongs to a rewritten token
-	 */
-	private String checkStandardTagForInlineBindings( String token ) {
-
-		if( token == null ) {
-			return token;
-		}
-
-		final String tokenLowerCase = token.toLowerCase();
-
-		if( tokenLowerCase.startsWith( WEBOBJECT_START_TAG ) || tokenLowerCase.startsWith( WO_COLON_START_TAG ) || tokenLowerCase.startsWith( WO_START_TAG ) || tokenLowerCase.startsWith( XML_CDATA_START_TAG ) ) {
-			// we return immediately, if it is a webobject token or CDATA tag
-			return token;
-		}
-
-		String[] tokenParts = token.split( " " );
-		String tokenPart = tokenParts[0].substring( 1 );
-
-		if( (token.indexOf( "\"$" ) != -1 || token.indexOf( "\"~" ) != -1) && token.startsWith( "<" ) ) {
-			// we assume a dynamic tag
-			token = token.replaceAll( tokenParts[0], "<wo:" + WO_REPLACEMENT_MARKER + tokenPart );
-			if( logger.isDebugEnabled() ) {
-				logger.debug( "Rewritten <" + tokenPart + " ...> tag to <wo:" + tokenPart + " ...>" );
-			}
-
-			if( !token.endsWith( "/" ) ) {
-				// no need to keep information for self closing tags
-				Stack<String> stack = _stackDict.get( tokenPart );
-
-				if( stack == null ) {
-					// create one and push a marker
-					stack = new Stack<>();
-					stack.push( WO_REPLACEMENT_MARKER );
-					_stackDict.put( tokenPart, stack );
-				}
-				else {
-					// just push a marker
-					stack.push( WO_REPLACEMENT_MARKER );
-					_stackDict.put( tokenPart, stack );
-				}
-			}
-		}
-		else if( !token.startsWith( "</" ) && _stackDict.containsKey( tokenPart ) ) {
-			// standard opening tag
-			final Stack<String> stack = _stackDict.get( tokenPart );
-
-			if( stack != null ) {
-				stack.push( tokenPart );
-				_stackDict.put( tokenPart, stack );
-			}
-		}
-		else if( token.startsWith( "</" ) ) {
-			// closing tag
-			final Stack<String> stack = _stackDict.get( tokenParts[0].substring( 2 ) );
-
-			if( stack != null && !stack.empty() ) {
-				final String stackContent = stack.pop();
-
-				if( stackContent.equals( WO_REPLACEMENT_MARKER ) ) {
-					if( logger.isDebugEnabled() ) {
-						logger.debug( "Replaced end tag for '" + tokenParts[0].substring( 2 ) + "' with 'wo' endtag" );
-					}
-					token = "</wo";
-				}
-			}
-		}
-
-		return token;
 	}
 
 	private void startOfWebObjectTag( String token ) throws NGHTMLFormatException, NGDeclarationFormatException {
@@ -334,5 +258,81 @@ public class NGHTMLParser {
 	 */
 	private static final boolean _parseStandardTags() {
 		return false;
+	}
+
+	/**
+	 * This method is invoked to parse dynamic bindings in standard tags.
+	 *
+	 * CHECKME: In the original Wonder version, this would catch any exception that happened and return the original token.
+	 * I think we should rather try to fix the exceptions as they occur (that is, if we decide to actually support this feature)
+	 *
+	 * @return A rewritten token if it has an inline binding or a closing tag, if it belongs to a rewritten token
+	 */
+	private String checkStandardTagForInlineBindings( String token ) {
+
+		if( token == null ) {
+			return token;
+		}
+
+		final String tokenLowerCase = token.toLowerCase();
+
+		if( tokenLowerCase.startsWith( WEBOBJECT_START_TAG ) || tokenLowerCase.startsWith( WO_COLON_START_TAG ) || tokenLowerCase.startsWith( WO_START_TAG ) || tokenLowerCase.startsWith( XML_CDATA_START_TAG ) ) {
+			// we return immediately, if it is a webobject token or CDATA tag
+			return token;
+		}
+
+		String[] tokenParts = token.split( " " );
+		String tokenPart = tokenParts[0].substring( 1 );
+
+		if( (token.indexOf( "\"$" ) != -1 || token.indexOf( "\"~" ) != -1) && token.startsWith( "<" ) ) {
+			// we assume a dynamic tag
+			token = token.replaceAll( tokenParts[0], "<wo:" + WO_REPLACEMENT_MARKER + tokenPart );
+			if( logger.isDebugEnabled() ) {
+				logger.debug( "Rewritten <" + tokenPart + " ...> tag to <wo:" + tokenPart + " ...>" );
+			}
+
+			if( !token.endsWith( "/" ) ) {
+				// no need to keep information for self closing tags
+				Stack<String> stack = _stackDict.get( tokenPart );
+
+				if( stack == null ) {
+					// create one and push a marker
+					stack = new Stack<>();
+					stack.push( WO_REPLACEMENT_MARKER );
+					_stackDict.put( tokenPart, stack );
+				}
+				else {
+					// just push a marker
+					stack.push( WO_REPLACEMENT_MARKER );
+					_stackDict.put( tokenPart, stack );
+				}
+			}
+		}
+		else if( !token.startsWith( "</" ) && _stackDict.containsKey( tokenPart ) ) {
+			// standard opening tag
+			final Stack<String> stack = _stackDict.get( tokenPart );
+
+			if( stack != null ) {
+				stack.push( tokenPart );
+				_stackDict.put( tokenPart, stack );
+			}
+		}
+		else if( token.startsWith( "</" ) ) {
+			// closing tag
+			final Stack<String> stack = _stackDict.get( tokenParts[0].substring( 2 ) );
+
+			if( stack != null && !stack.empty() ) {
+				final String stackContent = stack.pop();
+
+				if( stackContent.equals( WO_REPLACEMENT_MARKER ) ) {
+					if( logger.isDebugEnabled() ) {
+						logger.debug( "Replaced end tag for '" + tokenParts[0].substring( 2 ) + "' with 'wo' endtag" );
+					}
+					token = "</wo";
+				}
+			}
+		}
+
+		return token;
 	}
 }
