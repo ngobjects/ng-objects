@@ -45,7 +45,7 @@ public class NGTemplateParserProxy {
 	private static NGElement toDynamicElement( final PNode node ) throws NGDeclarationFormatException {
 		return switch( node ) {
 			case PBasicNode n -> toDynamicElement( n.tag() );
-			case PGroupNode n -> new NGDynamicGroup( null, null, template( n.tag() ) );
+			case PGroupNode n -> new NGDynamicGroup( null, null, template( n.children() ) );
 			case PHTMLNode n -> new NGHTMLBareString( n.value() );
 			case PCommentNode n -> new NGHTMLCommentString( n.value() );
 		};
@@ -53,7 +53,7 @@ public class NGTemplateParserProxy {
 
 	private static NGElement toDynamicElement( final NGDynamicHTMLTag tag ) throws NGDeclarationFormatException {
 		try {
-			return NGApplication.dynamicElementWithName( tag.declaration().type(), toAssociations( tag.declaration() ), template( tag ), Collections.emptyList() );
+			return NGApplication.dynamicElementWithName( tag.declaration().type(), toAssociations( tag.declaration() ), template( tag.children() ), Collections.emptyList() );
 		}
 		catch( NGElementNotFoundException e ) {
 			// FIXME:
@@ -126,14 +126,14 @@ public class NGTemplateParserProxy {
 	 * @return The tag's template
 	 * @throws NGDeclarationFormatException
 	 */
-	private static NGElement template( NGDynamicHTMLTag tag ) throws NGDeclarationFormatException {
+	private static NGElement template( final List<Object> children ) throws NGDeclarationFormatException {
 
 		// FIXME: Children should never really be null. I'm still hesitant to replace it with an empty list though, since in my mind that represents an empty container tag. Food for thought... // Hugi 2024-11-15
-		if( tag.children() == null ) {
+		if( children == null ) {
 			return null;
 		}
 
-		final List<PNode> childNodes = combineAndWrapBareStrings( tag.children() );
+		final List<PNode> childNodes = combineAndWrapBareStrings( children );
 		final List<NGElement> childElements = new ArrayList<>();
 
 		for( final PNode pNode : childNodes ) {

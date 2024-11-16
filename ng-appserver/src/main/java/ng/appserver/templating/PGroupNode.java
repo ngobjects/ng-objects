@@ -1,10 +1,11 @@
 package ng.appserver.templating;
 
+import java.util.List;
 import java.util.Objects;
 
-public record PGroupNode( NGDynamicHTMLTag tag ) implements PNode {
+public record PGroupNode( List<Object> children ) implements PNode {
 
 	public PGroupNode {
-		Objects.requireNonNull( tag );
+		Objects.requireNonNull( children );
 	}
 }
