@@ -19,13 +19,16 @@ public class NGTemplateParser {
 	private NGDynamicHTMLTag _currentDynamicTag = new NGDynamicHTMLTag();
 
 	/**
-	 * Keeps track of declarations. Will initially contain the parsed declarationString (if present) and any inline bindings will get added here as well.
+	 * The declarations parsed from the provided wod string (if present)
 	 */
 	private Map<String, NGDeclaration> _declarations;
 
 	/**
-	 * Keeps track of how many inline tags have been parsed. Used only to generate the tag declaration's name.
+	 * Keeps track of the number of parsed inline tags. Used to generate a declaration name for the tag
+	 *
+	 * FIXME: We don't really need to keep track of the number of parsed inline tags anymore // Hugi 2024-11-16
 	 */
+	@Deprecated
 	private int _inlineTagCount;
 
 	/**
