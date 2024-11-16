@@ -4,6 +4,9 @@ import java.util.Objects;
 
 public class NGAssociationFactory {
 
+	public static final NGConstantValueAssociation TRUE = new NGConstantValueAssociation( Boolean.TRUE );
+	public static final NGConstantValueAssociation FALSE = new NGConstantValueAssociation( Boolean.FALSE );
+
 	public static NGAssociation constantValueAssociationWithValue( Object obj ) {
 		return new NGConstantValueAssociation( obj );
 	}
@@ -41,11 +44,11 @@ public class NGAssociationFactory {
 		}
 
 		if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
-			return NGConstantValueAssociation.TRUE;
+			return TRUE;
 		}
 
 		if( "false".equalsIgnoreCase( associationValue ) || "no".equalsIgnoreCase( associationValue ) || "nil".equalsIgnoreCase( associationValue ) || "null".equalsIgnoreCase( associationValue ) ) {
-			return NGConstantValueAssociation.FALSE;
+			return FALSE;
 		}
 
 		return NGAssociationFactory.associationWithKeyPath( associationValue );
