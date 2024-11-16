@@ -76,20 +76,16 @@ public class NGTemplateParserProxy {
 	private static NGAssociation toAssociation( NGDeclaration declaration, NGBindingValue bindingValue ) {
 
 		if( declaration.isInline() ) {
-			try {
-				return associationForInlineBindingString( bindingValue.value() );
-			}
-			catch( NGHTMLFormatException e ) {
-				// FIXME: Don't throw RuntimeException here. Awaits cleanup of inline binding association construction // Hugi 2024-10-20
-				throw new RuntimeException( e );
-			}
+			return associationForInlineBindingValue( bindingValue.value() );
 		}
-		else {
-			return NGAssociationFactory.associationWithValue( bindingValue.value(), bindingValue.isQuoted() );
-		}
+
+		return NGAssociationFactory.associationWithValue( bindingValue.value(), bindingValue.isQuoted() );
 	}
 
-	private static NGAssociation associationForInlineBindingString( String value ) throws NGHTMLFormatException {
+	/**
+	 * FIXME: This is kind of shitty // Hugi 2024-11-16
+	 */
+	private static NGAssociation associationForInlineBindingValue( String value ) {
 		Objects.requireNonNull( value );
 
 		if( value.startsWith( "\"" ) ) {
@@ -99,7 +95,7 @@ public class NGTemplateParserProxy {
 				value = value.substring( 0, value.length() - 1 );
 			}
 			else {
-				throw new NGHTMLFormatException( value + " starts with quote but does not end with one." );
+				throw new IllegalArgumentException( value + " starts with quote but does not end with one. The parser should have already failed on this" );
 			}
 
 			if( value.startsWith( "$" ) ) {
