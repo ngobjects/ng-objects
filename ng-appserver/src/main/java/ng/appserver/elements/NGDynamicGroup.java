@@ -32,9 +32,19 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 		this( name, associations, childrenFromTemplate( contentTemplate ) );
 	}
 
-	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final List<NGElement> children ) {
+	/**
+	 * FIXME: Kind of don't like having this constructor around. Needs thinking // Hugi 2024-11-16
+	 */
+	private NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final List<NGElement> children ) {
 		super( null, null, null );
 		_children = children;
+	}
+
+	/**
+	 * FIXME: OK, we're including this method, just to get rid of that constructor that I feel is getting in our way. The whole construction of groups is a little iffy at the moment // Hugi 2024-11-16
+	 */
+	public static NGDynamicGroup of( final List<NGElement> children ) {
+		return new NGDynamicGroup( null, null, children );
 	}
 
 	@Override
