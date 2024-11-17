@@ -52,7 +52,7 @@ public class NGTemplateParserProxy {
 
 	private static NGElement toDynamicElement( final NGDynamicHTMLTag tag ) {
 		try {
-			return NGApplication.dynamicElementWithName( tag.declaration().type(), toAssociations( tag.declaration() ), template( tag.children() ), Collections.emptyList() );
+			return NGApplication.dynamicElementWithName( tag.declaration().type(), toAssociations( tag.declaration() ), template( tag.childrenWithStringsProcessedAndCombined() ), Collections.emptyList() );
 		}
 		catch( NGElementNotFoundException e ) {
 			// FIXME:
@@ -120,17 +120,16 @@ public class NGTemplateParserProxy {
 	/**
 	 * @return The tag's template
 	 */
-	private static NGElement template( final List<Object> children ) {
+	private static NGElement template( final List<PNode> children ) {
 
 		// FIXME: Children should never really be null. I'm still hesitant to replace it with an empty list though, since in my mind that represents an empty container tag. Food for thought... // Hugi 2024-11-15
 		if( children == null ) {
 			return null;
 		}
 
-		final List<PNode> childNodes = combineAndWrapBareStrings( children );
 		final List<NGElement> childElements = new ArrayList<>();
 
-		for( final PNode pNode : childNodes ) {
+		for( final PNode pNode : children ) {
 			childElements.add( toDynamicElement( pNode ) );
 		}
 
@@ -148,44 +147,5 @@ public class NGTemplateParserProxy {
 		}
 
 		return NGDynamicGroup.of( childElements );
-	}
-
-	/**
-	 * Iterates through the list, combining adjacent strings before wrapping them in a PHTMLNode
-	 * Other nodes just get added to the list.
-	 */
-	private static List<PNode> combineAndWrapBareStrings( List<Object> children ) {
-		final List<PNode> childElements = new ArrayList<>( children.size() );
-
-		final StringBuilder sb = new StringBuilder( 128 );
-
-		for( final Object currentChild : children ) {
-
-			if( currentChild instanceof String ) {
-				// If we encounter a string, we append it to the StringBuilder
-				sb.append( (String)currentChild );
-			}
-			else {
-				// If we encounter any other element and we still have unwrapped strings in our builder,
-				// we take the string data we've collected, wrap it up and add it to the element list.
-				if( sb.length() > 0 ) {
-					final PHTMLNode bareString = new PHTMLNode( sb.toString() );
-					childElements.add( bareString );
-					sb.setLength( 0 );
-				}
-
-				// ... and then add the element itself
-				childElements.add( (PNode)currentChild );
-			}
-		}
-
-		// If the last element happened to be a string, the StringBuilder will still have data so we wrap it here
-		if( sb.length() > 0 ) {
-			final PHTMLNode bareString = new PHTMLNode( sb.toString() );
-			childElements.add( bareString );
-			sb.setLength( 0 );
-		}
-
-		return childElements;
 	}
 }

@@ -64,7 +64,7 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( _currentDynamicTag.declaration().name() ) );
 		}
 
-		return new PGroupNode( _currentDynamicTag.children() );
+		return new PGroupNode( _currentDynamicTag.childrenWithStringsProcessedAndCombined() );
 	}
 
 	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException, NGDeclarationFormatException {

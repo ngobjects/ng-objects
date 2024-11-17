@@ -45,8 +45,17 @@ public class NGDynamicHTMLTag {
 		return _parent;
 	}
 
-	public List<Object> children() {
-		return _children;
+	/**
+	 * FIXME: Yeah, we need to fix this in the parser itself // Hugi 2024-11-17
+	 */
+	@Deprecated
+	public List<PNode> childrenWithStringsProcessedAndCombined() {
+
+		if( _children == null ) {
+			return null;
+		}
+
+		return combineAndWrapBareStrings( _children );
 	}
 
 	public void addChild( final Object stringOrElement ) {
@@ -69,6 +78,45 @@ public class NGDynamicHTMLTag {
 	 */
 	public boolean isRoot() {
 		return _declaration == null;
+	}
+
+	/**
+	 * Iterates through the list, combining adjacent strings before wrapping them in a PHTMLNode
+	 * Other nodes just get added to the list.
+	 */
+	private static List<PNode> combineAndWrapBareStrings( final List<Object> children ) {
+		final List<PNode> childElements = new ArrayList<>( children.size() );
+
+		final StringBuilder sb = new StringBuilder( 128 );
+
+		for( final Object currentChild : children ) {
+
+			if( currentChild instanceof String ) {
+				// If we encounter a string, we append it to the StringBuilder
+				sb.append( (String)currentChild );
+			}
+			else {
+				// If we encounter any other element and we still have unwrapped strings in our builder,
+				// we take the string data we've collected, wrap it up and add it to the element list.
+				if( sb.length() > 0 ) {
+					final PHTMLNode bareString = new PHTMLNode( sb.toString() );
+					childElements.add( bareString );
+					sb.setLength( 0 );
+				}
+
+				// ... and then add the element itself
+				childElements.add( (PNode)currentChild );
+			}
+		}
+
+		// If the last element happened to be a string, the StringBuilder will still have data so we wrap it here
+		if( sb.length() > 0 ) {
+			final PHTMLNode bareString = new PHTMLNode( sb.toString() );
+			childElements.add( bareString );
+			sb.setLength( 0 );
+		}
+
+		return childElements;
 	}
 
 	@Override
