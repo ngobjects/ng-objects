@@ -91,15 +91,6 @@ public class NGTemplateParserProxy {
 
 		if( childElements.size() == 1 ) {
 			return childElements.getFirst();
-
-			// FIXME: OK, I can  kind of understand why we unwrap the single element. But why on earth wrap a component reference in a dynamic group? (legacy from WOOgnl). Disabled // Hugi 2024-11-15
-			//			final NGElement onlyElement = childElements.get( 0 );
-			//
-			//			if( onlyElement instanceof NGComponentReference ) {
-			//				return new NGDynamicGroup( null, null, onlyElement );
-			//			}
-			//
-			//			return onlyElement;
 		}
 
 		return NGDynamicGroup.of( childElements );
