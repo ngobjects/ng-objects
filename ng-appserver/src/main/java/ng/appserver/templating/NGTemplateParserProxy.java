@@ -32,7 +32,7 @@ public class NGTemplateParserProxy {
 	 * @param htmlString The HTML to parse
 	 * @param wodString The associated wod/declarations
 	 */
-	public NGTemplateParserProxy( String htmlString, String wodString ) {
+	public NGTemplateParserProxy( final String htmlString, final String wodString ) {
 		Objects.requireNonNull( htmlString );
 		Objects.requireNonNull( wodString );
 
@@ -60,7 +60,7 @@ public class NGTemplateParserProxy {
 	private static NGElement toDynamicElement( final PBasicNode node ) {
 
 		final String type = node.type();
-		final Map<String, NGAssociation> associations = associationsFromDeclaration( node.bindings(), node.isInline() );
+		final Map<String, NGAssociation> associations = toAssociations( node.bindings(), node.isInline() );
 		final NGElement childTemplate = toTemplate( node.children() );
 
 		try {
@@ -73,11 +73,13 @@ public class NGTemplateParserProxy {
 		}
 	}
 
-	private static Map<String, NGAssociation> associationsFromDeclaration( final Map<String, NGBindingValue> bindings, final boolean isInline ) {
+	private static Map<String, NGAssociation> toAssociations( final Map<String, NGBindingValue> bindings, final boolean isInline ) {
 		final Map<String, NGAssociation> associations = new HashMap<>();
 
 		for( Entry<String, NGBindingValue> entry : bindings.entrySet() ) {
-			associations.put( entry.getKey(), NGAssociationFactory.toAssociation( entry.getValue(), isInline ) );
+			final String bindingName = entry.getKey();
+			final NGAssociation association = NGAssociationFactory.toAssociation( entry.getValue(), isInline );
+			associations.put( bindingName, association );
 		}
 
 		return associations;
