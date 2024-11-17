@@ -63,58 +63,14 @@ public class NGTemplateParserProxy {
 		}
 	}
 
-	private static Map<String, NGAssociation> toAssociations( NGDeclaration declaration ) {
+	private static Map<String, NGAssociation> toAssociations( final NGDeclaration declaration ) {
 		final Map<String, NGAssociation> associations = new HashMap<>();
 
 		for( Entry<String, NGBindingValue> entry : declaration.bindings().entrySet() ) {
-			associations.put( entry.getKey(), toAssociation( declaration, entry.getValue() ) );
+			associations.put( entry.getKey(), NGAssociationFactory.toAssociation( entry.getValue(), declaration.isInline() ) );
 		}
 
 		return associations;
-	}
-
-	private static NGAssociation toAssociation( NGDeclaration declaration, NGBindingValue bindingValue ) {
-
-		if( declaration.isInline() ) {
-			return associationForInlineBindingValue( bindingValue.value() );
-		}
-
-		return NGAssociationFactory.associationWithValue( bindingValue.value(), bindingValue.isQuoted() );
-	}
-
-	/**
-	 * FIXME: This is kind of shitty // Hugi 2024-11-16
-	 */
-	private static NGAssociation associationForInlineBindingValue( String value ) {
-		Objects.requireNonNull( value );
-
-		if( value.startsWith( "\"" ) ) {
-			value = value.substring( 1 );
-
-			if( value.endsWith( "\"" ) ) {
-				value = value.substring( 0, value.length() - 1 );
-			}
-			else {
-				throw new IllegalArgumentException( value + " starts with quote but does not end with one. The parser should have already failed on this" );
-			}
-
-			if( value.startsWith( "$" ) ) {
-				value = value.substring( 1 );
-
-				if( value.endsWith( "VALID" ) ) {
-					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
-				}
-
-				return NGAssociationFactory.associationWithValue( value, false );
-			}
-			else {
-				value = value.replaceAll( "\\\\\\$", "\\$" );
-				value = value.replaceAll( "\\\"", "\"" );
-				return NGAssociationFactory.associationWithValue( value, true );
-			}
-		}
-
-		return NGAssociationFactory.associationWithValue( value, false );
 	}
 
 	/**

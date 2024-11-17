@@ -2,6 +2,8 @@ package ng.appserver;
 
 import java.util.Objects;
 
+import ng.appserver.templating.NGDeclaration.NGBindingValue;
+
 public class NGAssociationFactory {
 
 	public static final NGConstantValueAssociation TRUE = new NGConstantValueAssociation( Boolean.TRUE );
@@ -20,7 +22,54 @@ public class NGAssociationFactory {
 		return new NGKeyValueAssociation( keyPath );
 	}
 
-	public static NGAssociation associationWithValue( String associationValue, final boolean quoted ) {
+	/**
+	 * FIXME: This is kind of shitty // Hugi 2024-11-16
+	 */
+	public static NGAssociation toAssociation( final NGBindingValue bindingValue, final boolean isInline ) {
+
+		if( isInline ) {
+			return associationForInlineBindingValue( bindingValue.value() );
+		}
+
+		return NGAssociationFactory.associationWithValue( bindingValue.value(), bindingValue.isQuoted() );
+	}
+
+	/**
+	 * FIXME: This is kind of shitty // Hugi 2024-11-16
+	 */
+	private static NGAssociation associationForInlineBindingValue( String value ) {
+		Objects.requireNonNull( value );
+
+		if( value.startsWith( "\"" ) ) {
+			value = value.substring( 1 );
+
+			if( value.endsWith( "\"" ) ) {
+				value = value.substring( 0, value.length() - 1 );
+			}
+			else {
+				throw new IllegalArgumentException( value + " starts with quote but does not end with one. The parser should have already failed on this" );
+			}
+
+			if( value.startsWith( "$" ) ) {
+				value = value.substring( 1 );
+
+				if( value.endsWith( "VALID" ) ) {
+					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
+				}
+
+				return NGAssociationFactory.associationWithValue( value, false );
+			}
+			else {
+				value = value.replaceAll( "\\\\\\$", "\\$" );
+				value = value.replaceAll( "\\\"", "\"" );
+				return NGAssociationFactory.associationWithValue( value, true );
+			}
+		}
+
+		return NGAssociationFactory.associationWithValue( value, false );
+	}
+
+	private static NGAssociation associationWithValue( String associationValue, final boolean quoted ) {
 		Objects.requireNonNull( associationValue );
 
 		if( quoted ) {
