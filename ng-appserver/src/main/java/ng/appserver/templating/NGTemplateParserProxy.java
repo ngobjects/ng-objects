@@ -44,7 +44,7 @@ public class NGTemplateParserProxy {
 	private static NGElement toDynamicElement( final PNode node ) {
 		return switch( node ) {
 			case PBasicNode n -> toDynamicElement( n.tag() );
-			case PGroupNode n -> new NGDynamicGroup( null, null, template( n.children() ) );
+			case PGroupNode n -> childrenToTemplate( n.children() );
 			case PHTMLNode n -> new NGHTMLBareString( n.value() );
 			case PCommentNode n -> new NGHTMLCommentString( n.value() );
 		};
@@ -52,7 +52,7 @@ public class NGTemplateParserProxy {
 
 	private static NGElement toDynamicElement( final NGDynamicHTMLTag tag ) {
 		try {
-			return NGApplication.dynamicElementWithName( tag.declaration().type(), toAssociations( tag.declaration() ), template( tag.childrenWithStringsProcessedAndCombined() ), Collections.emptyList() );
+			return NGApplication.dynamicElementWithName( tag.declaration().type(), associationsFromDeclaration( tag.declaration() ), childrenToTemplate( tag.childrenWithStringsProcessedAndCombined() ), Collections.emptyList() );
 		}
 		catch( NGElementNotFoundException e ) {
 			// FIXME:
@@ -63,7 +63,7 @@ public class NGTemplateParserProxy {
 		}
 	}
 
-	private static Map<String, NGAssociation> toAssociations( final NGDeclaration declaration ) {
+	private static Map<String, NGAssociation> associationsFromDeclaration( final NGDeclaration declaration ) {
 		final Map<String, NGAssociation> associations = new HashMap<>();
 
 		for( Entry<String, NGBindingValue> entry : declaration.bindings().entrySet() ) {
@@ -76,7 +76,7 @@ public class NGTemplateParserProxy {
 	/**
 	 * @return The tag's template
 	 */
-	private static NGElement template( final List<PNode> children ) {
+	private static NGElement childrenToTemplate( final List<PNode> children ) {
 
 		// FIXME: Children should never really be null. I'm still hesitant to replace it with an empty list though, since in my mind that represents an empty container tag. Food for thought... // Hugi 2024-11-15
 		if( children == null ) {
