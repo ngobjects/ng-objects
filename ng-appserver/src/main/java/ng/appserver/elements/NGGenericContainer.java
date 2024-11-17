@@ -8,10 +8,13 @@ import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
+import ng.appserver.privates._NGUtilities;
 
 public class NGGenericContainer extends NGDynamicGroup {
 
 	private final NGAssociation elementNameAssociation;
+
+	private final NGAssociation _omitTagsAssociation;
 
 	/**
 	 * For storing associations that aren't part of the component's basic associations
@@ -23,6 +26,7 @@ public class NGGenericContainer extends NGDynamicGroup {
 		_additionalAssociations = new HashMap<>( associations );
 
 		elementNameAssociation = _additionalAssociations.remove( "elementName" );
+		_omitTagsAssociation = _additionalAssociations.remove( "omitTags" );
 
 		if( elementNameAssociation == null ) {
 			throw new NGBindingConfigurationException( "elementName is a required binding" );
@@ -31,27 +35,33 @@ public class NGGenericContainer extends NGDynamicGroup {
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-		final String elementName = (String)elementNameAssociation.valueInComponent( context.component() );
 
-		final StringBuilder b = new StringBuilder();
+		if( _omitTagsAssociation != null && _NGUtilities.isTruthy( _omitTagsAssociation.valueInComponent( context.component() ) ) ) {
+			appendChildrenToResponse( response, context );
+		}
+		else {
+			final String elementName = (String)elementNameAssociation.valueInComponent( context.component() );
 
-		b.append( "<" + elementName );
+			final StringBuilder b = new StringBuilder();
 
-		_additionalAssociations.forEach( ( name, ass ) -> {
-			final Object value = ass.valueInComponent( context.component() );
+			b.append( "<" + elementName );
 
-			if( value != null ) {
-				b.append( " " );
-				b.append( name );
-				b.append( "=" );
-				b.append( "\"" + value + "\"" );
-			}
-		} );
+			_additionalAssociations.forEach( ( name, ass ) -> {
+				final Object value = ass.valueInComponent( context.component() );
 
-		b.append( ">" );
+				if( value != null ) {
+					b.append( " " );
+					b.append( name );
+					b.append( "=" );
+					b.append( "\"" + value + "\"" );
+				}
+			} );
 
-		response.appendContentString( b.toString() );
-		appendChildrenToResponse( response, context );
-		response.appendContentString( "</" + elementName + ">" );
+			b.append( ">" );
+
+			response.appendContentString( b.toString() );
+			appendChildrenToResponse( response, context );
+			response.appendContentString( "</" + elementName + ">" );
+		}
 	}
 }
