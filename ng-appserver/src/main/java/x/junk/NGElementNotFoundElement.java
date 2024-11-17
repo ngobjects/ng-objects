@@ -29,7 +29,7 @@ public class NGElementNotFoundElement implements NGElement {
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		String s = """
-				<a href="%s" style="padding: 10px; border: 2px solid rgba(50,50,200,0.6); box-shadow: 4px 4px 1px red; background-color: rgba(0,0,200,0.5); border-radius: 4px; text-decoration: none; color: white">
+				<a href="%s" style="padding: 10px; margin: 10px; border: 2px solid rgba(50,50,200,0.6); box-shadow: 4px 4px 1px red; background-color: rgba(0,0,200,0.5); border-radius: 4px; text-decoration: none; color: white">
 					Can't find an element/component '<strong>%s</strong>'. Would you like to create it?
 				</a>
 				""".formatted( context.componentActionURL() + "?elementName=" + _type, _type );
