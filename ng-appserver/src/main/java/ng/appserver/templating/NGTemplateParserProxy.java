@@ -50,29 +50,34 @@ public class NGTemplateParserProxy {
 
 	private static NGElement toDynamicElement( final PNode node ) {
 		return switch( node ) {
-			case PBasicNode n -> toDynamicElement( n.tag() );
+			case PBasicNode n -> toDynamicElement( n );
 			case PGroupNode n -> toTemplate( n.children() );
 			case PHTMLNode n -> new NGHTMLBareString( n.value() );
 			case PCommentNode n -> new NGHTMLCommentString( n.value() );
 		};
 	}
 
-	private static NGElement toDynamicElement( final NGDynamicHTMLTag tag ) {
+	private static NGElement toDynamicElement( final PBasicNode node ) {
+
+		final String type = node.type();
+		final Map<String, NGAssociation> associations = associationsFromDeclaration( node.bindings(), node.isInline() );
+		final NGElement childTemplate = toTemplate( node.children() );
+
 		try {
-			return NGApplication.dynamicElementWithName( tag.declaration().type(), associationsFromDeclaration( tag.declaration() ), toTemplate( tag.childrenWithStringsProcessedAndCombined() ), Collections.emptyList() );
+			return NGApplication.dynamicElementWithName( type, associations, childTemplate, Collections.emptyList() );
 		}
 		catch( NGElementNotFoundException e ) {
 			// FIXME: Experimental functionality, probably doesn't belong with the parser part of the framework.
 			// But since it's definitely something we want, I'm keeping this here for reference until it finds it's final home. // Hugi 2024-10-19
-			return new NGElementNotFoundElement( tag.declaration().type() );
+			return new NGElementNotFoundElement( type );
 		}
 	}
 
-	private static Map<String, NGAssociation> associationsFromDeclaration( final NGDeclaration declaration ) {
+	private static Map<String, NGAssociation> associationsFromDeclaration( final Map<String, NGBindingValue> bindings, final boolean isInline ) {
 		final Map<String, NGAssociation> associations = new HashMap<>();
 
-		for( Entry<String, NGBindingValue> entry : declaration.bindings().entrySet() ) {
-			associations.put( entry.getKey(), NGAssociationFactory.toAssociation( entry.getValue(), declaration.isInline() ) );
+		for( Entry<String, NGBindingValue> entry : bindings.entrySet() ) {
+			associations.put( entry.getKey(), NGAssociationFactory.toAssociation( entry.getValue(), isInline ) );
 		}
 
 		return associations;
