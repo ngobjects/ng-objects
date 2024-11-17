@@ -243,7 +243,7 @@ public class NGTemplateParser {
 			//			elementType = NGGenericContainer.class.getSimpleName();
 		}
 
-		final String declarationName = "_%s_%s".formatted( elementType, nextInlineBindingNumber );
+		final String declarationName = "%s_%s".formatted( elementType, nextInlineBindingNumber );
 		return new NGDeclaration( true, declarationName, elementType, bindings );
 	}
 }
