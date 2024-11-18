@@ -90,11 +90,6 @@ public class NGTemplateParserProxy {
 	 */
 	private static NGElement toTemplate( final List<PNode> nodes ) {
 
-		// FIXME: Shouldn't really ever be null. Still hesitant to replace it with an empty list though, since in my mind that represents an empty container tag. Food for thought... // Hugi 2024-11-15
-		if( nodes == null ) {
-			return null;
-		}
-
 		final List<NGElement> elements = new ArrayList<>();
 
 		for( final PNode pNode : nodes ) {

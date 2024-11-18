@@ -23,7 +23,7 @@ public class NGDynamicHTMLTag {
 	/**
 	 * Children of this tag. This list contains a mix of (java) strings and PNodes
 	 */
-	private List<Object> _children;
+	private List<Object> _children = new ArrayList<>();
 
 	public NGDynamicHTMLTag() {
 		_parent = null;
@@ -50,21 +50,11 @@ public class NGDynamicHTMLTag {
 	 */
 	@Deprecated
 	public List<PNode> childrenWithStringsProcessedAndCombined() {
-
-		if( _children == null ) {
-			return null;
-		}
-
 		return combineAndWrapBareStrings( _children );
 	}
 
 	public void addChild( final Object stringOrElement ) {
 		Objects.requireNonNull( stringOrElement );
-
-		if( _children == null ) {
-			_children = new ArrayList<>();
-		}
-
 		_children.add( stringOrElement );
 	}
 
@@ -72,8 +62,9 @@ public class NGDynamicHTMLTag {
 	 * @return true if the given tag is the root of the element tree.
 	 *
 	 * FIXME:
-	 * The implementation of this kind of sucks. The only tag in the tree without a declaration is currently the root tag
-	 * We should probably introduce another specific marker for the root tage, or give it a different type. Just anything else than a null check, that's just a consequence of an implementation detail.
+	 * The only tag in the tree without a declaration is currently assumed to be the root tag, which kind of sucks.
+	 * We should probably introduce a specific marker for the root tag or give it a different type.
+	 * Just anything else than checking for a null that's only the consequence of an implementation detail.
 	 * // Hugi 2024-10-20
 	 */
 	public boolean isRoot() {
