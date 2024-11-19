@@ -1,5 +1,6 @@
 package ng.appserver.templating;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +13,10 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGApplication.NGElementNotFoundException;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGAssociationFactory;
+import ng.appserver.NGBindingConfigurationException;
+import ng.appserver.NGContext;
 import ng.appserver.NGElement;
+import ng.appserver.NGResponse;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHTMLCommentString;
@@ -64,12 +68,31 @@ public class NGTemplateParserProxy {
 		final NGElement childTemplate = toTemplate( node.children() );
 
 		try {
+			System.out.println( type );
 			return NGApplication.dynamicElementWithName( type, associations, childTemplate, Collections.emptyList() );
 		}
 		catch( NGElementNotFoundException e ) {
 			// FIXME: Experimental functionality, probably doesn't belong with the parser part of the framework.
 			// But since it's definitely something we want, I'm keeping this here for reference until it finds it's final home. // Hugi 2024-10-19
 			return new NGElementNotFoundElement( type );
+		}
+		catch( RuntimeException e ) {
+			// FIXME: Digging this deep to get to the actual exception is crazy. We need to fix this up // Hugi 2024-11-19
+			if( e.getCause() instanceof InvocationTargetException ite ) {
+				if( ite.getCause() instanceof NGBindingConfigurationException bce ) {
+					return new NGElement() {
+
+						@Override
+						public void appendToResponse( NGResponse response, NGContext context ) {
+							response.appendContentString( """
+									<span style="display: inline-block; margin: 10px; padding: 10px; color:white; background-color: red; border-radius: 5px; box-shadow: 5px 5px 0px rgba(0,0,200,0.8); font-size: 12px;">Binding configuration error <br><span style="font-size: 16px"><strong>%s</strong><br>%s</span>
+									""".formatted( "&lt;wo:" + type + "&gt;", bce.getMessage() ) );
+						};
+					};
+				}
+			}
+
+			throw e;
 		}
 	}
 
