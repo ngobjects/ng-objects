@@ -67,7 +67,6 @@ public class NGTemplateParserProxy {
 		final NGElement childTemplate = toTemplate( node.children() );
 
 		try {
-			System.out.println( type );
 			return NGApplication.dynamicElementWithName( type, associations, childTemplate, Collections.emptyList() );
 		}
 		catch( NGElementNotFoundException e ) {
