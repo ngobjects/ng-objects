@@ -19,7 +19,7 @@ public class NGErrorMessageElement implements NGElement {
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		response.appendContentString( """
-				<span style="display: inline-block; margin: 10px; padding: 10px; color:white; background-color: red; border-radius: 5px; box-shadow: 5px 5px 0px rgba(0,0,200,0.8); font-size: 12px;">%s<br><span style="font-size: 16px"><strong>%s</strong><br>%s</span>
+				<span style="display: inline-block; margin: 10px; padding: 10px; color:white; background-color: rgba(255,100,100,0.5); border: 1px solid red; border-radius: 5px; box-shadow: 5px 5px 0px rgba(0,0,200,0.8); font-size: 12px;">%s<br><span style="font-size: 16px"><strong>%s</strong><br>%s</span>
 				""".formatted( _type, _heading, _message ) );
 	}
 }

@@ -10,6 +10,8 @@ import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.kvc.NGKeyValueCoding.UnknownKeyException;
+import x.junk.NGErrorMessageElement;
 
 /**
  * A common superclass for dynamic elements that have multiple children in our template element tree
@@ -72,7 +74,13 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 						response.appendContentString( elementDebugWrapper );
 					}
 
-					child.appendToResponse( response, context );
+					// FIXME: This try/catch clause is experimental, let's see how this works out and work from there // Hugi 2024-11-19
+					try {
+						child.appendToResponse( response, context );
+					}
+					catch( UnknownKeyException e ) {
+						new NGErrorMessageElement( "Unknown key", "Borka borka", e.getMessage() ).appendToResponse( response, context );
+					}
 
 					if( appendElementTreeDebugInfo ) {
 						response.appendContentString( "</span>" );
