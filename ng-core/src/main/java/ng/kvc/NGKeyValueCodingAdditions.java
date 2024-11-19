@@ -42,7 +42,18 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 			Object result = object;
 
 			for( String currentKeyPathComponent : keyPathComponents ) {
-				result = NGKeyValueCoding.Utility.valueForKey( result, currentKeyPathComponent );
+
+				try {
+					result = NGKeyValueCoding.Utility.valueForKey( result, currentKeyPathComponent );
+				}
+				catch( UnknownKeyException e ) {
+					// If the key is part of a longer keyPath, we're going to add info on the actual keyPath we're resolving to the thrown exception
+					if( !currentKeyPathComponent.equals( keyPath ) ) {
+						throw new UnknownKeyException( "While resolving keypath '%s': %s".formatted( keyPath, e.getMessage() ) );
+					}
+
+					throw e;
+				}
 
 				if( result == null ) {
 					return null;
