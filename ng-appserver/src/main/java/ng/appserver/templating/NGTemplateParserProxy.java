@@ -14,14 +14,13 @@ import ng.appserver.NGApplication.NGElementNotFoundException;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGAssociationFactory;
 import ng.appserver.NGBindingConfigurationException;
-import ng.appserver.NGContext;
 import ng.appserver.NGElement;
-import ng.appserver.NGResponse;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHTMLCommentString;
 import ng.appserver.templating.NGDeclaration.NGBindingValue;
 import x.junk.NGElementNotFoundElement;
+import x.junk.NGErrorMessageElement;
 
 /**
  * Bridges the "new and old world" for template parsing
@@ -80,15 +79,7 @@ public class NGTemplateParserProxy {
 			// FIXME: Digging this deep to get to the actual exception is crazy. We need to fix this up // Hugi 2024-11-19
 			if( e.getCause() instanceof InvocationTargetException ite ) {
 				if( ite.getCause() instanceof NGBindingConfigurationException bce ) {
-					return new NGElement() {
-
-						@Override
-						public void appendToResponse( NGResponse response, NGContext context ) {
-							response.appendContentString( """
-									<span style="display: inline-block; margin: 10px; padding: 10px; color:white; background-color: red; border-radius: 5px; box-shadow: 5px 5px 0px rgba(0,0,200,0.8); font-size: 12px;">Binding configuration error <br><span style="font-size: 16px"><strong>%s</strong><br>%s</span>
-									""".formatted( "&lt;wo:" + type + "&gt;", bce.getMessage() ) );
-						};
-					};
+					return new NGErrorMessageElement( "Binding configuration error", "&lt;wo:" + type + "&gt;", bce.getMessage() );
 				}
 			}
 
