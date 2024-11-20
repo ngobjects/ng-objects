@@ -2,7 +2,7 @@ package ng.appserver;
 
 import java.util.Objects;
 
-import ng.appserver.templating.NGDeclaration.NGBindingValue;
+import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 
 public class NGAssociationFactory {
 

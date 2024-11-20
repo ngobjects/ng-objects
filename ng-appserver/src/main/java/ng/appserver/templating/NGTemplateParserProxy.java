@@ -18,7 +18,15 @@ import ng.appserver.NGElement;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHTMLCommentString;
-import ng.appserver.templating.NGDeclaration.NGBindingValue;
+import ng.appserver.templating.parser.NGDeclarationFormatException;
+import ng.appserver.templating.parser.NGHTMLFormatException;
+import ng.appserver.templating.parser.NGTemplateParser;
+import ng.appserver.templating.parser.PBasicNode;
+import ng.appserver.templating.parser.PCommentNode;
+import ng.appserver.templating.parser.PGroupNode;
+import ng.appserver.templating.parser.PHTMLNode;
+import ng.appserver.templating.parser.PNode;
+import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 import x.junk.NGElementNotFoundElement;
 import x.junk.NGErrorMessageElement;
 

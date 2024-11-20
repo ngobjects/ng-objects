@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication.NGElementNotFoundException;
 import ng.appserver.resources.NGResource;
-import ng.appserver.templating.NGDeclarationFormatException;
-import ng.appserver.templating.NGHTMLFormatException;
 import ng.appserver.templating.NGTemplateParserProxy;
+import ng.appserver.templating.parser.NGDeclarationFormatException;
+import ng.appserver.templating.parser.NGHTMLFormatException;
 
 /**
  * Stores information about the structure of the component.

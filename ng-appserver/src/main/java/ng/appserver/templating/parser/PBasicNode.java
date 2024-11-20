@@ -1,10 +1,10 @@
-package ng.appserver.templating;
+package ng.appserver.templating.parser;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import ng.appserver.templating.NGDeclaration.NGBindingValue;
+import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 
 public record PBasicNode( NGDynamicHTMLTag tag ) implements PNode {
 

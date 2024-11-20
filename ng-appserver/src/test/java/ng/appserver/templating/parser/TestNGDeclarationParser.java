@@ -1,8 +1,10 @@
-package ng.appserver.templating;
+package ng.appserver.templating.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+
+import ng.appserver.templating.parser.NGDeclarationParser;
 
 public class TestNGDeclarationParser {
 
