@@ -13,7 +13,12 @@ import java.util.Objects;
 
 public record NGDeclaration( boolean isInline, String name, String type, Map<String, NGBindingValue> bindings ) {
 
-	public record NGBindingValue( boolean isQuoted, String value ) {}
+	public record NGBindingValue( boolean isQuoted, String value ) {
+
+		public NGBindingValue {
+			Objects.requireNonNull( value );
+		}
+	}
 
 	public NGDeclaration {
 		Objects.requireNonNull( name );
