@@ -37,10 +37,10 @@ import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 import ng.classes.NGClassManager;
 import ng.plugins.NGPlugin;
-import x.junk.NGExceptionPage;
-import x.junk.NGExceptionPageDevelopment;
-import x.junk.NGSessionTimeoutPage;
-import x.junk.NGWelcomePage;
+import ng.xperimental.NGExceptionPage;
+import ng.xperimental.NGExceptionPageDevelopment;
+import ng.xperimental.NGSessionTimeoutPage;
+import ng.xperimental.NGWelcomePage;
 
 /**
  * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29

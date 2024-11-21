@@ -11,7 +11,7 @@ import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.kvc.NGKeyValueCoding.UnknownKeyException;
-import x.junk.NGErrorMessageElement;
+import ng.xperimental.NGErrorMessageElement;
 
 /**
  * A common superclass for dynamic elements that have multiple children in our template element tree

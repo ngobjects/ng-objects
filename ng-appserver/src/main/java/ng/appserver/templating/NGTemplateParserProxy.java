@@ -27,8 +27,8 @@ import ng.appserver.templating.parser.PGroupNode;
 import ng.appserver.templating.parser.PHTMLNode;
 import ng.appserver.templating.parser.PNode;
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
-import x.junk.NGElementNotFoundElement;
-import x.junk.NGErrorMessageElement;
+import ng.xperimental.NGElementNotFoundElement;
+import ng.xperimental.NGErrorMessageElement;
 
 /**
  * Bridges the "new and old world" for template parsing
