@@ -10,6 +10,8 @@ public class TestNGAssociationFactory {
 	@Test
 	public void isNumeric() {
 		assertFalse( NGAssociationFactory.isNumeric( "" ) );
+		assertFalse( NGAssociationFactory.isNumeric( "1+2" ) );
+		assertFalse( NGAssociationFactory.isNumeric( "1-2" ) );
 		assertTrue( NGAssociationFactory.isNumeric( "-1.345" ) );
 		assertTrue( NGAssociationFactory.isNumeric( "+1456" ) );
 		assertTrue( NGAssociationFactory.isNumeric( "+1.456987" ) );

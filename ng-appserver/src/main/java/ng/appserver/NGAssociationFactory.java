@@ -25,13 +25,13 @@ public class NGAssociationFactory {
 	/**
 	 * FIXME: This is kind of shitty // Hugi 2024-11-16
 	 */
-	public static NGAssociation toAssociation( final NGBindingValue bindingValue, final boolean isInline ) {
+	public static NGAssociation associationForBindingValue( final NGBindingValue bindingValue, final boolean isInline ) {
 
 		if( isInline ) {
 			return associationForInlineBindingValue( bindingValue.value() );
 		}
 
-		return NGAssociationFactory.associationWithValue( bindingValue.value(), bindingValue.isQuoted() );
+		return associationForWodBindingValue( bindingValue.value(), bindingValue.isQuoted() );
 	}
 
 	/**
@@ -57,39 +57,43 @@ public class NGAssociationFactory {
 					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
 				}
 
-				return NGAssociationFactory.associationWithValue( value, false );
+				return associationForWodBindingValue( value, false );
 			}
 			else {
+				// FIXME: Figure out what the absolute ding-diddly we're doing here // Hugi 2024-11-23
 				value = value.replaceAll( "\\\\\\$", "\\$" );
 				value = value.replaceAll( "\\\"", "\"" );
-				return NGAssociationFactory.associationWithValue( value, true );
+				return associationForWodBindingValue( value, true );
 			}
 		}
 
-		return NGAssociationFactory.associationWithValue( value, false );
+		return associationForWodBindingValue( value, false );
 	}
 
-	private static NGAssociation associationWithValue( String associationValue, final boolean quoted ) {
+	/**
+	 * FIXME: This is kind of shitty // Hugi 2024-11-16
+	 */
+	private static NGAssociation associationForWodBindingValue( String associationValue, final boolean isQuoted ) {
 		Objects.requireNonNull( associationValue );
 
-		if( quoted ) {
+		if( isQuoted ) {
 			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
-			// FIXME: I kind of feel like this doesn't exactly belong here. And we should validate the escape behavior and define it as either/or // Hugi 2024-10-17
+			// FIXME: Escaping needs to be thought through and standardized, for both wod and inline bindings // Hugi 2024-11-23
 			associationValue = applyEscapes( associationValue );
-			return NGAssociationFactory.constantValueAssociationWithValue( associationValue );
+			return constantValueAssociationWithValue( associationValue );
 		}
 
 		if( isNumeric( associationValue ) ) {
 			final Number number;
 
-			if( associationValue != null && associationValue.contains( "." ) ) {
+			if( associationValue.contains( "." ) ) {
 				number = Double.valueOf( associationValue );
 			}
 			else {
 				number = Integer.parseInt( associationValue );
 			}
 
-			return NGAssociationFactory.constantValueAssociationWithValue( number );
+			return constantValueAssociationWithValue( number );
 		}
 
 		if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
@@ -100,7 +104,7 @@ public class NGAssociationFactory {
 			return FALSE;
 		}
 
-		return NGAssociationFactory.associationWithKeyPath( associationValue );
+		return associationWithKeyPath( associationValue );
 	}
 
 	/**
@@ -139,7 +143,10 @@ public class NGAssociationFactory {
 		return string;
 	}
 
-	static boolean isNumeric( String string ) {
+	/**
+	 * @return true if this is a numeric string. Note that a signed number (i.e. prefixed with a plus or a minus) is considered numeric
+	 */
+	static boolean isNumeric( final String string ) {
 		int length = string.length();
 
 		if( length == 0 ) {
