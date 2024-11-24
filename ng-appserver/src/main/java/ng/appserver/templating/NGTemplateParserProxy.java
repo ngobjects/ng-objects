@@ -21,12 +21,12 @@ import ng.appserver.elements.NGHTMLCommentString;
 import ng.appserver.templating.parser.NGDeclarationFormatException;
 import ng.appserver.templating.parser.NGHTMLFormatException;
 import ng.appserver.templating.parser.NGTemplateParser;
-import ng.appserver.templating.parser.PBasicNode;
-import ng.appserver.templating.parser.PCommentNode;
-import ng.appserver.templating.parser.PGroupNode;
-import ng.appserver.templating.parser.PHTMLNode;
-import ng.appserver.templating.parser.PNode;
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
+import ng.appserver.templating.parser.model.PBasicNode;
+import ng.appserver.templating.parser.model.PCommentNode;
+import ng.appserver.templating.parser.model.PGroupNode;
+import ng.appserver.templating.parser.model.PHTMLNode;
+import ng.appserver.templating.parser.model.PNode;
 import ng.xperimental.NGElementNotFoundElement;
 import ng.xperimental.NGErrorMessageElement;
 

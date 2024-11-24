@@ -1,4 +1,4 @@
-package ng.appserver.templating.parser;
+package ng.appserver.templating.parser.model;
 
 import java.util.Objects;
 

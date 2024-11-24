@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import ng.appserver.templating.parser.model.PHTMLNode;
+import ng.appserver.templating.parser.model.PNode;
+
 /**
  * Represents a dynamic tag in the HTML part of a template
  */
