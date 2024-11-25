@@ -703,20 +703,10 @@ public class NGApplication {
 		Objects.requireNonNull( associations );
 		Objects.requireNonNull( languages );
 
-		final String name;
+		// First we're going to check if we have a tag alias present.
+		final String name = NGElementUtils.tagShortcutMap().getOrDefault( identifier, identifier );
 
-		// First we're going to check if we have a tag alias present
-		final String shortName = NGElementUtils.tagShortcutMap().get( identifier );
-
-		if( shortName != null ) {
-			name = shortName;
-		}
-		else {
-			// If no shortcut is present for the given identifier, use the original identifier
-			name = identifier;
-		}
-
-		// First we locate the class of the element we're going to render.
+		// Check if we can find a class representing the element we're going to render.
 		final Class<? extends NGElement> elementClass = NGElementUtils.classWithNameNullIfNotFound( name );
 
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
