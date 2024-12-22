@@ -36,7 +36,7 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 	/**
 	 * FIXME: Kind of don't like having this constructor around. Needs thinking // Hugi 2024-11-16
 	 */
-	private NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final List<NGElement> children ) {
+	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final List<NGElement> children ) {
 		super( null, null, null );
 		_children = children;
 	}
