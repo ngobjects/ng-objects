@@ -4,7 +4,7 @@
 
 ng-objects is an open source web framework heavily based on concepts from Apple's WebObjects (WO) framework. It aims to:
 
-1. Extract the best concepts of WO and project Wonder (including the Ajax-framework, for client side interaction) and use them in a new, modern library.
+1. Extract the best concepts of WO and project Wonder (including the Ajax-framework, with it's partial component rendering) and use them in a new, modern library.
 
 2. Not be a WO clone but _familiar_ to a WO programmer and thus easy to migrate existing WO code to. While WO is great, there have been two decades of improvements in software design and web development since WO's last official release.
 
@@ -12,9 +12,9 @@ ng-objects is an open source web framework heavily based on concepts from Apple'
 
 ## Status
 
-The framework is still in development, but we currently have working implementations of HTTP request handling, templating, very, very basic routing, resource management, property management, sessions, and stateful actions.
+The framework is still in development, but we currently have working implementations of HTTP request handling, templating, very, very basic routing, resource loading and management, property/configuration management, sessions, and stateful actions.
 
-"Working implementation" is doing a lot of heavy lifting in that sentence though, since we're now going through the process of cleaning up and enriching the API and making it a joy to use. And there's a lot of work to do there. But first release is scheduled for 2025.
+"Working implementation" is doing a lot of heavy lifting in that sentence though, since we're now going through the process of cleaning up and enriching the APIs and making them a joy to use. And there's a lot of work to do. But the framework has been deployed for testing on a couple of production sites, since nothing is quite as valuable as dogfooding when it comes to developing a framework - and remarkably it works very, very well. First actual release is scheduled for 2025.
 
 ## Trying the test application
 
