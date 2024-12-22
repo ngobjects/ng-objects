@@ -2,26 +2,30 @@
 
 # ng-objects
 
-ng-objects is an open source web framework hevaily based on the concepts found in Apple's WebObjects (WO) framework. It aims to:
+ng-objects is an open source web framework heavily based on concepts from Apple's WebObjects (WO) framework. It aims to:
 
-1. Extract the best concepts of WO and use them in a new, modern library.
+1. Extract the best concepts of WO and project Wonder (including the Ajax-framework, for client side interaction) and use them in a new, modern library.
 
 2. Not be a WO clone but _familiar_ to a WO programmer and thus easy to migrate existing WO code to. While WO is great, there have been two decades of improvements in software design and web development since WO's last official release.
 
-3. Be compatible with WO's deployment environment, so apps can transparently integrate into an existing WO based deployment infrastructure.
+3. Be compatible with WO's deployment environment, so apps can transparently integrate into an existing WO deployment infrastructure, easing transition of existing apps and environments.
 
-## Launching the test application
+## Status
 
-### Install dependencies/frameworks
+The framework is still in development, but we currently have working implementations of HTTP request handling, templating, very, very basic routing, resource management, property management, sessions, and stateful actions.
 
-1. Clone this repo.
-2. Run `mvn install` at the project's root.
+"Working implementation" is doing a lot of heavy lifting in that sentence though, since we're now going through the process of cleaning up and enriching the API and making it a joy to use. And there's a lot of work to do there. But first release is scheduled for 2025.
 
-### Build and launch `ng-testapp`
-Build and run the application:
+## Trying the test application
 
-1. `cd ng-testapp`
-2. `mvn package`
-3. `./target/ng-testapp-1.0.0-SNAPSHOT.woa/ng-testapp`
+We haven't made a release yet, so to try the framework you need to either clone the repo and either import the projects into your IDE and run the "Application" class in the ng-testapp project, or, using maven on the command line...
 
-Now point your browser to [localhost:1200](http://localhost:1200/). You should be greeted with a test page showing some of the current features. Congratulations!
+```
+	$ git clone git@github.com:ngobjects/ng-objects.git
+	$ mvn install
+	$ cd ng-testapp
+	$ mvn package
+	$ ./target/ng-testapp-1.0.0-SNAPSHOT.woa/ng-testapp
+```
+
+Then point your browser to [localhost:1200](http://localhost:1200/). Yay!
