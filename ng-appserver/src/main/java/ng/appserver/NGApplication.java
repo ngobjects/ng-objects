@@ -588,6 +588,12 @@ public class NGApplication {
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/app/webserver-resources" ) );
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "ng/app/public" ) );
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/app/components" ) );
+
+		// "ng" namespace defined
+		loader.addResourceSource( StandardNamespace.NG.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "ng/ng/app-resources" ) );
+		loader.addResourceSource( StandardNamespace.NG.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/ng/webserver-resources" ) );
+		loader.addResourceSource( StandardNamespace.NG.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "ng/ng/public" ) );
+		loader.addResourceSource( StandardNamespace.NG.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/ng/components" ) );
 	}
 
 	/**

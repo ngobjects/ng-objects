@@ -1,7 +1,8 @@
 package ng.appserver.resources;
 
 public enum StandardNamespace {
-	App( "app" );
+	App( "app" ),
+	NG( "ng" );
 
 	private String _identifier;
 
