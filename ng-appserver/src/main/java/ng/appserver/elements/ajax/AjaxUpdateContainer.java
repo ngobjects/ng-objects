@@ -1,5 +1,6 @@
 package ng.appserver.elements.ajax;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import ng.appserver.NGActionResults;
@@ -16,10 +17,17 @@ public class AjaxUpdateContainer extends NGDynamicGroup {
 	public NGAssociation _elementNameAssociation;
 	public NGAssociation _idAssociation;
 
+	/**
+	 * For storing associations that aren't part of the component's basic associations
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
+
 	public AjaxUpdateContainer( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( name, associations, template );
-		_elementNameAssociation = associations.get( "elementName" );
-		_idAssociation = associations.get( "id" );
+		_additionalAssociations = new HashMap<>( associations );
+
+		_elementNameAssociation = _additionalAssociations.remove( "elementName" );
+		_idAssociation = _additionalAssociations.remove( "id" );
 	}
 
 	@Override
@@ -43,7 +51,11 @@ public class AjaxUpdateContainer extends NGDynamicGroup {
 			elementName = (String)_elementNameAssociation.valueInComponent( context.component() );
 		}
 
-		b.append( NGHTMLUtilities.createElementStringWithAttributes( elementName, Map.of( "id", id ), false ) );
+		final Map<String, String> attributes = new HashMap<>();
+		attributes.put( "id", id );
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
+
+		b.append( NGHTMLUtilities.createElementStringWithAttributes( elementName, attributes, false ) );
 		response.appendContentString( b.toString() );
 		appendChildrenToResponse( response, context );
 		response.appendContentString( "</div>" );
