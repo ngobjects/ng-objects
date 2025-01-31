@@ -577,23 +577,26 @@ public class NGApplication {
 	private static void addDefaultResourceSources( final NGResourceManager resourceManager ) {
 		final NGResourceLoader loader = resourceManager.resourceLoader();
 
-		// FIXME: These are the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future // Hugi 2024-06-19
+		// FIXME: These are the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future and should probably be deleted // Hugi 2024-06-19
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
 
-		// "app" namespace defined
-		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "ng/app/app-resources" ) );
-		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/app/webserver-resources" ) );
-		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "ng/app/public" ) );
-		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/app/components" ) );
+		addDefaultResourcesourcesForNamespace( loader, StandardNamespace.App );
+		addDefaultResourcesourcesForNamespace( loader, StandardNamespace.NG );
+	}
 
-		// "ng" namespace defined
-		loader.addResourceSource( StandardNamespace.NG.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "ng/ng/app-resources" ) );
-		loader.addResourceSource( StandardNamespace.NG.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/ng/webserver-resources" ) );
-		loader.addResourceSource( StandardNamespace.NG.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "ng/ng/public" ) );
-		loader.addResourceSource( StandardNamespace.NG.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/ng/components" ) );
+	/**
+	 * Declare resource sources for the standard resource types in the given namespace
+	 */
+	private static void addDefaultResourcesourcesForNamespace( final NGResourceLoader loader, final StandardNamespace namespace ) {
+		final String id = namespace.identifier();
+
+		loader.addResourceSource( id, StandardResourceType.App, new JavaClasspathResourceSource( "ng/%s/app-resources".formatted( id ) ) );
+		loader.addResourceSource( id, StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/%s/webserver-resources".formatted( id ) ) );
+		loader.addResourceSource( id, StandardResourceType.Public, new JavaClasspathResourceSource( "ng/%s/public".formatted( id ) ) );
+		loader.addResourceSource( id, StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/%s/components".formatted( id ) ) );
 	}
 
 	/**
