@@ -15,7 +15,10 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 
 /**
- * FIXME: Only partially implemented // Hugi 2023-05-01
+ * A wrapper element that allows you to:
+ *
+ *  1. Iterate over a java array/List/SequencedCollection
+ *  2. Display it's contained template [count] times
  */
 
 public class NGRepetition extends NGDynamicGroup {
