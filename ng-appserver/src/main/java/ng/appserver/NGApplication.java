@@ -110,7 +110,7 @@ public class NGApplication {
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		redirectOutputToFilesIfOutputPathSet( properties.propWOOutputPath() );
 
-		// FIXME: Since we've currently got no application instance, we can't yet query the application about mode (which is a property on the applicaiton instance). Lame and needs a fix // Hugi 2024-06-14
+		// FIXME: Since we've currently got no application instance, we can't yet query the application about mode (which is a property on the application instance). Lame and needs a fix // Hugi 2024-06-14
 		final boolean isDevelopmentModeBotchedVersion = !properties.propWOMonitorEnabled(); /* properties.isDevelopmentMode() */
 
 		if( isDevelopmentModeBotchedVersion ) {
@@ -193,7 +193,6 @@ public class NGApplication {
 	 * @return A table containing our "built-in routes"
 	 */
 	private NGRouteTable createSystemRoutes() {
-		// Then we add the "system route table"
 		final NGRouteTable systemRoutes = new NGRouteTable( "System routes" );
 		systemRoutes.map( "/", this::defaultResponse );
 		systemRoutes.map( NGComponentRequestHandler.DEFAULT_PATH + "*", new NGComponentRequestHandler() );
@@ -286,6 +285,9 @@ public class NGApplication {
 		}
 	}
 
+	/**
+	 * @return The Application's properties
+	 */
 	public NGProperties properties() {
 		return _properties;
 	}
