@@ -707,26 +707,26 @@ public class NGApplication {
 	 *
 	 * @return An instance of the named dynamic element. This can be a classless component (in which case it's the template name), a simple class name or a full class name
 	 */
-	public static NGElement dynamicElementWithName( final String identifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
-		Objects.requireNonNull( identifier );
+	public static NGElement dynamicElementWithName( final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate, final List<String> languages ) {
+		Objects.requireNonNull( elementIdentifier );
 		Objects.requireNonNull( associations );
 		Objects.requireNonNull( languages );
 
 		// First we're going to check if we have a tag alias present.
-		final String name = NGElementUtils.tagShortcutMap().getOrDefault( identifier, identifier );
+		final String elementName = NGElementUtils.tagShortcutMap().getOrDefault( elementIdentifier, elementIdentifier );
 
 		// Check if we can find a class representing the element we're going to render.
-		final Class<? extends NGElement> elementClass = NGElementUtils.classWithNameNullIfNotFound( name );
+		final Class<? extends NGElement> elementClass = NGElementUtils.classWithNameNullIfNotFound( elementName );
 
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
-			final NGComponentDefinition componentDefinition = _componentDefinition( name, languages );
+			final NGComponentDefinition componentDefinition = _componentDefinition( elementName, languages );
 			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 
 		// First we check if this is a dynamic element
 		if( NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
-			return createDynamicElementInstance( elementClass, name, associations, contentTemplate );
+			return createDynamicElementInstance( elementClass, elementName, associations, contentTemplate );
 		}
 
 		// If it's not an element, let's move on to creating a component reference instead
@@ -736,7 +736,7 @@ public class NGApplication {
 		}
 
 		// We should never end up here unless we got an incorrect/non-existent element name
-		throw new NGElementNotFoundException( "I could not construct a dynamic element named '%s'".formatted( name ), name );
+		throw new NGElementNotFoundException( "I could not construct a dynamic element named '%s'".formatted( elementName ), elementName );
 	}
 
 	public static class NGElementNotFoundException extends RuntimeException {
