@@ -115,9 +115,6 @@ public class NGRepetition extends NGDynamicGroup {
 		return actionResults;
 	}
 
-	/**
-	 * FIXME: Having to override this method smells bad. There's an evil battle brewing between NGDynamicGroup and NGStructuredElement we have to settle // Hugi 2024-10-17
-	 */
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		appendStructureToResponse( response, context );
