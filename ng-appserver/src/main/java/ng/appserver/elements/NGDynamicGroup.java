@@ -154,12 +154,6 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 	 */
 	private static List<NGElement> childrenFromTemplate( final NGElement contentTemplate ) {
 
-		// Null represents an empty container tag (i.e. no children).
-		// FIXME: Eliminate this check. The rendering engine should be using an empty list. Disabled on 2024-11-18 // Hugi
-		//		if( contentTemplate == null ) {
-		//			return Collections.emptyList();
-		//		}
-
 		// If the contained template is another DynamicGroup, "unwrap it", i.e. just steal it's kids.
 		if( contentTemplate.getClass().equals( NGDynamicGroup.class ) ) {
 			return ((NGDynamicGroup)contentTemplate).children();
