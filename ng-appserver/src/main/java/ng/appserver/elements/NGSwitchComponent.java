@@ -1,6 +1,5 @@
 package ng.appserver.elements;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,7 +83,7 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 
 		// No component instance found so we're going to have to construct a new one
 		if( localWOElement == null ) {
-			localWOElement = NGApplication.application().dynamicElementWithName( name, _componentAssociations, _contentTemplate, Collections.emptyList() );
+			localWOElement = NGApplication.application().dynamicElementWithName( name, _componentAssociations, _contentTemplate );
 
 			if( localWOElement == null ) {
 				throw new RuntimeException( "<" + getClass().getName() + "> : cannot find component or dynamic element named " + name );

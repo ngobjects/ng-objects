@@ -2,7 +2,6 @@ package ng.appserver.templating;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +17,10 @@ import ng.appserver.NGElement;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHTMLCommentString;
+import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 import ng.appserver.templating.parser.NGDeclarationFormatException;
 import ng.appserver.templating.parser.NGHTMLFormatException;
 import ng.appserver.templating.parser.NGTemplateParser;
-import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 import ng.appserver.templating.parser.model.PBasicNode;
 import ng.appserver.templating.parser.model.PCommentNode;
 import ng.appserver.templating.parser.model.PGroupNode;
@@ -75,7 +74,7 @@ public class NGTemplateParserProxy {
 		final NGElement childTemplate = toTemplate( node.children() );
 
 		try {
-			return NGApplication.dynamicElementWithName( type, associations, childTemplate, Collections.emptyList() );
+			return NGApplication.dynamicElementWithName( type, associations, childTemplate );
 		}
 		catch( NGElementNotFoundException e ) {
 			// FIXME: Experimental functionality, probably doesn't belong with the parser part of the framework.
