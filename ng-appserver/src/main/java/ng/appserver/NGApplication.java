@@ -42,7 +42,7 @@ import ng.xperimental.NGSessionTimeoutPage;
 import ng.xperimental.NGWelcomePage;
 
 /**
- * FIXME: Initialization still feels a little weird, while we're moving away from the way it's handled in WOApplication. Look a little more into the flow of application initialization // Hugi 2021-12-29
+ * Where everything related to an application really meets up
  */
 
 public class NGApplication {
