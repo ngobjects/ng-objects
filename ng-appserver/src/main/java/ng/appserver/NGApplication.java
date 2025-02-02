@@ -322,7 +322,7 @@ public class NGApplication {
 	 * FIXME: In any case, this is going to have to be cached in some way, since it gets invoked _a lot_ // Hugi 2024-03-23
 	 */
 	public boolean isDevelopmentMode() {
-		return _properties.isDevelopmentMode();
+		return _properties.propWOMonitorEnabled();
 	}
 
 	/**
