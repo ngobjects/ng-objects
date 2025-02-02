@@ -56,7 +56,7 @@ public class NGAdaptorRaw extends NGAdaptor {
 				}
 			}
 			catch( final Exception e ) {
-				if( application.properties().isDevelopmentMode() && e instanceof BindException ) {
+				if( application.isDevelopmentMode() && e instanceof BindException ) {
 					logger.info( "Our port seems to be in use and we're in development mode. Let's try murdering the bastard that's blocking us" );
 					NGDevelopmentInstanceStopper.stopPreviousDevelopmentInstance( port );
 					start( application );
