@@ -33,6 +33,7 @@ import ng.appserver.resources.StandardNamespace;
 import ng.appserver.resources.StandardResourceType;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGElementManager;
+import ng.appserver.templating.NGElementNotFoundException;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 import ng.classes.NGClassManager;
