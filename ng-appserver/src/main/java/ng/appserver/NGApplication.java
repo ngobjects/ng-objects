@@ -32,6 +32,7 @@ import ng.appserver.resources.NGResourceManagerDynamic;
 import ng.appserver.resources.StandardNamespace;
 import ng.appserver.resources.StandardResourceType;
 import ng.appserver.routing.NGRouteTable;
+import ng.appserver.templating.NGElementManager;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 import ng.classes.NGClassManager;
@@ -69,6 +70,11 @@ public class NGApplication {
 	 * Handles dynamic locating of classes used
 	 */
 	private NGClassManager _classManager;
+
+	/**
+	 * Handles templates and templating
+	 */
+	private NGElementManager _elementManager;
 
 	/**
 	 * Resource loading, caching and management
@@ -178,6 +184,7 @@ public class NGApplication {
 	 */
 	public NGApplication() {
 		_classManager = new NGClassManager();
+		_elementManager = new NGElementManager();
 		_resourceManager = new NGResourceManager();
 		_resourceManagerDynamic = new NGResourceManagerDynamic();
 		_sessionStore = new NGServerSessionStore();
