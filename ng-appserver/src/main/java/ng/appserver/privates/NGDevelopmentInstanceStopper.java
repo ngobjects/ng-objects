@@ -43,7 +43,7 @@ public class NGDevelopmentInstanceStopper {
 			}
 
 			new URI( url ).toURL().openConnection().getContent();
-			Thread.sleep( 1000 );
+			Thread.sleep( 2000 );
 			alreadyTriedStopping = true;
 		}
 		catch( Throwable e ) {
