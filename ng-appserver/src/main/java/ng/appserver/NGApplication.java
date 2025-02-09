@@ -738,20 +738,6 @@ public class NGApplication {
 		throw new NGElementNotFoundException( "I could not construct a dynamic element named '%s'".formatted( elementName ), elementName );
 	}
 
-	public static class NGElementNotFoundException extends RuntimeException {
-
-		private final String _elementName;
-
-		public NGElementNotFoundException( final String message, final String elementName ) {
-			super( message );
-			_elementName = elementName;
-		}
-
-		public String elementName() {
-			return _elementName;
-		}
-	}
-
 	/**
 	 * @return A new NGDynamicElement constructed using the given parameters
 	 *
