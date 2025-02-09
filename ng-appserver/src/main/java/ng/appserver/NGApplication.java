@@ -324,9 +324,10 @@ public class NGApplication {
 	/**
 	 * FIXME: I'm not quite sure what to do about this variable. Belongs here or someplace else? // Hugi 2023-03-10
 	 * FIXME: In any case, this is going to have to be cached in some way, since it gets invoked _a lot_ // Hugi 2024-03-23
+	 * FIXME: We're currently deducting this from if the WOMonitorEnabled property is set. Mode should be explicit // Hugi 2025-02-09
 	 */
 	public boolean isDevelopmentMode() {
-		return _properties.propWOMonitorEnabled();
+		return !properties().propWOMonitorEnabled();
 	}
 
 	/**
