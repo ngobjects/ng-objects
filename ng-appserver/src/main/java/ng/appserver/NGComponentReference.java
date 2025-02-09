@@ -57,7 +57,7 @@ public class NGComponentReference extends NGDynamicElement implements NGStructur
 		// If no instance was obtained, we need to create the component instance and insert it into the parent's child map.
 		if( newComponentInstance == null ) {
 			// Load up our component's definition
-			final NGComponentDefinition componentDefinition = NGApplication.application()._componentDefinition( _componentName );
+			final NGComponentDefinition componentDefinition = NGApplication.application().elementManager()._componentDefinition( _componentName );
 
 			// ...and obtain an instance of the component
 			newComponentInstance = componentDefinition.componentInstanceInContext( context );
