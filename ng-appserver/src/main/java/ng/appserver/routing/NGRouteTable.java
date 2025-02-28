@@ -38,11 +38,11 @@ public class NGRouteTable {
 		return _routes;
 	}
 
-	public NGRequestHandler handlerForURL( final String uri ) {
-		Objects.requireNonNull( uri );
+	public NGRequestHandler handlerForURL( final String url ) {
+		Objects.requireNonNull( url );
 
 		for( final Route route : routes() ) {
-			if( matches( route.pattern(), uri ) ) {
+			if( matches( route.pattern(), url ) ) {
 				return route.routeHandler();
 			}
 		}
@@ -67,13 +67,13 @@ public class NGRouteTable {
 	 *
 	 * FIXME: We're currently only checking if the pattern starts with the given pattern. We want some real pattern matching here // Hugi 2021-12-30
 	 */
-	private static boolean matches( final String pattern, final String uri ) {
+	private static boolean matches( final String pattern, final String url ) {
 		if( pattern.endsWith( "*" ) ) {
 			final String patternWithoutWildcard = pattern.substring( 0, pattern.length() - 1 );
-			return uri.startsWith( patternWithoutWildcard );
+			return url.startsWith( patternWithoutWildcard );
 		}
 
-		return pattern.equals( uri );
+		return pattern.equals( url );
 	}
 
 	public void map( final String pattern, final NGRequestHandler requestHandler ) {
