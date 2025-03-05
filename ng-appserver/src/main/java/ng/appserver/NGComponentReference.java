@@ -14,7 +14,7 @@ public class NGComponentReference extends NGDynamicElement implements NGStructur
 	/**
 	 * Holds a reference to the fully qualified class name of the component we're going to render
 	 */
-	private final String _componentName;
+	private final NGComponentDefinition _componentDefinition;
 
 	/**
 	 * The bindings being passed from the parent component to the component being rendered.
@@ -37,7 +37,7 @@ public class NGComponentReference extends NGDynamicElement implements NGStructur
 		super( null, null, null );
 		Objects.requireNonNull( componentName );
 		Objects.requireNonNull( associations );
-		_componentName = componentName;
+		_componentDefinition = NGApplication.application().elementManager().componentDefinition( componentName );
 		_associations = associations;
 		_contentTemplate = contentTemplate;
 	}
@@ -56,11 +56,9 @@ public class NGComponentReference extends NGDynamicElement implements NGStructur
 
 		// If no instance was obtained, we need to create the component instance and insert it into the parent's child map.
 		if( newComponentInstance == null ) {
-			// Load up our component's definition
-			final NGComponentDefinition componentDefinition = NGApplication.application().elementManager().componentDefinition( _componentName );
 
-			// ...and obtain an instance of the component
-			newComponentInstance = componentDefinition.componentInstanceInContext( context );
+			// Obtain an instance of the component
+			newComponentInstance = _componentDefinition.componentInstanceInContext( context );
 
 			// Finally, we store our component instance in it's parent child map, ensuring we're reusing instances between requests
 			previousComponent.addChild( context.elementID().toString(), newComponentInstance );
