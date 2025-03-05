@@ -22,7 +22,7 @@ public class NGElementManager {
 		Objects.requireNonNull( componentName, "'componentName' must not be null. I can't create components from nothing." );
 		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
 
-		final NGComponentDefinition definition = _componentDefinition( componentName );
+		final NGComponentDefinition definition = componentDefinition( componentName );
 		return pageWithName( definition, context );
 	}
 
@@ -34,7 +34,7 @@ public class NGElementManager {
 		Objects.requireNonNull( componentClass, "'componentClass' must not be null. I can't create components from nothing." );
 		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
 
-		final NGComponentDefinition definition = _componentDefinition( componentClass );
+		final NGComponentDefinition definition = componentDefinition( componentClass );
 		return (E)pageWithName( definition, context );
 	}
 
@@ -50,27 +50,21 @@ public class NGElementManager {
 
 	/**
 	 * @return The componentDefinition corresponding to the given NGComponent class.
-	 *
-	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
-	private static NGComponentDefinition _componentDefinition( final Class<? extends NGComponent> componentClass ) {
+	private static NGComponentDefinition componentDefinition( final Class<? extends NGComponent> componentClass ) {
 		Objects.requireNonNull( componentClass );
 		return NGComponentDefinition.get( componentClass );
 	}
 
 	/**
 	 * @return The componentDefinition corresponding to the named NGComponent
-	 *
-	 * FIXME: This should not be static // Hugi 2023-04-14
 	 */
-	public static NGComponentDefinition _componentDefinition( final String componentName ) {
+	public static NGComponentDefinition componentDefinition( final String componentName ) {
 		Objects.requireNonNull( componentName );
 		return NGComponentDefinition.get( componentName );
 	}
 
 	/**
-	 * FIXME: This should not be static // Hugi 2023-04-14
-	 *
 	 * @param name The name identifying what element we're getting
 	 * @param associations Associations used to bind the generated element to it's parent
 	 * @param contentTemplate The content wrapped by the element (if a container element)
@@ -89,7 +83,7 @@ public class NGElementManager {
 
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
-			final NGComponentDefinition componentDefinition = _componentDefinition( elementName );
+			final NGComponentDefinition componentDefinition = componentDefinition( elementName );
 			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 
@@ -100,7 +94,7 @@ public class NGElementManager {
 
 		// If it's not an element, let's move on to creating a component reference instead
 		if( NGComponent.class.isAssignableFrom( elementClass ) ) {
-			final NGComponentDefinition componentDefinition = _componentDefinition( (Class<? extends NGComponent>)elementClass );
+			final NGComponentDefinition componentDefinition = componentDefinition( (Class<? extends NGComponent>)elementClass );
 			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
 		}
 
