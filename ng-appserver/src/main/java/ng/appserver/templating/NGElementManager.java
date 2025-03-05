@@ -71,7 +71,7 @@ public class NGElementManager {
 	 *
 	 * @return An instance of the named dynamic element. This can be a classless component (in which case it's the template name), a simple class name or a full class name
 	 */
-	public static NGElement dynamicElementWithName( final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+	public static NGDynamicElement dynamicElementWithName( final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		Objects.requireNonNull( elementIdentifier );
 		Objects.requireNonNull( associations );
 
@@ -89,7 +89,7 @@ public class NGElementManager {
 
 		// First we check if this is a dynamic element
 		if( NGDynamicElement.class.isAssignableFrom( elementClass ) ) {
-			return createDynamicElementInstance( elementClass, elementName, associations, contentTemplate );
+			return createDynamicElementInstance( (Class<? extends NGDynamicElement>)elementClass, elementName, associations, contentTemplate );
 		}
 
 		// If it's not an element, let's move on to creating a component reference instead
@@ -107,7 +107,7 @@ public class NGElementManager {
 	 *
 	 * Really just a shortcut for invoking a dynamic element class' constructor via reflection.
 	 */
-	private static <E extends NGElement> E createDynamicElementInstance( final Class<E> elementClass, final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+	private static <E extends NGDynamicElement> E createDynamicElementInstance( final Class<E> elementClass, final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		final Class<?>[] parameterTypes = { String.class, Map.class, NGElement.class };
 		final Object[] parameters = { name, associations, contentTemplate };
 
