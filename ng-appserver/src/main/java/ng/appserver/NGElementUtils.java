@@ -45,7 +45,7 @@ public class NGElementUtils {
 	/**
 	 * Packages that we look for component classes inside
 	 */
-	private static List<String> _packages = new ArrayList<>();
+	private static final List<String> _packages = new ArrayList<>();
 
 	/**
 	 * Classes registered to be searchable by classWithName()
