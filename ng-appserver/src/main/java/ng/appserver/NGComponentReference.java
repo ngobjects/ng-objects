@@ -1,7 +1,6 @@
 package ng.appserver;
 
 import java.util.Map;
-import java.util.Objects;
 
 import ng.appserver.elements.NGStructuralElement;
 
@@ -14,7 +13,7 @@ public class NGComponentReference extends NGDynamicElement implements NGStructur
 	/**
 	 * Holds a reference to the fully qualified class name of the component we're going to render
 	 */
-	private final NGComponentDefinition _componentDefinition;
+	private NGComponentDefinition _componentDefinition;
 
 	/**
 	 * The bindings being passed from the parent component to the component being rendered.
@@ -35,11 +34,19 @@ public class NGComponentReference extends NGDynamicElement implements NGStructur
 	 */
 	public NGComponentReference( final String componentName, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		super( null, null, null );
-		Objects.requireNonNull( componentName );
-		Objects.requireNonNull( associations );
-		_componentDefinition = NGApplication.application().elementManager().componentDefinition( componentName );
 		_associations = associations;
 		_contentTemplate = contentTemplate;
+	}
+
+	/**
+	 * @return A new component reference for the given component definition
+	 *
+	 *  CHECKME: A little sucky, but required for passing in the component definition
+	 */
+	public static NGComponentReference of( final NGComponentDefinition componentDefinition, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		NGComponentReference reference = new NGComponentReference( null, associations, contentTemplate );
+		reference._componentDefinition = componentDefinition;
+		return reference;
 	}
 
 	private void beforeComponent( final NGContext context ) {

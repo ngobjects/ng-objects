@@ -172,7 +172,7 @@ public class NGComponentDefinition {
 	 * @return A new component reference to insert into a template being rendered
 	 */
 	public NGComponentReference componentReferenceWithAssociations( final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		return new NGComponentReference( name(), associations, contentTemplate );
+		return NGComponentReference.of( this, associations, contentTemplate );
 	}
 
 	/**

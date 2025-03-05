@@ -59,7 +59,7 @@ public class NGElementManager {
 	/**
 	 * @return The componentDefinition corresponding to the named NGComponent
 	 */
-	public static NGComponentDefinition componentDefinition( final String componentName ) {
+	private static NGComponentDefinition componentDefinition( final String componentName ) {
 		Objects.requireNonNull( componentName );
 		return NGComponentDefinition.get( componentName );
 	}
