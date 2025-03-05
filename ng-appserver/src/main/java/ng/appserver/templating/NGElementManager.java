@@ -70,6 +70,8 @@ public class NGElementManager {
 	 * @param contentTemplate The content wrapped by the element (if a container element)
 	 *
 	 * @return An instance of the named dynamic element. This can be a classless component (in which case it's the template name), a simple class name or a full class name
+	 *
+	 * FIXME: We're missing a cache for dynamic element name resolution // Hugi 2025-03-05
 	 */
 	public static NGDynamicElement dynamicElementWithName( final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		Objects.requireNonNull( elementIdentifier );
