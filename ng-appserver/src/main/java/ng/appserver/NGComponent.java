@@ -110,7 +110,8 @@ public class NGComponent implements NGElement, NGActionResults {
 				for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
 					final String bindingName = binding.getKey();
 					final NGAssociation association = binding.getValue();
-					NGKeyValueCoding.DefaultImplementation.takeValueForKey( this, association.valueInComponent( parent() ), bindingName );
+					final Object value = association.valueInComponent( parent() );
+					NGKeyValueCoding.Utility.takeValueForKey( this, value, bindingName );
 				}
 			}
 		}
@@ -126,8 +127,8 @@ public class NGComponent implements NGElement, NGActionResults {
 				for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
 					final String bindingName = binding.getKey();
 					final NGAssociation association = binding.getValue();
-					final Object associationValue = NGKeyValueCoding.DefaultImplementation.valueForKey( this, bindingName );
-					association.setValue( associationValue, parent() );
+					final Object value = NGKeyValueCoding.Utility.valueForKey( this, bindingName );
+					association.setValue( value, parent() );
 				}
 			}
 		}
