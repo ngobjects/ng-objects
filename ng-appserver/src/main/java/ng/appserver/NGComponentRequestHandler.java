@@ -79,7 +79,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// Push the page in the context
 		context.setPage( originalPage );
 		context.setComponent( originalPage );
-		context.page().awakeInContext( request.context() );
+		context.page().setContextIncludingChildren( request.context() );
 
 		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", originatingContextID, originalPage );
 
@@ -110,7 +110,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 		else if( actionInvocationResults instanceof NGComponent newPage ) {
 			// If an action method returns an NGComponent, that's our new page in this context. We set it, and return it
-			newPage.awakeInContext( context );
+			newPage.setContextIncludingChildren( context );
 			response = newPage.generateResponse();
 		}
 		else {

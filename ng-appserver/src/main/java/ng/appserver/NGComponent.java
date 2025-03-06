@@ -128,13 +128,6 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * Set the component's context
-	 */
-	private void setContext( NGContext newContext ) {
-		_context = newContext;
-	}
-
-	/**
 	 * @return The component's context
 	 */
 	public NGContext context() {
@@ -142,15 +135,20 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * Sets the context for this component and it's children.
-	 *
-	 * CHECKME: The name of this method is really just a relic from WO. We don't have the concepts of awake/sleep. So this could really just be… setContext? I mean, when would you really want your component's kids to be in a different context?
+	 * Set the context for this component (not including children)
 	 */
-	public void awakeInContext( NGContext newContext ) {
+	private void setContext( NGContext newContext ) {
+		_context = newContext;
+	}
+
+	/**
+	 * Sets the context for this component and it's children.
+	 */
+	public void setContextIncludingChildren( NGContext newContext ) {
 		setContext( newContext );
 
 		for( NGComponent child : _children.values() ) {
-			child.awakeInContext( newContext );
+			child.setContextIncludingChildren( newContext );
 		}
 	}
 
