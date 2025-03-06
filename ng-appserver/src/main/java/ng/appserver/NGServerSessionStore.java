@@ -33,7 +33,7 @@ public class NGServerSessionStore extends NGSessionStore {
 			@Override
 			public void run() {
 
-				// FIXME: This is, of course, horribly inefficient // Hugi 2023-01-21
+				// CHECKME: Iterating through every session every five seconds itsn't exactly efficient. We might want to look into some alternative methods // Hugi 2023-01-21
 				for( final NGSession session : sessions() ) {
 					if( session.shouldTerminate() ) {
 						_sessions.remove( session.sessionID() );
@@ -46,7 +46,7 @@ public class NGServerSessionStore extends NGSessionStore {
 		final Timer timer = new Timer( "SessionReaper", true );
 		final long timeBeforeFirstExecution = Duration.ofSeconds( 5 ).toMillis();
 		final long timeBetweenExecutions = Duration.ofSeconds( 5 ).toMillis();
-		timer.schedule( sessionReaperTask, timeBeforeFirstExecution, timeBetweenExecutions ); // FIXME: These execution times need further consideration // Hugi 2023-01-21
+		timer.schedule( sessionReaperTask, timeBeforeFirstExecution, timeBetweenExecutions ); // CHECKME: The execution times might need configuration // Hugi 2023-01-21
 	}
 
 	@Override
