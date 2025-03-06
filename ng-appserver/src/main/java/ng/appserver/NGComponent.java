@@ -21,27 +21,28 @@ public class NGComponent implements NGElement, NGActionResults {
 	private NGContext _context;
 
 	/**
+	 * The component definition from which this component is constructed.
 	 * FIXME: Shouldn't this really be final and initialized during component construction? // Hugi 2022-01-16
 	 */
 	private NGComponentDefinition _componentDefinition;
 
 	/**
-	 * Stores a reference to the component's parent component
+	 * This component's parent component if any, [null] if it's the root component
 	 */
 	private NGComponent _parent;
 
 	/**
-	 * Map of this component's children
+	 * Map of this component's children, with their elementID in the template as key
 	 */
 	private final Map<String, NGComponent> _children;
 
 	/**
-	 * The associations passed in to this component from it's parent component
+	 * Associations bound to this component from it's parent component
 	 */
 	private Map<String, NGAssociation> _associations;
 
 	/**
-	 * Reference to the template wrapped by this component (i.e. subcomponent(s) or dynamic element(s))
+	 * Template wrapped by this component (i.e. subcomponent(s) or dynamic element(s))
 	 *
 	 * As in:
 	 * <ThisComponent>[_contentElement]</ThisComponent>
@@ -100,8 +101,8 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * Invoked before each of the three R-R phases in NGComponent.
-	 * Iterates through all the component's bindings, pulls values from the parent component and sets them using KVC
+	 * If the component is synchronized, this method gets invoked before each of the three R-R phases in NGComponent.
+	 * Iterates through all of component's bindings, pulls values from it's parent and sets them using KVC.
 	 */
 	public void pullBindingValuesFromParent() {
 		if( parent() != null ) {
@@ -115,13 +116,18 @@ public class NGComponent implements NGElement, NGActionResults {
 		}
 	}
 
+	/**
+	 * If the component is synchronized, this method gets invoked after each of the three R-R phases in NGComponent.
+	 * Iterates through all of component's bindings and pushes it's values to it's parent, setting them using KVC.
+	 */
 	public void pushBindingValuesToParent() {
 		if( parent() != null ) {
 			if( synchronizesVariablesWithBindings() ) {
 				for( final Entry<String, NGAssociation> binding : _associations.entrySet() ) {
 					final String bindingName = binding.getKey();
 					final NGAssociation association = binding.getValue();
-					association.setValue( NGKeyValueCoding.DefaultImplementation.valueForKey( this, bindingName ), parent() );
+					final Object associationValue = NGKeyValueCoding.DefaultImplementation.valueForKey( this, bindingName );
+					association.setValue( associationValue, parent() );
 				}
 			}
 		}
@@ -188,6 +194,9 @@ public class NGComponent implements NGElement, NGActionResults {
 		return association.valueInComponent( parent() );
 	}
 
+	/**
+	 * Sets the given binding to the given value
+	 */
 	public void setValueForBinding( Object value, String bindingName ) {
 
 		final NGAssociation association = _associations.get( bindingName );
@@ -199,7 +208,7 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
-	 * @return The component's parent component in it's current context
+	 * @return The component's parent component in it's current context, null if no parent is present
 	 */
 	public NGComponent parent() {
 		return _parent;
@@ -221,6 +230,9 @@ public class NGComponent implements NGElement, NGActionResults {
 		return _contentElement;
 	}
 
+	/**
+	 * Generates the response for this component, setting it as it's context page and storing it in the page cache if required.
+	 */
 	@Override
 	public NGResponse generateResponse() {
 		context().setPage( this );
@@ -238,7 +250,6 @@ public class NGComponent implements NGElement, NGActionResults {
 		appendToResponse( response, context() );
 
 		// So, we've generated the page, and it's ready to return. Now we let the context tell us whether it should be stored in the page cache for future reference.
-		//
 		// CHECKME: This *still* feels a little like the wrong place to stash the page in the cache. Not yet sure where it *should* be but my gut *still* has a feeling // Hugi 2024-09-28
 		if( context()._shouldSaveInPageCache() ) {
 			context().session().pageCache().savePage( context().contextID(), this, context()._originatingContextID(), context().targetedUpdateContainerID() );
