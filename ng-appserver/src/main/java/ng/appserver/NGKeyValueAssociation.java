@@ -39,6 +39,22 @@ public class NGKeyValueAssociation extends NGAssociation {
 			throw new NGAssociationConstructionException( "[keyPath] doesn't support operators (keys prefixed with '@')" );
 		}
 
+		if( keyPath.contains( ". " ) ) {
+			throw new NGAssociationConstructionException( "[keyPath] has an element that starts with a space" );
+		}
+
+		if( keyPath.contains( " ." ) ) {
+			throw new NGAssociationConstructionException( "[keyPath] has an element that ends with a space" );
+		}
+
+		if( keyPath.startsWith( " " ) ) {
+			throw new NGAssociationConstructionException( "[keyPath] can't start with a space." );
+		}
+
+		if( keyPath.endsWith( " " ) ) {
+			throw new NGAssociationConstructionException( "[keyPath] can't end with a space." );
+		}
+
 		if( keyPath.contains( ".." ) ) {
 			throw new NGAssociationConstructionException( "[keyPath] can't contain two (or more) consecutive periods" );
 		}
