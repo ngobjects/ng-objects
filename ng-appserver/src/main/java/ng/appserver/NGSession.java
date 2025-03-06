@@ -4,16 +4,11 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Yes, we have sessions too!
  */
 
 public class NGSession {
-
-	private static final Logger logger = LoggerFactory.getLogger( NGSession.class );
 
 	/**
 	 * A unique identifier for this session
