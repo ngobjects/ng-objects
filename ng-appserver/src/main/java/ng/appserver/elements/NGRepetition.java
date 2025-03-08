@@ -1,6 +1,5 @@
 package ng.appserver.elements;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -236,10 +235,8 @@ public class NGRepetition extends NGDynamicGroup {
 		}
 
 		if( listAssociationValue instanceof SequencedCollection sc ) {
-			// FIXME: This conversion of the sequenced collection to a List shouldn't be required and is a potential performance issue. But making it redundant requires us to rethink/redesign how we're currently getting the list value to iterate over // Hugi 2024-09-30
-			final ArrayList<Object> list = new ArrayList<>();
-			sc.iterator().forEachRemaining( list::add );
-			return list;
+			// CHECKME: Ideally we don't want to convert the sequenced collection to a new List. However, making it redundant requires us to rethink/redesign how we're currently iterate over the list (by index) so here we are // Hugi 2024-09-30
+			return List.of( sc.toArray() );
 		}
 
 		throw new IllegalArgumentException( "NGRepetition only accepts java.util.List and java Arrays. You sent me a %s".formatted( listAssociationValue.getClass() ) );
