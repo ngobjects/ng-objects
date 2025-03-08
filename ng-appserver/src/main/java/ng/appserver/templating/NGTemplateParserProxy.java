@@ -73,7 +73,7 @@ public class NGTemplateParserProxy {
 		final NGElement childTemplate = toTemplate( node.children() );
 
 		try {
-			return NGApplication.application().elementManager().dynamicElementWithName( type, associations, childTemplate );
+			return NGApplication.application().elementManager().dynamicElementWithName( NGElementManager.GLOBAL_UNNAMESPACED_NAMESPACE, type, associations, childTemplate );
 		}
 		catch( NGElementNotFoundException e ) {
 			// FIXME: Experimental functionality, probably doesn't belong with the parser part of the framework.

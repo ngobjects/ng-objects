@@ -14,6 +14,7 @@ import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.templating.NGElementManager;
 
 /**
  * Implementation based on Project Wonder's ERXWOSwitchComponent by
@@ -83,7 +84,7 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 
 		// No component instance found so we're going to have to construct a new one
 		if( localWOElement == null ) {
-			localWOElement = NGApplication.application().elementManager().dynamicElementWithName( name, _componentAssociations, _contentTemplate );
+			localWOElement = NGApplication.application().elementManager().dynamicElementWithName( NGElementManager.GLOBAL_UNNAMESPACED_NAMESPACE, name, _componentAssociations, _contentTemplate );
 
 			if( localWOElement == null ) {
 				throw new RuntimeException( "<" + getClass().getName() + "> : cannot find component or dynamic element named " + name );

@@ -13,7 +13,19 @@ import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGElementUtils;
 
+/**
+ * Manages access to and location of dynamic elements and components registered with a project
+ */
+
 public class NGElementManager {
+
+	/**
+	 * I WO, elements are not namespaced. To help porting older templates, we therefore allow unnamespaced elements
+	 * by designating the namespace "wo" a "magic namespace" which when used for locating elements means searching every namespace.
+	 *
+	 * This is probably/hopefully temporary.
+	 */
+	public static final String GLOBAL_UNNAMESPACED_NAMESPACE = "wo";
 
 	/**
 	 * @return The named component, where [componentName] can be either the component's simple class name or full class name.
@@ -73,7 +85,7 @@ public class NGElementManager {
 	 *
 	 * FIXME: We're missing a cache for dynamic element name resolution // Hugi 2025-03-05
 	 */
-	public static NGDynamicElement dynamicElementWithName( final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+	public static NGDynamicElement dynamicElementWithName( final String namespace, final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		Objects.requireNonNull( elementIdentifier );
 		Objects.requireNonNull( associations );
 
