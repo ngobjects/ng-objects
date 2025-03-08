@@ -94,6 +94,15 @@ public class NGRepetition extends NGDynamicGroup {
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
 		beforeAll( context );
 
+		if( _countAssociation != null ) {
+			final int count = count( context );
+
+			for( int i = 0; i < count; ++i ) {
+				beforeEach( context, i );
+				takeValuesFromRequest( request, context );
+			}
+		}
+
 		if( _listAssociation != null ) {
 			final List<?> list = list( context );
 
@@ -115,6 +124,15 @@ public class NGRepetition extends NGDynamicGroup {
 		beforeAll( context );
 
 		NGActionResults actionResults = null;
+
+		if( _countAssociation != null ) {
+			final int count = count( context );
+
+			for( int i = 0; i < count; ++i ) {
+				beforeEach( context, i );
+				invokeChildrenAction( request, context );
+			}
+		}
 
 		if( _listAssociation != null ) {
 			final List<?> list = list( context );
