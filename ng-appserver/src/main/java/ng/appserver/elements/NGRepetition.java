@@ -103,7 +103,7 @@ public class NGRepetition extends NGDynamicGroup {
 				beforeEach( context, i );
 				final Object object = list.get( i );
 				_itemAssociation.setValue( object, context.component() );
-				super.takeValuesFromRequest( request, context );
+				takeChildrenValuesFromRequest( request, context );
 			}
 		}
 
@@ -131,7 +131,7 @@ public class NGRepetition extends NGDynamicGroup {
 				beforeEach( context, i );
 				final Object object = list.get( i );
 				_itemAssociation.setValue( object, context.component() );
-				actionResults = super.invokeAction( request, context );
+				actionResults = invokeChildrenAction( request, context );
 			}
 		}
 
