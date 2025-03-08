@@ -94,15 +94,17 @@ public class NGRepetition extends NGDynamicGroup {
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
 		beforeAll( context );
 
-		final List<?> list = list( context );
+		if( _listAssociation != null ) {
+			final List<?> list = list( context );
 
-		final int count = list.size();
+			final int count = list.size();
 
-		for( int i = 0; i < count; ++i ) {
-			beforeEach( context, i );
-			final Object object = list.get( i );
-			_itemAssociation.setValue( object, context.component() );
-			super.takeValuesFromRequest( request, context );
+			for( int i = 0; i < count; ++i ) {
+				beforeEach( context, i );
+				final Object object = list.get( i );
+				_itemAssociation.setValue( object, context.component() );
+				super.takeValuesFromRequest( request, context );
+			}
 		}
 
 		afterAll( context );
@@ -114,21 +116,23 @@ public class NGRepetition extends NGDynamicGroup {
 
 		NGActionResults actionResults = null;
 
-		final List<?> list = list( context );
+		if( _listAssociation != null ) {
+			final List<?> list = list( context );
 
-		// Note: You'd think it would be a good idea to cache the list size, right?
-		//
-		// final int listSize = list.size(); <-- don't do this
-		//
-		// No. If the invoked action modifies the list, for example by removing an item
-		// "listSize" becomes obsolete and we might get an OutOfBoundsException.
-		// This is just a warning for future coders.
+			// Note: You'd think it would be a good idea to cache the list size, right?
+			//
+			// final int listSize = list.size(); <-- don't do this
+			//
+			// No. If the invoked action modifies the list, for example by removing an item
+			// "listSize" becomes obsolete and we might get an OutOfBoundsException.
+			// This is just a warning for future coders.
 
-		for( int i = 0; i < list.size() && actionResults == null; ++i ) {
-			beforeEach( context, i );
-			final Object object = list.get( i );
-			_itemAssociation.setValue( object, context.component() );
-			actionResults = super.invokeAction( request, context );
+			for( int i = 0; i < list.size() && actionResults == null; ++i ) {
+				beforeEach( context, i );
+				final Object object = list.get( i );
+				_itemAssociation.setValue( object, context.component() );
+				actionResults = super.invokeAction( request, context );
+			}
 		}
 
 		afterAll( context );
