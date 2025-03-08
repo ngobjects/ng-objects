@@ -68,6 +68,18 @@ public class NGRepetition extends NGDynamicGroup {
 	}
 
 	/**
+	 * Invoked at the start of each of the repetition's iterations for preparation
+	 */
+	private void beforeEach( final NGContext context, final int iterationIndex ) {
+		context.elementID().increment();
+
+		// If an index binding is present, set it
+		if( _indexAssociation != null ) {
+			_indexAssociation.setValue( iterationIndex, context.component() );
+		}
+	}
+
+	/**
 	 * Invoked at the end of each R-R phase for cleanup of bindings and elementID
 	 */
 	private void afterAll( final NGContext context ) {
@@ -87,7 +99,7 @@ public class NGRepetition extends NGDynamicGroup {
 		final int count = list.size();
 
 		for( int i = 0; i < count; ++i ) {
-			context.elementID().increment();
+			beforeEach( context, i );
 			final Object object = list.get( i );
 			_itemAssociation.setValue( object, context.component() );
 			super.takeValuesFromRequest( request, context );
@@ -113,7 +125,7 @@ public class NGRepetition extends NGDynamicGroup {
 		// This is just a warning for future coders.
 
 		for( int i = 0; i < list.size() && actionResults == null; ++i ) {
-			context.elementID().increment();
+			beforeEach( context, i );
 			final Object object = list.get( i );
 			_itemAssociation.setValue( object, context.component() );
 			actionResults = super.invokeAction( request, context );
@@ -137,13 +149,7 @@ public class NGRepetition extends NGDynamicGroup {
 			final int count = Integer.parseInt( (String)_countAssociation.valueInComponent( context.component() ) );
 
 			for( int i = 0; i < count; ++i ) {
-				context.elementID().increment();
-
-				// If an index binding is present, set and increment
-				if( _indexAssociation != null ) {
-					_indexAssociation.setValue( i++, context.component() );
-				}
-
+				beforeEach( context, i );
 				appendChildrenToResponse( response, context );
 			}
 		}
@@ -155,14 +161,8 @@ public class NGRepetition extends NGDynamicGroup {
 
 			if( list != null ) {
 				for( Object object : list ) {
-					context.elementID().increment();
+					beforeEach( context, i++ );
 					_itemAssociation.setValue( object, context.component() );
-
-					// If an index binding is present, set and increment
-					if( _indexAssociation != null ) {
-						_indexAssociation.setValue( i++, context.component() );
-					}
-
 					appendChildrenToResponse( response, context );
 				}
 			}
