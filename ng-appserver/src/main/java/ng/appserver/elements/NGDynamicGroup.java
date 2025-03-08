@@ -108,8 +108,6 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 		if( !_children.isEmpty() ) {
 			context.elementID().addBranch();
 
-			// CHECKME: We might want to chek if this could cause problems during element structure changes
-			// same as in NGRepetition's invokeAction()
 			final int count = _children.size();
 
 			for( int i = 0; i < count && actionResults == null; ++i ) {
