@@ -53,13 +53,14 @@ public class NGSubmitButton extends NGDynamicElement {
 
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
+
 		// This would be our regular way of checking for a senderID:
 		// if( context.currentElementIsSender() ) {...}
 		// ....HOWEVER....
 		// The pressed button is not actually the submitting element, the form that contains the button is.
 		// The pressed submit button's name will be in the query parameter dictionary, so that's what we check for.
 		// I have a feeling this is going to cause us grief with regard to state management, i.e. the same form/elementID can now result in different actions being invoked. Very exciting.
-		// FIXME: This might actually be a perfect application for the formaction attributes (which would allow for a more traditional handling of the invoked button) // Hugi 2024-06-01
+		// CHECKME: This might actually be a perfect application for the formaction attributes (which would allow for a more traditional handling of the invoked button) // Hugi 2024-06-01
 		if( request.formValues().get( context.elementID().toString() ) != null ) {
 			return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 		}
