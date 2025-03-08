@@ -9,6 +9,7 @@ import java.util.SequencedCollection;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
+import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
@@ -49,11 +50,37 @@ public class NGRepetition extends NGDynamicGroup {
 		_itemAssociation = associations.get( "item" );
 		_indexAssociation = associations.get( "index" );
 		_listAssociation = associations.get( "list" );
+
+		if( _listAssociation == null && _countAssociation == null ) {
+			throw new NGBindingConfigurationException( "You must bind either [list] or [count]" );
+		}
+
+		if( _listAssociation != null && _countAssociation != null ) {
+			throw new NGBindingConfigurationException( "You can't bind both [list] and [count]" );
+		}
+	}
+
+	/**
+	 * Invoked at the start of each R-R phase for preparation
+	 */
+	private void beforeAll( final NGContext context ) {
+		context.elementID().addBranch();
+	}
+
+	/**
+	 * Invoked at the end of each R-R phase for cleanup of bindings and elementID
+	 */
+	private void afterAll( final NGContext context ) {
+		if( _itemAssociation != null ) {
+			_itemAssociation.setValue( null, context.component() );
+		}
+
+		context.elementID().removeBranch();
 	}
 
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
-		context.elementID().addBranch();
+		beforeAll( context );
 
 		final List<?> list = list( context );
 
@@ -66,21 +93,12 @@ public class NGRepetition extends NGDynamicGroup {
 			super.takeValuesFromRequest( request, context );
 		}
 
-		if( _itemAssociation != null ) {
-			_itemAssociation.setValue( null, context.component() );
-		}
-
-		//		FIXME: This won't work for a non-nullable primitive type (int/double etc.)
-		//		if( _indexAssociation != null ) {
-		//			_indexAssociation.setValue( null, context.component() );
-		//		}
-
-		context.elementID().removeBranch();
+		afterAll( context );
 	}
 
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
-		context.elementID().addBranch();
+		beforeAll( context );
 
 		NGActionResults actionResults = null;
 
@@ -88,10 +106,10 @@ public class NGRepetition extends NGDynamicGroup {
 
 		// Note: You'd think it would be a good idea to cache the list size, right?
 		//
-		// final int count = list.size(); <-- don't do this
+		// final int listSize = list.size(); <-- don't do this
 		//
 		// No. If the invoked action modifies the list, for example by removing an item
-		// "count" becomes obsolete and we might get an OutOfBoundsException.
+		// "listSize" becomes obsolete and we might get an OutOfBoundsException.
 		// This is just a warning for future coders.
 
 		for( int i = 0; i < list.size() && actionResults == null; ++i ) {
@@ -101,16 +119,7 @@ public class NGRepetition extends NGDynamicGroup {
 			actionResults = super.invokeAction( request, context );
 		}
 
-		if( _itemAssociation != null ) {
-			_itemAssociation.setValue( null, context.component() );
-		}
-
-		//		FIXME: This won't work for a non-nullable primitive type (int/double etc.)
-		//		if( _indexAssociation != null ) {
-		//			_indexAssociation.setValue( null, context.component() );
-		//		}
-
-		context.elementID().removeBranch();
+		afterAll( context );
 
 		return actionResults;
 	}
@@ -122,7 +131,7 @@ public class NGRepetition extends NGDynamicGroup {
 
 	@Override
 	public void appendStructureToResponse( NGResponse response, NGContext context ) {
-		context.elementID().addBranch();
+		beforeAll( context );
 
 		if( _countAssociation != null ) {
 			final int count = Integer.parseInt( (String)_countAssociation.valueInComponent( context.component() ) );
@@ -159,16 +168,7 @@ public class NGRepetition extends NGDynamicGroup {
 			}
 		}
 
-		if( _itemAssociation != null ) {
-			_itemAssociation.setValue( null, context.component() );
-		}
-
-		//		FIXME: This won't work for a non-nullable primitive type (int/double etc.)
-		//		if( _indexAssociation != null ) {
-		//			_indexAssociation.setValue( null, context.component() );
-		//		}
-
-		context.elementID().removeBranch();
+		afterAll( context );
 	}
 
 	/**
