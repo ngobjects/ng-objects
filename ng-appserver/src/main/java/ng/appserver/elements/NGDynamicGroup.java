@@ -102,7 +102,7 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 		return invokeChildrenAction( request, context );
 	}
 
-	private NGActionResults invokeChildrenAction( NGRequest request, NGContext context ) {
+	protected NGActionResults invokeChildrenAction( NGRequest request, NGContext context ) {
 		NGActionResults actionResults = null;
 
 		if( !_children.isEmpty() ) {
@@ -129,7 +129,7 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 		takeChildrenValuesFromRequest( request, context );
 	}
 
-	private void takeChildrenValuesFromRequest( NGRequest request, NGContext context ) {
+	protected void takeChildrenValuesFromRequest( NGRequest request, NGContext context ) {
 		if( !_children.isEmpty() ) {
 			context.elementID().addBranch();
 
