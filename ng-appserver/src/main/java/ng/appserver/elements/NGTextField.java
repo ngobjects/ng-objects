@@ -14,6 +14,7 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.privates._NGUtilities;
+import ng.appserver.templating.NGCheckedExceptionWrapper;
 
 public class NGTextField extends NGDynamicElement {
 
@@ -86,7 +87,7 @@ public class NGTextField extends NGDynamicElement {
 							value = formatter.parseObject( stringValueFromRequest );
 						}
 						catch( ParseException e ) {
-							throw new RuntimeException( e ); // FIXME: RuntimeException is probably not the right choice here
+							throw new NGCheckedExceptionWrapper( e );
 						}
 					}
 					else {
