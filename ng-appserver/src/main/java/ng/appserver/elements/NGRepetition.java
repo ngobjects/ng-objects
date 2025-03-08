@@ -95,9 +95,9 @@ public class NGRepetition extends NGDynamicGroup {
 		beforeAll( context );
 
 		if( _countAssociation != null ) {
-			final int count = count( context );
+			final int iterations = count( context );
 
-			for( int i = 0; i < count; ++i ) {
+			for( int i = 0; i < iterations; ++i ) {
 				beforeEach( context, i );
 				takeValuesFromRequest( request, context );
 			}
@@ -106,13 +106,15 @@ public class NGRepetition extends NGDynamicGroup {
 		if( _listAssociation != null ) {
 			final List<?> list = list( context );
 
-			final int count = list.size();
+			if( list != null ) {
+				final int iterations = list.size();
 
-			for( int i = 0; i < count; ++i ) {
-				beforeEach( context, i );
-				final Object object = list.get( i );
-				_itemAssociation.setValue( object, context.component() );
-				takeChildrenValuesFromRequest( request, context );
+				for( int i = 0; i < iterations; ++i ) {
+					beforeEach( context, i );
+					final Object object = list.get( i );
+					_itemAssociation.setValue( object, context.component() );
+					takeChildrenValuesFromRequest( request, context );
+				}
 			}
 		}
 
@@ -128,9 +130,9 @@ public class NGRepetition extends NGDynamicGroup {
 		if( _countAssociation != null ) {
 			// CHECKME: The value of the count variable might actually change during the operation if bound to, for example, the size of a list that's manipulated in an invoked action
 			// If we want to support this, we have to handle it (same way we do as if [list] is bound, rather than [count]
-			final int count = count( context );
+			final int iterations = count( context );
 
-			for( int i = 0; i < count; ++i ) {
+			for( int i = 0; i < iterations; ++i ) {
 				beforeEach( context, i );
 				actionResults = invokeChildrenAction( request, context );
 			}
@@ -149,11 +151,13 @@ public class NGRepetition extends NGDynamicGroup {
 			//
 			// CHECKME: Can't we actually skip the rest of the loop if invokeAction() on a child actually returns a value?
 
-			for( int i = 0; i < list.size() && actionResults == null; ++i ) {
-				beforeEach( context, i );
-				final Object object = list.get( i );
-				_itemAssociation.setValue( object, context.component() );
-				actionResults = invokeChildrenAction( request, context );
+			if( list != null ) {
+				for( int i = 0; i < list.size() && actionResults == null; ++i ) {
+					beforeEach( context, i );
+					final Object object = list.get( i );
+					_itemAssociation.setValue( object, context.component() );
+					actionResults = invokeChildrenAction( request, context );
+				}
 			}
 		}
 
@@ -172,9 +176,9 @@ public class NGRepetition extends NGDynamicGroup {
 		beforeAll( context );
 
 		if( _countAssociation != null ) {
-			final int count = count( context );
+			final int iterations = count( context );
 
-			for( int i = 0; i < count; ++i ) {
+			for( int i = 0; i < iterations; ++i ) {
 				beforeEach( context, i );
 				appendChildrenToResponse( response, context );
 			}
@@ -183,11 +187,12 @@ public class NGRepetition extends NGDynamicGroup {
 		if( _listAssociation != null ) {
 			final List<?> list = list( context );
 
-			int i = 0;
-
 			if( list != null ) {
-				for( Object object : list ) {
-					beforeEach( context, i++ );
+				int iterations = list.size();
+
+				for( int i = 0; i < iterations; ++i ) {
+					beforeEach( context, i );
+					final Object object = list.get( i );
 					_itemAssociation.setValue( object, context.component() );
 					appendChildrenToResponse( response, context );
 				}
