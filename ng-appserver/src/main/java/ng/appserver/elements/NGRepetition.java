@@ -126,11 +126,13 @@ public class NGRepetition extends NGDynamicGroup {
 		NGActionResults actionResults = null;
 
 		if( _countAssociation != null ) {
+			// CHECKME: The value of the count variable might actually change during the operation if bound to, for example, the size of a list that's manipulated in an invoked action
+			// If we want to support this, we have to handle it (same way we do as if [list] is bound, rather than [count]
 			final int count = count( context );
 
 			for( int i = 0; i < count; ++i ) {
 				beforeEach( context, i );
-				invokeChildrenAction( request, context );
+				actionResults = invokeChildrenAction( request, context );
 			}
 		}
 
@@ -144,6 +146,8 @@ public class NGRepetition extends NGDynamicGroup {
 			// No. If the invoked action modifies the list, for example by removing an item
 			// "listSize" becomes obsolete and we might get an OutOfBoundsException.
 			// This is just a warning for future coders.
+			//
+			// CHECKME: Can't we actually skip the rest of the loop if invokeAction() on a child actually returns a value?
 
 			for( int i = 0; i < list.size() && actionResults == null; ++i ) {
 				beforeEach( context, i );
