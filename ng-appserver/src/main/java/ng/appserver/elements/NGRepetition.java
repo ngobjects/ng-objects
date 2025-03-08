@@ -150,7 +150,7 @@ public class NGRepetition extends NGDynamicGroup {
 		beforeAll( context );
 
 		if( _countAssociation != null ) {
-			final int count = Integer.parseInt( (String)_countAssociation.valueInComponent( context.component() ) );
+			final int count = count( context );
 
 			for( int i = 0; i < count; ++i ) {
 				beforeEach( context, i );
@@ -173,6 +173,21 @@ public class NGRepetition extends NGDynamicGroup {
 		}
 
 		afterAll( context );
+	}
+
+	/**
+	 * @return The value of the [count] binding.
+	 */
+	private int count( final NGContext context ) {
+		final Object count = _countAssociation.valueInComponent( context.component() );
+
+		// If the count gets passed in as a numeric constant from the template, it will be a String.
+		// We currently have to handle that for each case, although at some point we might want to be more clever about numeric bindings? not really seeing it happening though...
+		if( count instanceof String str ) {
+			Integer.parseInt( str );
+		}
+
+		return (Integer)count;
 	}
 
 	/**
