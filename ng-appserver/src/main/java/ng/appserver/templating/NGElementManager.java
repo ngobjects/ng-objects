@@ -86,6 +86,7 @@ public class NGElementManager {
 	 * FIXME: We're missing a cache for dynamic element name resolution // Hugi 2025-03-05
 	 */
 	public static NGDynamicElement dynamicElementWithName( final String namespace, final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		Objects.requireNonNull( namespace );
 		Objects.requireNonNull( elementIdentifier );
 		Objects.requireNonNull( associations );
 
