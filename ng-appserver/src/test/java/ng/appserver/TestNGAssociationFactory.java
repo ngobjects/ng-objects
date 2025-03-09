@@ -12,6 +12,8 @@ public class TestNGAssociationFactory {
 		assertFalse( NGAssociationFactory.isNumeric( "a" ) );
 		assertFalse( NGAssociationFactory.isNumeric( "" ) );
 		assertFalse( NGAssociationFactory.isNumeric( "." ) );
+		assertFalse( NGAssociationFactory.isNumeric( "+" ) );
+		assertFalse( NGAssociationFactory.isNumeric( "-" ) );
 		assertFalse( NGAssociationFactory.isNumeric( "1+2" ) );
 		assertFalse( NGAssociationFactory.isNumeric( "1-2" ) );
 		assertTrue( NGAssociationFactory.isNumeric( "-1.345" ) );
