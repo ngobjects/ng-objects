@@ -173,6 +173,11 @@ public class NGAssociationFactory {
 			dotAlreadySpotted = true;
 		}
 
+		// If we've already advanced and the string's length is only 1, the string is merely a period or a sign and not numeric.
+		if( i == 1 && length == 1 ) {
+			return false;
+		}
+
 		while( i < length ) {
 			character = string.charAt( i++ );
 
