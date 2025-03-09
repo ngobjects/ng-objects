@@ -6,14 +6,20 @@ import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 
 public class NGAssociationFactory {
 
-	public static final NGConstantValueAssociation TRUE = new NGConstantValueAssociation( Boolean.TRUE );
-	public static final NGConstantValueAssociation FALSE = new NGConstantValueAssociation( Boolean.FALSE );
+	private static final NGConstantValueAssociation TRUE = new NGConstantValueAssociation( Boolean.TRUE );
+	private static final NGConstantValueAssociation FALSE = new NGConstantValueAssociation( Boolean.FALSE );
 
-	public static NGAssociation constantValueAssociationWithValue( Object obj ) {
-		return new NGConstantValueAssociation( obj );
+	/**
+	 * @return An association that returns the given value
+	 */
+	public static NGAssociation constantValueAssociationWithValue( final Object value ) {
+		return new NGConstantValueAssociation( value );
 	}
 
-	public static NGAssociation associationWithKeyPath( String keyPath ) {
+	/**
+	 * @return An association for resolving the given keyPath
+	 */
+	public static NGAssociation associationWithKeyPath( final String keyPath ) {
 
 		if( keyPath.charAt( 0 ) == '^' ) {
 			return new NGBindingAssociation( keyPath.substring( 1 ) );
@@ -23,7 +29,7 @@ public class NGAssociationFactory {
 	}
 
 	/**
-	 * FIXME: This is kind of shitty // Hugi 2024-11-16
+	 * @return An association for the given binding value
 	 */
 	public static NGAssociation associationForBindingValue( final NGBindingValue bindingValue, final boolean isInline ) {
 
@@ -35,7 +41,9 @@ public class NGAssociationFactory {
 	}
 
 	/**
-	 * FIXME: This is kind of shitty // Hugi 2024-11-16
+	 * @return An association for the given inline binding value
+	 *
+	 * FIXME: We shouldn't be invoking "assicationForWodBindingValue" from here. Handing inline/wod assiciations values totally separately would be much cleaner // Hugi 2025-03-09
 	 */
 	private static NGAssociation associationForInlineBindingValue( String value ) {
 		Objects.requireNonNull( value );
@@ -71,28 +79,18 @@ public class NGAssociationFactory {
 	}
 
 	/**
-	 * FIXME: This is kind of shitty // Hugi 2024-11-16
+	 * @return An association for the given wod binding value
 	 */
 	private static NGAssociation associationForWodBindingValue( String associationValue, final boolean isQuoted ) {
 		Objects.requireNonNull( associationValue );
 
 		if( isQuoted ) {
-			// MS: WO 5.4 converts \n to an actual newline. I don't know if WO 5.3 does, too, but let's go ahead and be compatible with them as long as nobody is yelling.
-			// FIXME: Escaping needs to be thought through and standardized, for both wod and inline bindings // Hugi 2024-11-23
 			associationValue = applyEscapes( associationValue );
 			return constantValueAssociationWithValue( associationValue );
 		}
 
 		if( isNumeric( associationValue ) ) {
-			final Number number;
-
-			if( associationValue.contains( "." ) ) {
-				number = Double.valueOf( associationValue );
-			}
-			else {
-				number = Integer.parseInt( associationValue );
-			}
-
+			final Number number = numericValueFromString( associationValue );
 			return constantValueAssociationWithValue( number );
 		}
 
@@ -111,29 +109,21 @@ public class NGAssociationFactory {
 	 * @return The given string with escape sequences \r, \n and \t converted to what they represent
 	 */
 	private static String applyEscapes( String string ) {
-		int backslashIndex = string.indexOf( '\\' );
+		int firstBackslashIndex = string.indexOf( '\\' );
 
-		if( backslashIndex != -1 ) {
-			StringBuilder sb = new StringBuilder( string );
-			int length = sb.length();
+		if( firstBackslashIndex != -1 ) {
+			final StringBuilder sb = new StringBuilder( string );
 
-			for( int i = backslashIndex; i < length; i++ ) {
-				char ch = sb.charAt( i );
-				if( ch == '\\' && i < length ) {
-					char nextCh = sb.charAt( i + 1 );
-					if( nextCh == 'n' ) {
-						sb.replace( i, i + 2, "\n" );
+			for( int i = firstBackslashIndex; i < sb.length(); i++ ) {
+				if( sb.charAt( i ) == '\\' && i + 1 < sb.length() ) {
+					char nextChar = sb.charAt( i + 1 );
+
+					switch( nextChar ) {
+						case 'n' -> sb.replace( i, i + 2, "\n" );
+						case 'r' -> sb.replace( i, i + 2, "\r" );
+						case 't' -> sb.replace( i, i + 2, "\t" );
+						default -> sb.deleteCharAt( i ); // Remove the backslash if not followed by a known escape
 					}
-					else if( nextCh == 'r' ) {
-						sb.replace( i, i + 2, "\r" );
-					}
-					else if( nextCh == 't' ) {
-						sb.replace( i, i + 2, "\t" );
-					}
-					else {
-						sb.replace( i, i + 2, String.valueOf( nextCh ) );
-					}
-					length--;
 				}
 			}
 
@@ -144,35 +134,53 @@ public class NGAssociationFactory {
 	}
 
 	/**
+	 * @return The given string converted to a number. If the number contains a decimal separator (period), returns a Double, if no decimal separator, returns an Integer.
+	 */
+	static Number numericValueFromString( final String string ) {
+		final Number number;
+
+		if( string.contains( "." ) ) {
+			number = Double.valueOf( string );
+		}
+		else {
+			number = Integer.valueOf( string ); // CHEKME: Determine the number's size and return a Long if it doesn't fit in an int?
+		}
+
+		return number;
+	}
+
+	/**
 	 * @return true if this is a numeric string. Note that a signed number (i.e. prefixed with a plus or a minus) is considered numeric
 	 */
 	static boolean isNumeric( final String string ) {
+
 		int length = string.length();
 
 		if( length == 0 ) {
 			return false;
 		}
 
-		boolean dot = false;
+		boolean dotAlreadySpotted = false;
+
 		int i = 0;
-		char character = string.charAt( 0 );
+		char character = string.charAt( i );
 
 		if( (character == '-') || (character == '+') ) {
 			i = 1;
 		}
 		else if( character == '.' ) {
 			i = 1;
-			dot = true;
+			dotAlreadySpotted = true;
 		}
 
 		while( i < length ) {
 			character = string.charAt( i++ );
 
 			if( character == '.' ) {
-				if( dot ) {
+				if( dotAlreadySpotted ) {
 					return false;
 				}
-				dot = true;
+				dotAlreadySpotted = true;
 			}
 			else if( !(Character.isDigit( character )) ) {
 				return false;

@@ -97,7 +97,8 @@ public class NGTemplateParserProxy {
 
 		for( Entry<String, NGBindingValue> entry : bindings.entrySet() ) {
 			final String bindingName = entry.getKey();
-			final NGAssociation association = NGAssociationFactory.associationForBindingValue( entry.getValue(), isInline );
+			final NGBindingValue bindingValue = entry.getValue();
+			final NGAssociation association = NGAssociationFactory.associationForBindingValue( bindingValue, isInline );
 			associations.put( bindingName, association );
 		}
 
