@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import ng.appserver.templating.NGElementID;
+
 public class TestNGElementID {
 
 	@Test

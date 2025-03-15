@@ -3,6 +3,7 @@ package ng.appserver;
 import java.util.Map;
 
 import ng.appserver.elements.NGStructuralElement;
+import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
 
 /**

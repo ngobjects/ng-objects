@@ -9,10 +9,10 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
-import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
+import ng.appserver.templating.NGElement;
 import ng.appserver.templating.NGElementManager;
 import ng.appserver.templating.assications.NGAssociation;
 

@@ -2,7 +2,7 @@ package ng.appserver.elements;
 
 import java.util.Map;
 
-import ng.appserver.NGElement;
+import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
 
 /**

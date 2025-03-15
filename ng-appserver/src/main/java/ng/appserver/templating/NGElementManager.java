@@ -9,8 +9,6 @@ import ng.appserver.NGComponent;
 import ng.appserver.NGComponentDefinition;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
-import ng.appserver.NGElement;
-import ng.appserver.NGElementUtils;
 import ng.appserver.templating.assications.NGAssociation;
 
 /**

@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.templating;
 
 import java.util.ArrayList;
 import java.util.HashMap;

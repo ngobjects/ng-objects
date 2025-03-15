@@ -1,8 +1,8 @@
 package ng.appserver.elements;
 
 import ng.appserver.NGContext;
-import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
+import ng.appserver.templating.NGElement;
 
 /**
  * Represents a plain, non-dynamic HTML string

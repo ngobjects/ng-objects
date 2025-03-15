@@ -14,9 +14,9 @@ import java.util.Objects;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
-import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.templating.NGElement;
 
 public class NGElementNotFoundElement implements NGElement {
 

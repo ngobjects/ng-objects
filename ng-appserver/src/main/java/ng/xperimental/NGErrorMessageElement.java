@@ -1,8 +1,8 @@
 package ng.xperimental;
 
 import ng.appserver.NGContext;
-import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
+import ng.appserver.templating.NGElement;
 
 public class NGErrorMessageElement implements NGElement {
 

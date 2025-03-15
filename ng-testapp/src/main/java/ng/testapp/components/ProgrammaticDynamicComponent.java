@@ -7,13 +7,13 @@ import java.util.Map;
 
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
-import ng.appserver.NGElement;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHyperlink;
 import ng.appserver.elements.NGImage;
 import ng.appserver.elements.NGString;
 import ng.appserver.elements.NGStylesheet;
+import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
 import ng.appserver.templating.assications.NGConstantValueAssociation;
 import ng.appserver.templating.assications.NGKeyValueAssociation;

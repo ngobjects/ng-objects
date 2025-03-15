@@ -12,13 +12,13 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
-import ng.appserver.NGElement;
 import ng.appserver.NGResourceRequestHandler;
 import ng.appserver.NGResourceRequestHandlerDynamic;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.resources.NGDynamicResource;
 import ng.appserver.templating.NGBindingConfigurationException;
+import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
 
 /**
