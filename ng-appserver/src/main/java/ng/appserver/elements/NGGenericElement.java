@@ -3,12 +3,12 @@ package ng.appserver.elements;
 import java.util.HashMap;
 import java.util.Map;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
+import ng.appserver.templating.assications.NGAssociation;
 
 /**
  * CHECKME: NGGenericElement and NGGenericContainer share a lot of code, we could probably simplify this // Hugi 2022-10-13

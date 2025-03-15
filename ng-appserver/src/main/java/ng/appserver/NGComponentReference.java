@@ -3,6 +3,7 @@ package ng.appserver;
 import java.util.Map;
 
 import ng.appserver.elements.NGStructuralElement;
+import ng.appserver.templating.assications.NGAssociation;
 
 /**
  * NGComponentReference holds a reference to a component being rendered in the template tree.

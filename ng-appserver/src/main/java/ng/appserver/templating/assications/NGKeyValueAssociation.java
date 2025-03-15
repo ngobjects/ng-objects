@@ -1,7 +1,8 @@
-package ng.appserver;
+package ng.appserver.templating.assications;
 
 import java.util.Objects;
 
+import ng.appserver.NGComponent;
 import ng.kvc.NGKeyValueCodingAdditions;
 
 public class NGKeyValueAssociation extends NGAssociation {

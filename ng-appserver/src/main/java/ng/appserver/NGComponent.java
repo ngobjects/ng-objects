@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGStructuralElement;
+import ng.appserver.templating.assications.NGAssociation;
 import ng.kvc.NGKeyValueCoding;
 
 /**

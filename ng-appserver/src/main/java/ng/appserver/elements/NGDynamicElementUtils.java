@@ -1,7 +1,7 @@
 package ng.appserver.elements;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
+import ng.appserver.templating.assications.NGAssociation;
 
 /**
  * Utility methods for dynamc elements, mostly input elements.

@@ -2,6 +2,8 @@ package ng.appserver;
 
 import java.util.Map;
 
+import ng.appserver.templating.assications.NGAssociation;
+
 /**
  * Common superclass for all dynamic elements.
  *

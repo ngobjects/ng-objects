@@ -3,13 +3,13 @@ package ng.appserver.elements;
 import java.util.Map;
 import java.util.Optional;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResourceRequestHandler;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
+import ng.appserver.templating.assications.NGAssociation;
 
 public class NGResourceURL extends NGDynamicElement {
 

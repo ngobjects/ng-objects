@@ -7,9 +7,9 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
+import ng.appserver.templating.assications.NGAssociation;
 
 public class NGHTMLUtilities {
 

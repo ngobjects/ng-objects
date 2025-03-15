@@ -2,8 +2,8 @@ package ng.appserver.elements;
 
 import java.util.Map;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGElement;
+import ng.appserver.templating.assications.NGAssociation;
 
 /**
  * FIXME: The implementation for multiple selection should be moved here from NGPopUpButton // Hugi 2024-08-14

@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import ng.appserver.NGApplication;
-import ng.appserver.NGAssociation;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
@@ -20,6 +19,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.resources.NGDynamicResource;
 import ng.appserver.templating.NGBindingConfigurationException;
+import ng.appserver.templating.assications.NGAssociation;
 
 /**
  * An image element

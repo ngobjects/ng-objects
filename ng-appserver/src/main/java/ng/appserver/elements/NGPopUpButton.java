@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
@@ -15,6 +14,7 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.privates._NGUtilities;
+import ng.appserver.templating.assications.NGAssociation;
 
 /**
  * FIXME: Add support for <optgroup> // Hugi 2024-07-13

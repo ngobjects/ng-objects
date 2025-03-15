@@ -9,13 +9,13 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import ng.appserver.NGApplication;
-import ng.appserver.NGAssociation;
-import ng.appserver.NGAssociationFactory;
 import ng.appserver.NGElement;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;
 import ng.appserver.elements.NGHTMLCommentString;
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
+import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.assications.NGAssociationFactory;
 import ng.appserver.templating.parser.NGDeclarationFormatException;
 import ng.appserver.templating.parser.NGHTMLFormatException;
 import ng.appserver.templating.parser.NGTemplateParser;

@@ -1,9 +1,11 @@
-package ng.appserver;
+package ng.appserver.templating.assications;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+
+import ng.appserver.templating.assications.NGAssociationFactory;
 
 public class TestNGAssociationFactory {
 

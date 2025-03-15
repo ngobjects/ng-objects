@@ -4,13 +4,13 @@ import java.text.Format;
 import java.util.Map;
 import java.util.Objects;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGBindingConfigurationException;
+import ng.appserver.templating.assications.NGAssociation;
 
 public class NGString extends NGDynamicElement {
 

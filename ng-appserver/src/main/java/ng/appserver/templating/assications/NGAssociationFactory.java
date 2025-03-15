@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.templating.assications;
 
 import java.util.Objects;
 

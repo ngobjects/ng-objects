@@ -5,13 +5,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Objects;
 
-import ng.appserver.NGAssociation;
 import ng.appserver.NGComponent;
 import ng.appserver.NGComponentDefinition;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGElementUtils;
+import ng.appserver.templating.assications.NGAssociation;
 
 /**
  * Manages access to and location of dynamic elements and components registered with a project

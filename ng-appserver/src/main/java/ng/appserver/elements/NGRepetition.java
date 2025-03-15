@@ -7,12 +7,12 @@ import java.util.Map;
 import java.util.SequencedCollection;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGAssociation;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
+import ng.appserver.templating.assications.NGAssociation;
 
 /**
  * A wrapper element that allows you to:
