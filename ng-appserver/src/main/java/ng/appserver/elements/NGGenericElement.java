@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ng.appserver.NGAssociation;
-import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
+import ng.appserver.templating.NGBindingConfigurationException;
 
 /**
  * CHECKME: NGGenericElement and NGGenericContainer share a lot of code, we could probably simplify this // Hugi 2022-10-13

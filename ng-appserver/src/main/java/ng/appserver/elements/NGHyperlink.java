@@ -6,7 +6,6 @@ import java.util.Map;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
-import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
@@ -14,6 +13,7 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.privates._NGUtilities;
+import ng.appserver.templating.NGBindingConfigurationException;
 
 public class NGHyperlink extends NGDynamicGroup {
 

@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import ng.appserver.NGAssociation;
-import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGDynamicElement;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
+import ng.appserver.templating.NGBindingConfigurationException;
 
 public class NGString extends NGDynamicElement {
 

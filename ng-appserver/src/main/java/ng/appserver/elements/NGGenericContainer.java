@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ng.appserver.NGAssociation;
-import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGResponse;
 import ng.appserver.privates._NGUtilities;
+import ng.appserver.templating.NGBindingConfigurationException;
 
 public class NGGenericContainer extends NGDynamicGroup {
 

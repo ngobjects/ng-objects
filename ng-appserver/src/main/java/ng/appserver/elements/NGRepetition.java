@@ -8,11 +8,11 @@ import java.util.SequencedCollection;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
-import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.templating.NGBindingConfigurationException;
 
 /**
  * A wrapper element that allows you to:

@@ -11,7 +11,6 @@ import java.util.Objects;
 import ng.appserver.NGApplication;
 import ng.appserver.NGAssociation;
 import ng.appserver.NGAssociationFactory;
-import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGElement;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.elements.NGHTMLBareString;

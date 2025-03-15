@@ -4,12 +4,12 @@ import java.util.Map;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
-import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates._NGUtilities;
+import ng.appserver.templating.NGBindingConfigurationException;
 
 /**
  * Container element that will only render it's contained content if the binding [condition] evaluates to true.

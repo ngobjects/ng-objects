@@ -5,13 +5,13 @@ import java.util.Map;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGAssociation;
-import ng.appserver.NGBindingConfigurationException;
 import ng.appserver.NGContext;
 import ng.appserver.NGElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.privates.NGHTMLUtilities;
+import ng.appserver.templating.NGBindingConfigurationException;
 
 public class AjaxUpdateLink extends NGDynamicGroup {
 
