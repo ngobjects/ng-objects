@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.elements.NGComponentReference;
 import ng.appserver.resources.NGResource;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.NGElementNotFoundException;
