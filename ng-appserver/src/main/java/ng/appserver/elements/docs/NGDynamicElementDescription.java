@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGDynamicElement;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGDynamicGroup;
@@ -24,6 +23,7 @@ import ng.appserver.elements.NGSubmitButton;
 import ng.appserver.elements.NGSwitchComponent;
 import ng.appserver.elements.NGTextField;
 import ng.appserver.elements.docs.NGDynamicElementDescription.NGBindingDescription;
+import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElementUtils;
 
 /**

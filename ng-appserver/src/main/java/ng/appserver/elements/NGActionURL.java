@@ -4,10 +4,10 @@ import java.util.Map;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
-import ng.appserver.NGDynamicElement;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
+import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
 
