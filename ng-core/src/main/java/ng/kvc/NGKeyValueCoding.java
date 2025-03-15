@@ -22,7 +22,7 @@ import ng.NGRuntimeException;
  * FIXME: Decide if we're going to go all the way and do validation and error handling
  * FIXME: We should be using cached MethodHandles for improved performance
  *
- * Lookup order when searching for a readable binding:
+ * Lookup order when searching for readable binding for key 'smu':
  *
  * 1. Method "getSmu"
  * 2. Method "smu"
@@ -116,8 +116,6 @@ public interface NGKeyValueCoding {
 
 	/**
 	 * @return A KVC binding for the given class and key.
-	 *
-	 * FIXME: KVC in WebObjects follows a slightly different method ordering. Our ordering is different in the way that we try for the exact key name first, for both methods and fields. In other terms, our lookup order is the same. Consider if this is the correct approach // Hugi 2022-10-22
 	 */
 	private static KVCReadBinding readBindingForKey( final Object object, final String key ) {
 		Objects.requireNonNull( object );
@@ -125,17 +123,17 @@ public interface NGKeyValueCoding {
 
 		Method method;
 
-		// First we try for just the key
-		method = readMethod( object, key );
+		final String keyCapitalized = key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
+
+		// Ugly old bean-style getMethod()
+		method = readMethod( object, "get" + keyCapitalized );
 
 		if( method != null ) {
 			return new MethodReadBinding( method );
 		}
 
-		final String keyCapitalized = key.substring( 0, 1 ).toUpperCase() + key.substring( 1 );
-
-		// Now we try the old bean-style getMethod()
-		method = readMethod( object, "get" + keyCapitalized );
+		// A method with the exact key name
+		method = readMethod( object, key );
 
 		if( method != null ) {
 			return new MethodReadBinding( method );
@@ -477,19 +475,6 @@ public interface NGKeyValueCoding {
 			}
 		}
 	}
-
-	//		FIXME: Probably not needed?
-	//		public static class NumericMethodReadBinding extends MethodReadBinding {
-	//
-	//		public NumericMethodReadBinding( Method method ) {
-	//			super( method );
-	//		}
-	//
-	//		@Override
-	//		public Object valueInObject( Object object ) {
-	//			return super.valueInObject( object );
-	//		}
-	//	}
 
 	public static class NumericMethodWriteBinding extends MethodWriteBinding {
 
