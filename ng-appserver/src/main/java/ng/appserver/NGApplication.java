@@ -31,7 +31,6 @@ import ng.appserver.resources.StandardNamespace;
 import ng.appserver.resources.StandardResourceType;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGElementManager;
-import ng.appserver.templating.NGElementUtils;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 import ng.plugins.NGPlugin;
@@ -141,7 +140,7 @@ public class NGApplication {
 			_application = application;
 
 			// FIXME: Setting the application's mode. This should really be done in the constructor, since that's somewhere you'd _really_ like to be able to access the mode // Hugi 2025-03-16
-			_application._isDevelopmentMode = isDevelopmentMode;
+			application._isDevelopmentMode = isDevelopmentMode;
 
 			// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
 			application._properties = properties;
@@ -168,8 +167,8 @@ public class NGApplication {
 			// FIXME: Eventually the adaptor startup should probably be done by the user
 			application.createAdaptor().start( application );
 
-			// FIXME: For loading up our standard components. This should be moved to a separate module // Hugi 2025-03-16
-			NGElementUtils.init();
+			// FIXME: For loading up our standard components. This will eventually move to a separate module // Hugi 2025-03-16
+			application.elementManager().registerFrameworkElementClasses();
 
 			if( properties.propWOLifebeatEnabled() ) {
 				NGDefaultLifeBeatThread.start( application._properties );

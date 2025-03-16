@@ -10,6 +10,29 @@ import java.util.Objects;
 
 import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
+import ng.appserver.elements.NGActionURL;
+import ng.appserver.elements.NGBrowser;
+import ng.appserver.elements.NGComponentContent;
+import ng.appserver.elements.NGConditional;
+import ng.appserver.elements.NGForm;
+import ng.appserver.elements.NGGenericContainer;
+import ng.appserver.elements.NGGenericElement;
+import ng.appserver.elements.NGHyperlink;
+import ng.appserver.elements.NGImage;
+import ng.appserver.elements.NGJavaScript;
+import ng.appserver.elements.NGPopUpButton;
+import ng.appserver.elements.NGRepetition;
+import ng.appserver.elements.NGResourceURL;
+import ng.appserver.elements.NGString;
+import ng.appserver.elements.NGStylesheet;
+import ng.appserver.elements.NGSubmitButton;
+import ng.appserver.elements.NGSwitchComponent;
+import ng.appserver.elements.NGText;
+import ng.appserver.elements.NGTextField;
+import ng.appserver.elements.ajax.AjaxObserveField;
+import ng.appserver.elements.ajax.AjaxSubmitButton;
+import ng.appserver.elements.ajax.AjaxUpdateContainer;
+import ng.appserver.elements.ajax.AjaxUpdateLink;
 import ng.appserver.templating.assications.NGAssociation;
 
 /**
@@ -213,5 +236,35 @@ public class NGElementManager {
 	 */
 	public Map<String, String> elementTagNames() {
 		return _elementTagNames;
+	}
+
+	/**
+	 * FIXME: Delete this method once we've moved the initialization of the framework elements to it's own module // Hugi 2025-03-16
+	 */
+	@Deprecated
+	public void registerFrameworkElementClasses() {
+		registerElementClass( NGActionURL.class, "actionURL" );
+		registerElementClass( AjaxUpdateContainer.class, "auc" );
+		registerElementClass( AjaxUpdateLink.class, "aul" );
+		registerElementClass( AjaxObserveField.class, "aof" );
+		registerElementClass( AjaxSubmitButton.class, "asb" );
+		registerElementClass( NGBrowser.class, "browser" );
+		registerElementClass( NGComponentContent.class, "content" );
+		registerElementClass( NGConditional.class, "if" );
+		registerElementClass( NGForm.class, "form" );
+		registerElementClass( NGString.class, "str" );
+		registerElementClass( NGGenericContainer.class, "container" );
+		registerElementClass( NGGenericElement.class, "element" );
+		registerElementClass( NGImage.class, "img" );
+		registerElementClass( NGHyperlink.class, "link" );
+		registerElementClass( NGJavaScript.class, "script" );
+		registerElementClass( NGPopUpButton.class, "popUpButton" ); // CHECKME: We might want to consider just naming this "popup"
+		registerElementClass( NGRepetition.class, "repetition" );
+		registerElementClass( NGResourceURL.class, "resourceURL" );
+		registerElementClass( NGSubmitButton.class, "submit" );
+		registerElementClass( NGStylesheet.class, "stylesheet" );
+		registerElementClass( NGSwitchComponent.class, "switch" );
+		registerElementClass( NGText.class, "text" );
+		registerElementClass( NGTextField.class, "textfield" );
 	}
 }
