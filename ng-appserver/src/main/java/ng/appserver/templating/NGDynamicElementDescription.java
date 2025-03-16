@@ -3,9 +3,11 @@ package ng.appserver.templating;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import ng.appserver.NGActionResults;
+import ng.appserver.NGApplication;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGDynamicGroup;
@@ -22,7 +24,6 @@ import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGSubmitButton;
 import ng.appserver.elements.NGSwitchComponent;
 import ng.appserver.elements.NGTextField;
-import ng.appserver.templating.NGDynamicElementDescription.NGBindingDescription;
 
 /**
  * Provides a description of a dynamic element, particularly what it's bindings are and how they work.
@@ -67,7 +68,9 @@ public record NGDynamicElementDescription( Class<? extends NGDynamicElement> ele
 	public List<String> aliases() {
 		final List<String> result = new ArrayList<>();
 
-		for( Entry<String, String> entry : NGElementUtils.tagShortcutMap().entrySet() ) {
+		final Map<String, String> tagNameMap = NGApplication.application().elementManager().elementTagNames();
+
+		for( Entry<String, String> entry : tagNameMap.entrySet() ) {
 			if( entry.getValue().equals( elementClass().getSimpleName() ) ) {
 				result.add( entry.getKey() );
 			}

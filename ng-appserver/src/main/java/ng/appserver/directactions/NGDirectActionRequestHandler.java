@@ -5,11 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 import ng.appserver.NGActionResults;
+import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGParsedURI;
-import ng.appserver.templating.NGElementUtils;
 
 /**
  * CHECKME: We need to cache both action classes and methods // Hugi 2024-08-14
@@ -40,7 +40,7 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 
 		try {
 			// FIXME: We're using the Dynamic Element class locator to find the class by the simple name. This needs redesign // Hugi 2023-03-17
-			final Class<? extends NGDirectAction> directActionClass = NGElementUtils.classWithNameNullIfNotFound( directActionClassName.get() );
+			final Class<? extends NGDirectAction> directActionClass = NGApplication.application().elementManager().classWithNameNullIfNotFound( directActionClassName.get() );
 			final Constructor<? extends NGDirectAction> constructor = directActionClass.getConstructor( NGRequest.class );
 			final NGDirectAction instance = constructor.newInstance( request );
 			final NGActionResults actionResults = instance.performActionNamed( directActionMethodName.get() );

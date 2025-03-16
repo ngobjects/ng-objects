@@ -2,6 +2,9 @@ package ng.appserver.templating;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -81,16 +84,16 @@ public class NGElementManager {
 	 *
 	 * FIXME: We're missing a cache for dynamic element name resolution // Hugi 2025-03-05
 	 */
-	public static NGDynamicElement dynamicElementWithName( final String namespace, final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+	public NGDynamicElement dynamicElementWithName( final String namespace, final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		Objects.requireNonNull( namespace );
 		Objects.requireNonNull( elementIdentifier );
 		Objects.requireNonNull( associations );
 
 		// First we're going to check if we have a tag alias present.
-		final String elementName = NGElementUtils.tagShortcutMap().getOrDefault( elementIdentifier, elementIdentifier );
+		final String elementName = elementTagNames().getOrDefault( elementIdentifier, elementIdentifier );
 
 		// Check if we can find a class representing the element we're going to render.
-		final Class<? extends NGElement> elementClass = NGElementUtils.classWithNameNullIfNotFound( elementName );
+		final Class<? extends NGElement> elementClass = classWithNameNullIfNotFound( elementName );
 
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
@@ -129,5 +132,70 @@ public class NGElementManager {
 		catch( NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
 			throw new RuntimeException( e );
 		}
+	}
+
+	/**
+	 * Packages that we look for element classes in
+	 */
+	private final List<String> _elementPackages = new ArrayList<>();
+
+	/**
+	 * Explicitly registered element classes
+	 */
+	private final List<Class<?>> _elementClasses = new ArrayList<>();
+
+	/**
+	 * A mapping of shortcuts to element classes. For example, mapping of <wo:str /> to <wo:NGString />
+	 */
+	private final Map<String, String> _elementTagNames = new HashMap<>();
+
+	/**
+	 * Registers an element class for use in the application
+	 */
+	public void registerElementClass( final String namespace, final Class<? extends NGElement> elementClass, String... tagNames ) {
+		_elementClasses.add( elementClass );
+
+		for( String shortcut : tagNames ) {
+			_elementTagNames.put( shortcut, elementClass.getSimpleName() );
+		}
+	}
+
+	/**
+	 * Registers an element class for use in the application
+	 */
+	public void registerElementPackage( final String namespace, final String packageName ) {
+		_elementPackages.add( packageName );
+	}
+
+	/**
+	 * @return A class matching classNameToSearch for. Searches by fully qualified class name and simpleName.
+	 */
+	public Class classWithNameNullIfNotFound( String classNameToSearchFor ) {
+		Objects.requireNonNull( classNameToSearchFor );
+
+		for( Class<?> c : _elementClasses ) {
+			if( c.getSimpleName().equals( classNameToSearchFor ) ) {
+				return c;
+			}
+		}
+
+		for( String packageName : _elementPackages ) {
+			try {
+				final String className = packageName + "." + classNameToSearchFor;
+				return Class.forName( className );
+			}
+			catch( ClassNotFoundException e ) {}
+		}
+
+		throw new RuntimeException( "Class not found: " + classNameToSearchFor );
+	}
+
+	/**
+	 * Maps tag names to their dynamic element names
+	 *
+	 * FIXME: Definitely not the final home of this functionality // Hugi 2022-04-23
+	 */
+	public Map<String, String> elementTagNames() {
+		return _elementTagNames;
 	}
 }

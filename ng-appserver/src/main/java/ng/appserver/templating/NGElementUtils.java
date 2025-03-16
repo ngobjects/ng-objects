@@ -1,14 +1,6 @@
 package ng.appserver.templating;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import ng.appserver.NGApplication;
 import ng.appserver.elements.NGActionURL;
 import ng.appserver.elements.NGBrowser;
 import ng.appserver.elements.NGComponentContent;
@@ -40,23 +32,6 @@ import ng.appserver.elements.ajax.AjaxUpdateLink;
 @Deprecated
 public class NGElementUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger( NGElementUtils.class );
-
-	/**
-	 * Packages that we look for component classes inside
-	 */
-	private static final List<String> _packages = new ArrayList<>();
-
-	/**
-	 * Classes registered to be searchable by classWithName()
-	 */
-	private static final List<Class<?>> _classes = new ArrayList<>();
-
-	/**
-	 * A mapping of shortcuts to element classes. For example, mapping of <wo:str /> to <wo:NGString />
-	 */
-	private static final Map<String, String> _shortcutToClassMap = new HashMap<>();
-
 	static {
 		addClass( NGActionURL.class, "actionURL" );
 		addClass( AjaxUpdateContainer.class, "auc" );
@@ -86,50 +61,14 @@ public class NGElementUtils {
 	/**
 	 * Add a class to make searchable by it's simpleName, full class name or any of the given shortcuts (for tags)
 	 */
-	public static void addClass( final Class<?> clazz, final String... shortcuts ) {
-		_classes.add( clazz );
-
-		for( String shortcut : shortcuts ) {
-			_shortcutToClassMap.put( shortcut, clazz.getSimpleName() );
-		}
+	@Deprecated
+	public static void addClass( final Class<?> elementClass, final String... tagNames ) {
+		NGApplication.application().elementManager().registerElementClass( NGElementManager.GLOBAL_UNNAMESPACED_NAMESPACE, (Class<? extends NGElement>)elementClass, tagNames );
 	}
 
+	@Deprecated
 	public static void addPackage( final String packageName ) {
-		_packages.add( packageName );
-	}
-
-	/**
-	 * @return A class matching classNameToSearch for. Searches by fully qualified class name and simpleName.
-	 */
-	public static Class classWithNameNullIfNotFound( String classNameToSearchFor ) {
-		Objects.requireNonNull( classNameToSearchFor );
-
-		logger.debug( "Searching for class '{}'", classNameToSearchFor );
-
-		for( Class<?> c : _classes ) {
-			if( c.getSimpleName().equals( classNameToSearchFor ) ) {
-				return c;
-			}
-		}
-
-		for( String packageName : _packages ) {
-			try {
-				final String className = packageName + "." + classNameToSearchFor;
-				return Class.forName( className );
-			}
-			catch( ClassNotFoundException e ) {}
-		}
-
-		throw new RuntimeException( "Class not found: " + classNameToSearchFor );
-	}
-
-	/**
-	 * Maps tag names to their dynamic element names
-	 *
-	 * FIXME: Definitely not the final home of this functionality // Hugi 2022-04-23
-	 */
-	public static Map<String, String> tagShortcutMap() {
-		return _shortcutToClassMap;
+		NGApplication.application().elementManager().registerElementPackage( NGElementManager.GLOBAL_UNNAMESPACED_NAMESPACE, packageName );
 	}
 
 	/**
