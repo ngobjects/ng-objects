@@ -10,7 +10,6 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGDynamicElement;
-import ng.appserver.templating.NGDynamicElementUtils;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
 
@@ -48,7 +47,7 @@ public class NGText extends NGDynamicElement {
 
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
-		final String name = NGDynamicElementUtils.name( _nameAssociation, context );
+		final String name = name( _nameAssociation, context );
 		final List<String> valuesFromRequest = request.formValuesForKey( name );
 
 		if( !valuesFromRequest.isEmpty() ) {
@@ -75,7 +74,7 @@ public class NGText extends NGDynamicElement {
 		final Object value = _valueAssociation.valueInComponent( context.component() );
 
 		final Map<String, String> attributes = new HashMap<>();
-		attributes.put( "name", NGDynamicElementUtils.name( _nameAssociation, context ) );
+		attributes.put( "name", name( _nameAssociation, context ) );
 
 		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
@@ -87,5 +86,17 @@ public class NGText extends NGDynamicElement {
 		}
 
 		response.appendContentString( "</textarea>" );
+	}
+
+	/**
+	 * @return The name of the field (to use in the HTML code)
+	 */
+	private static String name( final NGAssociation association, final NGContext context ) {
+
+		if( association != null ) {
+			return (String)association.valueInComponent( context.component() );
+		}
+
+		return context.elementID().toString();
 	}
 }
