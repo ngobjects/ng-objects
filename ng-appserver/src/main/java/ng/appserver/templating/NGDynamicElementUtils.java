@@ -1,4 +1,4 @@
-package ng.appserver.elements;
+package ng.appserver.templating;
 
 import ng.appserver.NGContext;
 import ng.appserver.templating.assications.NGAssociation;

@@ -10,6 +10,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGDynamicElement;
+import ng.appserver.templating.NGDynamicElementUtils;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
 
