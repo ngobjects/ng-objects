@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.directactions.NGDirectActionRequestHandler;
-import ng.appserver.privates.NGClassManager;
 import ng.appserver.properties.NGProperties;
 import ng.appserver.properties.NGProperties.PropertiesSourceArguments;
 import ng.appserver.properties.NGProperties.PropertiesSourceResource;
@@ -63,11 +62,6 @@ public class NGApplication {
 	 * Session storage and coordination
 	 */
 	private NGSessionStore _sessionStore;
-
-	/**
-	 * Handles dynamic locating of classes used
-	 */
-	private NGClassManager _classManager;
 
 	/**
 	 * Handles templates and templating
@@ -191,7 +185,6 @@ public class NGApplication {
 	 * Construct an application with no properties (and no property loading)
 	 */
 	public NGApplication() {
-		_classManager = new NGClassManager();
 		_elementManager = new NGElementManager();
 		_resourceManager = new NGResourceManager();
 		_resourceManagerDynamic = new NGResourceManagerDynamic();
