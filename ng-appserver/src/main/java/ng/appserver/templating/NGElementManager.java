@@ -165,7 +165,7 @@ public class NGElementManager {
 	/**
 	 * Explicitly registered element classes
 	 */
-	private final List<Class<?>> _elementClasses = new ArrayList<>();
+	private final Map<String, Class<?>> _elementClasses = new HashMap<>();
 
 	/**
 	 * A mapping of shortcuts to element classes. For example, mapping of <wo:str /> to <wo:NGString />
@@ -192,10 +192,10 @@ public class NGElementManager {
 	 * Registers an element class for use in the application
 	 */
 	public void registerElementClass( final String namespace, final Class<?> elementClass, String... tagNames ) {
-		_elementClasses.add( elementClass );
+		_elementClasses.put( elementClass.getSimpleName(), elementClass );
 
-		for( String shortcut : tagNames ) {
-			_elementTagNames.put( shortcut, elementClass.getSimpleName() );
+		for( final String tagName : tagNames ) {
+			_elementTagNames.put( tagName, elementClass.getSimpleName() );
 		}
 	}
 
@@ -212,10 +212,10 @@ public class NGElementManager {
 	public Class classWithNameNullIfNotFound( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
-		for( Class<?> c : _elementClasses ) {
-			if( c.getSimpleName().equals( classNameToSearchFor ) ) {
-				return c;
-			}
+		final Class<?> elementClass = _elementClasses.get( classNameToSearchFor );
+
+		if( elementClass != null ) {
+			return elementClass;
 		}
 
 		for( String packageName : _elementPackages ) {
