@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.directactions.NGDirectActionRequestHandler;
+import ng.appserver.privates.NGAdminAction;
 import ng.appserver.properties.NGProperties;
 import ng.appserver.properties.NGProperties.PropertiesSourceArguments;
 import ng.appserver.properties.NGProperties.PropertiesSourceResource;
@@ -160,6 +161,9 @@ public class NGApplication {
 
 			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
 			NGElementUtils.addPackage( applicationClass.getPackageName() );
+
+			// FIXME: Registering for the instance stopper to work. We neeshould to convert NGAdminAction to routes // Hugi 2025-03-16
+			NGElementUtils.addClass( NGAdminAction.class );
 
 			// FIXME: Eventually the adaptor startup should probably be done by the user
 			application.createAdaptor().start( application );
