@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.directactions.NGDirectActionRequestHandler;
+import ng.appserver.privates.NGClassManager;
 import ng.appserver.properties.NGProperties;
 import ng.appserver.properties.NGProperties.PropertiesSourceArguments;
 import ng.appserver.properties.NGProperties.PropertiesSourceResource;
@@ -33,7 +34,6 @@ import ng.appserver.templating.NGElementManager;
 import ng.appserver.templating.NGElementUtils;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
-import ng.classes.NGClassManager;
 import ng.plugins.NGPlugin;
 import ng.xperimental.NGExceptionPage;
 import ng.xperimental.NGExceptionPageDevelopment;
