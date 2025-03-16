@@ -96,6 +96,13 @@ public class NGApplication {
 	private List<NGRouteTable> _routeTables = new ArrayList<>();
 
 	/**
+	 * Mode we're running in. Defaults to development mode unless explicitly set to a different mode through the application's startup parameters.
+	 *
+	 * FIXME: This requires modification to support more 'modes' (testing, staging etc.) // Hugi 2025-03-16
+	 */
+	private boolean _isDevelopmentMode = true;
+
+	/**
 	 * Run the application
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
@@ -114,10 +121,10 @@ public class NGApplication {
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		redirectOutputToFilesIfOutputPathSet( properties.propWOOutputPath() );
 
-		// FIXME: Since we've currently got no application instance, we can't yet query the application about mode (which is a property on the application instance). Lame and needs a fix // Hugi 2024-06-14
-		final boolean isDevelopmentModeBotchedVersion = !properties.propWOMonitorEnabled(); /* properties.isDevelopmentMode() */
+		// Determine the mode we're currently running in. CHECKME: This should be configured using an explicit parameter // Hugi 2025-03-16
+		final boolean isDevelopmentMode = !properties.propWOMonitorEnabled();
 
-		if( isDevelopmentModeBotchedVersion ) {
+		if( isDevelopmentMode ) {
 			logger.info( "========================================" );
 			logger.info( "===== Running in development mode! =====" );
 			logger.info( "========================================" );
@@ -137,6 +144,9 @@ public class NGApplication {
 
 			// FIXME: Assigning that unwanted global application...
 			_application = application;
+
+			// FIXME: Setting the application's mode. This should really be done in the constructor, since that's somewhere you'd _really_ like to be able to access the mode // Hugi 2025-03-16
+			_application._isDevelopmentMode = isDevelopmentMode;
 
 			// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
 			application._properties = properties;
@@ -323,19 +333,16 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: I'm not quite sure what to do about this variable. Belongs here or someplace else? // Hugi 2023-03-10
-	 * FIXME: In any case, this is going to have to be cached in some way, since it gets invoked _a lot_ // Hugi 2024-03-23
-	 * FIXME: We're currently deducting this from if the WOMonitorEnabled property is set. Mode should be explicit // Hugi 2025-02-09
+	 * @return true if we're in development mode
 	 */
 	public boolean isDevelopmentMode() {
-		return !properties().propWOMonitorEnabled();
+		return _isDevelopmentMode;
 	}
 
 	/**
 	 * @return true if we want to enable caches
 	 *
 	 * FIXME: This is not here to stay. It's just nice to have a single location to refer to for now, rather than always using isDevelopmentMode() // Hugi 2022-10-19
-	 * FIXME: While this is temporary, note that it's not best for performance to check properties every time this method is invoked. We should be caching the result. Just not doing it now, since we're still consolidating caching // Hugi 2023-03-10
 	 */
 	@Deprecated
 	public boolean cachingEnabled() {
