@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.templating;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
@@ -10,12 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.NGComponent;
 import ng.appserver.elements.NGComponentReference;
 import ng.appserver.resources.NGResource;
-import ng.appserver.templating.NGElement;
-import ng.appserver.templating.NGElementNotFoundException;
-import ng.appserver.templating.NGElementUtils;
-import ng.appserver.templating.NGTemplateParserProxy;
 import ng.appserver.templating.assications.NGAssociation;
 import ng.appserver.templating.parser.NGDeclarationFormatException;
 import ng.appserver.templating.parser.NGHTMLFormatException;
