@@ -104,20 +104,22 @@ public class NGElementUtils {
 	private static Class<?> classWithName( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
-		logger.debug( "Searching for class '{}'", classNameToSearchFor );
+		logger.info( "Searching for class '{}'", classNameToSearchFor );
 
 		for( Class<?> c : _classes ) {
-			if( c.getName().equals( classNameToSearchFor ) || c.getSimpleName().equals( classNameToSearchFor ) ) {
+			// FIXME: We've disabled this functionality, since we shouldn't be using this functionality to look for a class by a fully qualified name // Hugi 2025-03-16
+			if( /*c.getName().equals( classNameToSearchFor ) || */ c.getSimpleName().equals( classNameToSearchFor ) ) {
 				return c;
 			}
 		}
 
 		// If the class isn't found by simple name, let's try constructing from a fully qualified class name.
-		try {
-			logger.debug( "Did not find class '{}'. Trying Class.forName()", classNameToSearchFor );
-			return Class.forName( classNameToSearchFor );
-		}
-		catch( ClassNotFoundException e ) {}
+		// FIXME: We've disabled this functionality, since we shouldn't be using this functionality to look for a class by a fully qualified name // Hugi 2025-03-16
+		//		try {
+		//			logger.debug( "Did not find class '{}'. Trying Class.forName()", classNameToSearchFor );
+		//			return Class.forName( classNameToSearchFor );
+		//		}
+		//		catch( ClassNotFoundException e ) {}
 
 		for( String packageName : _packages ) {
 			try {
@@ -160,21 +162,21 @@ public class NGElementUtils {
 	 * - null
 	 */
 	public static boolean isTruthy( Object object ) {
-	
+
 		if( object == null ) {
 			return false;
 		}
-	
+
 		if( object instanceof Boolean b ) {
 			return b;
 		}
-	
+
 		if( object instanceof Number number ) {
 			// Note that Number.doubleValue() might return Double.NaN which is... Troublesome. Trying to decide if NaN is true or false is almost a philosophical question.
 			// I'm still leaning towards keeping our definition of "only exactly zero is false", meaning NaN is true, making this code currently fine.
 			return number.doubleValue() != 0;
 		}
-	
+
 		return true;
 	}
 }
