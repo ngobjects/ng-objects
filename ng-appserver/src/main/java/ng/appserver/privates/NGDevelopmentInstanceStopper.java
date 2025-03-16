@@ -32,6 +32,8 @@ public class NGDevelopmentInstanceStopper {
 		}
 
 		try {
+			alreadyTriedStopping = true;
+
 			String url = "http://localhost:" + portNumber;
 
 			if( isNGApplicationRunningInPort( portNumber ) ) {
@@ -44,7 +46,6 @@ public class NGDevelopmentInstanceStopper {
 
 			new URI( url ).toURL().openConnection().getContent();
 			Thread.sleep( 2000 );
-			alreadyTriedStopping = true;
 		}
 		catch( Throwable e ) {
 			logger.info( "Terminated existing development instance" );
