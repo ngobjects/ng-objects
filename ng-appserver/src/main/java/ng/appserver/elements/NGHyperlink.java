@@ -12,8 +12,8 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.assications.NGAssociationUtils;
 
 public class NGHyperlink extends NGDynamicGroup {
 
@@ -109,6 +109,6 @@ public class NGHyperlink extends NGDynamicGroup {
 	 * @return true if the "disabled" value evaluates to truth
 	 */
 	private boolean isDisabled( NGContext context ) {
-		return _disabledAssociation != null && NGElementUtils.isTruthy( _disabledAssociation.valueInComponent( context.component() ) );
+		return _disabledAssociation != null && NGAssociationUtils.isTruthy( _disabledAssociation.valueInComponent( context.component() ) );
 	}
 }

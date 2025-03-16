@@ -13,8 +13,8 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.assications.NGAssociationUtils;
 
 /**
  * FIXME: Add support for <optgroup> // Hugi 2024-07-13
@@ -198,7 +198,7 @@ public class NGPopUpButton extends NGDynamicElement {
 	 */
 	private boolean disabled( final NGContext context ) {
 		if( _disabledAss != null ) {
-			return NGElementUtils.isTruthy( _disabledAss.valueInComponent( context.component() ) );
+			return NGAssociationUtils.isTruthy( _disabledAss.valueInComponent( context.component() ) );
 		}
 
 		return false;
@@ -209,7 +209,7 @@ public class NGPopUpButton extends NGDynamicElement {
 	 */
 	private boolean multiple( final NGContext context ) {
 		if( _multipleAss != null ) {
-			return NGElementUtils.isTruthy( _multipleAss.valueInComponent( context.component() ) );
+			return NGAssociationUtils.isTruthy( _multipleAss.valueInComponent( context.component() ) );
 		}
 
 		return false;

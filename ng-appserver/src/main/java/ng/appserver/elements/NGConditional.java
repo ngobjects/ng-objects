@@ -8,8 +8,8 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.assications.NGAssociationUtils;
 
 /**
  * Container element that will only render it's contained content if the binding [condition] evaluates to true.
@@ -65,10 +65,10 @@ public class NGConditional extends NGDynamicGroup {
 	 */
 	private Boolean conditionInContext( NGContext context ) {
 		final Object condition = _conditionAssociation.valueInComponent( context.component() );
-		Boolean conditionAsBoolean = NGElementUtils.isTruthy( condition );
+		Boolean conditionAsBoolean = NGAssociationUtils.isTruthy( condition );
 
 		if( _negateAssociation != null ) {
-			final Boolean negate = NGElementUtils.isTruthy( _negateAssociation.valueInComponent( context.component() ) );
+			final Boolean negate = NGAssociationUtils.isTruthy( _negateAssociation.valueInComponent( context.component() ) );
 
 			if( negate ) {
 				conditionAsBoolean = !conditionAsBoolean;

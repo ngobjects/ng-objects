@@ -7,29 +7,29 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.templating.NGElementUtils;
+import ng.appserver.templating.assications.NGAssociationUtils;
 
 public class Test_NGUtilities {
 
 	@Test
 	public void isTruthy() {
-		assertFalse( NGElementUtils.isTruthy( null ) );
+		assertFalse( NGAssociationUtils.isTruthy( null ) );
 
-		assertFalse( NGElementUtils.isTruthy( false ) );
-		assertTrue( NGElementUtils.isTruthy( true ) );
+		assertFalse( NGAssociationUtils.isTruthy( false ) );
+		assertTrue( NGAssociationUtils.isTruthy( true ) );
 
-		assertFalse( NGElementUtils.isTruthy( Boolean.FALSE ) );
-		assertTrue( NGElementUtils.isTruthy( Boolean.TRUE ) );
+		assertFalse( NGAssociationUtils.isTruthy( Boolean.FALSE ) );
+		assertTrue( NGAssociationUtils.isTruthy( Boolean.TRUE ) );
 
-		assertFalse( NGElementUtils.isTruthy( 0 ) );
-		assertTrue( NGElementUtils.isTruthy( 0.1 ) );
-		assertTrue( NGElementUtils.isTruthy( 2 ) );
-		assertTrue( NGElementUtils.isTruthy( Double.NaN ) );
+		assertFalse( NGAssociationUtils.isTruthy( 0 ) );
+		assertTrue( NGAssociationUtils.isTruthy( 0.1 ) );
+		assertTrue( NGAssociationUtils.isTruthy( 2 ) );
+		assertTrue( NGAssociationUtils.isTruthy( Double.NaN ) );
 
-		assertFalse( NGElementUtils.isTruthy( BigDecimal.ZERO ) );
-		assertTrue( NGElementUtils.isTruthy( new BigDecimal( "2.5" ) ) );
+		assertFalse( NGAssociationUtils.isTruthy( BigDecimal.ZERO ) );
+		assertTrue( NGAssociationUtils.isTruthy( new BigDecimal( "2.5" ) ) );
 
-		assertTrue( NGElementUtils.isTruthy( "haha" ) );
-		assertTrue( NGElementUtils.isTruthy( new Object() ) );
+		assertTrue( NGAssociationUtils.isTruthy( "haha" ) );
+		assertTrue( NGAssociationUtils.isTruthy( new Object() ) );
 	}
 }

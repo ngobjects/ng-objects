@@ -13,8 +13,8 @@ import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGCheckedExceptionWrapper;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.assications.NGAssociationUtils;
 
 public class NGTextField extends NGDynamicElement {
 
@@ -145,7 +145,7 @@ public class NGTextField extends NGDynamicElement {
 	 */
 	private boolean disabled( final NGContext context ) {
 		if( _disabledAssociation != null ) {
-			return NGElementUtils.isTruthy( _disabledAssociation.valueInComponent( context.component() ) );
+			return NGAssociationUtils.isTruthy( _disabledAssociation.valueInComponent( context.component() ) );
 		}
 
 		return false;

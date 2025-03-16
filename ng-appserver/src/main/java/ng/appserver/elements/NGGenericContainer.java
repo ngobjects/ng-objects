@@ -7,8 +7,8 @@ import ng.appserver.NGContext;
 import ng.appserver.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.assications.NGAssociationUtils;
 
 public class NGGenericContainer extends NGDynamicGroup {
 
@@ -36,7 +36,7 @@ public class NGGenericContainer extends NGDynamicGroup {
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
 
-		if( _omitTagsAssociation != null && NGElementUtils.isTruthy( _omitTagsAssociation.valueInComponent( context.component() ) ) ) {
+		if( _omitTagsAssociation != null && NGAssociationUtils.isTruthy( _omitTagsAssociation.valueInComponent( context.component() ) ) ) {
 			appendChildrenToResponse( response, context );
 		}
 		else {
