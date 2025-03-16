@@ -31,7 +31,6 @@ import ng.appserver.resources.StandardNamespace;
 import ng.appserver.resources.StandardResourceType;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGElementManager;
-import ng.appserver.templating.NGElementUtils;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 import ng.plugins.NGPlugin;
@@ -160,10 +159,10 @@ public class NGApplication {
 			application.loadPlugins();
 
 			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
-			NGElementUtils.addPackage( applicationClass.getPackageName() );
+			application._elementManager.registerElementPackage( applicationClass.getPackageName() );
 
 			// FIXME: Registering for the instance stopper to work. Horrid stuff. We need to convert NGAdminAction to routes // Hugi 2025-03-16
-			NGElementUtils.addClass( NGAdminAction.class );
+			application._elementManager.registerElementClass( NGAdminAction.class );
 
 			// FIXME: Eventually the adaptor startup should probably be done by the user
 			application.createAdaptor().start( application );

@@ -63,11 +63,11 @@ public class NGElementUtils {
 	 */
 	@Deprecated
 	public static void addClass( final Class<?> elementClass, final String... tagNames ) {
-		NGApplication.application().elementManager().registerElementClass( NGElementManager.GLOBAL_UNNAMESPACED_NAMESPACE, (Class<? extends NGElement>)elementClass, tagNames );
+		NGApplication.application().elementManager().registerElementClass( (Class<? extends NGElement>)elementClass, tagNames );
 	}
 
 	@Deprecated
 	public static void addPackage( final String packageName ) {
-		NGApplication.application().elementManager().registerElementPackage( NGElementManager.GLOBAL_UNNAMESPACED_NAMESPACE, packageName );
+		NGApplication.application().elementManager().registerElementPackage( packageName );
 	}
 }

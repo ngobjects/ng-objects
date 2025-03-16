@@ -150,9 +150,25 @@ public class NGElementManager {
 	private final Map<String, String> _elementTagNames = new HashMap<>();
 
 	/**
+	 * FIXME: Allows us to invoke registerElementClass without a namespace. Temporary while we're working on namespaces
+	 */
+	@Deprecated
+	public void registerElementClass( final Class<?> elementClass, String... tagNames ) {
+		registerElementClass( GLOBAL_UNNAMESPACED_NAMESPACE, elementClass, tagNames );
+	}
+
+	/**
+	 * FIXME: Allows us to invoke registerElementPackage without a namespace. Temporary while we're working on namespaces
+	 */
+	@Deprecated
+	public void registerElementPackage( final String packageName ) {
+		registerElementPackage( GLOBAL_UNNAMESPACED_NAMESPACE, packageName );
+	}
+
+	/**
 	 * Registers an element class for use in the application
 	 */
-	public void registerElementClass( final String namespace, final Class<? extends NGElement> elementClass, String... tagNames ) {
+	public void registerElementClass( final String namespace, final Class<?> elementClass, String... tagNames ) {
 		_elementClasses.add( elementClass );
 
 		for( String shortcut : tagNames ) {
