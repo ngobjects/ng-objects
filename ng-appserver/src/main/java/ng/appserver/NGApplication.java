@@ -92,7 +92,7 @@ public class NGApplication {
 	/**
 	 * Mode we're running in. Defaults to development mode unless explicitly set to a different mode through the application's startup parameters.
 	 *
-	 * FIXME: This requires modification to support more 'modes' (testing, staging etc.) // Hugi 2025-03-16
+	 * FIXME: This requires modification to support more 'modes' (testing, staging etc.). We should also consider this a part of configuration, possibly more related to NGProperties than NGApplication. The application isn't what determines the mode; configuration determines that the application is in development mode, not vice-versa // Hugi 2025-03-16
 	 */
 	private boolean _isDevelopmentMode = true;
 
