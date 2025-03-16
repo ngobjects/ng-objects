@@ -32,7 +32,7 @@ import ng.appserver.elements.ajax.AjaxUpdateLink;
 @Deprecated
 public class NGElementUtils {
 
-	static {
+	public static void init() {
 		addClass( NGActionURL.class, "actionURL" );
 		addClass( AjaxUpdateContainer.class, "auc" );
 		addClass( AjaxUpdateLink.class, "aul" );
@@ -63,7 +63,7 @@ public class NGElementUtils {
 	 */
 	@Deprecated
 	public static void addClass( final Class<?> elementClass, final String... tagNames ) {
-		NGApplication.application().elementManager().registerElementClass( (Class<? extends NGElement>)elementClass, tagNames );
+		NGApplication.application().elementManager().registerElementClass( elementClass, tagNames );
 	}
 
 	@Deprecated

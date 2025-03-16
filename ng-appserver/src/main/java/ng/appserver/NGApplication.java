@@ -31,6 +31,7 @@ import ng.appserver.resources.StandardNamespace;
 import ng.appserver.resources.StandardResourceType;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGElementManager;
+import ng.appserver.templating.NGElementUtils;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
 import ng.plugins.NGPlugin;
@@ -166,6 +167,9 @@ public class NGApplication {
 
 			// FIXME: Eventually the adaptor startup should probably be done by the user
 			application.createAdaptor().start( application );
+
+			// FIXME: For loading up our standard components. This should be moved to a separate module // Hugi 2025-03-16
+			NGElementUtils.init();
 
 			if( properties.propWOLifebeatEnabled() ) {
 				NGDefaultLifeBeatThread.start( application._properties );
