@@ -1,4 +1,4 @@
-package ng.appserver.elements.docs;
+package ng.appserver.templating;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,9 +22,7 @@ import ng.appserver.elements.NGStylesheet;
 import ng.appserver.elements.NGSubmitButton;
 import ng.appserver.elements.NGSwitchComponent;
 import ng.appserver.elements.NGTextField;
-import ng.appserver.elements.docs.NGDynamicElementDescription.NGBindingDescription;
-import ng.appserver.templating.NGDynamicElement;
-import ng.appserver.templating.NGElementUtils;
+import ng.appserver.templating.NGDynamicElementDescription.NGBindingDescription;
 
 /**
  * Provides a description of a dynamic element, particularly what it's bindings are and how they work.
