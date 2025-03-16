@@ -6,9 +6,9 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import ng.appserver.elements.NGDynamicGroup;
-import ng.appserver.elements.NGStructuralElement;
 import ng.appserver.templating.NGComponentDefinition;
 import ng.appserver.templating.NGElement;
+import ng.appserver.templating.NGStructuralElement;
 import ng.appserver.templating.assications.NGAssociation;
 import ng.kvc.NGKeyValueCoding;
 
