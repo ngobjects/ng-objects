@@ -107,19 +107,10 @@ public class NGElementUtils {
 		logger.debug( "Searching for class '{}'", classNameToSearchFor );
 
 		for( Class<?> c : _classes ) {
-			// FIXME: We've disabled this functionality, since we shouldn't be using this functionality to look for a class by a fully qualified name // Hugi 2025-03-16
-			if( /*c.getName().equals( classNameToSearchFor ) || */ c.getSimpleName().equals( classNameToSearchFor ) ) {
+			if( c.getSimpleName().equals( classNameToSearchFor ) ) {
 				return c;
 			}
 		}
-
-		// If the class isn't found by simple name, let's try constructing from a fully qualified class name.
-		// FIXME: We've disabled this functionality, since we shouldn't be using this functionality to look for a class by a fully qualified name // Hugi 2025-03-16
-		//		try {
-		//			logger.debug( "Did not find class '{}'. Trying Class.forName()", classNameToSearchFor );
-		//			return Class.forName( classNameToSearchFor );
-		//		}
-		//		catch( ClassNotFoundException e ) {}
 
 		for( String packageName : _packages ) {
 			try {
