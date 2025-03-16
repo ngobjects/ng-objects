@@ -162,7 +162,7 @@ public class NGApplication {
 			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
 			NGElementUtils.addPackage( applicationClass.getPackageName() );
 
-			// FIXME: Registering for the instance stopper to work. We neeshould to convert NGAdminAction to routes // Hugi 2025-03-16
+			// FIXME: Registering for the instance stopper to work. Horrid stuff. We need to convert NGAdminAction to routes // Hugi 2025-03-16
 			NGElementUtils.addClass( NGAdminAction.class );
 
 			// FIXME: Eventually the adaptor startup should probably be done by the user
@@ -654,7 +654,7 @@ public class NGApplication {
 	/**
 	 * @return The named component, where [componentName] can be either the component's simple class name or full class name.
 	 *
-	 * CHECKME: The implementation of this method is in elementManager, we're currently nly keeping this method around for API compatibility with older projects.
+	 * CHECKME: The implementation of this method is in elementManager, we're currently only keeping this method around for API compatibility with older projects.
 	 */
 	public NGComponent pageWithName( final String componentName, final NGContext context ) {
 		return elementManager().pageWithName( componentName, context );
@@ -663,7 +663,7 @@ public class NGApplication {
 	/**
 	 * @return A new instance of [componentClass] in the given [context]
 	 *
-	 * CHECKME: The implementation of this method is in elementManager, we're currently nly keeping this method around for API compatibility with older projects.
+	 * CHECKME: The implementation of this method is in elementManager, we're currently only keeping this method around for API compatibility with older projects.
 	 */
 	public <E extends NGComponent> E pageWithName( final Class<E> componentClass, final NGContext context ) {
 		return elementManager().pageWithName( componentClass, context );
