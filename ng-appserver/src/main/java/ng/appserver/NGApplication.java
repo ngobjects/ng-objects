@@ -568,8 +568,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: Like the other "create..." methods, this one is inspired by WO. It's really a relic from the time when WOApplication served as The Central Thing Of All Things That Are.
-	 * Good idea at the time, it made Wonder possible… But it's really just an older type of a factory or, well, dependency injection. Not sure we want to keep this way of constructing objects. // Hugi 2021-12-29
+	 * CHECKME: All the "create..." methods here are really turning this into a factory. We might have to reconsider this design, not least if we decide to migrate to DI at some point // Hugi 2021-12-29
 	 */
 	public NGContext createContextForRequest( NGRequest request ) {
 		return new NGContext( request );
