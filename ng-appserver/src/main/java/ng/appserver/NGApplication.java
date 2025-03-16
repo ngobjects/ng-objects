@@ -158,8 +158,9 @@ public class NGApplication {
 			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath
 			application.loadPlugins();
 
-			// The application class' package gets added by default // FIXME: Don't like this Hugi 2022-10-10
+			// The application class' package and it's ".components" subpackage get added by default when searching for element and component classes // FIXME: Kind of don't like this Hugi 2022-10-10
 			application._elementManager.registerElementPackage( applicationClass.getPackageName() );
+			application._elementManager.registerElementPackage( applicationClass.getPackageName() + ".components" );
 
 			// FIXME: Registering for the instance stopper to work. Horrid stuff. We need to convert NGAdminAction to routes // Hugi 2025-03-16
 			application._elementManager.registerElementClass( NGAdminAction.class );
