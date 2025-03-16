@@ -11,9 +11,9 @@ import ng.appserver.NGContext;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
-import ng.appserver.privates._NGUtilities;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
+import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.assications.NGAssociation;
 
 /**
@@ -198,7 +198,7 @@ public class NGPopUpButton extends NGDynamicElement {
 	 */
 	private boolean disabled( final NGContext context ) {
 		if( _disabledAss != null ) {
-			return _NGUtilities.isTruthy( _disabledAss.valueInComponent( context.component() ) );
+			return NGElementUtils.isTruthy( _disabledAss.valueInComponent( context.component() ) );
 		}
 
 		return false;
@@ -209,7 +209,7 @@ public class NGPopUpButton extends NGDynamicElement {
 	 */
 	private boolean multiple( final NGContext context ) {
 		if( _multipleAss != null ) {
-			return _NGUtilities.isTruthy( _multipleAss.valueInComponent( context.component() ) );
+			return NGElementUtils.isTruthy( _multipleAss.valueInComponent( context.component() ) );
 		}
 
 		return false;

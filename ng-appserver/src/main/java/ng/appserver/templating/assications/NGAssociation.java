@@ -1,7 +1,7 @@
 package ng.appserver.templating.assications;
 
 import ng.appserver.NGComponent;
-import ng.appserver.privates._NGUtilities;
+import ng.appserver.templating.NGElementUtils;
 
 public abstract class NGAssociation {
 
@@ -22,6 +22,6 @@ public abstract class NGAssociation {
 	 */
 	public boolean booleanValueInComponent( NGComponent component ) {
 		final Object value = valueInComponent( component );
-		return _NGUtilities.isTruthy( value );
+		return NGElementUtils.isTruthy( value );
 	}
 }

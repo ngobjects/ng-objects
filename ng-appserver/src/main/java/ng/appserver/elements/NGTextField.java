@@ -10,10 +10,10 @@ import ng.appserver.NGContext;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
-import ng.appserver.privates._NGUtilities;
 import ng.appserver.templating.NGCheckedExceptionWrapper;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
+import ng.appserver.templating.NGElementUtils;
 import ng.appserver.templating.assications.NGAssociation;
 
 public class NGTextField extends NGDynamicElement {
@@ -145,7 +145,7 @@ public class NGTextField extends NGDynamicElement {
 	 */
 	private boolean disabled( final NGContext context ) {
 		if( _disabledAssociation != null ) {
-			return _NGUtilities.isTruthy( _disabledAssociation.valueInComponent( context.component() ) );
+			return NGElementUtils.isTruthy( _disabledAssociation.valueInComponent( context.component() ) );
 		}
 
 		return false;
