@@ -101,10 +101,10 @@ public class NGElementUtils {
 	/**
 	 * @return A class matching classNameToSearch for. Searches by fully qualified class name and simpleName.
 	 */
-	private static Class<?> classWithName( String classNameToSearchFor ) {
+	public static Class classWithNameNullIfNotFound( String classNameToSearchFor ) {
 		Objects.requireNonNull( classNameToSearchFor );
 
-		logger.info( "Searching for class '{}'", classNameToSearchFor );
+		logger.debug( "Searching for class '{}'", classNameToSearchFor );
 
 		for( Class<?> c : _classes ) {
 			// FIXME: We've disabled this functionality, since we shouldn't be using this functionality to look for a class by a fully qualified name // Hugi 2025-03-16
@@ -130,18 +130,6 @@ public class NGElementUtils {
 		}
 
 		throw new RuntimeException( "Class not found: " + classNameToSearchFor );
-	}
-
-	/**
-	 * FIXME: This is horrible
-	 */
-	public static Class classWithNameNullIfNotFound( String classNameToSearchFor ) {
-		try {
-			return classWithName( classNameToSearchFor );
-		}
-		catch( RuntimeException e ) {
-			return null;
-		}
 	}
 
 	/**
