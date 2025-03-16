@@ -140,9 +140,8 @@ public class NGPageCache {
 
 		final NGPageCacheEntry cacheEntry = _allEntries.get( contextID );
 
-		// FIXME: This might actually be the right place to throw a page restoration error // Hugi 2024-09-30
 		if( cacheEntry == null ) {
-			throw new IllegalStateException( "No cached page was found for contextID '%s'".formatted( contextID ) );
+			throw new NGPageRestorationException( "No page found in the page cache for contextID '%s'. The page has probably been pushed out of the session's page cache".formatted( contextID ) );
 		}
 
 		return cacheEntry.page();
