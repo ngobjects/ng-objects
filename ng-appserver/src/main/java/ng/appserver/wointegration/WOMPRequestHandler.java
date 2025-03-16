@@ -70,7 +70,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 		// We perform the shutdown in a thread that executes after we've returned the response to the client.
 		// This ensures the application has the opportunity to submit a response to wotaskd before shutting down.
 		// Not that pretty but does the job.
-		// FIMXE: The entire shutdown process should probably be in a shutdown hook // Hugi 2024-08-10
+		// FIXME: The entire shutdown process should probably be in a shutdown hook // Hugi 2024-08-10
 		new Thread( () -> {
 			try {
 				Thread.sleep( 1000 );
