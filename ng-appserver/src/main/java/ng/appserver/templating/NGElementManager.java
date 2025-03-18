@@ -225,7 +225,8 @@ public class NGElementManager {
 			catch( ClassNotFoundException e ) {}
 		}
 
-		throw new RuntimeException( "Class not found: " + classNameToSearchFor );
+		return null;
+		// throw new RuntimeException( "Class not found: " + classNameToSearchFor );
 	}
 
 	/**
