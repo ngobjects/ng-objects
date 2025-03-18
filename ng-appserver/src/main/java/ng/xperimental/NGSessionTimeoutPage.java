@@ -1,8 +1,8 @@
 package ng.xperimental;
 
-import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.NGSessionRestorationException;
+import ng.appserver.templating.NGComponent;
 
 public class NGSessionTimeoutPage extends NGComponent {
 

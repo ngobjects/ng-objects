@@ -1,6 +1,6 @@
 package ng.appserver.templating.assications;
 
-import ng.appserver.NGComponent;
+import ng.appserver.templating.NGComponent;
 
 public abstract class NGAssociation {
 

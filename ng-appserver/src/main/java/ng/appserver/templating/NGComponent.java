@@ -1,14 +1,17 @@
-package ng.appserver;
+package ng.appserver.templating;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import ng.appserver.NGActionResults;
+import ng.appserver.NGApplication;
+import ng.appserver.NGContext;
+import ng.appserver.NGRequest;
+import ng.appserver.NGResponse;
+import ng.appserver.NGSession;
 import ng.appserver.elements.NGDynamicGroup;
-import ng.appserver.templating.NGComponentDefinition;
-import ng.appserver.templating.NGElement;
-import ng.appserver.templating.NGStructuralElement;
 import ng.appserver.templating.assications.NGAssociation;
 import ng.kvc.NGKeyValueCoding;
 

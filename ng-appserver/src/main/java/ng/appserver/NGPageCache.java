@@ -7,6 +7,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.templating.NGComponent;
+
 /**
  * The page cache is used by stateful actions to store instances of previously rendered components
  *

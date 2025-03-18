@@ -2,8 +2,8 @@ package ng.testapp.components;
 
 import java.util.List;
 
-import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
+import ng.appserver.templating.NGComponent;
 
 public class RepetitionComponent extends NGComponent {
 

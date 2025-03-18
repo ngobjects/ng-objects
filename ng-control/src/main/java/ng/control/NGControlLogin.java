@@ -3,8 +3,8 @@ package ng.control;
 import java.util.Objects;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
+import ng.appserver.templating.NGComponent;
 
 public class NGControlLogin extends NGComponent {
 

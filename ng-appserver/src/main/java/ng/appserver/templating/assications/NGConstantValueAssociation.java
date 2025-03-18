@@ -2,7 +2,7 @@ package ng.appserver.templating.assications;
 
 import java.util.Objects;
 
-import ng.appserver.NGComponent;
+import ng.appserver.templating.NGComponent;
 
 public class NGConstantValueAssociation extends NGAssociation {
 

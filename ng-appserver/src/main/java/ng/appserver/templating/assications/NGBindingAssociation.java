@@ -1,6 +1,6 @@
 package ng.appserver.templating.assications;
 
-import ng.appserver.NGComponent;
+import ng.appserver.templating.NGComponent;
 
 /**
  * A binding association allows a component to access it's bindings direcly and push/pull values, by prefixing the binding name with "^".

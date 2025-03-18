@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import ng.appserver.NGComponent;
 import ng.appserver.NGContext;
 import ng.appserver.elements.NGActionURL;
 import ng.appserver.elements.NGBrowser;

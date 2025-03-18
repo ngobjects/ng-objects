@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementID;
 
 public class NGContext {

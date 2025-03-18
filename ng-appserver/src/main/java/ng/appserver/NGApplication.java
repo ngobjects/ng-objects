@@ -30,6 +30,7 @@ import ng.appserver.resources.NGResourceManagerDynamic;
 import ng.appserver.resources.StandardNamespace;
 import ng.appserver.resources.StandardResourceType;
 import ng.appserver.routing.NGRouteTable;
+import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementManager;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
