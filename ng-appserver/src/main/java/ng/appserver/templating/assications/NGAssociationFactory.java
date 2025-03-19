@@ -10,25 +10,6 @@ public class NGAssociationFactory {
 	private static final NGConstantValueAssociation FALSE = new NGConstantValueAssociation( Boolean.FALSE );
 
 	/**
-	 * @return An association that returns the given value
-	 */
-	public static NGAssociation constantValueAssociationWithValue( final Object value ) {
-		return new NGConstantValueAssociation( value );
-	}
-
-	/**
-	 * @return An association for resolving the given keyPath
-	 */
-	public static NGAssociation associationWithKeyPath( final String keyPath ) {
-
-		if( keyPath.charAt( 0 ) == '^' ) {
-			return new NGBindingAssociation( keyPath.substring( 1 ) );
-		}
-
-		return new NGKeyValueAssociation( keyPath );
-	}
-
-	/**
 	 * @return An association for the given binding value
 	 */
 	public static NGAssociation associationForBindingValue( final NGBindingValue bindingValue, final boolean isInline ) {
@@ -90,7 +71,7 @@ public class NGAssociationFactory {
 	 */
 	private static NGAssociation associationForConstantStringValue( String associationValue ) {
 		associationValue = applyEscapes( associationValue );
-		return constantValueAssociationWithValue( associationValue );
+		return associationForConstantValue( associationValue );
 	}
 
 	/**
@@ -100,7 +81,7 @@ public class NGAssociationFactory {
 
 		if( isNumeric( associationValue ) ) {
 			final Number number = numericValueFromString( associationValue );
-			return constantValueAssociationWithValue( number );
+			return associationForConstantValue( number );
 		}
 
 		// FIXME: I really think only $true and $false should be interpreted as boolean values in inline bindings // Hugi 2025-03-19
@@ -112,7 +93,26 @@ public class NGAssociationFactory {
 			return FALSE;
 		}
 
-		return associationWithKeyPath( associationValue );
+		return associationForKeyPath( associationValue );
+	}
+
+	/**
+	 * @return An association that returns the given value
+	 */
+	private static NGAssociation associationForConstantValue( final Object value ) {
+		return new NGConstantValueAssociation( value );
+	}
+
+	/**
+	 * @return An association for resolving the given keyPath
+	 */
+	private static NGAssociation associationForKeyPath( final String keyPath ) {
+
+		if( keyPath.charAt( 0 ) == '^' ) {
+			return new NGBindingAssociation( keyPath.substring( 1 ) );
+		}
+
+		return new NGKeyValueAssociation( keyPath );
 	}
 
 	/**
