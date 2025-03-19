@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.templating;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
