@@ -62,8 +62,6 @@ public class NGAssociationFactory {
 				if( value.endsWith( "VALID" ) ) {
 					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
 				}
-
-				return associationForDynamicValue( value );
 			}
 			else {
 				value = value.replace( "\\$", "$" ); // Unescape escaped dollar signs
