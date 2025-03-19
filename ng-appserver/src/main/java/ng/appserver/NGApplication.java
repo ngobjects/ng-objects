@@ -391,7 +391,6 @@ public class NGApplication {
 				throw new NullPointerException( String.format( "'%s' returned a null response. That's just rude.", requestHandler.getClass().getName() ) );
 			}
 
-			// FIXME: This is not the right place for session ID management // Hugi 2024-10-12
 			addSessionCookieToResponse( request, response );
 			touchSessionIfPresentAndNotTerminating( request );
 
@@ -411,8 +410,6 @@ public class NGApplication {
 
 	/**
 	 * Add the sessionID cookie (if present in request) to the given response or, if the session is marked for termination, delete the session cookie
-	 *
-	 * FIXME: This might be a prime location to perform a session cookie deletion if (a) no sessionID is present or (b) no session is available for the given sessionID // Hugi 2024-07-10
 	 */
 	private void addSessionCookieToResponse( final NGRequest request, final NGResponse response ) {
 		final String sessionID = request._sessionID();
