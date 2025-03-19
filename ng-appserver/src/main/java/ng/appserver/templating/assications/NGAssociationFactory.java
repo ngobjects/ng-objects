@@ -42,8 +42,6 @@ public class NGAssociationFactory {
 
 	/**
 	 * @return An association for the given inline binding value
-	 *
-	 * FIXME: We shouldn't be invoking "assicationForWodBindingValue" from here. Handing inline/wod assiciations values totally separately would be much cleaner // Hugi 2025-03-09
 	 */
 	private static NGAssociation associationForInlineBindingValue( String value ) {
 		Objects.requireNonNull( value );
@@ -65,35 +63,50 @@ public class NGAssociationFactory {
 					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
 				}
 
-				return associationForWodBindingValue( value, false );
+				return associationForDynamicValue( value );
 			}
 			else {
 				// FIXME: Figure out what the absolute ding-diddly we're doing here // Hugi 2024-11-23
 				value = value.replaceAll( "\\\\\\$", "\\$" );
 				value = value.replaceAll( "\\\"", "\"" );
-				return associationForWodBindingValue( value, true );
+				return associationForConstantStringValue( value );
 			}
 		}
 
-		return associationForWodBindingValue( value, false );
+		return associationForDynamicValue( value );
 	}
 
 	/**
 	 * @return An association for the given wod binding value
 	 */
-	private static NGAssociation associationForWodBindingValue( String associationValue, final boolean isQuoted ) {
-		Objects.requireNonNull( associationValue );
+	private static NGAssociation associationForWodBindingValue( final String associationValue, final boolean isQuoted ) {
 
 		if( isQuoted ) {
-			associationValue = applyEscapes( associationValue );
-			return constantValueAssociationWithValue( associationValue );
+			return associationForConstantStringValue( associationValue );
 		}
+
+		return associationForDynamicValue( associationValue );
+	}
+
+	/**
+	 * @return An association for the given constant string value, by applying the necessary escapes
+	 */
+	private static NGAssociation associationForConstantStringValue( String associationValue ) {
+		associationValue = applyEscapes( associationValue );
+		return constantValueAssociationWithValue( associationValue );
+	}
+
+	/**
+	 * @return And association for the given dynamic value (a "dynamic value" being what we're calling any value following a $ in an inline binding or an unquoted value in a wod binding)
+	 */
+	private static NGAssociation associationForDynamicValue( final String associationValue ) {
 
 		if( isNumeric( associationValue ) ) {
 			final Number number = numericValueFromString( associationValue );
 			return constantValueAssociationWithValue( number );
 		}
 
+		// FIXME: I really think only $true and $false should be interpreted as boolean values in inline bindings // Hugi 2025-03-19
 		if( "true".equalsIgnoreCase( associationValue ) || "yes".equalsIgnoreCase( associationValue ) ) {
 			return TRUE;
 		}
