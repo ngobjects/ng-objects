@@ -108,7 +108,7 @@ public class NGAssociationFactory {
 	/**
 	 * @return The given string with escape sequences \r, \n and \t converted to what they represent
 	 */
-	private static String applyEscapes( String string ) {
+	static String applyEscapes( String string ) {
 		int firstBackslashIndex = string.indexOf( '\\' );
 
 		if( firstBackslashIndex != -1 ) {
