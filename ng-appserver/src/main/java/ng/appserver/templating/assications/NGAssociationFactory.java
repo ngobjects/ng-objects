@@ -121,29 +121,30 @@ public class NGAssociationFactory {
 	 * @return The given string with escape sequences \r, \n and \t converted to what they represent
 	 */
 	static String applyEscapes( String string ) {
+
 		int firstBackslashIndex = string.indexOf( '\\' );
 
-		if( firstBackslashIndex != -1 ) {
-			final StringBuilder sb = new StringBuilder( string );
-
-			for( int i = firstBackslashIndex; i < sb.length(); i++ ) {
-				if( sb.charAt( i ) == '\\' && i + 1 < sb.length() ) {
-					char nextChar = sb.charAt( i + 1 );
-
-					switch( nextChar ) {
-						case 'n' -> sb.replace( i, i + 2, "\n" );
-						case 'r' -> sb.replace( i, i + 2, "\r" );
-						case 't' -> sb.replace( i, i + 2, "\t" );
-						case '\\' -> sb.replace( i, i + 2, "\\" );
-						default -> throw new IllegalArgumentException( "Unknown escape character: '%s' (%s) ".formatted( nextChar, Character.getName( nextChar ) ) );
-					}
-				}
-			}
-
-			string = sb.toString();
+		if( firstBackslashIndex == -1 ) {
+			return string;
 		}
 
-		return string;
+		final StringBuilder sb = new StringBuilder( string );
+
+		for( int i = firstBackslashIndex; i < sb.length(); i++ ) {
+			if( sb.charAt( i ) == '\\' && i + 1 < sb.length() ) {
+				char nextChar = sb.charAt( i + 1 );
+
+				switch( nextChar ) {
+					case 'n' -> sb.replace( i, i + 2, "\n" );
+					case 'r' -> sb.replace( i, i + 2, "\r" );
+					case 't' -> sb.replace( i, i + 2, "\t" );
+					case '\\' -> sb.replace( i, i + 2, "\\" );
+					default -> throw new IllegalArgumentException( "Unknown escape character: '%s' (%s) ".formatted( nextChar, Character.getName( nextChar ) ) );
+				}
+			}
+		}
+
+		return sb.toString();
 	}
 
 	/**
