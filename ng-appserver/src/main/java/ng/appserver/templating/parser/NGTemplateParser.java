@@ -30,7 +30,7 @@ public class NGTemplateParser {
 	/**
 	 * Keeps track of the number of parsed inline tags. Used to generate a declaration name for the tag
 	 *
-	 * FIXME: We don't really need to keep track of the number of parsed inline tags anymore // Hugi 2024-11-16
+	 * CHECKME: We don't really need to keep track of the number of parsed inline tags anymore // Hugi 2024-11-16
 	 */
 	@Deprecated
 	private int _inlineTagCount;
