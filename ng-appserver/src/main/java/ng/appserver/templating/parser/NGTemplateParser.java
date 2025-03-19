@@ -236,16 +236,16 @@ public class NGTemplateParser {
 
 		String elementType = elementTypeBuffer.toString();
 
-		if( elementType.startsWith( NGHTMLParser.WO_REPLACEMENT_MARKER ) ) {
-			// Acts only on tags, where we have "dynamified" inside the tag parser
-			// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
-			// as the elementName binding
+		// CHECKME: We're probably not going to support this feature. Old parser code kept around for reference // Hugi 2025-03-19
+		// if( elementType.startsWith( NGHTMLParser.WO_REPLACEMENT_MARKER ) ) {
+		// Acts only on tags, where we have "dynamified" inside the tag parser
+		// this takes the value found after the "wo:" part in the element and generates a WOGenericContainer with that value
+		// as the elementName binding
 
-			// FIXME: Fix up in "New parser world"
-			//			elementType = elementType.replaceAll( NGHTMLParser.WO_REPLACEMENT_MARKER, "" );
-			//			bindings.put( "elementName", new NGBindingValue( true, elementType ) );
-			//			elementType = NGGenericContainer.class.getSimpleName();
-		}
+		// elementType = elementType.replaceAll( NGHTMLParser.WO_REPLACEMENT_MARKER, "" );
+		// bindings.put( "elementName", new NGBindingValue( true, elementType ) );
+		// elementType = NGGenericContainer.class.getSimpleName();
+		// }
 
 		final String declarationName = "%s_%s".formatted( elementType, nextInlineBindingNumber );
 		return new NGDeclaration( true, declarationName, elementType, bindings );
