@@ -136,17 +136,14 @@ public class NGAssociationFactory {
 	/**
 	 * @return The given string converted to a number. If the number contains a decimal separator (period), returns a Double, if no decimal separator, returns an Integer.
 	 */
-	static Number numericValueFromString( final String string ) {
-		final Number number;
+	static Number numericValueFromString( final String numericString ) {
 
-		if( string.contains( "." ) ) {
-			number = Double.valueOf( string );
-		}
-		else {
-			number = Integer.valueOf( string ); // CHEKME: Determine the number's size and return a Long if it doesn't fit in an int?
+		if( numericString.contains( "." ) ) {
+			return Double.valueOf( numericString );
 		}
 
-		return number;
+		// CHECKME: Determine the number's size and return a Long if it doesn't fit in an int? Or just always return a Long? // Hugi 2025-03-19
+		return Integer.valueOf( numericString );
 	}
 
 	/**
