@@ -134,7 +134,8 @@ public class NGAssociationFactory {
 						case 'n' -> sb.replace( i, i + 2, "\n" );
 						case 'r' -> sb.replace( i, i + 2, "\r" );
 						case 't' -> sb.replace( i, i + 2, "\t" );
-						default -> sb.deleteCharAt( i ); // Remove the backslash if not followed by a known escape. FIXME: We probably want to throw an exception (or just keep in the backslash) if an unknown escape character is encountered // Hugi 2025-03-09
+						case '\\' -> sb.replace( i, i + 2, "\\" );
+						default -> throw new IllegalArgumentException( "Unknown escape character: '%s' (%s) ".formatted( nextChar, Character.getName( nextChar ) ) );
 					}
 				}
 			}
