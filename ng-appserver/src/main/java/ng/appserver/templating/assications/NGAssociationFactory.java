@@ -66,9 +66,8 @@ public class NGAssociationFactory {
 				return associationForDynamicValue( value );
 			}
 			else {
-				// FIXME: Figure out what the absolute ding-diddly we're doing here // Hugi 2024-11-23
-				value = value.replaceAll( "\\\\\\$", "\\$" );
-				value = value.replaceAll( "\\\"", "\"" );
+				value = value.replace( "\\$", "$" ); // Unescape escaped dollar signs
+				value = value.replace( "\\\"", "\"" ); // Unescape escaped quotes
 				return associationForConstantStringValue( value );
 			}
 		}
