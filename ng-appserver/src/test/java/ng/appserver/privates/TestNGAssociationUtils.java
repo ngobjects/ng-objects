@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import ng.appserver.templating.assications.NGAssociationUtils;
 
-public class Test_NGUtilities {
+public class TestNGAssociationUtils {
 
 	@Test
 	public void isTruthy() {
