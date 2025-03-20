@@ -41,8 +41,8 @@ import ng.appserver.templating.assications.NGAssociation;
 public class NGElementManager {
 
 	/**
-	 * I WO, elements are not namespaced. To help porting older templates, we therefore allow unnamespaced elements
-	 * by designating the namespace "wo" a "magic namespace" which when used for locating elements means searching every namespace.
+	 * To ease the porting of older templates to this system we allow unnamespaced elements. This is done
+	 * by designating the namespace "wo" a "magic namespace" which when used for locating elements means "search every namespace".
 	 *
 	 * This is probably/hopefully temporary.
 	 */
@@ -105,6 +105,9 @@ public class NGElementManager {
 	 * @return An instance of the named dynamic element. This can be a classless component (in which case it's the template name), a simple class name or a full class name
 	 *
 	 * FIXME: We're missing a cache for dynamic element name resolution // Hugi 2025-03-05
+	 * FIXME: We are going to have to support namespace aliases // Hugi 2025-03-20
+	 * FIXME: We are going to have to support recursion when looking for "tag aliases". I.e. you should be able to look up "teh alias of an alias" // Hugi 2025-03-20
+	 * FIXME: Tag aliasing needs to be namespace aware in general // Hugi 2025-03-20
 	 */
 	public NGDynamicElement dynamicElementWithName( final String namespace, final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		Objects.requireNonNull( namespace );
