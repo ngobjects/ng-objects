@@ -193,7 +193,7 @@ public class NGContext {
 	 * @return True if the current element is the sender
 	 */
 	public boolean currentElementIsSender() {
-		return elementID().equals( senderID() );
+		return elementID().equals( senderID() ); // FIXME: WE can gain a little performance here by first checking if senderID is actually present // Hugi 2025-03-22
 	}
 
 	/**
@@ -245,7 +245,7 @@ public class NGContext {
 	 * Should be replaced with a variable, preferably set at the context's construction.
 	 * That also means we need to make the context's construction a little more formal, since any request handler should be able to request partial rendering (and it should be straight forward).
 	 * In any case, this functionality will probably end up in a separate rendering context that's been begging to be created for a while.
-	 * // Hugi 2024-10-15  
+	 * // Hugi 2024-10-15
 	 */
 	public String targetedUpdateContainerID() {
 		return request().headerForKey( "x-updatecontainerid" );
