@@ -66,7 +66,7 @@ public class AjaxUpdateLink extends NGDynamicGroup {
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 
-		if( context.elementID().equals( context.senderID() ) ) {
+		if( context.currentElementIsSender() ) {
 			return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 		}
 
