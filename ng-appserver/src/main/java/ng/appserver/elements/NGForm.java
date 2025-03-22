@@ -65,9 +65,7 @@ public class NGForm extends NGDynamicGroup {
 		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
 		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "form", attributes, false ) );
-		context.setIsInForm( true );
 		appendChildrenToResponse( response, context );
-		context.setIsInForm( false );
 		response.appendContentString( "</form>" );
 	}
 
