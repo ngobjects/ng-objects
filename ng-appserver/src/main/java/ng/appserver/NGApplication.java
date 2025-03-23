@@ -168,14 +168,14 @@ public class NGApplication {
 			application._elementManager.registerElementPackage( applicationClass.getPackageName() );
 			application._elementManager.registerElementPackage( applicationClass.getPackageName() + ".components" );
 
-			// FIXME: Registering for the instance stopper to work. Horrid stuff. We need to convert NGAdminAction to routes // Hugi 2025-03-16
+			// FIXME: For loading up our standard components. This will eventually move to a separate module // Hugi 2025-03-16
+			application.elementManager().registerFrameworkElementClasses();
+
+			// FIXME: Registering for the instance stopper to work. Horrid stuff. We need to use routes for AdminAction - or at least make DirectAction class/package registration ... usable // Hugi 2025-03-16
 			application._elementManager.registerElementClass( NGAdminAction.class );
 
 			// FIXME: Eventually the adaptor startup should probably be done by the user
 			application.createAdaptor().start( application );
-
-			// FIXME: For loading up our standard components. This will eventually move to a separate module // Hugi 2025-03-16
-			application.elementManager().registerFrameworkElementClasses();
 
 			if( properties.propWOLifebeatEnabled() ) {
 				NGDefaultLifeBeatThread.start( application._properties );
@@ -200,9 +200,9 @@ public class NGApplication {
 	public NGApplication() {
 		_elementManager = new NGElementManager();
 		_resourceManager = new NGResourceManager();
-		_exceptionManager = new NGExceptionManager( this );
 		_resourceManagerDynamic = new NGResourceManagerDynamic();
 		_sessionStore = new NGServerSessionStore();
+		_exceptionManager = new NGExceptionManager( this );
 		_urlRewritePatterns = new ArrayList<>();
 
 		// The first table in the list is the "user route table"
@@ -368,12 +368,16 @@ public class NGApplication {
 		return _resourceManager;
 	}
 
+	public NGResourceManagerDynamic resourceManagerDynamic() {
+		return _resourceManagerDynamic;
+	}
+
 	public NGElementManager elementManager() {
 		return _elementManager;
 	}
 
-	public NGResourceManagerDynamic resourceManagerDynamic() {
-		return _resourceManagerDynamic;
+	public NGExceptionManager exceptionManager() {
+		return _exceptionManager;
 	}
 
 	public NGSessionStore sessionStore() {
