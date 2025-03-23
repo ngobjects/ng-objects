@@ -500,17 +500,6 @@ public class NGApplication {
 	}
 
 	/**
-	 * If the application fails to restore a page from the session's page cache during component action request handling,
-	 * (usually because the page cache has been exhausted, and the page pushed out of the cache), this method will be invoked and it's response returned to the user.
-	 *
-	 * FIXME: Create a nicer response for this // Hugi 2023-02-10
-	 * FIXME: This is the component action request handler leaking into the generic application // Hugi 2023-07-01
-	 */
-	protected NGActionResults responseForPageRestorationException( final NGPageRestorationException exception ) {
-		return new NGResponse( exception.getMessage(), 404 );
-	}
-
-	/**
 	 * @return The response generated when an exception occurs
 	 */
 	public NGActionResults responseForException( final Throwable throwable, final NGContext context ) {
