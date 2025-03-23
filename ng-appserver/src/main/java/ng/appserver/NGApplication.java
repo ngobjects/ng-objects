@@ -506,7 +506,7 @@ public class NGApplication {
 	/**
 	 * @return The response generated when an exception occurs
 	 */
-	public NGActionResults responseForException( final Throwable throwable, final NGContext context ) {
+	protected NGActionResults responseForException( final Throwable throwable, final NGContext context ) {
 
 		// FIXME: The originating context might have been an Ajax request, meaning the exception page won't render squat, which isn't helpful.
 		// We should(a) not render the exception pace in the original context where the exception happened and/or (b) have a better,
