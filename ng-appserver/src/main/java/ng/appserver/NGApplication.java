@@ -80,6 +80,11 @@ public class NGApplication {
 	private NGResourceManagerDynamic _resourceManagerDynamic;
 
 	/**
+	 * Handles exceptions and response generation for exceptions
+	 */
+	private NGExceptionManager _exceptionManager;
+
+	/**
 	 * A list of patterns that will be applied to URLs before they are processed by the framework
 	 */
 	private List<Pattern> _urlRewritePatterns;
@@ -195,6 +200,7 @@ public class NGApplication {
 	public NGApplication() {
 		_elementManager = new NGElementManager();
 		_resourceManager = new NGResourceManager();
+		_exceptionManager = new NGExceptionManager( this );
 		_resourceManagerDynamic = new NGResourceManagerDynamic();
 		_sessionStore = new NGServerSessionStore();
 		_urlRewritePatterns = new ArrayList<>();
@@ -396,15 +402,9 @@ public class NGApplication {
 
 			return response;
 		}
-		catch( final NGSessionRestorationException e ) {
-			return responseForSessionRestorationException( e ).generateResponse();
-		}
-		catch( final NGPageRestorationException e ) {
-			return responseForPageRestorationException( e ).generateResponse();
-		}
 		catch( final Throwable throwable ) {
-			handleException( throwable );
-			return responseForException( throwable, request.context() ).generateResponse();
+			_exceptionManager.handleException( throwable );
+			return _exceptionManager.responseForException( throwable, request.context() ).generateResponse();
 		}
 	}
 
