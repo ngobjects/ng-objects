@@ -331,7 +331,6 @@ public class NGApplication {
 			final NGRequestHandler handler = routeTable.handlerForURL( url );
 
 			if( handler != null ) {
-				logger.debug( "Matched URL '{}' with route '{}' from table '{}'", url, "[untitled]", routeTable.name() ); // FIXME: Missing route name instead of [untitled] // Hugi 2022-11-27
 				return handler;
 			}
 		}
