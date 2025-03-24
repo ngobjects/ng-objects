@@ -188,7 +188,7 @@ public class NGContext {
 	 * @return True if the current element is the sender
 	 */
 	public boolean currentElementIsSender() {
-		return elementID().equals( senderID() ); // FIXME: WE can gain a little performance here by first checking if senderID is actually present // Hugi 2025-03-22
+		return senderID() != null && senderID().equals( elementID() );
 	}
 
 	/**
