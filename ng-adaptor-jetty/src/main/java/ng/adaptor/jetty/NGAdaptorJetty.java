@@ -44,7 +44,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final int maxThreads = 32;
 		final int idleTimeout = 2000; // Specified in milliseconds
 
-		Integer port = application.properties().propWOPort(); // FIXME: Ugly way to get the port number
+		Integer port = application.properties().d().propWOPort(); // FIXME: Ugly way to get the port number
 
 		if( port == null ) {
 			logger.warn( "port property is not set, defaulting to port {}", DEFAULT_PORT_NUMBER );
