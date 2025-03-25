@@ -284,97 +284,17 @@ public class NGProperties {
 		return String.join( "\n", stringKeyPairs );
 	}
 
-	/**
-	 * Defines a property
-	 *
-	 * FIXME: Finish this concept up (for defined, typesafe properties) // Hugi 2023-08-05
-	 */
-	public static class Property<E> {
-		private String _key;
-		private E _value;
-		private E _defaultValue;
-
-		public Property( final String key, E value, E defaultValue ) {
-			_key = key;
-			_value = value;
-			_defaultValue = defaultValue;
-		}
-
-		public String key() {
-			return _key;
-		}
-
-		public E value() {
-			return _value;
-		}
-
-		public E defaultValue() {
-			return _defaultValue;
-		}
-	}
+	private NGPropertiesDeprecated _d;
 
 	/**
-	 * FIXME: We're creating cover methods for some of the more used properties for now. // Hugi 2021-12-29
-	 * This is not the way we it'll be going forward, but it will help with refactoring later (rather than using property name strings)
+	 * FIXME: TEmporary bridge to old properties
 	 */
-	public Integer propWOPort() {
-		return getInteger( WOProperties.WOPort.name() );
-	}
+	@Deprecated
+	public NGPropertiesDeprecated d() {
+		if( _d == null ) {
+			_d = new NGPropertiesDeprecated( this );
+		}
 
-	public String propWOHost() {
-		return get( WOProperties.WOHost.name() );
-	}
-
-	public Integer propWOLifebeatDestinationPort() {
-		return getInteger( WOProperties.WOLifebeatDestinationPort.name() );
-	}
-
-	public Integer propWOLifebeatIntervalInSeconds() {
-		return getInteger( WOProperties.WOLifebeatInterval.name() );
-	}
-
-	public boolean propWOLifebeatEnabled() {
-		return "YES".equals( get( WOProperties.WOLifebeatEnabled.name() ) );
-	}
-
-	public boolean propWOMonitorEnabled() {
-		return "YES".equals( get( WOProperties.WOMonitorEnabled.name() ) );
-	}
-
-	public String propWOApplicationName() {
-		return get( WOProperties.WOApplicationName.name() );
-	}
-
-	public String propWOOutputPath() {
-		return get( WOProperties.WOOutputPath.name() );
-	}
-
-	/**
-	 * Container for all the old properties from WO
-	 */
-	public static enum WOProperties {
-		// Properties in use
-		WOOutputPath,
-		WOApplicationName,
-		WOMonitorEnabled,
-		WOLifebeatEnabled,
-		WOLifebeatInterval,
-		WOLifebeatDestinationPort,
-		WOHost,
-		WOPort,
-
-		// Properties currently NOT in use
-		NSProjectSearchPath,
-		WOAdaptor,
-		WOAutoOpenClientApplication,
-		WOAutoOpenInBrowser,
-		WOCachingEnabled,
-		WODebuggingEnabled,
-		WOListenQueueSize,
-		WONoPause,
-		WOSessionTimeOut,
-		WOWorkerThreadCount,
-		WOWorkerThreadCountMax,
-		WOWorkerThreadCountMin
+		return _d;
 	}
 }

@@ -119,10 +119,10 @@ public class NGApplication {
 		properties.addAndReadSourceHighestPriority( new PropertiesSourceArguments( args ) );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
-		redirectOutputToFilesIfOutputPathSet( properties.propWOOutputPath() );
+		redirectOutputToFilesIfOutputPathSet( properties.d().propWOOutputPath() );
 
 		// Determine the mode we're currently running in. CHECKME: This should be configured using an explicit parameter // Hugi 2025-03-16
-		final boolean isDevelopmentMode = !properties.propWOMonitorEnabled();
+		final boolean isDevelopmentMode = !properties.d().propWOMonitorEnabled();
 
 		if( isDevelopmentMode ) {
 			logger.info( "========================================" );
@@ -158,7 +158,7 @@ public class NGApplication {
 
 			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
 			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
-			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.propWOApplicationName() + ".woa(/[0-9])?" ) );
+			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.d().propWOApplicationName() + ".woa(/[0-9])?" ) );
 
 			// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
 			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath
@@ -177,7 +177,7 @@ public class NGApplication {
 			// FIXME: Eventually the adaptor startup should probably be done by the user
 			application.createAdaptor().start( application );
 
-			if( properties.propWOLifebeatEnabled() ) {
+			if( properties.d().propWOLifebeatEnabled() ) {
 				NGDefaultLifeBeatThread.start( application._properties );
 			}
 

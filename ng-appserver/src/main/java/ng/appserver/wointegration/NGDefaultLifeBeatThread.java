@@ -21,11 +21,11 @@ public class NGDefaultLifeBeatThread {
 	 * Starts a lifebeat thread for communicating with wotaskd.
 	 */
 	public static void start( final NGProperties properties ) {
-		final String hostName = properties.propWOHost();
-		final String appName = properties.propWOApplicationName();
-		final Integer appPort = properties.propWOPort();
-		final Integer lifeBeatDestinationPort = properties.propWOLifebeatDestinationPort();
-		final Integer lifeBeatIntervalInSeconds = properties.propWOLifebeatIntervalInSeconds();
+		final String hostName = properties.d().propWOHost();
+		final String appName = properties.d().propWOApplicationName();
+		final Integer appPort = properties.d().propWOPort();
+		final Integer lifeBeatDestinationPort = properties.d().propWOLifebeatDestinationPort();
+		final Integer lifeBeatIntervalInSeconds = properties.d().propWOLifebeatIntervalInSeconds();
 		final long lifeBeatIntervalInMilliseconds = TimeUnit.MILLISECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.SECONDS );
 
 		InetAddress hostAddress = null;
