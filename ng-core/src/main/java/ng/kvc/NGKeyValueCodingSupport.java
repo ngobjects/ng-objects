@@ -15,14 +15,14 @@ public class NGKeyValueCodingSupport {
 	/**
 	 * @return a List of keys that can be invoked on the given object
 	 */
-	private static List<String> availableGetterKeysForObject( final Object object ) {
-		return availableGetterKeysForClass( object.getClass() );
+	public static List<String> getterKeysForObject( final Object object ) {
+		return getterKeysForClass( object.getClass() );
 	}
 
 	/**
 	 * @return A list of available accessible keys on the given object
 	 */
-	private static List<String> availableGetterKeysForClass( final Class<?> objectClass ) {
+	private static List<String> getterKeysForClass( final Class<?> objectClass ) {
 		final List<String> result = new ArrayList<>();
 
 		for( final Method method : objectClass.getMethods() ) {
@@ -31,8 +31,8 @@ public class NGKeyValueCodingSupport {
 			}
 		}
 
-		for( Field field : objectClass.getFields() ) {
-			result.add( field.getName() );
+		for( final Field field : objectClass.getFields() ) {
+			result.add( keyForFieldName( field.getName() ) );
 		}
 
 		return result;
@@ -57,7 +57,7 @@ public class NGKeyValueCodingSupport {
 	}
 
 	/**
-	 * @return A java method name, normalized for use in a KeyPath. This means removing a prefixing underscore or "get" (And in case of "get", lowercasing the following character)
+	 * @return The method name normalized for KVC conventions. This means removing a prefixing underscore and/or "get"/"is" prefix (and in case of "get"/"is", lowercasing the following character)
 	 */
 	static String keyForMethodName( final String methodName ) {
 
@@ -70,6 +70,24 @@ public class NGKeyValueCodingSupport {
 
 		if( key.startsWith( "get" ) ) {
 			return keyByRemovingPrefix( key, "get" );
+		}
+
+		if( key.startsWith( "is" ) ) {
+			return keyByRemovingPrefix( key, "is" );
+		}
+
+		return key;
+	}
+
+	/**
+	 * @return The method name normalized for KVC conventions. This means removing a prefixing underscore and/or "is" prefix (and in case of "is", lowercasing the following character)
+	 */
+	static String keyForFieldName( final String fieldName ) {
+		String key = fieldName;
+
+		// A prefixing underscore always gets removed
+		if( fieldName.charAt( 0 ) == '_' ) {
+			key = fieldName.substring( 1 );
 		}
 
 		if( key.startsWith( "is" ) ) {
@@ -105,7 +123,7 @@ public class NGKeyValueCodingSupport {
 
 		record Suggestion( int distance, String key ) {}
 
-		return availableGetterKeysForObject( object )
+		return getterKeysForObject( object )
 				.stream()
 				.map( key -> new Suggestion( distanceLevenshtein( key, proposedKey ), key ) )
 				.sorted( Comparator.comparing( Suggestion::distance ) )
