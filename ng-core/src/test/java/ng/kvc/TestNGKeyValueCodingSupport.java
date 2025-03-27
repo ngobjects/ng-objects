@@ -57,6 +57,16 @@ public class TestNGKeyValueCodingSupport {
 		assertFalse( availableKeys.contains( "protectedMethod" ) );
 	}
 
+	@Test
+	public void testGetterKeysForRecord() {
+		final List<String> availableKeys = NGKeyValueCodingSupport.getterKeysForObject( new _TestSomeKVCRecord( "whocares", "idont" ) );
+
+		assertTrue( availableKeys.contains( "name" ) );
+		assertTrue( availableKeys.contains( "address" ) );
+	}
+
+	public record _TestSomeKVCRecord( String name, String address ) {}
+
 	public static class _TestSomeKVCClass {
 
 		String friendlyField;

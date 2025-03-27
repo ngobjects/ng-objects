@@ -25,6 +25,7 @@ public class NGKeyValueCodingSupport {
 	private static List<String> getterKeysForClass( final Class<?> objectClass ) {
 		final List<String> result = new ArrayList<>();
 
+		// CHECKME: Since Java records will return record components as well as regular methods, we're about to perform our regular method name munging for record component names too. We might want to give that a second though // Hugi 2025-03-27
 		for( final Method method : objectClass.getMethods() ) {
 			if( isGetterMethod( method ) ) {
 				result.add( keyForMethodName( method.getName() ) );
