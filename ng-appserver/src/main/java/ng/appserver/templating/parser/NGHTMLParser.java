@@ -209,7 +209,7 @@ public class NGHTMLParser {
 		}
 	}
 
-	private void didParseClosingWebObjectTag() throws NGDeclarationFormatException, NGHTMLFormatException {
+	private void didParseClosingWebObjectTag() throws NGHTMLFormatException {
 		logger.debug( "Parsed Closing WebObject ({}) : {}", _contentText.length(), _contentText );
 
 		if( _contentText.length() > 0 ) {
