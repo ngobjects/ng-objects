@@ -185,7 +185,7 @@ public class NGHTMLParser {
 		didParseOpeningWebObjectTag();
 	}
 
-	private void endOfWebObjectTag( String token ) throws NGDeclarationFormatException, NGHTMLFormatException {
+	private void endOfWebObjectTag( String token ) throws NGHTMLFormatException {
 		didParseText();
 		_contentText.append( token );
 		didParseClosingWebObjectTag();
