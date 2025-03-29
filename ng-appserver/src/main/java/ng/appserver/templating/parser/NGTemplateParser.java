@@ -101,7 +101,7 @@ public class NGTemplateParser {
 		_currentDynamicTag = new NGDynamicHTMLTag( declaration, _currentDynamicTag );
 	}
 
-	public void didParseClosingWebObjectTag( final String parsedString ) throws NGDeclarationFormatException, NGHTMLFormatException {
+	public void didParseClosingWebObjectTag( final String parsedString ) throws NGHTMLFormatException {
 		final NGDynamicHTMLTag parentDynamicTag = _currentDynamicTag.parent();
 
 		if( parentDynamicTag == null ) {
