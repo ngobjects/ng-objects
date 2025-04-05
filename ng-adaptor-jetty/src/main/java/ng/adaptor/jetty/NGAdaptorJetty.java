@@ -43,11 +43,23 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 	private NGApplication _application;
 
+	/**
+	 * Port used if no port number is specified in properties
+	 *
+	 * FIXME: This should be a default for all adaptors // Hugi 2021-12-31
+	 */
+	private static final int DEFAULT_PORT_NUMBER = 1200;
+
 	@Override
 	public void start( NGApplication application ) {
 		_application = application;
 
-		final int port = 1200;
+		Integer port = application.properties().d().propWOPort(); // FIXME: Ugly way to get the port number
+
+		if( port == null ) {
+			logger.warn( "port property is not set, defaulting to port {}", DEFAULT_PORT_NUMBER );
+			port = DEFAULT_PORT_NUMBER;
+		}
 
 		final Server server = new Server();
 
