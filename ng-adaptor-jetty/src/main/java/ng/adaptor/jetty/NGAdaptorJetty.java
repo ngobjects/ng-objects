@@ -74,7 +74,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final ServerConnector connector = new ServerConnector( server, http11 );
 		connector.setPort( port );
 		server.addConnector( connector );
-
 		server.setHandler( new NGHandler() );
 
 		try {
@@ -106,17 +105,17 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			final String contentType = jettyRequest.getHeaders().get( HttpHeader.CONTENT_TYPE );
 
-			final NGRequest woRequest;
+			final NGRequest ngRequest;
 
 			if( contentType != null && contentType.contains( "multipart/form-data" ) ) {
-				woRequest = multipartRequestToNGRequest( jettyRequest, contentType, callback );
+				ngRequest = multipartRequestToNGRequest( jettyRequest, contentType, callback );
 			}
 			else {
-				woRequest = requestToNGRequest( jettyRequest );
+				ngRequest = requestToNGRequest( jettyRequest );
 			}
 
 			// This is where the application logic will perform it's actual work
-			final NGResponse ngResponse = _application.dispatchRequest( woRequest );
+			final NGResponse ngResponse = _application.dispatchRequest( ngRequest );
 
 			jettyResponse.setStatus( ngResponse.status() );
 
@@ -156,21 +155,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 				else {
 					ngResponse.contentByteStream().writeTo( out );
 				}
-
-				// FIXME: I'm doing this to mark the response as completed. Probably not the right way // Hugi 2024-04-05
-				Content.Sink.write( jettyResponse, true, "", callback );
 			}
-			//			if( ngResponse.contentInputStream() != null ) {
-			//				jettyResponse.write( isFailed(), null, callback );
-			//				try( final InputStream inputStream = ngResponse.contentInputStream()) {
-			//					final byte[] bytes = ngResponse.contentInputStream().readAllBytes();
-			//					jettyResponse.write( true, ByteBuffer.wrap( bytes ), callback );
-			//				}
-			//			}
-			//			else {
-			//				final byte[] bytes = ngResponse.contentByteStream().toByteArray();
-			//				jettyResponse.write( true, ByteBuffer.wrap( bytes ), callback );
-			//			}
+
+			callback.succeeded();
 		}
 
 		private static HttpCookie ngCookieToJettyCookie( final NGCookie ngCookie ) {
@@ -199,8 +186,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		/**
-		 * @param callback
-		 * @return the given HttpServletRequest converted to an NGRequest
+		 * @return the given Request converted to an NGRequest
 		 */
 		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType, final Callback callback ) {
 
@@ -263,12 +249,12 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		/**
-		 * @return the given HttpServletRequest converted to an NGRequest
+		 * @return the given Request converted to an NGRequest
 		 */
 		private static NGRequest requestToNGRequest( final Request jettyRequest ) {
 
 			// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
-			final Map<String, List<String>> formValuesFromServletRequest = formValuesFromRequest( jettyRequest );
+			final Map<String, List<String>> formValues = formValuesFromRequest( jettyRequest );
 
 			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -283,7 +269,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final NGRequest request = new NGRequest( jettyRequest.getMethod(), jettyRequest.getHttpURI().getCanonicalPath(), "FIXME", headerMap( jettyRequest ), bos.toByteArray() );
 
 			// FIXME: Form value parsing should really happen within the request object, not in the adaptor // Hugi 2021-12-31
-			request._setFormValues( formValuesFromServletRequest );
+			request._setFormValues( formValues );
 
 			// FIXME: Cookie parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
 			request._setCookieValues( cookieValues( Request.getCookies( jettyRequest ) ) );
@@ -337,12 +323,12 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		/**
-		 * @return The headers from the ServletRequest as a Map
+		 * @return The headers from the Request as a Map
 		 */
-		private static Map<String, List<String>> headerMap( final Request servletRequest ) {
+		private static Map<String, List<String>> headerMap( final Request jettyRequest ) {
 			final Map<String, List<String>> map = new HashMap<>();
 
-			for( final HttpField httpField : servletRequest.getHeaders() ) {
+			for( final HttpField httpField : jettyRequest.getHeaders() ) {
 				map.put( httpField.getName(), httpField.getValueList() );
 			}
 
