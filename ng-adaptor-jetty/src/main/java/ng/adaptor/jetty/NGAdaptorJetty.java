@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.BindException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +17,9 @@ import java.util.Map.Entry;
 import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.http.HttpCookie.SameSite;
 import org.eclipse.jetty.http.HttpField;
-import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.MultiPartConfig;
+import org.eclipse.jetty.http.MultiPartFormData;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -27,6 +31,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Fields;
 import org.eclipse.jetty.util.Fields.Field;
+import org.eclipse.jetty.util.Promise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,8 +104,18 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		private void doRequest( final Request jettyRequest, final Response jettyResponse, Callback callback ) throws IOException {
 
+			final String contentType = jettyRequest.getHeaders().get( HttpHeader.CONTENT_TYPE );
+
+			final NGRequest woRequest;
+
+			if( contentType != null && contentType.contains( "multipart/form-data" ) ) {
+				woRequest = multipartRequestToNGRequest( jettyRequest, contentType, callback );
+			}
+			else {
+				woRequest = requestToNGRequest( jettyRequest );
+			}
+
 			// This is where the application logic will perform it's actual work
-			final NGRequest woRequest = requestToNGRequest( jettyRequest );
 			final NGResponse ngResponse = _application.dispatchRequest( woRequest );
 
 			jettyResponse.setStatus( ngResponse.status() );
@@ -184,22 +199,80 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		/**
+		 * @param callback
 		 * @return the given HttpServletRequest converted to an NGRequest
 		 */
-		private static NGRequest requestToNGRequest( final Request sr ) {
+		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType, final Callback callback ) {
+
+			final MultiPartConfig config = new MultiPartConfig.Builder()
+					.location( Path.of( "/tmp/jet" ) )
+					.build();
+
+			final Map<String, List<String>> formValues = new HashMap<>();
+
+			MultiPartFormData.onParts( jettyRequest, jettyRequest, contentType, config, new Promise.Invocable<MultiPartFormData.Parts>() {
+
+				@Override
+				public void succeeded( MultiPartFormData.Parts parts ) {
+					parts.forEach( p -> {
+						final String partContentType = p.getHeaders().get( HttpHeader.CONTENT_TYPE );
+
+						// We're assuming that if this part does not have a content type, it's a regular ol' form value, to be added to the requests formValues map as usual.
+						if( partContentType == null ) {
+							final String parameterName = p.getName();
+							final String parameterValue = p.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
+
+							List<String> list = formValues.get( parameterName );
+
+							if( list == null ) {
+								list = new ArrayList<>();
+								formValues.put( p.getName(), list );
+							}
+
+							list.add( parameterValue );
+						}
+						else {
+							System.out.println( "==============" );
+							System.out.println( "We should handle the file upload here" );
+							System.out.println( "==============" );
+							System.out.println( "Headers: " + p.getHeaders() );
+							System.out.println( "Name: " + p.getName() );
+							System.out.println( "Filename: " + p.getFileName() );
+							System.out.println( "Length: " + p.getLength() );
+							System.out.println( "ContentSource Class: " + p.getContentSource().getClass() );
+							System.out.println( "==============" );
+						}
+					} );
+				}
+
+				@Override
+				public void failed( Throwable failure ) {
+					throw new RuntimeException( failure );
+				}
+
+				@Override
+				public InvocationType getInvocationType() {
+					return InvocationType.NON_BLOCKING;
+				}
+			} );
+
+			final NGRequest request = new NGRequest( jettyRequest.getMethod(), jettyRequest.getHttpURI().getCanonicalPath(), "FIXME", headerMap( jettyRequest ), new byte[] {} ); // FIXME: It makes little sense to set the request content to be empty here... // Hugi 2025-04-05
+			request._setFormValues( formValues );
+			request._setCookieValues( cookieValues( Request.getCookies( jettyRequest ) ) );
+			return request;
+		}
+
+		/**
+		 * @return the given HttpServletRequest converted to an NGRequest
+		 */
+		private static NGRequest requestToNGRequest( final Request jettyRequest ) {
 
 			// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
-			Map<String, List<String>> formValuesFromServletRequest;
-			try {
-				formValuesFromServletRequest = formValues( Request.getParameters( sr ) );
-			}
-			catch( Exception e ) {
-				throw new RuntimeException( e );
-			}
+			final Map<String, List<String>> formValuesFromServletRequest = formValuesFromRequest( jettyRequest );
 
 			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-			try( final InputStream is = Request.asInputStream( sr )) {
+			try( final InputStream is = Request.asInputStream( jettyRequest )) {
 				is.transferTo( bos );
 			}
 			catch( final IOException e ) {
@@ -207,61 +280,34 @@ public class NGAdaptorJetty extends NGAdaptor {
 			}
 
 			// FIXME: Get the protocol
-			final NGRequest request = new NGRequest( sr.getMethod(), sr.getHttpURI().getCanonicalPath(), "FIXME", headerMap( sr ), bos.toByteArray() );
+			final NGRequest request = new NGRequest( jettyRequest.getMethod(), jettyRequest.getHttpURI().getCanonicalPath(), "FIXME", headerMap( jettyRequest ), bos.toByteArray() );
 
 			// FIXME: Form value parsing should really happen within the request object, not in the adaptor // Hugi 2021-12-31
 			request._setFormValues( formValuesFromServletRequest );
 
 			// FIXME: Cookie parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
-			request._setCookieValues( cookieValues( Request.getCookies( sr ) ) );
+			request._setCookieValues( cookieValues( Request.getCookies( jettyRequest ) ) );
 
 			return request;
 		}
 
-		/*
-		private static void logMultipartRequest( HttpServletRequest sr ) {
-			// FIXME: Starting work on multipart request handling. Very much experimental/work in progress // Hugi 2023-04-16
-			if( sr.getContentType() != null && sr.getContentType().startsWith( "multipart/form-data" ) ) {
-				System.out.println( ">>>>>>>>>> Multipart request detected" );
-		
-				try {
-					// final String string = Files.createTempFile( UUID.randomUUID().toString(), ".fileupload" ).toString();
-					// System.out.println( "Multipart temp dir: " + string );
-		
-					for( Part part : sr.getParts() ) {
-						//					MultiPart mp = (MultiPart)part;
-						System.out.println( "============= START PART =============" );
-						System.out.println( "class: " + part.getClass() );
-						System.out.println( "name: " + part.getName() );
-						System.out.println( "contentType: " + part.getContentType() );
-						System.out.println( "submittedFilename: " + part.getSubmittedFileName() );
-						System.out.println( "size: " + part.getSize() );
-						System.out.println( "value: " + new String( part.getInputStream().readAllBytes() ) );
-		
-						System.out.println( "- Headers:" );
-						for( String headerName : part.getHeaderNames() ) {
-							System.out.println( "-- %s : %s".formatted( headerName, part.getHeaders( headerName ) ) );
-		
-						}
-		
-						System.out.println( "============= END PART =============" );
-					}
-				}
-				catch( IOException e ) {
-					throw new RuntimeException( e );
-				}
-			}
-		}
-		*/
-
 		/**
 		 * @return The queryParameters as a formValue Map (our format)
 		 */
-		private static Map<String, List<String>> formValues( final Fields queryParameters ) {
+		private static Map<String, List<String>> formValuesFromRequest( final Request jettyRequest ) {
 
-			Map<String, List<String>> map = new HashMap<>();
+			Fields parameters;
 
-			for( Field entry : queryParameters ) {
+			try {
+				parameters = Request.getParameters( jettyRequest );
+			}
+			catch( Exception e ) {
+				throw new RuntimeException( e );
+			}
+
+			final Map<String, List<String>> map = new HashMap<>();
+
+			for( Field entry : parameters ) {
 				map.put( entry.getName(), entry.getValues() );
 			}
 
@@ -296,9 +342,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		private static Map<String, List<String>> headerMap( final Request servletRequest ) {
 			final Map<String, List<String>> map = new HashMap<>();
 
-			final HttpFields headerNamesEnumeration = servletRequest.getHeaders();
-
-			for( final HttpField httpField : headerNamesEnumeration ) {
+			for( final HttpField httpField : servletRequest.getHeaders() ) {
 				map.put( httpField.getName(), httpField.getValueList() );
 			}
 
