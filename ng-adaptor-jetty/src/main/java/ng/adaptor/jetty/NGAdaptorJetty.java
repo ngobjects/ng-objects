@@ -39,6 +39,7 @@ import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
+import ng.appserver.NGRequest.UploadedFile;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGDevelopmentInstanceStopper;
 
@@ -194,7 +195,11 @@ public class NGAdaptorJetty extends NGAdaptor {
 					.location( Path.of( "/tmp/jet" ) )
 					.build();
 
+			// The formValues that will get set on the request
 			final Map<String, List<String>> formValues = new HashMap<>();
+
+			// The uploaded files, if any
+			final Map<String, UploadedFile> uploadedFiles = new HashMap<>();
 
 			MultiPartFormData.onParts( jettyRequest, jettyRequest, contentType, config, new Promise.Invocable<MultiPartFormData.Parts>() {
 
@@ -203,31 +208,30 @@ public class NGAdaptorJetty extends NGAdaptor {
 					parts.forEach( p -> {
 						final String partContentType = p.getHeaders().get( HttpHeader.CONTENT_TYPE );
 
+						final String parameterName = p.getName();
+						final String parameterValue;
+
 						// We're assuming that if this part does not have a content type, it's a regular ol' form value, to be added to the requests formValues map as usual.
 						if( partContentType == null ) {
-							final String parameterName = p.getName();
-							final String parameterValue = p.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
-
-							List<String> list = formValues.get( parameterName );
-
-							if( list == null ) {
-								list = new ArrayList<>();
-								formValues.put( p.getName(), list );
-							}
-
-							list.add( parameterValue );
+							parameterValue = p.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
 						}
 						else {
-							System.out.println( "==============" );
-							System.out.println( "We should handle the file upload here" );
-							System.out.println( "==============" );
-							System.out.println( "Headers: " + p.getHeaders() );
-							System.out.println( "Name: " + p.getName() );
-							System.out.println( "Filename: " + p.getFileName() );
-							System.out.println( "Length: " + p.getLength() );
-							System.out.println( "ContentSource Class: " + p.getContentSource().getClass() );
-							System.out.println( "==============" );
+							// We'll add the filename as the parameter's value here. That can then be used to fetch the uploaded data in the request's uploadedFiles map
+							parameterValue = p.getFileName();
+
+							// Now we add the uploaded file to the request
+							final UploadedFile file = new UploadedFile( p.getFileName(), partContentType, Content.Source.asInputStream( p.getContentSource() ), p.getLength() );
+							uploadedFiles.put( p.getFileName(), file );
 						}
+
+						List<String> list = formValues.get( parameterName );
+
+						if( list == null ) {
+							list = new ArrayList<>();
+							formValues.put( p.getName(), list );
+						}
+
+						list.add( parameterValue );
 					} );
 				}
 
@@ -245,6 +249,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final NGRequest request = new NGRequest( jettyRequest.getMethod(), jettyRequest.getHttpURI().getCanonicalPath(), "FIXME", headerMap( jettyRequest ), new byte[] {} ); // FIXME: It makes little sense to set the request content to be empty here... // Hugi 2025-04-05
 			request._setFormValues( formValues );
 			request._setCookieValues( cookieValues( Request.getCookies( jettyRequest ) ) );
+			uploadedFiles.entrySet().forEach( p -> request._uploadedFiles().put( p.getKey(), p.getValue() ) ); // FIXME: Adding uploaded files this way is really, really temporary // Hugi 2025-04-05
 			return request;
 		}
 

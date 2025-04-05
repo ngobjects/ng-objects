@@ -1,6 +1,8 @@
 package ng.appserver;
 
+import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -290,6 +292,17 @@ public class NGRequest extends NGMessage {
 		}
 
 		return _parsedURI;
+	}
+
+	/**
+	 * FIXME: This is temporary handling of multipart file uploads. Still thinking on the final design of this // Hugi 2025-04-05
+	 */
+	private final Map<String, UploadedFile> _uploadedFiles = new HashMap<>();
+
+	public record UploadedFile( String name, String contentType, InputStream stream, long length ) {}
+
+	public Map<String, UploadedFile> _uploadedFiles() {
+		return _uploadedFiles;
 	}
 
 	@Override
