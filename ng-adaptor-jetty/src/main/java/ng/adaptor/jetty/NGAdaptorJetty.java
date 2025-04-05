@@ -74,7 +74,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		try {
 			server.start();
-			server.join();
 		}
 		catch( final Exception e ) {
 			if( application.isDevelopmentMode() && e instanceof IOException && e.getCause() instanceof BindException ) {
@@ -224,11 +223,11 @@ public class NGAdaptorJetty extends NGAdaptor {
 			// FIXME: Starting work on multipart request handling. Very much experimental/work in progress // Hugi 2023-04-16
 			if( sr.getContentType() != null && sr.getContentType().startsWith( "multipart/form-data" ) ) {
 				System.out.println( ">>>>>>>>>> Multipart request detected" );
-
+		
 				try {
 					// final String string = Files.createTempFile( UUID.randomUUID().toString(), ".fileupload" ).toString();
 					// System.out.println( "Multipart temp dir: " + string );
-
+		
 					for( Part part : sr.getParts() ) {
 						//					MultiPart mp = (MultiPart)part;
 						System.out.println( "============= START PART =============" );
@@ -238,13 +237,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 						System.out.println( "submittedFilename: " + part.getSubmittedFileName() );
 						System.out.println( "size: " + part.getSize() );
 						System.out.println( "value: " + new String( part.getInputStream().readAllBytes() ) );
-
+		
 						System.out.println( "- Headers:" );
 						for( String headerName : part.getHeaderNames() ) {
 							System.out.println( "-- %s : %s".formatted( headerName, part.getHeaders( headerName ) ) );
-
+		
 						}
-
+		
 						System.out.println( "============= END PART =============" );
 					}
 				}
