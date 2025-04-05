@@ -1,6 +1,7 @@
 package ng.appserver.elements;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -64,9 +65,8 @@ public class NGFileUpload extends NGDynamicElement {
 			if( _dataAssociation != null ) {
 				final UploadedFile file = request._uploadedFiles().get( filename );
 
-				try {
-					byte[] data = file.stream().readAllBytes();
-					_dataAssociation.setValue( data, context.component() );
+				try( final InputStream stream = file.stream()) {
+					_dataAssociation.setValue( stream.readAllBytes(), context.component() );
 				}
 				catch( IOException e ) {
 					throw new RuntimeException( e );
