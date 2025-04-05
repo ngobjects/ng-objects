@@ -286,7 +286,7 @@ public class NGApplication {
 	 * CHECKME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
 	 */
 	public String adaptorClassName() {
-		return "ng.adaptor.jetty.NGAdaptorJetty";
+		return "ng.adaptor.jetty.NGAdaptorJettyServlet";
 	}
 
 	/**
