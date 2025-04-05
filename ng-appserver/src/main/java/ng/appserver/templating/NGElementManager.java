@@ -13,6 +13,7 @@ import ng.appserver.elements.NGActionURL;
 import ng.appserver.elements.NGBrowser;
 import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGConditional;
+import ng.appserver.elements.NGFileUpload;
 import ng.appserver.elements.NGForm;
 import ng.appserver.elements.NGGenericContainer;
 import ng.appserver.elements.NGGenericElement;
@@ -254,6 +255,7 @@ public class NGElementManager {
 		registerElementClass( NGBrowser.class, "browser" );
 		registerElementClass( NGComponentContent.class, "content" );
 		registerElementClass( NGConditional.class, "if" );
+		registerElementClass( NGFileUpload.class, "fileUpload" );
 		registerElementClass( NGForm.class, "form" );
 		registerElementClass( NGString.class, "str" );
 		registerElementClass( NGGenericContainer.class, "container" );
