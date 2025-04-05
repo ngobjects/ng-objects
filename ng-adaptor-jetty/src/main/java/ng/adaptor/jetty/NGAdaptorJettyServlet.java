@@ -25,9 +25,9 @@ import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.privates.NGDevelopmentInstanceStopper;
 
-public class NGAdaptorJetty extends NGAdaptor {
+public class NGAdaptorJettyServlet extends NGAdaptor {
 
-	private static final Logger logger = LoggerFactory.getLogger( NGAdaptorJetty.class );
+	private static final Logger logger = LoggerFactory.getLogger( NGAdaptorJettyServlet.class );
 
 	/**
 	 * Port used if no port number is specified in properties
