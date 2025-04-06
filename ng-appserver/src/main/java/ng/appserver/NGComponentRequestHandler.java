@@ -65,66 +65,70 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			throw new IllegalStateException( "The context's session is null. That should never happen" );
 		}
 
-		// Now let's try to restore the page from the cache, using the contextID provided by the URL
-		// If no page is found (page probably pushed out of the session's page cache), NGPageRestorationException is thrown.
-		final NGComponent originalPage = session.pageCache().restorePageFromCache( originatingContextID );
+		// We're executing the following code in a try-block so we can release the lock on the page cache record in the finally clause.
+		// FIXME: Making the PageCache records use a Lock that implements AutoClosable and obtaining it in a try-with-resources would be really, really nice. We should do that // Hugi 2025-04-06
+		try {
+			// Now let's try to restore the page from the cache, using the contextID provided by the URL
+			// If no page is found (page probably pushed out of the session's page cache), NGPageRestorationException is thrown.
+			final NGComponent originalPage = session.pageCache().restorePageFromCache( originatingContextID );
 
-		// Since we're working with the page we can safely assume it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
-		session.pageCache().retainPageWithContextIDInCache( originatingContextID );
+			// Since we're working with the page we can safely assume it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
+			session.pageCache().retainPageWithContextIDInCache( originatingContextID );
 
-		logger.debug( "Page restored from cache is: " + originalPage.getClass() );
+			logger.debug( "Page restored from cache is: " + originalPage.getClass() );
 
-		// Push the page in the context
-		context.setPage( originalPage );
-		context.setComponent( originalPage );
-		context.page().setContextIncludingChildren( request.context() );
+			// Push the page in the context
+			context.setPage( originalPage );
+			context.setComponent( originalPage );
+			context.page().setContextIncludingChildren( request.context() );
 
-		logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", originatingContextID, originalPage );
+			logger.debug( "About to perform takeValuesfromRequest in context {} on page {} ", originatingContextID, originalPage );
 
-		// We only perform the takeValuesFromRequest phase if there are actual form values to read
-		if( !request.formValues().isEmpty() ) {
-			originalPage.takeValuesFromRequest( request, context );
+			// We only perform the takeValuesFromRequest phase if there are actual form values to read
+			if( !request.formValues().isEmpty() ) {
+				originalPage.takeValuesFromRequest( request, context );
+			}
+
+			logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), originatingContextID, originalPage );
+
+			// We now invoke the action on the original page instance
+			final NGActionResults actionInvocationResults = originalPage.invokeAction( request, context );
+
+			logger.debug( "Action invocation returned {}", actionInvocationResults );
+
+			// The response we will eventually return
+			final NGResponse response;
+
+			// The response returned by an action can be
+			// - null : Meaning we're working within a page/staying on the same page instance
+			// - An instance of NGComponent : In which case that becomes the new page of this context
+			// - Everything else that implements NGActionResults : which we just allow to do it's own thing (by invoking generateResponse() on it)
+
+			if( actionInvocationResults == null ) {
+				// If an action returns null, we're staying on the same page
+				logger.debug( "Action method returned null, invoking generateResponse on the original page" );
+				response = originalPage.generateResponse();
+			}
+			else if( actionInvocationResults instanceof NGComponent newPage ) {
+				// If an action method returns an NGComponent, that's our new page in this context. We set it, and return it
+				newPage.setContextIncludingChildren( context );
+				response = newPage.generateResponse();
+			}
+			else {
+				// If this is not an NGComponent, we don't need to take any special action and just invoke generateResponse() on the action's results
+				response = actionInvocationResults.generateResponse();
+			}
+
+			// Just a little self-documenting sanity checking
+			if( response == null ) {
+				throw new IllegalStateException( "Response is null. This should never happen" );
+			}
+			return response;
+
 		}
-
-		logger.debug( "About to perform invokeAction on element {} in context {} on page {} ", context.senderID(), originatingContextID, originalPage );
-
-		// We now invoke the action on the original page instance
-		final NGActionResults actionInvocationResults = originalPage.invokeAction( request, context );
-
-		logger.debug( "Action invocation returned {}", actionInvocationResults );
-
-		// The response we will eventually return
-		final NGResponse response;
-
-		// The response returned by an action can be
-		// - null : Meaning we're working within a page/staying on the same page instance
-		// - An instance of NGComponent : In which case that becomes the new page of this context
-		// - Everything else that implements NGActionResults : which we just allow to do it's own thing (by invoking generateResponse() on it)
-
-		if( actionInvocationResults == null ) {
-			// If an action returns null, we're staying on the same page
-			logger.debug( "Action method returned null, invoking generateResponse on the original page" );
-			response = originalPage.generateResponse();
+		finally {
+			session.pageCache().releaseLock( originatingContextID );
 		}
-		else if( actionInvocationResults instanceof NGComponent newPage ) {
-			// If an action method returns an NGComponent, that's our new page in this context. We set it, and return it
-			newPage.setContextIncludingChildren( context );
-			response = newPage.generateResponse();
-		}
-		else {
-			// If this is not an NGComponent, we don't need to take any special action and just invoke generateResponse() on the action's results
-			response = actionInvocationResults.generateResponse();
-		}
-
-		// Just a little self-documenting sanity checking
-		if( response == null ) {
-			throw new IllegalStateException( "Response is null. This should never happen" );
-		}
-
-		// FIXME: If we have a checked out page instance, we probably need to release the lock in a finally clause // Hugi 2025-04-06
-		session.pageCache().releaseLock( originatingContextID );
-
-		return response;
 	}
 
 	/**
