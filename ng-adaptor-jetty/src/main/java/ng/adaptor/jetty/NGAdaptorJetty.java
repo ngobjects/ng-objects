@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.http.HttpCookie.SameSite;
@@ -216,12 +217,14 @@ public class NGAdaptorJetty extends NGAdaptor {
 							parameterValue = p.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
 						}
 						else {
-							// We'll add the filename as the parameter's value here. That can then be used to fetch the uploaded data in the request's uploadedFiles map
-							parameterValue = p.getFileName();
+							// We're generating a unique ID here to store the attachment under in the request. This value will be stored in the request's formValues, and can be used to fetch the uploaded data in the request's uploadedFiles map
+							final String uniqueID = UUID.randomUUID().toString();
+
+							parameterValue = uniqueID;
 
 							// Now we add the uploaded file to the request
 							final UploadedFile file = new UploadedFile( p.getFileName(), partContentType, Content.Source.asInputStream( p.getContentSource() ), p.getLength() );
-							uploadedFiles.put( p.getFileName(), file );
+							uploadedFiles.put( uniqueID, file );
 						}
 
 						List<String> list = formValues.get( parameterName );
