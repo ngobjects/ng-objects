@@ -240,9 +240,12 @@ public class NGAdaptorJetty extends NGAdaptor {
 					throw new RuntimeException( failure );
 				}
 
+				/**
+				 * FIXME: I'm not entirely sure we should be blocking here // Hugi 2025-04-06
+				 */
 				@Override
 				public InvocationType getInvocationType() {
-					return InvocationType.NON_BLOCKING;
+					return InvocationType.BLOCKING;
 				}
 			} );
 
