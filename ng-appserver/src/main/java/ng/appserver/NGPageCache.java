@@ -3,6 +3,8 @@ package ng.appserver;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +26,10 @@ public class NGPageCache {
 	 * Represents a single entry in the page cache, along with it's "child entries"
 	 * "Child entries" currently means entries generated for update containers within the same page, meaning they can be thrown out with their parent.
 	 */
-	public record NGPageCacheEntry( String contextID, NGComponent page, String originatingContextID, String updateContainerID, NGPageCacheEntry parent, Map<String, NGPageCacheEntry> children ) {
+	public record NGPageCacheEntry( String contextID, NGComponent page, String originatingContextID, String updateContainerID, NGPageCacheEntry parent, Map<String, NGPageCacheEntry> children, Lock lock ) {
 
 		public NGPageCacheEntry( String contextID, NGComponent page, String originatingContextID, NGPageCacheEntry parent, String updateContainerID ) {
-			this( contextID, page, originatingContextID, updateContainerID, parent, new LinkedHashMap<>() );
+			this( contextID, page, originatingContextID, updateContainerID, parent, new LinkedHashMap<>(), new ReentrantLock() );
 		}
 
 		/**
@@ -146,7 +148,17 @@ public class NGPageCache {
 			throw new NGPageRestorationException( "No page found in the page cache for contextID '%s'. The page has probably been pushed out of the session's page cache".formatted( contextID ) );
 		}
 
+		cacheEntry.lock().lock();
 		return cacheEntry.page();
+	}
+
+	/**
+	 * Release the lock on the context.
+	 *
+	 * FIXME: Locking in the page cache is still very experimental functionality. Needs testing // Hugi 2025-04-06
+	 */
+	public void releaseLock( final String contextID ) {
+		_allEntries.get( contextID ).lock().unlock();
 	}
 
 	/**

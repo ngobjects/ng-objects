@@ -121,6 +121,9 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			throw new IllegalStateException( "Response is null. This should never happen" );
 		}
 
+		// FIXME: If we have a checked out page instance, we probably need to release the lock in a finally clause // Hugi 2025-04-06
+		session.pageCache().releaseLock( originatingContextID );
+
 		return response;
 	}
 
