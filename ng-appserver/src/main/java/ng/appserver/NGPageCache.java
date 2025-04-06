@@ -158,7 +158,13 @@ public class NGPageCache {
 	 * FIXME: Locking in the page cache is still very experimental functionality. Needs testing // Hugi 2025-04-06
 	 */
 	public void releaseLock( final String contextID ) {
-		_allEntries.get( contextID ).lock().unlock();
+		final NGPageCacheEntry cacheEntry = _allEntries.get( contextID );
+
+		// If this null check is not present, we'll hit an error here, disguising the real error when reported (context doesn't exist)
+		// So we add a null checl. We don't really care about releasing a non-existent entry anyway.
+		if( cacheEntry != null ) {
+			cacheEntry.lock().unlock();
+		}
 	}
 
 	/**
