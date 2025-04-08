@@ -49,16 +49,10 @@ public class NGMultipartServer {
 		}
 
 		private void doRequest( final Request jettyRequest, final Response jettyResponse, Callback callback ) throws IOException {
-
-			final HttpFields httpFields1 = HttpFields.build().add( new HttpField( "content-disposition", "form-data; name=\"smu\"" ) );
-			final Source contentSource1 = Content.Source.from( new ByteArrayInputStream( "Þetta er fyrri strengurinn".getBytes() ) );
-
-			final HttpFields httpFields2 = HttpFields.build().add( new HttpField( "content-disposition", "form-data; name=\"bork\"" ) );
-			final Source contentSource2 = Content.Source.from( new ByteArrayInputStream( "Þetta er seinni strengurinn".getBytes() ) );
-
 			final ContentSource cs = new MultiPartFormData.ContentSource( "12345" );
-			cs.addPart( new MultiPart.ContentSourcePart( null, null, httpFields1, contentSource1 ) );
-			cs.addPart( new MultiPart.ContentSourcePart( null, null, httpFields2, contentSource2 ) );
+			cs.addPart( stringPart( "number1", "<h1>Hvað er að frétta!</h1>" ) );
+			cs.addPart( stringPart( "number2", "Hér er annar partur" ) );
+			cs.addPart( stringPart( "number3", "Hér er þriðji partur" ) );
 			cs.close();
 
 			jettyResponse.getHeaders().add( "content-type", "multipart/form-data; boundary=12345" );
@@ -66,5 +60,11 @@ public class NGMultipartServer {
 
 			Content.copy( cs, jettyResponse, callback );
 		}
+	}
+
+	private static MultiPart.ContentSourcePart stringPart( final String name, final String content ) {
+		final HttpFields httpFields = HttpFields.build().add( new HttpField( "content-disposition", "form-data; name=\"%s\"".formatted( name ) ) );
+		final Source contentSource = Content.Source.from( new ByteArrayInputStream( content.getBytes() ) );
+		return new MultiPart.ContentSourcePart( name, null, httpFields, contentSource );
 	}
 }
