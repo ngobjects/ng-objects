@@ -37,13 +37,16 @@ public class NGResponse extends NGMessage implements NGActionResults {
 	/**
 	 * Creates an empty NGResponse with status 200
 	 */
+	@Deprecated
 	public NGResponse() {}
 
+	@Deprecated
 	public NGResponse( final byte[] bytes, final int status ) {
 		setContentBytes( bytes );
 		setStatus( status );
 	}
 
+	@Deprecated
 	public NGResponse( final String contentString, final int status ) {
 		setContentString( contentString );
 		setStatus( status );
