@@ -79,16 +79,16 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 					try {
 						child.appendToResponse( response, context );
 					}
-					catch( UnknownKeyException e ) {
-						new NGErrorMessageElement( "Unknown key", child.getClass().getSimpleName(), e.getMessage() ).appendToResponse( response, context );
+					catch( UnknownKeyException unknownKeyException ) {
+						new NGErrorMessageElement( "Unknown key", child.getClass().getSimpleName(), unknownKeyException.getMessage() ).appendToResponse( response, context );
 					}
 
 					if( appendElementTreeDebugInfo ) {
 						response.appendContentString( "</span>" );
 					}
 				}
-				else if( child instanceof NGStructuralElement dg ) {
-					dg.appendStructureToResponse( response, context );
+				else if( child instanceof NGStructuralElement structuralChild ) {
+					structuralChild.appendStructureToResponse( response, context );
 				}
 
 				context.elementID().increment();
