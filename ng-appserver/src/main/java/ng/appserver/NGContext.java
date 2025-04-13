@@ -236,8 +236,30 @@ public class NGContext {
 	 * @return true if we're targeting multiple containers
 	 */
 	public boolean targetsMultipleUpdateContainers() {
-		final boolean target = targetedUpdateContainerID() != null && targetedUpdateContainerID().contains( ";" );
-		return target;
+		return targetedUpdateContainerID() != null && targetedUpdateContainerID().contains( ";" );
+	}
+
+	/**
+	 * @return The name of the updateContainer to target with the current appendToResponse. In the case of multiple currently matching containers, the first one (the "outermost one") is specified
+	 */
+	public String updateContainerToAppendTo() {
+		if( targetsMultipleUpdateContainers() ) {
+			// The list of containers to update is passed in to the request as a header
+			final String containerIDToUpdate = targetedUpdateContainerID();
+
+			final String[] updateContainerIDs = containerIDToUpdate.split( ";" );
+
+			// We return the first matching container, since that should be the outermost container
+			for( final String containingContainerID : containingUpdateContainerIDs ) {
+				for( final String targetedContainerID : updateContainerIDs ) {
+					if( containingContainerID.equals( targetedContainerID ) ) {
+						return containingContainerID;
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 
 	@Override

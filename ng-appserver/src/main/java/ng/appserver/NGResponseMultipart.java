@@ -28,30 +28,10 @@ public class NGResponseMultipart extends NGResponse {
 	 */
 	public record ContentPart( String name, StringBuilder content ) {}
 
-	private String updateContainerToTarget() {
-		if( _context.targetsMultipleUpdateContainers() ) {
-			// The list of containers to update is passed in to the request as a header
-			final String containerIDToUpdate = _context.targetedUpdateContainerID();
-
-			final String[] updateContainerIDs = containerIDToUpdate.split( ";" );
-
-			// We return the first matching container, since that should be the outermost container
-			for( String containingContainerID : _context.containingUpdateContainerIDs ) {
-				for( String targetedContainerID : updateContainerIDs ) {
-					if( containingContainerID.equals( targetedContainerID ) ) {
-						return containingContainerID;
-					}
-				}
-			}
-		}
-
-		return null;
-	}
-
 	@Override
 	public void appendContentString( String stringToAppend ) {
 		if( _context.targetsMultipleUpdateContainers() ) {
-			getContentPart( updateContainerToTarget() ).content().append( stringToAppend );
+			getContentPart( _context.updateContainerToAppendTo() ).content().append( stringToAppend );
 		}
 		else {
 			super.appendContentString( stringToAppend );
