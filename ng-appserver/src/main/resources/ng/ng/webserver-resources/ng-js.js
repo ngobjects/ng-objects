@@ -48,32 +48,48 @@ function ajaxSubmitButtonClick(button,updateContainerID) {
 	// we add the button's name to the submitted values ourselves, allowing the framework to determine the pressed button.
 	params.append(button.name,button.value);
 
-	// The update container that will be targeted by the update
-	// FIXME: Allow form submission without a specified updateContainer 
-	var updateContainer = document.getElementById(updateContainerID);
-
 	fetch(url, {
-	  method: form.method,
-	  body: params,
-	  headers: {
-	    'Content-Type': 'application/x-www-form-urlencoded',
-	    'x-updatecontainerid': updateContainerID
-	  }
+		method: form.method,
+		body: params,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'x-updatecontainerid': updateContainerID
+		}
 	})
-	.then(response => response.formData() )
 	.then(
-		formData => {
-			// console.log( formData.values() );
-			for (const pair of formData.entries()) {
-			  var uc = document.getElementById(pair[0]);
-			  uc.innerHTML= pair[1];
-			  console.log(pair[0], pair[1]);
+		response => {
+			// When the response arrives, we determine if it's a multipart response or a "regular" response.
+			// If it's a multipart response, we assume that each part corresponds to a container to be updated
+			// FIXME: Not absolutely certain that we're using the best method to determine if this is a multipart response. Investigate // Hugi 2025-04-13
+			var contentType = response.headers.get('content-type')
+			
+			if( contentType.includes('multipart') ) { 
+				return response.formData();
+			}
+			else {
+				return response.text();
 			}
 		}
-		// text => {
-		// updateContainer.innerHTML = text;
-	//}
-);
+	)
+	.then(
+		responseData => {
+			if( responseData instanceof FormData ) {
+				for (const pair of responseData.entries()) {
+					var partName = pair[0];
+					var partData = pair[1];
+					
+					var updateContainer = document.getElementById(partName);
+					updateContainer.innerHTML= partData;
+				}
+			}
+			else {
+				// The update container that will be targeted by the update
+				// FIXME: Allow form submission without a specified updateContainer 
+				var updateContainer = document.getElementById(updateContainerID);
+				updateContainer.innerHTML = responseData;		
+			}
+		}
+	);
 }
 
 /**
