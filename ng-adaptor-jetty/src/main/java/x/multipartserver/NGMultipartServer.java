@@ -62,7 +62,7 @@ public class NGMultipartServer {
 		}
 	}
 
-	private static MultiPart.ContentSourcePart stringPart( final String name, final String content ) {
+	public static MultiPart.ContentSourcePart stringPart( final String name, final String content ) {
 		final HttpFields httpFields = HttpFields.build().add( new HttpField( "content-disposition", "form-data; name=\"%s\"".formatted( name ) ) );
 		final Source contentSource = Content.Source.from( new ByteArrayInputStream( content.getBytes() ) );
 		return new MultiPart.ContentSourcePart( name, null, httpFields, contentSource );
