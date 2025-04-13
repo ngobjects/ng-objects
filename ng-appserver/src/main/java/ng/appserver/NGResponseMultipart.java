@@ -26,7 +26,7 @@ public class NGResponseMultipart extends NGResponse {
 	/**
 	 * A single part of content within a multipart response
 	 */
-	public record ContentPart( String name, String contentType, StringBuilder content ) {}
+	public record ContentPart( String name, StringBuilder content ) {}
 
 	private String updateContainerToTarget() {
 		if( _context.targetsMultipleUpdateContainers() ) {
@@ -51,7 +51,7 @@ public class NGResponseMultipart extends NGResponse {
 	@Override
 	public void appendContentString( String stringToAppend ) {
 		if( _context.targetsMultipleUpdateContainers() ) {
-			contentPart( updateContainerToTarget() ).content().append( stringToAppend );
+			getContentPart( updateContainerToTarget() ).content().append( stringToAppend );
 		}
 		else {
 			super.appendContentString( stringToAppend );
@@ -61,11 +61,11 @@ public class NGResponseMultipart extends NGResponse {
 	/**
 	 * @return The content part with the given name. If no such part exists, construct a new one
 	 */
-	private ContentPart contentPart( final String name ) {
+	private ContentPart getContentPart( final String name ) {
 		ContentPart contentPart = _contentParts.get( name );
 
 		if( contentPart == null ) {
-			contentPart = new ContentPart( name, "text/html", new StringBuilder() );
+			contentPart = new ContentPart( name, new StringBuilder() );
 			_contentParts.put( name, contentPart );
 		}
 
