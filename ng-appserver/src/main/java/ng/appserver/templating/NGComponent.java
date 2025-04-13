@@ -253,12 +253,15 @@ public class NGComponent implements NGElement, NGActionResults {
 		context()._resetElementID();
 
 		// Now let's create a new response and append ourselves to it
-		final NGResponseMultipart response = new NGResponseMultipart( context() );
+		final NGResponse response;
 
+		// FIXME: It feels wrong to determine here the type of response we're constructing, but going with it for testing for now // Hugi 2025-04-13
 		if( context().targetsMultipleUpdateContainers() ) {
+			response = new NGResponseMultipart( context() );
 			response.setHeader( "content-type", "multipart/form-data; boundary=12345" );
 		}
 		else {
+			response = new NGResponse();
 			response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
 		}
 
