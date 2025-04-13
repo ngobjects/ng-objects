@@ -1,8 +1,8 @@
 package ng.appserver;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementID;
@@ -14,10 +14,10 @@ public class NGContext {
 	 *
 	 * FIXME: This is a temporary hack while we're developing the AJAX functionality // Hugi 2024-03-16
 	 */
-	public Set<String> containingUpdateContainerIDs = new HashSet<>();
+	public List<String> containingUpdateContainerIDs = new ArrayList<>();
 
 	/**
-	 * FIXME: Yet another temporary testhack while we experiment with methods to control partial page updates on the server side // Hugi 2024-10-09
+	 * FIXME: Yet another temporary hack while we experiment with methods to control partial page updates on the server side // Hugi 2024-10-09
 	 */
 	public boolean forceFullUpdate;
 
