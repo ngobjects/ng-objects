@@ -253,8 +253,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		context()._resetElementID();
 
 		// Now let's create a new response and append ourselves to it
-		final NGResponseMultipart response = new NGResponseMultipart();
-		response.context = context();
+		final NGResponseMultipart response = new NGResponseMultipart( context() );
 
 		if( context().targetsMultipleUpdateContainers() ) {
 			response.setHeader( "content-type", "multipart/form-data; boundary=12345" );

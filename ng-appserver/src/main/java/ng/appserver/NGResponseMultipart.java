@@ -10,38 +10,39 @@ import java.util.Map;
 public class NGResponseMultipart extends NGResponse {
 
 	/**
-	 * We need the ontext to know which part of the page we're targeting if the request targetd multiple update containers
+	 * We need the context to keep track of which parts of the page are targeted for update
 	 */
-	public NGContext context;
+	private NGContext _context;
 
 	/**
-	 * The list of
+	 * The parts this response contains. Initialized to an empty list at the start. If used in NGResponse, should probably be null if this isn't a multipart response (in our current worldview)
 	 */
 	public Map<String, ContentPart> _contentParts = new HashMap<>();
 
+	public NGResponseMultipart( NGContext context ) {
+		_context = context;
+	}
+
+	/**
+	 * A single part of content within a multipart response
+	 */
 	public record ContentPart( String name, String contentType, StringBuilder content ) {}
 
 	private String updateContainerToTarget() {
-		if( context.targetsMultipleUpdateContainers() ) {
+		if( _context.targetsMultipleUpdateContainers() ) {
 			// The list of containers to update is passed in to the request as a header
-			final String containerIDToUpdate = context.targetedUpdateContainerID();
+			final String containerIDToUpdate = _context.targetedUpdateContainerID();
 
 			final String[] updateContainerIDs = containerIDToUpdate.split( ";" );
 
-			// We return the first matching container, since th should be the outermost container
-			for( String containingContainerID : context.containingUpdateContainerIDs ) {
+			// We return the first matching container, since that should be the outermost container
+			for( String containingContainerID : _context.containingUpdateContainerIDs ) {
 				for( String targetedContainerID : updateContainerIDs ) {
 					if( containingContainerID.equals( targetedContainerID ) ) {
 						return containingContainerID;
 					}
 				}
 			}
-			for( String updateContainerID : updateContainerIDs ) {
-				if( context.containingUpdateContainerIDs.contains( updateContainerID ) ) {
-					return updateContainerID;
-				}
-			}
-
 		}
 
 		return null;
@@ -49,7 +50,7 @@ public class NGResponseMultipart extends NGResponse {
 
 	@Override
 	public void appendContentString( String stringToAppend ) {
-		if( context.targetsMultipleUpdateContainers() ) {
+		if( _context.targetsMultipleUpdateContainers() ) {
 			contentPart( updateContainerToTarget() ).content().append( stringToAppend );
 		}
 		else {
@@ -60,7 +61,7 @@ public class NGResponseMultipart extends NGResponse {
 	/**
 	 * @return The content part with the given name. If no such part exists, construct a new one
 	 */
-	private ContentPart contentPart( String name ) {
+	private ContentPart contentPart( final String name ) {
 		ContentPart contentPart = _contentParts.get( name );
 
 		if( contentPart == null ) {
