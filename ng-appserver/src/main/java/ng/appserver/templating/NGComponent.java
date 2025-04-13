@@ -10,6 +10,7 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGSession;
 import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.templating.assications.NGAssociation;
@@ -252,8 +253,16 @@ public class NGComponent implements NGElement, NGActionResults {
 		context()._resetElementID();
 
 		// Now let's create a new response and append ourselves to it
-		final NGResponse response = new NGResponse();
-		response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
+		final NGResponseMultipart response = new NGResponseMultipart();
+		response.context = context();
+
+		if( context().targetsMultipleUpdateContainers() ) {
+			response.setHeader( "content-type", "multipart/form-data; boundary=12345" );
+		}
+		else {
+			response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
+		}
+
 		appendToResponse( response, context() );
 
 		// So, we've generated the page, and it's ready to return. Now we let the context tell us whether it should be stored in the page cache for future reference.

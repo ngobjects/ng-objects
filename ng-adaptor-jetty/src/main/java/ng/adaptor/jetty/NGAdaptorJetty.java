@@ -21,6 +21,7 @@ import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.MultiPartConfig;
 import org.eclipse.jetty.http.MultiPartFormData;
+import org.eclipse.jetty.http.MultiPartFormData.ContentSource;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -42,7 +43,10 @@ import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGRequest.UploadedFile;
 import ng.appserver.NGResponse;
+import ng.appserver.NGResponseMultipart;
+import ng.appserver.NGResponseMultipart.ContentPart;
 import ng.appserver.privates.NGDevelopmentInstanceStopper;
+import x.multipartserver.NGMultipartServer;
 
 public class NGAdaptorJetty extends NGAdaptor {
 
@@ -125,18 +129,23 @@ public class NGAdaptorJetty extends NGAdaptor {
 			// - Should we always be setting the content length to zero?
 			// - Should we complain if a content stream has been set, but contentInputStreamLength not?
 			// Hugi 2023-01-26
-			final long contentLength;
 
-			if( ngResponse.contentInputStream() != null ) {
-				// If an inputstream is present, use the stream's manually specified length value
-				contentLength = ngResponse.contentInputStreamLength();
-			}
-			else {
-				// Otherwise we go for the length of the response's contained data/bytes.
-				contentLength = ngResponse.contentBytesLength();
-			}
+			final boolean isMultipartResponse = ngResponse instanceof NGResponseMultipart mp && !mp._contentParts.isEmpty();
 
-			jettyResponse.getHeaders().add( "content-length", String.valueOf( contentLength ) );
+			if( !isMultipartResponse ) {
+				final long contentLength;
+
+				if( ngResponse.contentInputStream() != null ) {
+					// If an inputstream is present, use the stream's manually specified length value
+					contentLength = ngResponse.contentInputStreamLength();
+				}
+				else {
+					// Otherwise we go for the length of the response's contained data/bytes.
+					contentLength = ngResponse.contentBytesLength();
+				}
+
+				jettyResponse.getHeaders().add( "content-length", String.valueOf( contentLength ) );
+			}
 
 			for( final NGCookie ngCookie : ngResponse.cookies() ) {
 				Response.addCookie( jettyResponse, ngCookieToJettyCookie( ngCookie ) );
@@ -149,17 +158,32 @@ public class NGAdaptorJetty extends NGAdaptor {
 			}
 
 			try( final OutputStream out = Content.Sink.asOutputStream( jettyResponse )) {
-				if( ngResponse.contentInputStream() != null ) {
+				if( ngResponse instanceof NGResponseMultipart mp && !mp._contentParts.isEmpty() ) {
+					final String boundary = "12345";
+
+					final ContentSource cs = new MultiPartFormData.ContentSource( boundary );
+
+					for( ContentPart part : mp._contentParts.values() ) {
+						cs.addPart( NGMultipartServer.stringPart( part.name(), part.content().toString() ) );
+					}
+
+					cs.close();
+					// jettyResponse.getHeaders().add( "Access-Control-Allow-Origin", "*" );
+
+					Content.copy( cs, jettyResponse, callback );
+				}
+				else if( ngResponse.contentInputStream() != null ) {
 					try( final InputStream inputStream = ngResponse.contentInputStream()) {
 						inputStream.transferTo( out );
 					}
+					callback.succeeded();
 				}
 				else {
 					ngResponse.contentByteStream().writeTo( out );
+					callback.succeeded();
 				}
 			}
 
-			callback.succeeded();
 		}
 
 		private static HttpCookie ngCookieToJettyCookie( final NGCookie ngCookie ) {

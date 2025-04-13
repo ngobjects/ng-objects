@@ -60,10 +60,20 @@ function ajaxSubmitButtonClick(button,updateContainerID) {
 	    'x-updatecontainerid': updateContainerID
 	  }
 	})
-	.then(response => response.text() )
-	.then(text => {
-		updateContainer.innerHTML = text;
-	});
+	.then(response => response.formData() )
+	.then(
+		formData => {
+			// console.log( formData.values() );
+			for (const pair of formData.entries()) {
+			  var uc = document.getElementById(pair[0]);
+			  uc.innerHTML= pair[1];
+			  console.log(pair[0], pair[1]);
+			}
+		}
+		// text => {
+		// updateContainer.innerHTML = text;
+	//}
+);
 }
 
 /**

@@ -232,6 +232,14 @@ public class NGContext {
 		return request().headerForKey( "x-updatecontainerid" );
 	}
 
+	/**
+	 * @return true if we're targeting multiple containers
+	 */
+	public boolean targetsMultipleUpdateContainers() {
+		final boolean target = targetedUpdateContainerID() != null && targetedUpdateContainerID().contains( ";" );
+		return target;
+	}
+
 	@Override
 	public String toString() {
 		return "NGContext [_request=" + _request + ", _component=" + _component + ", _page=" + _page + ", _contextID=" + _contextID + ", _elementID=" + _elementID + ", _senderID=" + _senderID + "]";
