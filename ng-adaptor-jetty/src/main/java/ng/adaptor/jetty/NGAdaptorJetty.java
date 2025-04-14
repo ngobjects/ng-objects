@@ -125,28 +125,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			jettyResponse.setStatus( ngResponse.status() );
 
-			final boolean isMultipartResponse = ngResponse instanceof NGResponseMultipart mp && !mp._contentParts.isEmpty();
-
-			if( !isMultipartResponse ) {
-				// FIXME: If a content-length header is already present it has probably been set by the user, so perhaps we should skip this leave that header alone? // Hugi 2025-04-14
-				final long contentLength;
-
-				if( ngResponse.contentInputStream() != null ) {
-					// If an inputstream is present, use the stream's manually specified length value
-					contentLength = ngResponse.contentInputStreamLength();
-
-					if( contentLength == -1 ) {
-						throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
-					}
-				}
-				else {
-					// Otherwise we go for the length of the response's contained data/bytes.
-					contentLength = ngResponse.contentBytesLength();
-				}
-
-				jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
-			}
-
 			for( final NGCookie ngCookie : ngResponse.cookies() ) {
 				Response.addCookie( jettyResponse, ngCookieToJettyCookie( ngCookie ) );
 			}
@@ -172,6 +150,25 @@ public class NGAdaptorJetty extends NGAdaptor {
 					Content.copy( cs, jettyResponse, callback );
 				}
 				else {
+
+					// FIXME: If a content-length header is already present it has probably been set by the user, so perhaps we should skip this and leave that header alone? // Hugi 2025-04-14
+					final long contentLength;
+
+					if( ngResponse.contentInputStream() != null ) {
+						// If an inputstream is present, use the stream's manually specified length value
+						contentLength = ngResponse.contentInputStreamLength();
+
+						if( contentLength == -1 ) {
+							throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
+						}
+					}
+					else {
+						// Otherwise we go for the length of the response's contained data/bytes.
+						contentLength = ngResponse.contentBytesLength();
+					}
+
+					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+
 					if( ngResponse.contentInputStream() != null ) {
 						try( final InputStream inputStream = ngResponse.contentInputStream()) {
 							inputStream.transferTo( out );
