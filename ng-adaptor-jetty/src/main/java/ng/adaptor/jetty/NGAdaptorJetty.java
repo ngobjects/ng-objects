@@ -125,26 +125,26 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			jettyResponse.setStatus( ngResponse.status() );
 
-			// FIXME: Thoughts on content-length:
-			// - Should we always be setting the content length to zero?
-			// - Should we complain if a content stream has been set, but contentInputStreamLength not?
-			// Hugi 2023-01-26
-
 			final boolean isMultipartResponse = ngResponse instanceof NGResponseMultipart mp && !mp._contentParts.isEmpty();
 
 			if( !isMultipartResponse ) {
+				// FIXME: If a content-length header is already present it has probably been set by the user, so perhaps we should skip this leave that header alone? // Hugi 2025-04-14
 				final long contentLength;
 
 				if( ngResponse.contentInputStream() != null ) {
 					// If an inputstream is present, use the stream's manually specified length value
 					contentLength = ngResponse.contentInputStreamLength();
+
+					if( contentLength == -1 ) {
+						throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
+					}
 				}
 				else {
 					// Otherwise we go for the length of the response's contained data/bytes.
 					contentLength = ngResponse.contentBytesLength();
 				}
 
-				jettyResponse.getHeaders().add( "content-length", String.valueOf( contentLength ) );
+				jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
 			}
 
 			for( final NGCookie ngCookie : ngResponse.cookies() ) {
@@ -159,7 +159,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			try( final OutputStream out = Content.Sink.asOutputStream( jettyResponse )) {
 				if( ngResponse instanceof NGResponseMultipart mp && !mp._contentParts.isEmpty() ) {
-					final String boundary = "12345";
+					final String boundary = "12345"; // FIXME: Use a proper boundary // Hugi 2025-04-14
 
 					final ContentSource cs = new MultiPartFormData.ContentSource( boundary );
 
@@ -168,18 +168,19 @@ public class NGAdaptorJetty extends NGAdaptor {
 					}
 
 					cs.close();
-					// jettyResponse.getHeaders().add( "Access-Control-Allow-Origin", "*" );
 
 					Content.copy( cs, jettyResponse, callback );
 				}
-				else if( ngResponse.contentInputStream() != null ) {
-					try( final InputStream inputStream = ngResponse.contentInputStream()) {
-						inputStream.transferTo( out );
-					}
-					callback.succeeded();
-				}
 				else {
-					ngResponse.contentByteStream().writeTo( out );
+					if( ngResponse.contentInputStream() != null ) {
+						try( final InputStream inputStream = ngResponse.contentInputStream()) {
+							inputStream.transferTo( out );
+						}
+					}
+					else {
+						ngResponse.contentByteStream().writeTo( out );
+					}
+
 					callback.succeeded();
 				}
 			}
