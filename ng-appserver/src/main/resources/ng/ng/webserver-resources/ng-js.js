@@ -7,7 +7,7 @@
 function ajaxUpdateLinkClick( url, id ) {
 	const xhttp = new XMLHttpRequest();
 	xhttp.open("GET", url, true);
-	xhttp.setRequestHeader( 'x-updatecontainerid', id )
+	xhttp.setRequestHeader( 'ng-container-id', id )
 
 	if( id ) {
 		var updateContainer = document.getElementById(id);
@@ -53,7 +53,7 @@ function ajaxSubmitButtonClick(button,updateContainerID) {
 		body: params,
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
-			'x-updatecontainerid': updateContainerID
+			'ng-container-id': updateContainerID
 		}
 	})
 	.then(

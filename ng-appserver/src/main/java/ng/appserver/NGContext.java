@@ -229,7 +229,7 @@ public class NGContext {
 	 * // Hugi 2024-10-15
 	 */
 	public String targetedUpdateContainerID() {
-		return request().headerForKey( "x-updatecontainerid" );
+		return request().headerForKey( "ng-container-id" );
 	}
 
 	/**
