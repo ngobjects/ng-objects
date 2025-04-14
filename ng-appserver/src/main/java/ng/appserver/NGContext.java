@@ -10,6 +10,17 @@ import ng.appserver.templating.NGElementID;
 public class NGContext {
 
 	/**
+	 * Name of the header or query parameter (form value) added to a request to signify the part(s) of the page we want to render
+	 * (as in, the IDs of the updateContainers we want updated)
+	 */
+	private static final String TARGETED_CONTAINER_ID_HEADER = "ng-container-id";
+
+	/**
+	 * If multiple update container IDs are targeted they are separated by this string
+	 */
+	private static final String MULTIPLE_CONTAINER_SEPARATOR = ";";
+
+	/**
 	 * Contains the list of AjaxUpdateContainer IDs that encapsulate the element currently being rendered
 	 *
 	 * FIXME: This is a temporary hack while we're developing the AJAX functionality // Hugi 2024-03-16
@@ -229,14 +240,21 @@ public class NGContext {
 	 * // Hugi 2024-10-15
 	 */
 	public String targetedUpdateContainerID() {
-		return request().headerForKey( "ng-container-id" );
+		// CHECKME: We're allowing the specification of targeted containers from the request parameters. This makes integration with JS libraries like htmx easier
+		final String fromRequestParameters = request().formValueForKey( TARGETED_CONTAINER_ID_HEADER );
+
+		if( fromRequestParameters != null ) {
+			return fromRequestParameters;
+		}
+
+		return request().headerForKey( TARGETED_CONTAINER_ID_HEADER );
 	}
 
 	/**
 	 * @return true if we're targeting multiple containers
 	 */
 	public boolean targetsMultipleUpdateContainers() {
-		return targetedUpdateContainerID() != null && targetedUpdateContainerID().contains( ";" );
+		return targetedUpdateContainerID() != null && targetedUpdateContainerID().contains( MULTIPLE_CONTAINER_SEPARATOR );
 	}
 
 	/**
@@ -247,7 +265,7 @@ public class NGContext {
 			// The list of containers to update is passed in to the request as a header
 			final String containerIDToUpdate = targetedUpdateContainerID();
 
-			final String[] updateContainerIDs = containerIDToUpdate.split( ";" );
+			final String[] updateContainerIDs = containerIDToUpdate.split( MULTIPLE_CONTAINER_SEPARATOR );
 
 			// We return the first matching container, since that should be the outermost container
 			for( final String containingContainerID : containingUpdateContainerIDs ) {
