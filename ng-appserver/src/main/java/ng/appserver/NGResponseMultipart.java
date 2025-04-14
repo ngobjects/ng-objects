@@ -4,9 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * FIXME: Created as a temporary holder class to experiment with a nice API for constructing multipart responses
+ * Holder class constructing responses with a multipart body.
+ *
+ * FIXME:
+ * This class is a bit of a standout, since as the framework is designed at the moment, NGResponse usually contains the data directly.
+ * Ideally we'd have a separate container class for the response's body content (string/data/multipart), like most request handling frameworks do.
+ * Until a decision is made on the final design of the APIs, this class gets to stay.
+ * Hugi 2025-04-14
  */
 
+@Deprecated
 public class NGResponseMultipart extends NGResponse {
 
 	/**
