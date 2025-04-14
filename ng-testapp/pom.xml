@@ -26,7 +26,7 @@
 		</dependency>
 		<dependency>
 			<groupId>is.rebbi</groupId>
-			<artifactId>ng-adaptor-jetty-servlet</artifactId>
+			<artifactId>ng-adaptor-jetty</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
