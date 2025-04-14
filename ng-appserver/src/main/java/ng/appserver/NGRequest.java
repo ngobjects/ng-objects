@@ -105,7 +105,7 @@ public class NGRequest extends NGMessage {
 
 		// Fail if multiple form values are present for the same query parameter.
 		if( values.size() > 1 ) {
-			throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( values.size(), key, values ) );
+			throw new IllegalStateException( "The request contains %s form values named '%s' with values (%s). If you expected multiple values, use formValuesForKey() instead of formValueForKey()".formatted( values.size(), key, values ) );
 		}
 
 		return values.get( 0 );
