@@ -172,7 +172,7 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 	public static boolean shouldAppendToResponseInContext( final NGContext context ) {
 
 		// FIXME: Dont' forget; this is a temporary reprieve // Hugi 2024-10-09
-		if( context.forceFullUpdate ) {
+		if( context.forceFullRender ) {
 			return true;
 		}
 

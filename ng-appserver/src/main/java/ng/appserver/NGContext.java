@@ -30,7 +30,7 @@ public class NGContext {
 	/**
 	 * FIXME: Yet another temporary hack while we experiment with methods to control partial page updates on the server side // Hugi 2024-10-09
 	 */
-	public boolean forceFullUpdate;
+	public boolean forceFullRender;
 
 	/**
 	 * The request that initiated the creation of this context
