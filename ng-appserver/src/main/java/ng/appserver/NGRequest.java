@@ -76,8 +76,6 @@ public class NGRequest extends NGMessage {
 
 	/**
 	 * @return The requests form values (query parameters)
-	 *
-	 * FIXME: Form values arent always strings? What about file uploads? (multipart/form-data) // Hugi 2023-03-11
 	 */
 	public Map<String, List<String>> formValues() {
 		return _formValues;
