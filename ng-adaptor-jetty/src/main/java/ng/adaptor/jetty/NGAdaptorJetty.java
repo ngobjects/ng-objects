@@ -1,5 +1,6 @@
 package ng.adaptor.jetty;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,11 +19,14 @@ import java.util.UUID;
 import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.http.HttpCookie.SameSite;
 import org.eclipse.jetty.http.HttpField;
+import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.MultiPart;
 import org.eclipse.jetty.http.MultiPartConfig;
 import org.eclipse.jetty.http.MultiPartFormData;
 import org.eclipse.jetty.http.MultiPartFormData.ContentSource;
 import org.eclipse.jetty.io.Content;
+import org.eclipse.jetty.io.Content.Source;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -46,7 +50,6 @@ import ng.appserver.NGResponse;
 import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGResponseMultipart.ContentPart;
 import ng.appserver.privates.NGDevelopmentInstanceStopper;
-import x.multipartserver.NGMultipartServer;
 
 public class NGAdaptorJetty extends NGAdaptor {
 
@@ -142,7 +145,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 					final ContentSource cs = new MultiPartFormData.ContentSource( boundary );
 
 					for( ContentPart part : mp._contentParts.values() ) {
-						cs.addPart( NGMultipartServer.stringPart( part.name(), part.content().toString() ) );
+						cs.addPart( createStringPart( part.name(), part.content().toString() ) );
 					}
 
 					cs.close();
@@ -181,7 +184,15 @@ public class NGAdaptorJetty extends NGAdaptor {
 					callback.succeeded();
 				}
 			}
+		}
 
+		/**
+		 * @return A multipart ContentPart with [name] and [content]
+		 */
+		private static MultiPart.ContentSourcePart createStringPart( final String name, final String content ) {
+			final HttpFields httpFields = HttpFields.build().add( new HttpField( "content-disposition", "form-data; name=\"%s\"".formatted( name ) ) );
+			final Source contentSource = Content.Source.from( new ByteArrayInputStream( content.getBytes() ) );
+			return new MultiPart.ContentSourcePart( name, null, httpFields, contentSource );
 		}
 
 		private static HttpCookie ngCookieToJettyCookie( final NGCookie ngCookie ) {
