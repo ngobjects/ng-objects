@@ -104,6 +104,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 	public class NGHandler extends Handler.Abstract {
 
+		/**
+		 * The directory used by Jetty to store cached data during processing of multipart requests
+		 *
+		 * FIXME: This should probably be specified in a property
+		 */
+		private static final String MULTIPART_TMP_DIR = "/tmp/jet";
+
 		@Override
 		public boolean handle( Request request, Response response, Callback callback ) throws Exception {
 			doRequest( request, response, callback );
@@ -226,7 +233,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType, final Callback callback ) {
 
 			final MultiPartConfig config = new MultiPartConfig.Builder()
-					.location( Path.of( "/tmp/jet" ) )
+					.location( Path.of( MULTIPART_TMP_DIR ) )
 					.build();
 
 			// The formValues that will get set on the request
