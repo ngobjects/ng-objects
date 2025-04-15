@@ -187,7 +187,7 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 		final String[] updateContainerIDs = containerIDToUpdate.split( ";" );
 
 		for( String updateContainerID : updateContainerIDs ) {
-			if( context.containingUpdateContainerIDs.contains( updateContainerID ) ) {
+			if( context.containingUpdateContainerIDs().contains( updateContainerID ) ) {
 				return true;
 			}
 		}

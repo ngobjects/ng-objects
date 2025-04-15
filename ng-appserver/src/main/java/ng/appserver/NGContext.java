@@ -22,13 +22,11 @@ public class NGContext {
 
 	/**
 	 * Contains the list of AjaxUpdateContainer IDs that encapsulate the element currently being rendered
-	 *
-	 * FIXME: This is a temporary hack while we're developing the AJAX functionality // Hugi 2024-03-16
 	 */
-	public List<String> containingUpdateContainerIDs = new ArrayList<>();
+	private List<String> _containingUpdateContainerIDs = new ArrayList<>();
 
 	/**
-	 * FIXME: Yet another temporary hack while we experiment with methods to control partial page updates on the server side // Hugi 2024-10-09
+	 * Indicates that we ignore any update container headers and append every element to the response
 	 */
 	public boolean forceFullRender;
 
@@ -231,6 +229,13 @@ public class NGContext {
 	}
 
 	/**
+	 * @return The names of updateContainers containing the element currently being rendered
+	 */
+	public List<String> containingUpdateContainerIDs() {
+		return _containingUpdateContainerIDs;
+	}
+
+	/**
 	 * ID of the update container targeted with this request
 	 *
 	 * FIXME:
@@ -268,7 +273,7 @@ public class NGContext {
 			final String[] updateContainerIDs = containerIDToUpdate.split( MULTIPLE_CONTAINER_SEPARATOR );
 
 			// We return the first matching container, since that should be the outermost container
-			for( final String containingContainerID : containingUpdateContainerIDs ) {
+			for( final String containingContainerID : containingUpdateContainerIDs() ) {
 				for( final String targetedContainerID : updateContainerIDs ) {
 					if( containingContainerID.equals( targetedContainerID ) ) {
 						return containingContainerID;
