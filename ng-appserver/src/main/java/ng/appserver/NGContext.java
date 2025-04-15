@@ -238,11 +238,7 @@ public class NGContext {
 	/**
 	 * ID of the update container targeted with this request
 	 *
-	 * FIXME:
-	 * Should be replaced with a variable, preferably set at the context's construction.
-	 * That also means we need to make the context's construction a little more formal, since any request handler should be able to request partial rendering (and it should be straight forward).
-	 * In any case, this functionality will probably end up in a separate rendering context that's been begging to be created for a while.
-	 * // Hugi 2024-10-15
+	 * FIXME: Should be replaced with a variable, preferably set at the context's construction // Hugi 2024-10-15
 	 */
 	public String targetedUpdateContainerID() {
 		// CHECKME: We're allowing the specification of targeted containers from the request parameters. This makes integration with JS libraries like htmx easier
@@ -289,7 +285,6 @@ public class NGContext {
 	 * @return true if the context is currently working inside an updateContainer meant to be updated.
 	 *
 	 * FIXME: We should probably be caching some of this operation. Even if this isn't heavy, it's going to get invoked for every element on the page // Hugi 20224-07-15
-	 * FIXME: We can make this more exact/performant by rendering structure only for the branch(es) containing the updateContainer(s) we're actually targeting // Hugi 2024-07-16
 	 */
 	public boolean shouldAppendToResponse() {
 
