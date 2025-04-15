@@ -1,27 +1,72 @@
 /**
+ * Update the given UpdateContainer with the given HTML content
+ */
+function setUpdateContainerContent( updateContainerID, content ) {
+
+	var updateContainer = document.getElementById(updateContainerID);
+
+	if( !updateContainer ) {
+		alert( 'No UpdateContainer found on page with id ' + updateContainerID );
+	}
+
+	updateContainer.innerHTML = content;
+}
+
+/**
+ * Submit an ajax request and update the given updateContainerID with the response
+ * 
+ * FIXME: Allow form submission without a specified updateContainer? // Hugi 2025-04-14
+ */
+function ajaxRequest( url, fetchOptions, updateContainerID ) {
+	fetch( url, fetchOptions )
+	.then(
+		response => {
+			// When the response arrives, we determine if it's a multipart response or a "regular" response.
+			// If it's a multipart response, we assume that each part corresponds to a container to be updated
+			// FIXME: Not certain we're using the best method to determine if this is a multipart response. Investigate // Hugi 2025-04-13
+			var contentType = response.headers.get('content-type')
+			
+			if( contentType.includes('multipart') ) { 
+				return response.formData();
+			}
+			else {
+				return response.text();
+			}
+		}
+	)
+	.then(
+		responseData => {
+			if( responseData instanceof FormData ) {
+				for (const pair of responseData.entries()) {
+					var partName = pair[0];
+					var partData = pair[1];
+					setUpdateContainerContent( partName, partData );
+				}
+			}
+			else {
+				setUpdateContainerContent( updateContainerID, responseData );
+			}
+		}
+	);	
+}
+
+/**
  * Invoked by AjaxUpdateLink.
  * Initiates a GET request to the given URL and updates the container identified by 'id' with the returned response content.
  * 
  * FIXME: Currently, null can be passed in as an id parameter. Invoking an action without a resulting update feels like such a special situation (WRT caching, rendering and other handling on the server side) that this might warrant a separate function // Hugi 2024-10-05    
  */
-function ajaxUpdateLinkClick( url, id ) {
-	const xhttp = new XMLHttpRequest();
-	xhttp.open("GET", url, true);
-	xhttp.setRequestHeader( 'ng-container-id', id )
+function ajaxUpdateLinkClick( url, updateContainerID ) {
 
-	if( id ) {
-		var updateContainer = document.getElementById(id);
-		
-		if( !updateContainer ) {
-			alert( 'No AjaxUpdateContainer on the page with id ' + id );
-		}
+	const fetchOptions =
+		{
+			method: "GET",
+			headers: {
+				'ng-container-id': updateContainerID
+			}
+		};
 
-		xhttp.onload = () => {
-			updateContainer.innerHTML = xhttp.responseText;
-	    };
-	}
-	
-	xhttp.send();
+	ajaxRequest( url, fetchOptions, updateContainerID );
 }
 
 /**
@@ -30,7 +75,7 @@ function ajaxUpdateLinkClick( url, id ) {
  * @param button The button clicked to submit the form
  * @param updateContainerID The ID of an update container to display the returned HTML
  */
-function ajaxSubmitButtonClick(button,updateContainerID) {
+function ajaxSubmitButtonClick( button, updateContainerID ) {
 
 	// The form we are submitting is always the clicked button's containing form
 	var form = button.form;
@@ -48,48 +93,17 @@ function ajaxSubmitButtonClick(button,updateContainerID) {
 	// we add the button's name to the submitted values ourselves, allowing the framework to determine the pressed button.
 	params.append(button.name,button.value);
 
-	fetch(url, {
-		method: form.method,
-		body: params,
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-			'ng-container-id': updateContainerID
-		}
-	})
-	.then(
-		response => {
-			// When the response arrives, we determine if it's a multipart response or a "regular" response.
-			// If it's a multipart response, we assume that each part corresponds to a container to be updated
-			// FIXME: Not absolutely certain that we're using the best method to determine if this is a multipart response. Investigate // Hugi 2025-04-13
-			var contentType = response.headers.get('content-type')
-			
-			if( contentType.includes('multipart') ) { 
-				return response.formData();
+	const fetchOptions =
+		{
+			method: form.method,
+			body: params,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'ng-container-id': updateContainerID
 			}
-			else {
-				return response.text();
-			}
-		}
-	)
-	.then(
-		responseData => {
-			if( responseData instanceof FormData ) {
-				for (const pair of responseData.entries()) {
-					var partName = pair[0];
-					var partData = pair[1];
-					
-					var updateContainer = document.getElementById(partName);
-					updateContainer.innerHTML= partData;
-				}
-			}
-			else {
-				// The update container that will be targeted by the update
-				// FIXME: Allow form submission without a specified updateContainer 
-				var updateContainer = document.getElementById(updateContainerID);
-				updateContainer.innerHTML = responseData;		
-			}
-		}
-	);
+		};
+
+	ajaxRequest( url, fetchOptions, updateContainerID );
 }
 
 /**
