@@ -64,7 +64,7 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 			context.elementID().addBranch();
 
 			for( final NGElement child : children() ) {
-				if( shouldAppendToResponseInContext( context ) ) {
+				if( context.shouldAppendToResponse() ) {
 					// FIXME: Certainly butt-ugly element display of some element debugging info, but being able to display the elementID tree while debugging is kind of useful, so we want to build something from this // Hugi 2024-09-28
 					final boolean appendElementTreeDebugInfo = false;
 
@@ -160,38 +160,5 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 
 		// If template is any other element, it's an only child.
 		return List.of( contentTemplate );
-	}
-
-	/**
-	 * @return true if the context is currently working inside an updateContainer meant to be updated.
-	 *
-	 * FIXME: We should probably be caching some of this operation. Even if this isn't heavy, it's going to get invoked for every element on the page // Hugi 20224-07-15
-	 * FIXME: We can make this more exact/performant by rendering structure only for the branch(es) containing the updateContainer(s) we're actually targeting // Hugi 2024-07-16
-	 * FIXME: This method probably belongs on the context. Maybe. We're starting to accumulate some API cruft so we need to think through this whole "decide what to render"-thing to make sure it's totally nice and awesome // Hugi 2024-10-15
-	 */
-	public static boolean shouldAppendToResponseInContext( final NGContext context ) {
-
-		// FIXME: Dont' forget; this is a temporary reprieve // Hugi 2024-10-09
-		if( context.forceFullRender ) {
-			return true;
-		}
-
-		// The list of containers to update is passed in to the request as a header
-		final String containerIDToUpdate = context.targetedUpdateContainerID();
-
-		// If no containers are specified, we're doing a full page render, so always perform appendToResponse()
-		if( containerIDToUpdate == null ) {
-			return true;
-		}
-
-		final String[] updateContainerIDs = containerIDToUpdate.split( ";" );
-
-		for( String updateContainerID : updateContainerIDs ) {
-			if( context.containingUpdateContainerIDs().contains( updateContainerID ) ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 }

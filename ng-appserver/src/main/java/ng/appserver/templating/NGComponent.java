@@ -12,7 +12,6 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGSession;
-import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.templating.assications.NGAssociation;
 import ng.kvc.NGKeyValueCoding;
 
@@ -291,8 +290,8 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		final NGElement template = template();
 
-		// FIXME: We're duplicating some logic here from NGDynamicGroup so we're going to have to do some cleanup // Hugi 2024-10-15
-		if( NGDynamicGroup.shouldAppendToResponseInContext( context ) ) {
+		// FIXME: I think this actually belongs in NGComponentReference // Hugi 2025-04-15
+		if( context.shouldAppendToResponse() ) {
 			template.appendToResponse( response, context );
 		}
 		else if( template instanceof NGStructuralElement se ) {

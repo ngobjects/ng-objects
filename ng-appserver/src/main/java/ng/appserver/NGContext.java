@@ -28,7 +28,7 @@ public class NGContext {
 	/**
 	 * Indicates that we ignore any update container headers and append every element to the response
 	 */
-	public boolean forceFullRender;
+	private boolean _forceFullRender;
 
 	/**
 	 * The request that initiated the creation of this context
@@ -283,6 +283,44 @@ public class NGContext {
 		}
 
 		return null;
+	}
+
+	/**
+	 * @return true if the context is currently working inside an updateContainer meant to be updated.
+	 *
+	 * FIXME: We should probably be caching some of this operation. Even if this isn't heavy, it's going to get invoked for every element on the page // Hugi 20224-07-15
+	 * FIXME: We can make this more exact/performant by rendering structure only for the branch(es) containing the updateContainer(s) we're actually targeting // Hugi 2024-07-16
+	 */
+	public boolean shouldAppendToResponse() {
+
+		if( _forceFullRender ) {
+			return true;
+		}
+
+		// The list of containers to update is passed in to the request as a header
+		final String containerIDToUpdate = targetedUpdateContainerID();
+
+		// If no containers are specified, we're doing a full page render, so always perform appendToResponse()
+		if( containerIDToUpdate == null ) {
+			return true;
+		}
+
+		final String[] updateContainerIDs = containerIDToUpdate.split( ";" );
+
+		for( String updateContainerID : updateContainerIDs ) {
+			if( containingUpdateContainerIDs().contains( updateContainerID ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Instructs this context to append every element to the response, ignoring any update container instructions
+	 */
+	public void setForceFullRender() {
+		_forceFullRender = true;
 	}
 
 	@Override

@@ -511,7 +511,7 @@ public class NGApplication {
 		// We should(a) not render the exception pace in the original context where the exception happened and/or (b) have a better,
 		// more generic mechanism to ignore the context's updateContainers (in other words, we need a better way to control rendering from the server side)
 		// Hugi 2024-10-09
-		context.forceFullRender = true;
+		context.setForceFullRender();
 
 		final boolean isDevelopmentMode = isDevelopmentMode();
 
