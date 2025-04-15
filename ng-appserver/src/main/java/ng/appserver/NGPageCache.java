@@ -16,6 +16,7 @@ import ng.appserver.templating.NGComponent;
  *
  * FIXME: We should probably have separate cache entry types for full pages/partial pages. Going to wait with it a bit while we're at the design stage // Hugi 2024-10-03
  * FIXME: On the same note, a page fragment cache entry should probably just reference it's parent's page instance. Page fragments should always be referencing the same instance anyway // Hugi 2024-10-03
+ * FIXME: Making the PageCache records use a Lock that implements AutoClosable and obtaining it in a try-with-resources would be really, really nice. We should do that // Hugi 2025-04-06
  */
 
 public class NGPageCache {

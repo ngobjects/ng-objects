@@ -50,7 +50,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// The _originatingContextID is the first part of the request handler path. This tells us where the request is coming from.
 		final String originatingContextID = componentPart.substring( 0, firstPeriodIndex );
 
-		// FIXME: WIP. Not sure the context itself should actually be keeping track of the originating context, but we need this currently for the partial page caching mechanism // Hugi 2024-09-28
+		// Keep track of the originating context for the partial page caching mechanism.
 		context._setOriginatingContextID( originatingContextID );
 
 		// The sending element ID consists of everything after the first period.
@@ -66,7 +66,6 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 
 		// We're executing the following code in a try-block so we can release the lock on the page cache record in the finally clause.
-		// FIXME: Making the PageCache records use a Lock that implements AutoClosable and obtaining it in a try-with-resources would be really, really nice. We should do that // Hugi 2025-04-06
 		try {
 			// Now let's try to restore the page from the cache, using the contextID provided by the URL
 			// If no page is found (page probably pushed out of the session's page cache), NGPageRestorationException is thrown.
