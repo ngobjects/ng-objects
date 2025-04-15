@@ -120,7 +120,8 @@ public class NGRequest extends NGMessage {
 
 	/**
 	 * @return the request's URL
-	 * FIXME: This method should probably be called "url" rather than "uri" // Hugi 2024-06-29
+	 *
+	 * CHECKME: We might want to consider renaming this "url". Conventions are different between frameworks though, for example, java.net.HttpRequest uses "uri" // Hugi 2024-06-29
 	 */
 	public String uri() {
 		return _uri;
