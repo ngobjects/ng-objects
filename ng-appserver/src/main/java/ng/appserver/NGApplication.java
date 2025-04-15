@@ -497,9 +497,7 @@ public class NGApplication {
 	 * @return The page to return to the user when a session restoration error occurs.
 	 */
 	protected NGActionResults responseForSessionRestorationException( final NGSessionRestorationException exception ) {
-		final NGSessionTimeoutPage nextPage = pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context within a dead session feels weird // Hugi 2023-01-11
-		nextPage.setException( exception );
-		return nextPage;
+		return pageWithName( NGSessionTimeoutPage.class, exception.request().context() ); // FIXME: Working with a context within a dead session feels weird // Hugi 2023-01-11
 	}
 
 	/**
