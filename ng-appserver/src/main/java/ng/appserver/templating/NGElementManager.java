@@ -221,6 +221,7 @@ public class NGElementManager {
 	 * @return A class matching classNameToSearch for. Searches by fully qualified class name and simpleName.
 	 */
 	public Class classWithNameNullIfNotFound( String classNameToSearchFor ) {
+
 		Objects.requireNonNull( classNameToSearchFor );
 
 		final Class<?> elementClass = _elementClasses.get( classNameToSearchFor );
@@ -229,7 +230,7 @@ public class NGElementManager {
 			return elementClass;
 		}
 
-		for( String packageName : _elementPackages ) {
+		for( final String packageName : _elementPackages ) {
 			try {
 				final String className = packageName + "." + classNameToSearchFor;
 				return Class.forName( className );
@@ -238,7 +239,6 @@ public class NGElementManager {
 		}
 
 		return null;
-		// throw new RuntimeException( "Class not found: " + classNameToSearchFor );
 	}
 
 	/**
