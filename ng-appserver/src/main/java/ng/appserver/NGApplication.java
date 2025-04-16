@@ -227,7 +227,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This needs a better mechanism overall // Hugi 2024-03-17
+	 * The framework's default session reset response
 	 */
 	private NGActionResults resetSessionCookie() {
 		return resetSessionCookieWithRedirectToURL( "/" );
@@ -243,7 +243,7 @@ public class NGApplication {
 		response.setStatus( 302 );
 		response.setHeader( "content-type", "text/html" );
 		response.setHeader( "content-length", "0" );
-		response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
+		response.addCookie( createSessionResetCookie() );
 
 		return response;
 	}
@@ -423,7 +423,7 @@ public class NGApplication {
 			if( session != null ) {
 				if( session.shouldTerminate() ) {
 					// If the session is terminating, delete the client side session cookie
-					response.addCookie( createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 ) );
+					response.addCookie( createSessionResetCookie() );
 					// CHECKME: This might be a better location to ask session storage to dispose of a terminated session.
 				}
 				else {
@@ -482,6 +482,13 @@ public class NGApplication {
 		// sessionCookie.setDomain( ... ) // FIXME: Implement // Hugi 2023-01-11
 		// sessionCookie.setSecure( ... ) // FIXME: We also might want this to be configurable... Sending session cookies over HTTP isn't exactly brilliant in a production setting // Hugi 2023-02-06
 		return sessionCookie;
+	}
+
+	/**
+	 * @return A cookie that will reset the session ID on the client side
+	 */
+	public NGCookie createSessionResetCookie() {
+		return createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 );
 	}
 
 	/**
