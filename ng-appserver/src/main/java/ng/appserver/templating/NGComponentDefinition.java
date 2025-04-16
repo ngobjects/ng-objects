@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
-import ng.appserver.elements.NGComponentReference;
 import ng.appserver.resources.NGResource;
-import ng.appserver.templating.assications.NGAssociation;
 import ng.appserver.templating.parser.NGDeclarationFormatException;
 import ng.appserver.templating.parser.NGHTMLFormatException;
 
@@ -168,13 +166,6 @@ public class NGComponentDefinition {
 		catch( InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e ) {
 			throw new RuntimeException( e );
 		}
-	}
-
-	/**
-	 * @return A new component reference to insert into a template being rendered
-	 */
-	public NGComponentReference componentReferenceWithAssociations( final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		return NGComponentReference.of( this, associations, contentTemplate );
 	}
 
 	/**

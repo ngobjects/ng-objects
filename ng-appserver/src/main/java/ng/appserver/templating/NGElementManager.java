@@ -12,6 +12,7 @@ import ng.appserver.NGContext;
 import ng.appserver.elements.NGActionURL;
 import ng.appserver.elements.NGBrowser;
 import ng.appserver.elements.NGComponentContent;
+import ng.appserver.elements.NGComponentReference;
 import ng.appserver.elements.NGConditional;
 import ng.appserver.elements.NGFileUpload;
 import ng.appserver.elements.NGForm;
@@ -57,7 +58,7 @@ public class NGElementManager {
 		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
 
 		final NGComponentDefinition definition = componentDefinition( componentName );
-		return pageWithName( definition, context );
+		return componentInstance( definition, context );
 	}
 
 	/**
@@ -69,13 +70,13 @@ public class NGElementManager {
 		Objects.requireNonNull( context, "'context' must not be null. What's life without context?" );
 
 		final NGComponentDefinition definition = componentDefinition( componentClass );
-		return (E)pageWithName( definition, context );
+		return (E)componentInstance( definition, context );
 	}
 
 	/**
 	 * @return A new instance of [componentDefinition] in the given [context]
 	 */
-	private NGComponent pageWithName( final NGComponentDefinition componentDefinition, final NGContext context ) {
+	private NGComponent componentInstance( final NGComponentDefinition componentDefinition, final NGContext context ) {
 		Objects.requireNonNull( componentDefinition );
 		Objects.requireNonNull( context );
 
@@ -96,6 +97,13 @@ public class NGElementManager {
 	private static NGComponentDefinition componentDefinition( final String componentName ) {
 		Objects.requireNonNull( componentName );
 		return NGComponentDefinition.get( componentName );
+	}
+
+	/**
+	 * @return A new component reference element for inserting into a template being rendered
+	 */
+	private static NGComponentReference componentReference( final NGComponentDefinition componentDefinition, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		return NGComponentReference.of( componentDefinition, associations, contentTemplate );
 	}
 
 	/**
@@ -124,7 +132,7 @@ public class NGElementManager {
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
 			final NGComponentDefinition componentDefinition = componentDefinition( elementName );
-			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
+			return componentReference( componentDefinition, associations, contentTemplate );
 		}
 
 		// First we check if this is a dynamic element
@@ -135,7 +143,7 @@ public class NGElementManager {
 		// If it's not an element, let's move on to creating a component reference instead
 		if( NGComponent.class.isAssignableFrom( elementClass ) ) {
 			final NGComponentDefinition componentDefinition = componentDefinition( (Class<? extends NGComponent>)elementClass );
-			return componentDefinition.componentReferenceWithAssociations( associations, contentTemplate );
+			return componentReference( componentDefinition, associations, contentTemplate );
 		}
 
 		// We should never end up here unless we got an incorrect/non-existent element name
