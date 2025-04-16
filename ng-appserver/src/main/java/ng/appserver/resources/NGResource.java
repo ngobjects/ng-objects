@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 /**
  * FIXME: We're currently missing caching of the resource's data // Hugi 2024-06-22
+ * FIXME: NGResource should probably be an interface, since we need to accommodate JAR resources, filesystem resources, dynamic resources etc. etc.
  */
 
 public class NGResource {
