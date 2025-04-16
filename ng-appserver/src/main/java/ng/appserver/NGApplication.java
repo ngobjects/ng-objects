@@ -234,7 +234,7 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This method should not exist, it's currently used by subclasses as a workaround for some bad session management // Hugi 2024-06-29
+	 * CHECKME: This method should probably not exist. Ideally, we probably just want the user to construct his own response and add the session ID killer cookie // Hugi 2025-04-16
 	 */
 	protected NGActionResults resetSessionCookieWithRedirectToURL( final String url ) {
 		final NGResponse response = new NGResponse();
