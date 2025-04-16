@@ -55,6 +55,15 @@ public class NGComponent implements NGElement, NGActionResults {
 	 */
 	private NGElement _contentElement;
 
+	/**
+	 * The default component constructor
+	 *
+	 *  CHECKME:
+	 *  I'm not sure this constructor should exist.
+	 *  Manual construction of components should never be done by the user - and the actual constructor (that should be protected) really needs to take a component definition as an argument.
+	 *  The only reason it is kept around is becuse it makes migration of older codebases easier (where this constructor is in every component).
+	 *  // Hugi 2025-04-16
+	 */
 	public NGComponent( final NGContext context ) {
 		Objects.requireNonNull( context );
 		_context = context;
