@@ -19,9 +19,11 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.appserver.privates.NGAdminAction;
+import ng.appserver.properties.DeploymentMode;
 import ng.appserver.properties.NGProperties;
 import ng.appserver.properties.NGProperties.PropertiesSourceArguments;
 import ng.appserver.properties.NGProperties.PropertiesSourceResource;
+import ng.appserver.properties.StandardDeploymentMode;
 import ng.appserver.resources.NGResource;
 import ng.appserver.resources.NGResourceLoader;
 import ng.appserver.resources.NGResourceLoader.JavaClasspathResourceSource;
@@ -100,7 +102,7 @@ public class NGApplication {
 	 *
 	 * FIXME: This requires modification to support more 'modes' (testing, staging etc.). We should also consider this a part of configuration, possibly more related to NGProperties than NGApplication. The application isn't what determines the mode; configuration determines that the application is in development mode, not vice-versa // Hugi 2025-03-16
 	 */
-	private boolean _isDevelopmentMode = true;
+	private DeploymentMode _deploymentMode;
 
 	/**
 	 * Run the application
@@ -121,19 +123,14 @@ public class NGApplication {
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		redirectOutputToFilesIfOutputPathSet( properties.d().propWOOutputPath() );
 
-		// Determine the mode we're currently running in. CHECKME: This should be configured using an explicit parameter // Hugi 2025-03-16
+		// Determine the mode we're currently running in. 
+		// CHECKME: This should be configured using an explicit parameter // Hugi 2025-03-16
 		final boolean isDevelopmentMode = !properties.d().propWOMonitorEnabled();
+		final DeploymentMode deploymentMode = isDevelopmentMode ? StandardDeploymentMode.Development : StandardDeploymentMode.Production;
 
-		if( isDevelopmentMode ) {
-			logger.info( "========================================" );
-			logger.info( "===== Running in development mode! =====" );
-			logger.info( "========================================" );
-		}
-		else {
-			logger.info( "=======================================" );
-			logger.info( "===== Running in production mode! =====" );
-			logger.info( "=======================================" );
-		}
+		logger.info( "========================================" );
+		logger.info( "===== Running in %s mode! =====".formatted( deploymentMode ) );
+		logger.info( "========================================" );
 
 		logger.info( "===== Properties from arguments =====\n" + properties._propertiesMapAsString() );
 
@@ -146,7 +143,7 @@ public class NGApplication {
 			_application = application;
 
 			// FIXME: Setting the application's mode. This should really be done in the constructor, since that's somewhere you'd _really_ like to be able to access the mode // Hugi 2025-03-16
-			application._isDevelopmentMode = isDevelopmentMode;
+			application._deploymentMode = deploymentMode;
 
 			// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
 			application._properties = properties;
@@ -342,7 +339,7 @@ public class NGApplication {
 	 * @return true if we're in development mode
 	 */
 	public boolean isDevelopmentMode() {
-		return _isDevelopmentMode;
+		return _deploymentMode == StandardDeploymentMode.Development;
 	}
 
 	/**
@@ -518,10 +515,8 @@ public class NGApplication {
 		// Hugi 2024-10-09
 		context.setForceFullRender();
 
-		final boolean isDevelopmentMode = isDevelopmentMode();
-
 		// If we're in development mode, we want to show some extra nice debugging information (sources, caches, context info etc.)
-		if( isDevelopmentMode ) {
+		if( isDevelopmentMode() ) {
 			final NGExceptionPageDevelopment nextPage = pageWithName( NGExceptionPageDevelopment.class, context );
 			nextPage.setException( throwable );
 			return nextPage;
