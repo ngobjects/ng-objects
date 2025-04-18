@@ -33,6 +33,13 @@ public interface NGPlugin {
 	}
 
 	/**
+	 * @return Definition of routes provided by this plugin
+	 */
+	public default Routes routes() {
+		return Routes.create();
+	}
+
+	/**
 	 * @return A list of plugin classes that this plugin requires (and potentially depends on being loaded and initialized before itself)
 	 */
 	public default List<NGPlugin> dependsOn() {

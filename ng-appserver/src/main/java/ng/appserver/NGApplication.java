@@ -32,6 +32,7 @@ import ng.appserver.resources.NGResourceManagerDynamic;
 import ng.appserver.resources.StandardNamespace;
 import ng.appserver.resources.StandardResourceType;
 import ng.appserver.routing.NGRouteTable;
+import ng.appserver.routing.NGRouteTable.Route;
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementManager;
 import ng.appserver.templating.NGElementManager.ElementProvider;
@@ -172,6 +173,18 @@ public class NGApplication implements NGPlugin {
 
 				for( final ElementProvider elementProvider : plugin.elements().elementProviders() ) {
 					application.elementManager().registerElementProvider( elementProvider );
+				}
+
+				final List<Route> routes = plugin.routes().routeTable().routes();
+
+				if( !routes.isEmpty() ) {
+					final NGRouteTable pluginRouteTable = new NGRouteTable( plugin.namespace() );
+
+					for( final Route route : routes ) {
+						pluginRouteTable.routes().add( 0, route );
+					}
+
+					application._routeTables.add( pluginRouteTable );
 				}
 			}
 
