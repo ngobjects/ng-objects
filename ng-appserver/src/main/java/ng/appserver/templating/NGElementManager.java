@@ -9,31 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import ng.appserver.NGContext;
-import ng.appserver.elements.NGActionURL;
-import ng.appserver.elements.NGBrowser;
-import ng.appserver.elements.NGComponentContent;
 import ng.appserver.elements.NGComponentReference;
-import ng.appserver.elements.NGConditional;
-import ng.appserver.elements.NGFileUpload;
-import ng.appserver.elements.NGForm;
-import ng.appserver.elements.NGGenericContainer;
-import ng.appserver.elements.NGGenericElement;
-import ng.appserver.elements.NGHyperlink;
-import ng.appserver.elements.NGImage;
-import ng.appserver.elements.NGJavaScript;
-import ng.appserver.elements.NGPopUpButton;
-import ng.appserver.elements.NGRepetition;
-import ng.appserver.elements.NGResourceURL;
-import ng.appserver.elements.NGString;
-import ng.appserver.elements.NGStylesheet;
-import ng.appserver.elements.NGSubmitButton;
-import ng.appserver.elements.NGSwitchComponent;
-import ng.appserver.elements.NGText;
-import ng.appserver.elements.NGTextField;
-import ng.appserver.elements.ajax.AjaxObserveField;
-import ng.appserver.elements.ajax.AjaxSubmitButton;
-import ng.appserver.elements.ajax.AjaxUpdateContainer;
-import ng.appserver.elements.ajax.AjaxUpdateLink;
 import ng.appserver.templating.assications.NGAssociation;
 
 /**
@@ -124,7 +100,7 @@ public class NGElementManager {
 		Objects.requireNonNull( associations );
 
 		// First we're going to check if we have a tag alias present.
-		final String elementName = elementTagNames().getOrDefault( elementIdentifier, elementIdentifier );
+		final String elementName = resolveTagName( elementIdentifier );
 
 		// Check if we can find a class representing the element we're going to render.
 		final Class<? extends NGElement> elementClass = classWithNameNullIfNotFound( elementName );
@@ -182,6 +158,14 @@ public class NGElementManager {
 	 * A mapping of shortcuts to element classes. For example, mapping of <wo:str /> to <wo:NGString />
 	 */
 	private final Map<String, String> _elementTagNames = new HashMap<>();
+
+	public void registerElementProvider( final ElementProvider elementProvider ) {
+		switch( elementProvider ) {
+			case ElementByClass o -> registerElementClass( o.namespace(), o.elementClass(), o.tagNames() );
+			case ElementsByPackage o -> registerElementPackage( o.namespace(), o.packageName() );
+			case ElementAliases o -> throw new IllegalArgumentException( "Not implemented" );
+		}
+	}
 
 	/**
 	 * FIXME: Allows us to invoke registerElementClass without a namespace. Temporary while we're working on namespaces
@@ -251,33 +235,20 @@ public class NGElementManager {
 	}
 
 	/**
-	 * FIXME: Delete this method once we've moved the initialization of the framework elements to it's own module // Hugi 2025-03-16
+	 * @return The actual name of the given tagName, obtained by resolving any tag aliases
 	 */
-	@Deprecated
-	public void registerFrameworkElementClasses() {
-		registerElementClass( NGActionURL.class, "actionURL" );
-		registerElementClass( AjaxUpdateContainer.class, "auc" );
-		registerElementClass( AjaxUpdateLink.class, "aul" );
-		registerElementClass( AjaxObserveField.class, "aof" );
-		registerElementClass( AjaxSubmitButton.class, "asb" );
-		registerElementClass( NGBrowser.class, "browser" );
-		registerElementClass( NGComponentContent.class, "content" );
-		registerElementClass( NGConditional.class, "if" );
-		registerElementClass( NGFileUpload.class, "fileUpload" );
-		registerElementClass( NGForm.class, "form" );
-		registerElementClass( NGString.class, "str" );
-		registerElementClass( NGGenericContainer.class, "container" );
-		registerElementClass( NGGenericElement.class, "element" );
-		registerElementClass( NGImage.class, "img" );
-		registerElementClass( NGHyperlink.class, "link" );
-		registerElementClass( NGJavaScript.class, "script" );
-		registerElementClass( NGPopUpButton.class, "popUpButton" ); // CHECKME: We might want to consider just naming this "popup"
-		registerElementClass( NGRepetition.class, "repetition" );
-		registerElementClass( NGResourceURL.class, "resourceURL" );
-		registerElementClass( NGSubmitButton.class, "submit" );
-		registerElementClass( NGStylesheet.class, "stylesheet" );
-		registerElementClass( NGSwitchComponent.class, "switch" );
-		registerElementClass( NGText.class, "text" );
-		registerElementClass( NGTextField.class, "textfield" );
+	public String resolveTagName( final String elementIdentifier ) {
+		return elementTagNames().getOrDefault( elementIdentifier, elementIdentifier );
 	}
+
+	/**
+	 * An interface that declares methods used by the framework
+	 */
+	public sealed interface ElementProvider permits ElementByClass, ElementsByPackage, ElementAliases {}
+
+	public record ElementByClass( String namespace, Class<? extends NGElement> elementClass, String[] tagNames ) implements ElementProvider {}
+
+	public record ElementsByPackage( String namespace, String packageName ) implements ElementProvider {}
+
+	public record ElementAliases( String tagName, String[] tagAliases ) implements ElementProvider {}
 }

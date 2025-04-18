@@ -34,8 +34,11 @@ import ng.appserver.resources.StandardResourceType;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementManager;
+import ng.appserver.templating.NGElementManager.ElementProvider;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.appserver.wointegration.WOMPRequestHandler;
+import ng.plugins.Elements;
+import ng.plugins.NG;
 import ng.plugins.NGPlugin;
 import ng.xperimental.NGExceptionPage;
 import ng.xperimental.NGExceptionPageDevelopment;
@@ -46,7 +49,7 @@ import ng.xperimental.NGWelcomePage;
  * Where everything related to an application really meets up
  */
 
-public class NGApplication {
+public class NGApplication implements NGPlugin {
 
 	private static Logger logger = LoggerFactory.getLogger( NGApplication.class );
 
@@ -105,6 +108,11 @@ public class NGApplication {
 	private DeploymentMode _deploymentMode;
 
 	/**
+	 * The list of loaded plugins
+	 */
+	private List<NGPlugin> plugins = new ArrayList<>();
+
+	/**
 	 * Run the application
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
@@ -118,12 +126,12 @@ public class NGApplication {
 		final long startTime = System.currentTimeMillis();
 
 		final NGProperties properties = new NGProperties();
-		properties.addAndReadSourceHighestPriority( new PropertiesSourceArguments( args ) );
+		properties.addAndReadCommandLineArguments( new PropertiesSourceArguments( args ) );
 
 		// We need to start out with initializing logging to ensure we're seeing everything the application does during the init phase.
 		redirectOutputToFilesIfOutputPathSet( properties.d().propWOOutputPath() );
 
-		// Determine the mode we're currently running in. 
+		// Determine the mode we're currently running in.
 		// CHECKME: This should be configured using an explicit parameter // Hugi 2025-03-16
 		final boolean isDevelopmentMode = !properties.d().propWOMonitorEnabled();
 		final DeploymentMode deploymentMode = isDevelopmentMode ? StandardDeploymentMode.Development : StandardDeploymentMode.Production;
@@ -148,28 +156,30 @@ public class NGApplication {
 			// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
 			application._properties = properties;
 
-			// FIXME: We're adding the properties file here since it will use and needs application().resourceManager() to function at the moment // Hugi 2024-06-14
-			properties.addAndReadSourceLowestPriority( new PropertiesSourceResource( StandardNamespace.App.identifier(), "Properties" ) );
-
-			logger.info( "===== Properties after loading application properties =====\n" + properties._propertiesMapAsString() );
-
-			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
-			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
-			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.d().propWOApplicationName() + ".woa(/[0-9])?" ) );
+			// We're manually adding the "ng" plugin, defining it's elements and routes.
+			application.plugins.add( new NG() );
 
 			// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
 			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath
 			application.loadPlugins();
 
-			// The application class' package and it's ".components" subpackage get added by default when searching for element and component classes // FIXME: Kind of don't like this Hugi 2022-10-10
-			application._elementManager.registerElementPackage( applicationClass.getPackageName() );
-			application._elementManager.registerElementPackage( applicationClass.getPackageName() + ".components" );
+			// We add the application plugin after all the other plugins
+			application.plugins.add( application );
 
-			// FIXME: For loading up our standard components. This will eventually move to a separate module // Hugi 2025-03-16
-			application.elementManager().registerFrameworkElementClasses();
+			for( final NGPlugin plugin : application.plugins ) {
+				properties.addAndReadSource( new PropertiesSourceResource( plugin.namespace(), "Properties" ) );
+
+				for( final ElementProvider elementProvider : plugin.elements().elementProviders() ) {
+					application.elementManager().registerElementProvider( elementProvider );
+				}
+
+				addDefaultResourcesourcesForNamespace( application.resourceManager().resourceLoader(), plugin.namespace() );
+			}
+
+			logger.info( "===== All properties =====\n" + properties._propertiesMapAsString() );
 
 			// FIXME: Registering for the instance stopper to work. Horrid stuff. We need to use routes for AdminAction - or at least make DirectAction class/package registration ... usable // Hugi 2025-03-16
-			application._elementManager.registerElementClass( NGAdminAction.class );
+			NGDirectActionRequestHandler.registerDirectActionClass( NGAdminAction.class );
 
 			// FIXME: Eventually the adaptor startup should probably be done by the user
 			application.createAdaptor().start( application );
@@ -177,6 +187,10 @@ public class NGApplication {
 			if( properties.d().propWOLifebeatEnabled() ) {
 				NGDefaultLifeBeatThread.start( application._properties );
 			}
+
+			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
+			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
+			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.d().propWOApplicationName() + ".woa(/[0-9])?" ) );
 
 			logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 
@@ -223,6 +237,19 @@ public class NGApplication {
 		return systemRoutes;
 	}
 
+	@Override
+	public String namespace() {
+		return StandardNamespace.App.identifier();
+	}
+
+	@Override
+	public Elements elements() {
+		return Elements
+				.create()
+				.elementPackage( getClass().getPackageName() )
+				.elementPackage( getClass().getPackageName() + ".components" );
+	}
+
 	/**
 	 * The framework's default session reset response
 	 */
@@ -254,6 +281,7 @@ public class NGApplication {
 				.map( Provider::get )
 				.forEach( plugin -> {
 					logger.info( "Loading plugin {}", plugin.getClass().getName() );
+					plugins.add( plugin );
 					plugin.load( this );
 				} );
 	}
@@ -579,31 +607,24 @@ public class NGApplication {
 	}
 
 	/**
-	 * FIXME: This needs cleanup // Hugi 2024-08-14
+	 * FIXME: These is for registering the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future and should probably be deleted // Hugi 2024-06-19
 	 */
 	private static void addDefaultResourceSources( final NGResourceManager resourceManager ) {
 		final NGResourceLoader loader = resourceManager.resourceLoader();
-
-		// FIXME: These are the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future and should probably be deleted // Hugi 2024-06-19
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
-
-		addDefaultResourcesourcesForNamespace( loader, StandardNamespace.App );
-		addDefaultResourcesourcesForNamespace( loader, StandardNamespace.NG );
 	}
 
 	/**
 	 * Declare resource sources for the standard resource types in the given namespace
 	 */
-	private static void addDefaultResourcesourcesForNamespace( final NGResourceLoader loader, final StandardNamespace namespace ) {
-		final String id = namespace.identifier();
-
-		loader.addResourceSource( id, StandardResourceType.App, new JavaClasspathResourceSource( "ng/%s/app-resources".formatted( id ) ) );
-		loader.addResourceSource( id, StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/%s/webserver-resources".formatted( id ) ) );
-		loader.addResourceSource( id, StandardResourceType.Public, new JavaClasspathResourceSource( "ng/%s/public".formatted( id ) ) );
-		loader.addResourceSource( id, StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/%s/components".formatted( id ) ) );
+	private static void addDefaultResourcesourcesForNamespace( final NGResourceLoader loader, final String namespace ) {
+		loader.addResourceSource( namespace, StandardResourceType.App, new JavaClasspathResourceSource( "ng/%s/app-resources".formatted( namespace ) ) );
+		loader.addResourceSource( namespace, StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/%s/webserver-resources".formatted( namespace ) ) );
+		loader.addResourceSource( namespace, StandardResourceType.Public, new JavaClasspathResourceSource( "ng/%s/public".formatted( namespace ) ) );
+		loader.addResourceSource( namespace, StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/%s/components".formatted( namespace ) ) );
 	}
 
 	/**

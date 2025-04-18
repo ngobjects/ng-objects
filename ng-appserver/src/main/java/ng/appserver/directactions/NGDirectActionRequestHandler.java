@@ -2,10 +2,11 @@ package ng.appserver.directactions;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.NGResponse;
@@ -16,6 +17,8 @@ import ng.appserver.privates.NGParsedURI;
  */
 
 public class NGDirectActionRequestHandler extends NGRequestHandler {
+
+	private static Map<String, Class<? extends NGDirectAction>> _directActionClasses = new HashMap<>();
 
 	/**
 	 * The default path prefix for this request handler
@@ -39,8 +42,7 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 		}
 
 		try {
-			// FIXME: We're using the Dynamic Element class locator to find the class by the simple name. This needs redesign // Hugi 2023-03-17
-			final Class<? extends NGDirectAction> directActionClass = NGApplication.application().elementManager().classWithNameNullIfNotFound( directActionClassName.get() );
+			final Class<? extends NGDirectAction> directActionClass = _directActionClasses.get( directActionClassName.get() );
 			final Constructor<? extends NGDirectAction> constructor = directActionClass.getConstructor( NGRequest.class );
 			final NGDirectAction instance = constructor.newInstance( request );
 			final NGActionResults actionResults = instance.performActionNamed( directActionMethodName.get() );
@@ -49,5 +51,13 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 		catch( /* ClassNotFoundException |*/ InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
 			throw new RuntimeException( e );
 		}
+	}
+
+	/**
+	 * FIXME: This is a horrid method of registering Zdirect action classes // Hugi 2025-04-18
+	 */
+	public static void registerDirectActionClass( Class<? extends NGDirectAction> directActionClass ) {
+		_directActionClasses.put( directActionClass.getName(), directActionClass );
+		_directActionClasses.put( directActionClass.getSimpleName(), directActionClass );
 	}
 }

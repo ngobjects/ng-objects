@@ -75,21 +75,19 @@ public class NGProperties {
 
 	/**
 	 * Add a property source that will override all previously inserted resource sources
-	 *
-	 * FIXME: This will eventually be refactored, just starting out the work on prioritizing resource sources // Hugi 2024-07-09
 	 */
-	public void addAndReadSourceHighestPriority( final PropertiesSource source ) {
+	public void addAndReadCommandLineArguments( final PropertiesSource source ) {
 		_sources.add( source );
 		_readAllSources();
 	}
 
 	/**
-	 * Add a property source at the very back, i.e. it's properties will be overridden by all previously inserted resource sources
-	 *
-	 * FIXME: This will eventually be refactored, just starting out the work on prioritizing resource sources // Hugi 2024-07-09
+	 * Add a property source before the command line arguments, i.e. it's properties will overridde all previously inserted resource sources, except the CLI arguments which always maintain priority
 	 */
-	public void addAndReadSourceLowestPriority( final PropertiesSource source ) {
-		_sources.add( 0, source );
+	public void addAndReadSource( final PropertiesSource source ) {
+		// We assume that the sources already contains one object, the command line arguments
+		final int index = _sources.size() - 1;
+		_sources.add( index, source );
 		_readAllSources();
 	}
 
@@ -160,7 +158,7 @@ public class NGProperties {
 			final Optional<NGResource> propertyBytes = NGApplication.application().resourceManager().obtainAppResource( _namespace, _resourcePath );
 
 			if( !propertyBytes.isPresent() ) {
-				logger.warn( "No default properties file found {}::{}", _namespace, _resourcePath );
+				logger.debug( "Property resource not found {}::{}", _namespace, _resourcePath );
 				return Collections.emptyMap();
 			}
 
