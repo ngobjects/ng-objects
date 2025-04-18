@@ -98,11 +98,6 @@ public class NGRouteTable {
 		map( pattern, routeHandler );
 	}
 
-	@Deprecated
-	public void mapComponent( final String pattern, final Class<? extends NGComponent> componentClass ) {
-		map( pattern, componentClass );
-	}
-
 	/**
 	 * Maps a URL pattern to a given RouteHandler
 	 */
