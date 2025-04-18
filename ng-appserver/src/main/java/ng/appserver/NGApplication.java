@@ -37,7 +37,6 @@ import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementManager;
 import ng.appserver.templating.NGElementManager.ElementProvider;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
-import ng.appserver.wointegration.WOMPRequestHandler;
 import ng.plugins.Elements;
 import ng.plugins.NGCorePlugin;
 import ng.plugins.NGPlugin;
@@ -230,23 +229,6 @@ public class NGApplication implements NGPlugin {
 
 		// The first table in the list is the "user route table"
 		_routeTables.add( new NGRouteTable( "User routes" ) );
-
-		_routeTables.add( createSystemRoutes() );
-	}
-
-	/**
-	 * @return A table containing our "built-in routes"
-	 */
-	private NGRouteTable createSystemRoutes() {
-		final NGRouteTable systemRoutes = new NGRouteTable( "System routes" );
-		systemRoutes.map( "/", this::defaultResponse );
-		systemRoutes.map( NGComponentRequestHandler.DEFAULT_PATH + "*", new NGComponentRequestHandler() );
-		systemRoutes.map( NGResourceRequestHandler.DEFAULT_PATH + "*", new NGResourceRequestHandler() );
-		systemRoutes.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH + "*", new NGResourceRequestHandlerDynamic() );
-		systemRoutes.map( NGDirectActionRequestHandler.DEFAULT_PATH + "*", new NGDirectActionRequestHandler() );
-		systemRoutes.map( WOMPRequestHandler.DEFAULT_PATH, new WOMPRequestHandler() );
-		systemRoutes.map( "/sessionCookieReset", this::resetSessionCookie );
-		return systemRoutes;
 	}
 
 	@Override
@@ -265,7 +247,7 @@ public class NGApplication implements NGPlugin {
 	/**
 	 * The framework's default session reset response
 	 */
-	private NGActionResults resetSessionCookie() {
+	public NGActionResults resetSessionCookie() {
 		return resetSessionCookieWithRedirectToURL( "/" );
 	}
 
