@@ -336,6 +336,7 @@ public class NGApplication implements NGPlugin {
 	/**
 	 * @return The default route table.
 	 */
+	@Deprecated
 	public NGRouteTable routeTable() {
 		return _routeTables.get( 0 );
 	}
