@@ -159,6 +159,9 @@ public class NGElementManager {
 	 */
 	private final Map<String, String> _elementTagNames = new HashMap<>();
 
+	/**
+	 * Register a provider of element(s)
+	 */
 	public void registerElementProvider( final ElementProvider elementProvider ) {
 		switch( elementProvider ) {
 			case ElementByClass o -> registerElementClass( o.namespace(), o.elementClass(), o.tagNames() );
@@ -168,25 +171,9 @@ public class NGElementManager {
 	}
 
 	/**
-	 * FIXME: Allows us to invoke registerElementClass without a namespace. Temporary while we're working on namespaces
-	 */
-	@Deprecated
-	public void registerElementClass( final Class<?> elementClass, String... tagNames ) {
-		registerElementClass( GLOBAL_UNNAMESPACED_NAMESPACE, elementClass, tagNames );
-	}
-
-	/**
-	 * FIXME: Allows us to invoke registerElementPackage without a namespace. Temporary while we're working on namespaces
-	 */
-	@Deprecated
-	public void registerElementPackage( final String packageName ) {
-		registerElementPackage( GLOBAL_UNNAMESPACED_NAMESPACE, packageName );
-	}
-
-	/**
 	 * Registers an element class for use in the application
 	 */
-	public void registerElementClass( final String namespace, final Class<?> elementClass, String... tagNames ) {
+	private void registerElementClass( final String namespace, final Class<?> elementClass, String... tagNames ) {
 		_elementClasses.put( elementClass.getSimpleName(), elementClass );
 
 		for( final String tagName : tagNames ) {
@@ -197,7 +184,7 @@ public class NGElementManager {
 	/**
 	 * Registers an element class for use in the application
 	 */
-	public void registerElementPackage( final String namespace, final String packageName ) {
+	private void registerElementPackage( final String namespace, final String packageName ) {
 		_elementPackages.add( packageName );
 	}
 
