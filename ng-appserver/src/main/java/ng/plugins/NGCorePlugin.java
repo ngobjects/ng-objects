@@ -26,7 +26,7 @@ import ng.appserver.elements.ajax.AjaxSubmitButton;
 import ng.appserver.elements.ajax.AjaxUpdateContainer;
 import ng.appserver.elements.ajax.AjaxUpdateLink;
 
-public class NG implements NGPlugin {
+public class NGCorePlugin implements NGPlugin {
 
 	@Override
 	public void load( NGApplication application ) {}
