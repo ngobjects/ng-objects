@@ -10,7 +10,6 @@ import ng.testapp.components.FormComponent;
 import ng.testapp.components.ProgrammaticDynamicComponent;
 import ng.testapp.components.RepetitionComponent;
 import ng.testapp.components.SingleFileComponent;
-import ng.testapp.components.WrapperComponent;
 
 public class Application extends NGApplication {
 
@@ -19,8 +18,6 @@ public class Application extends NGApplication {
 	}
 
 	public Application() {
-		elementManager().registerElementClass( WrapperComponent.class );
-		elementManager().registerElementClass( RepetitionComponent.class );
 
 		routeTable().map( "/response-plain", ( request ) -> {
 			NGResponse response = new NGResponse( "Oh look, a response!", 200 );
