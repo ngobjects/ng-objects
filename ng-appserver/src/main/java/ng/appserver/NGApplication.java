@@ -167,13 +167,12 @@ public class NGApplication implements NGPlugin {
 			application.plugins.add( application );
 
 			for( final NGPlugin plugin : application.plugins ) {
+				addDefaultResourcesourcesForNamespace( application.resourceManager().resourceLoader(), plugin.namespace() );
 				properties.addAndReadSource( new PropertiesSourceResource( plugin.namespace(), "Properties" ) );
 
 				for( final ElementProvider elementProvider : plugin.elements().elementProviders() ) {
 					application.elementManager().registerElementProvider( elementProvider );
 				}
-
-				addDefaultResourcesourcesForNamespace( application.resourceManager().resourceLoader(), plugin.namespace() );
 			}
 
 			logger.info( "===== All properties =====\n" + properties._propertiesMapAsString() );
