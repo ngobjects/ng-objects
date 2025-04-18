@@ -10,7 +10,7 @@ public class NGControlPlugin implements NGPlugin {
 	// Or... We should perhaps have two methods - beforeLoad() and afterLoad(). even beforeLoadAll(), afterLoadAll() afterInitAll(), beforeInitAll() etc. Keep track of the lifecycle phases of applicaiton startup
 	@Override
 	public void load( NGApplication application ) {
-		application.routeTable().mapComponent( "/control", NGControlLogin.class );
+		application.routeTable().map( "/control", NGControlLogin.class );
 	}
 
 	// Invoked after the application has been run

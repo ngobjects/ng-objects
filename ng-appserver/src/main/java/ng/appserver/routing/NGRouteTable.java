@@ -93,9 +93,14 @@ public class NGRouteTable {
 		map( pattern, routeHandler );
 	}
 
-	public void mapComponent( final String pattern, final Class<? extends NGComponent> componentClass ) {
+	public void map( final String pattern, final Class<? extends NGComponent> componentClass ) {
 		final ComponentRouteHandler routeHandler = new ComponentRouteHandler( componentClass );
 		map( pattern, routeHandler );
+	}
+
+	@Deprecated
+	public void mapComponent( final String pattern, final Class<? extends NGComponent> componentClass ) {
+		map( pattern, componentClass );
 	}
 
 	/**
