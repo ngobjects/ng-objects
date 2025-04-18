@@ -180,10 +180,10 @@ public class NGApplication implements NGPlugin {
 					final NGRouteTable pluginRouteTable = new NGRouteTable( plugin.namespace() );
 
 					for( final Route route : routes ) {
-						pluginRouteTable.routes().add( 0, route );
+						pluginRouteTable.routes().add( route );
 					}
 
-					application._routeTables.add( pluginRouteTable );
+					application._routeTables.add( 0, pluginRouteTable );
 				}
 			}
 
