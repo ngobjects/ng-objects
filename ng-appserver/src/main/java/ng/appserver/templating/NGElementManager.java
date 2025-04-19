@@ -89,6 +89,7 @@ public class NGElementManager {
 	 *
 	 * @return An instance of the named dynamic element. This can be a classless component (in which case it's the template name), a simple class name or a full class name
 	 *
+	 * FIXME: "Tag lookup" is a separate (cacheable) task from "Tag construction". Separate the two // Hugi 2025-04-19
 	 * FIXME: We're missing a cache for dynamic element name resolution // Hugi 2025-03-05
 	 * FIXME: We are going to have to support namespace aliases // Hugi 2025-03-20
 	 * FIXME: We are going to have to support recursion when looking for "tag aliases". I.e. you should be able to look up "teh alias of an alias" // Hugi 2025-03-20
