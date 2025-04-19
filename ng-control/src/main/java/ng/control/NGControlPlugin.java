@@ -33,14 +33,14 @@ public class NGControlPlugin implements NGPlugin {
 	//	@Override
 	//	public Routes routes() {
 	//		return Routes
-	//				.map( "/home", context -> new NGResponse( "You're home", 200 ) )
-	//				.mapComponent( "/home/user", NGUserDetailPage.class );
-	//	}
-	//	@Override
-	//	public Routes routes() {
-	//		return Routes
-	//				.map( "/home", context -> new NGResponse( "You're home", 200 ) )
-	//				.mapComponent( "/home/user", NGUserDetailPage.class );
+	//				.map( "/home", request -> new NGResponse( "You're home", 200 ) )
+	//				.map( "/home/user", NGUserDetailPage.class )
+	//				.map( "/some/page", request -> {
+	//					String someValue = request.formValueForKey( "someValue" );
+	//					SomePage page = request.context().pageWithName( SomePage.class );
+	//					page.someValue = someValue;
+	//					return page;
+	//				}
 	//	}
 	//
 	//	/**
