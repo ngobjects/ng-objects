@@ -34,9 +34,6 @@ import ng.appserver.wointegration.WOMPRequestHandler;
 public class NGCorePlugin implements NGPlugin {
 
 	@Override
-	public void load( NGApplication application ) {}
-
-	@Override
 	public String namespace() {
 		return "ng";
 	}
@@ -75,16 +72,12 @@ public class NGCorePlugin implements NGPlugin {
 	public Routes routes() {
 		return Routes
 				.create()
-				.map( "/", request -> {
-					return NGApplication.application().defaultResponse( request );
-				} )
+				.map( "/", request -> NGApplication.application().defaultResponse( request ) )
 				.map( NGComponentRequestHandler.DEFAULT_PATH + "*", new NGComponentRequestHandler() )
 				.map( NGResourceRequestHandler.DEFAULT_PATH + "*", new NGResourceRequestHandler() )
 				.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH + "*", new NGResourceRequestHandlerDynamic() )
 				.map( NGDirectActionRequestHandler.DEFAULT_PATH + "*", new NGDirectActionRequestHandler() )
 				.map( WOMPRequestHandler.DEFAULT_PATH, new WOMPRequestHandler() )
-				.map( "/sessionCookieReset", request -> {
-					return NGApplication.application().resetSessionCookie();
-				} );
+				.map( "/sessionCookieReset", request -> NGApplication.application().resetSessionCookie() );
 	}
 }
