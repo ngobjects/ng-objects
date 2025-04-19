@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import ng.plugins.Routes;
+
 public class TestNGAdaptorJetty {
 
 	@Test
@@ -60,16 +62,19 @@ public class TestNGAdaptorJetty {
 		 */
 		public NGRequest lastServedRequest;
 
-		public SmuApplication() {
-			routeTable().map( "/first/second", ( request ) -> {
-				lastServedRequest = request;
+		@Override
+		public Routes routes() {
+			return Routes
+					.create()
+					.map( "/first/second", ( request ) -> {
+						lastServedRequest = request;
 
-				final NGResponse response = new NGResponse( "Oh look, a 404 response!", 404 );
-				response.appendHeader( "someHeader", "firstValue" );
-				response.appendHeader( "someHeader", "secondValue" );
-				response.addCookie( new NGCookie( "someCookieName", "someCookieValue" ) );
-				return response;
-			} );
+						final NGResponse response = new NGResponse( "Oh look, a 404 response!", 404 );
+						response.appendHeader( "someHeader", "firstValue" );
+						response.appendHeader( "someHeader", "secondValue" );
+						response.addCookie( new NGCookie( "someCookieName", "someCookieValue" ) );
+						return response;
+					} );
 		}
 	}
 }
