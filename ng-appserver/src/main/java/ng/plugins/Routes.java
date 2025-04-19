@@ -1,5 +1,6 @@
 package ng.plugins;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -7,6 +8,7 @@ import ng.appserver.NGActionResults;
 import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.routing.NGRouteTable;
+import ng.appserver.routing.NGRouteTable.Route;
 import ng.appserver.templating.NGComponent;
 
 /**
@@ -15,7 +17,22 @@ import ng.appserver.templating.NGComponent;
 
 public class Routes {
 
+	/**
+	 * CHECKME: We're using an NGRouteTable to keep track of registered routes, only to get access to it's existing route construction API
+	 */
 	private NGRouteTable _routeTable = new NGRouteTable();
+
+	/**
+	 * Instances are created using the create() method
+	 */
+	private Routes() {}
+
+	/**
+	 * @return A new instance
+	 */
+	public static Routes create() {
+		return new Routes();
+	}
 
 	public Routes map( String pattern, Class<? extends NGComponent> componentClass ) {
 		_routeTable.map( pattern, componentClass );
@@ -37,13 +54,7 @@ public class Routes {
 		return this;
 	}
 
-	public NGRouteTable routeTable() {
-		return _routeTable;
-	}
-
-	private Routes() {}
-
-	public static Routes create() {
-		return new Routes();
+	public List<Route> routes() {
+		return _routeTable.routes();
 	}
 }

@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import ng.appserver.NGApplication;
-import ng.appserver.routing.NGRouteTable.Route;
 
 /**
  * Defines an extension point/module to be used with the framework
@@ -45,12 +44,5 @@ public interface NGPlugin {
 	 */
 	public default List<NGPlugin> dependsOn() {
 		return Collections.emptyList();
-	}
-
-	/**
-	 * @return A list of all routes provided by this plugin as a routeTable
-	 */
-	public default List<Route> _createRouteList() {
-		return routes().routeTable().routes();
 	}
 }

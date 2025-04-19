@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -161,7 +162,7 @@ public class NGApplication implements NGPlugin {
 
 			// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
 			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath
-			application.loadPlugins();
+			application.locatePlugins();
 
 			// We add the application plugin after all the other plugins
 			application.plugins.add( application );
@@ -252,17 +253,18 @@ public class NGApplication implements NGPlugin {
 	/**
 	 * Locates plugins and loads them.
 	 */
-	private void loadPlugins() {
+	private void locatePlugins() {
 		ServiceLoader.load( NGPlugin.class )
 				.stream()
 				.map( Provider::get )
 				.forEach( plugin -> {
-					logger.info( "Loading plugin {}", plugin.getClass().getName() );
+					logger.info( "Located plugin {}", plugin.getClass().getName() );
 					plugins.add( plugin );
 				} );
 	}
 
 	private void loadPlugin( NGPlugin plugin ) {
+		logger.info( "Loading plugin {}", plugin.getClass().getName() );
 		addDefaultResourcesourcesForNamespace( resourceManager().resourceLoader(), plugin.namespace() );
 		properties().addAndReadSource( new PropertiesSourceResource( plugin.namespace(), "Properties" ) );
 
@@ -271,7 +273,7 @@ public class NGApplication implements NGPlugin {
 		}
 
 		// Check if the plugin is providing routes
-		final List<Route> routeList = plugin._createRouteList();
+		final List<Route> routeList = plugin.routes().routes();
 
 		if( !routeList.isEmpty() ) {
 
@@ -282,10 +284,11 @@ public class NGApplication implements NGPlugin {
 			// In production, we just create the route table by reading the route list once directly, maintaining performance in production.
 			// FIXME: Whether or not the route list is cached should be configurable. It should even be configurable for each table, since some lists will rarely change (including ng's own routes) // Hugi 2025-04-19
 			if( isDevelopmentMode() ) {
-				routeTable = new NGRouteTable( plugin.namespace(), plugin::_createRouteList );
+				final Supplier<List<Route>> routeSupplier = () -> plugin.routes().routes();
+				routeTable = new NGRouteTable( plugin.namespace(), routeSupplier );
 			}
 			else {
-				routeTable = new NGRouteTable( plugin.namespace(), plugin._createRouteList() );
+				routeTable = new NGRouteTable( plugin.namespace(), routeList );
 			}
 
 			// The new route table is added at the front, corresponding with the load order of the plugins
