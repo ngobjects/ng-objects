@@ -27,10 +27,14 @@ public class NGRouteTable {
 	private String _name;
 
 	/**
-	 * A cached list of all routes mapped by this table
+	 * A list of all routes mapped by this table
 	 */
 	private List<Route> _routes = new ArrayList<>();
 
+	/**
+	 * A supplier of a list of all routes mapped by this table.
+	 * If this is set, routes from here will be preferred over the stored route list.
+	 */
 	private Supplier<List<Route>> _routeProvider;
 
 	/**
@@ -50,7 +54,7 @@ public class NGRouteTable {
 
 		for( final Route route : routes() ) {
 			if( matches( route.pattern(), url ) ) {
-				return route.routeHandler();
+				return route.handler();
 			}
 		}
 
@@ -62,8 +66,7 @@ public class NGRouteTable {
 	}
 
 	public NGRouteTable( final String name ) {
-		_name = name;
-		_routes = new ArrayList<>();
+		this( name, new ArrayList<>() );
 	}
 
 	public NGRouteTable( final String name, final Supplier<List<Route>> routeProvider ) {
@@ -94,50 +97,28 @@ public class NGRouteTable {
 		return pattern.equals( url );
 	}
 
-	public void map( final String pattern, final NGRequestHandler requestHandler ) {
-		Route r = new Route();
-		r._pattern = pattern;
-		r._routeHandler = requestHandler;
-		routes().add( r );
+	/**
+	 * Maps a URL pattern to a given RouteHandler
+	 *
+	 * @param pattern The pattern this route uses
+	 * @param handler The request handler that will handle requests passed to this route
+	 */
+	public record Route( String pattern, NGRequestHandler handler ) {}
+
+	public void map( final String pattern, final NGRequestHandler handler ) {
+		routes().add( new Route( pattern, handler ) );
 	}
 
 	public void map( final String pattern, final Function<NGRequest, NGActionResults> function ) {
-		final FunctionRouteHandler routeHandler = new FunctionRouteHandler( function );
-		map( pattern, routeHandler );
+		map( pattern, new FunctionRouteHandler( function ) );
 	}
 
 	public void map( final String pattern, final Supplier<NGActionResults> supplier ) {
-		final SupplierRouteHandler routeHandler = new SupplierRouteHandler( supplier );
-		map( pattern, routeHandler );
+		map( pattern, new SupplierRouteHandler( supplier ) );
 	}
 
 	public void map( final String pattern, final Class<? extends NGComponent> componentClass ) {
-		final ComponentRouteHandler routeHandler = new ComponentRouteHandler( componentClass );
-		map( pattern, routeHandler );
-	}
-
-	/**
-	 * Maps a URL pattern to a given RouteHandler
-	 */
-	public static class Route {
-
-		/**
-		 * The pattern this route uses
-		 */
-		private String _pattern;
-
-		/**
-		 * The routeHandler that will handle requests passed to this route
-		 */
-		private NGRequestHandler _routeHandler;
-
-		public String pattern() {
-			return _pattern;
-		}
-
-		public NGRequestHandler routeHandler() {
-			return _routeHandler;
-		}
+		map( pattern, new ComponentRouteHandler( componentClass ) );
 	}
 
 	public static class FunctionRouteHandler extends NGRequestHandler {
