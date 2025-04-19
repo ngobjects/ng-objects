@@ -210,9 +210,6 @@ public class NGApplication implements NGPlugin {
 		_sessionStore = new NGServerSessionStore();
 		_exceptionManager = new NGExceptionManager( this );
 		_urlRewritePatterns = new ArrayList<>();
-
-		// The first table in the list is the "user route table"
-		_routeTables.add( new NGRouteTable( "User routes" ) );
 	}
 
 	@Override
@@ -352,20 +349,12 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * @return The default route table.
-	 */
-	@Deprecated
-	public NGRouteTable routeTable() {
-		return _routeTables.get( 0 );
-	}
-
-	/**
 	 * @return a request handler for the given route, by searching all route tables
 	 *
 	 * FIXME: This belongs in a routing related class // Hugi 2022-10-16
 	 */
 	private NGRequestHandler handlerForURL( String url ) {
-		for( NGRouteTable routeTable : _routeTables ) {
+		for( final NGRouteTable routeTable : _routeTables ) {
 			final NGRequestHandler handler = routeTable.handlerForURL( url );
 
 			if( handler != null ) {
