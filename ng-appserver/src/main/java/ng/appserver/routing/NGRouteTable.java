@@ -27,14 +27,21 @@ public class NGRouteTable {
 	private String _name;
 
 	/**
-	 * A list of all routes mapped by this table
+	 * A cached list of all routes mapped by this table
 	 */
 	private List<Route> _routes = new ArrayList<>();
+
+	private Supplier<List<Route>> _routeProvider;
 
 	/**
 	 * @return All registered routes in the table
 	 */
 	public List<Route> routes() {
+
+		if( _routeProvider != null ) {
+			return _routeProvider.get();
+		}
+
 		return _routes;
 	}
 
@@ -56,6 +63,17 @@ public class NGRouteTable {
 
 	public NGRouteTable( final String name ) {
 		_name = name;
+		_routes = new ArrayList<>();
+	}
+
+	public NGRouteTable( final String name, final Supplier<List<Route>> routeProvider ) {
+		_name = name;
+		_routeProvider = routeProvider;
+	}
+
+	public NGRouteTable( final String name, final List<Route> routes ) {
+		_name = name;
+		_routes = routes;
 	}
 
 	public String name() {
@@ -80,7 +98,7 @@ public class NGRouteTable {
 		Route r = new Route();
 		r._pattern = pattern;
 		r._routeHandler = requestHandler;
-		_routes.add( r );
+		routes().add( r );
 	}
 
 	public void map( final String pattern, final Function<NGRequest, NGActionResults> function ) {
