@@ -160,8 +160,8 @@ public class NGApplication implements NGPlugin {
 			// We're manually adding the "ng" plugin, defining it's elements and routes.
 			application.plugins.add( new NGCorePlugin() );
 
-			// FIXME: This is probably not the place to load plugins. Probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
-			// We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath
+			// CHECKME: We probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
+			// CHECKME: We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath // Hugi 2025-04-19
 			application.locatePlugins();
 
 			// We add the application plugin after all the other plugins
@@ -265,6 +265,7 @@ public class NGApplication implements NGPlugin {
 		addDefaultResourcesourcesForNamespace( resourceManager().resourceLoader(), plugin.namespace() );
 		properties().addAndReadSource( new PropertiesSourceResource( plugin.namespace(), "Properties" ) );
 
+		// FIXME: We're greedily loading everything now. We need to modify element loading and caching to make it dynamic during development // Hugi 2025-04-19
 		for( final ElementProvider elementProvider : plugin.elements().elementProviders() ) {
 			elementManager().registerElementProvider( elementProvider );
 		}
@@ -278,7 +279,7 @@ public class NGApplication implements NGPlugin {
 			final NGRouteTable routeTable;
 
 			// If we're in development mode, we create the route table using the plugin as a "route supplier". This means the route list gets updated, every time the user makes a change.
-			// In production, we just create the route table by reading the route list once directly, maintaining performance in production.
+			// In production, we just read the route list once and set it directly, maintaining performance
 			// FIXME: Whether or not the route list is cached should be configurable. It should even be configurable for each table, since some lists will rarely change (including ng's own routes) // Hugi 2025-04-19
 			if( isDevelopmentMode() ) {
 				final Supplier<List<Route>> routeSupplier = () -> plugin.routes().routes();
