@@ -661,9 +661,10 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * FIXME: This is a bit harsh. We probably want to start some sort of a graceful shutdown procedure instead of saying "'K, BYE" // Hugi 2021-11-20
+	 * CHECKME: This is a bit harsh. We probably want to start some sort of a graceful shutdown procedure instead of saying "'K, BYE" // Hugi 2021-11-20
 	 */
 	public void terminate() {
+		logger.info( "Application shutting down via Application.terminate()" );
 		System.exit( 0 );
 	}
 

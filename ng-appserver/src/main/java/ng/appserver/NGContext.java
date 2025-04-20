@@ -156,9 +156,9 @@ public class NGContext {
 
 			// Since we're generating a contextID we're going to have to assume our page instance has to be cached, so we mark it as such.
 			//
-			// CHECKME: This is currently just the best indiator we have that we're going to be involved in stateful work.
-			// (i.e. the page was a result of a stateful action invocation, or has generated stateful URLs that reference it)
-			// Feels like we could be a little more explicit about this, since at the moment it feels a little too much like a side effect.
+			// CHECKME: This is currently just the best indicator we have that we're involved in stateful work.
+			// (i.e. the context's page was the result of a stateful action invocation, or generated stateful URLs that need to reference it)
+			// Feels like we could be a little more explicit about this, at the moment this feels just a little like a side effect.
 			_shouldSaveInPageCache = true;
 		}
 
@@ -236,12 +236,13 @@ public class NGContext {
 	}
 
 	/**
-	 * ID of the update container targeted with this request
+	 * ID of the update containers targeted for rendering this request
 	 *
 	 * FIXME: Should be replaced with a variable, preferably set at the context's construction // Hugi 2024-10-15
 	 */
 	public String targetedUpdateContainerID() {
-		// CHECKME: We're allowing the specification of targeted containers from the request parameters. This makes integration with JS libraries like htmx easier
+
+		// Start by checking for targeted containers from the request parameters
 		final String fromRequestParameters = request().formValueForKey( TARGETED_CONTAINER_ID_PARAM );
 
 		if( fromRequestParameters != null ) {
@@ -300,7 +301,7 @@ public class NGContext {
 			return true;
 		}
 
-		final String[] updateContainerIDs = containerIDToUpdate.split( ";" );
+		final String[] updateContainerIDs = containerIDToUpdate.split( MULTIPLE_CONTAINER_SEPARATOR );
 
 		for( String updateContainerID : updateContainerIDs ) {
 			if( containingUpdateContainerIDs().contains( updateContainerID ) ) {

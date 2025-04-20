@@ -13,8 +13,12 @@ import java.util.Map;
  * Hugi 2025-04-14
  */
 
-@Deprecated
 public class NGResponseMultipart extends NGResponse {
+
+	/**
+	 * A single part of content within a multipart response
+	 */
+	public record ContentPart( String name, StringBuilder content ) {}
 
 	/**
 	 * We need the context to keep track of which parts of the page are targeted for update
@@ -22,7 +26,8 @@ public class NGResponseMultipart extends NGResponse {
 	private NGContext _context;
 
 	/**
-	 * The parts this response contains. Initialized to an empty list at the start. If used in NGResponse, should probably be null if this isn't a multipart response (in our current worldview)
+	 * The parts this response contains. Initialized to an empty list at the start.
+	 * If this ends up in NGResponse, should probably be null if this isn't a multipart response (in our current worldview)
 	 */
 	public Map<String, ContentPart> _contentParts = new HashMap<>();
 
@@ -30,13 +35,8 @@ public class NGResponseMultipart extends NGResponse {
 		_context = context;
 	}
 
-	/**
-	 * A single part of content within a multipart response
-	 */
-	public record ContentPart( String name, StringBuilder content ) {}
-
 	@Override
-	public void appendContentString( String stringToAppend ) {
+	public void appendContentString( final String stringToAppend ) {
 		if( _context.targetsMultipleUpdateContainers() ) {
 			getContentPart( _context.updateContainerToAppendTo() ).content().append( stringToAppend );
 		}
