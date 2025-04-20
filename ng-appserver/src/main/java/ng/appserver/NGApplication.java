@@ -255,7 +255,6 @@ public class NGApplication implements NGPlugin {
 				.stream()
 				.map( Provider::get )
 				.forEach( plugin -> {
-					logger.info( "Located plugin {}", plugin.getClass().getName() );
 					plugins.add( plugin );
 				} );
 	}
