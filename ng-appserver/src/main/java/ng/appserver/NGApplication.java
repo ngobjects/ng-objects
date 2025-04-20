@@ -317,8 +317,6 @@ public class NGApplication implements NGPlugin {
 
 	/**
 	 * @return The fully qualified class name of the http adaptor
-	 *
-	 * CHECKME: This should eventually return the name of our own adaptor. Using Jetty for now (since it's easier to implement) // Hugi 2021-12-29
 	 */
 	public String adaptorClassName() {
 		return "ng.adaptor.jetty.NGAdaptorJetty";
