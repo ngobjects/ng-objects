@@ -31,6 +31,7 @@ import ng.appserver.resources.NGResource;
  * FIXME: Properties need watching for changes (allowing us to trigger logic when properties change, like switching loggers, flushing caches etc.) // Hugi 2024-07-10
  * FIXME: Property files loaded from resource/file need a preview feature in the control UI // Hugi 2024-07-10
  * FIXME: Configuration for different deployment modes should be previewable as well in the UI // Hugi 2024-07-10
+ * FIXME: You probably need a "configuration set" to group certain properties together. For example, you may need to flip the dev machine to talk to the production DB. Or flip a single web service to speak to production, both of which may need multiple properties // Hugi 2025-04-20
  */
 
 public class NGProperties {
