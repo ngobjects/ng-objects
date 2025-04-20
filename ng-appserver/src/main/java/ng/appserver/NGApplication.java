@@ -238,8 +238,8 @@ public class NGApplication implements NGPlugin {
 	protected NGActionResults resetSessionCookieWithRedirectToURL( final String url ) {
 		final NGResponse response = new NGResponse();
 
-		response.setHeader( "location", url );
 		response.setStatus( 302 );
+		response.setHeader( "location", url );
 		response.setHeader( "content-type", "text/html" );
 		response.setHeader( "content-length", "0" );
 		response.addCookie( createSessionResetCookie() );

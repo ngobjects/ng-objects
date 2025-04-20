@@ -13,7 +13,7 @@ public class NGContext {
 	 * Name of the header or query parameter (form value) added to a request to signify the part(s) of the page we want to render
 	 * (as in, the IDs of the updateContainers we want updated)
 	 */
-	private static final String TARGETED_CONTAINER_ID_HEADER = "ng-container-id";
+	private static final String TARGETED_CONTAINER_ID_PARAM = "ng-container-id";
 
 	/**
 	 * If multiple update container IDs are targeted they are separated by this string
@@ -242,13 +242,13 @@ public class NGContext {
 	 */
 	public String targetedUpdateContainerID() {
 		// CHECKME: We're allowing the specification of targeted containers from the request parameters. This makes integration with JS libraries like htmx easier
-		final String fromRequestParameters = request().formValueForKey( TARGETED_CONTAINER_ID_HEADER );
+		final String fromRequestParameters = request().formValueForKey( TARGETED_CONTAINER_ID_PARAM );
 
 		if( fromRequestParameters != null ) {
 			return fromRequestParameters;
 		}
 
-		return request().headerForKey( TARGETED_CONTAINER_ID_HEADER );
+		return request().headerForKey( TARGETED_CONTAINER_ID_PARAM );
 	}
 
 	/**
