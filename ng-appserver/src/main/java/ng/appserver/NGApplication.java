@@ -18,8 +18,6 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ng.appserver.directactions.NGDirectActionRequestHandler;
-import ng.appserver.privates.NGAdminAction;
 import ng.appserver.properties.DeploymentMode;
 import ng.appserver.properties.NGProperties;
 import ng.appserver.properties.NGProperties.PropertiesSourceArguments;
@@ -40,6 +38,7 @@ import ng.appserver.templating.NGElementManager.ElementProvider;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
 import ng.plugins.Elements;
 import ng.plugins.NGCorePlugin;
+import ng.plugins.NGDevelopmentPlugin;
 import ng.plugins.NGPlugin;
 import ng.xperimental.NGExceptionPage;
 import ng.xperimental.NGExceptionPageDevelopment;
@@ -160,6 +159,11 @@ public class NGApplication implements NGPlugin {
 			// We're manually adding the "ng" plugin, defining it's elements and routes.
 			application.plugins.add( new NGCorePlugin() );
 
+			// If we're in development mode, activate the development plugin for some bonus development features
+			if( isDevelopmentMode ) {
+				application.plugins.add( new NGDevelopmentPlugin() );
+			}
+
 			// CHECKME: We probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
 			// CHECKME: We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath // Hugi 2025-04-19
 			application.locatePlugins();
@@ -172,9 +176,6 @@ public class NGApplication implements NGPlugin {
 			}
 
 			logger.info( "===== All properties =====\n" + properties._propertiesMapAsString() );
-
-			// FIXME: Registering for the instance stopper to work. Horrid stuff. We need to use routes for AdminAction - or at least make DirectAction class/package registration ... usable // Hugi 2025-03-16
-			NGDirectActionRequestHandler.registerDirectActionClass( NGAdminAction.class );
 
 			// FIXME: Eventually the adaptor startup should probably be done by the user
 			application.createAdaptor().start( application );

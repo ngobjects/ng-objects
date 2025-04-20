@@ -37,7 +37,7 @@ public class NGDevelopmentInstanceStopper {
 			String url = "http://localhost:" + portNumber;
 
 			if( isNGApplicationRunningInPort( portNumber ) ) {
-				url += "/wa/NGAdminAction/terminate";
+				url += "/ng/dev/terminate";
 			}
 			else {
 				// If not an ng-objects application, try killing a WO instance
@@ -56,7 +56,7 @@ public class NGDevelopmentInstanceStopper {
 	 * @return true if the application running on the given port number is an ng-objects application
 	 */
 	private static boolean isNGApplicationRunningInPort( int portNumber ) {
-		final String urlString = String.format( "http://localhost:%s/wa/NGAdminAction/type", 1200 );
+		final String urlString = String.format( "http://localhost:%s/ng/dev/type", 1200 );
 
 		try( InputStream is = new URI( urlString ).toURL().openStream()) {
 			final String type = new String( is.readAllBytes() );
