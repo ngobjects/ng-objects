@@ -146,7 +146,7 @@ public class NGApplication implements NGPlugin {
 		try {
 			NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
 
-			addDefaultResourceSources( application.resourceManager() );
+			addDeprecatedDefaultResourceSources( application.resourceManager() );
 
 			// FIXME: Assigning that unwanted global application...
 			_application = application;
@@ -608,9 +608,10 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * FIXME: These is for registering the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future and should probably be deleted // Hugi 2024-06-19
+	 * CHECKME: These is for registering the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future and should probably be deleted // Hugi 2024-06-19
 	 */
-	private static void addDefaultResourceSources( final NGResourceManager resourceManager ) {
+	@Deprecated
+	private static void addDeprecatedDefaultResourceSources( final NGResourceManager resourceManager ) {
 		final NGResourceLoader loader = resourceManager.resourceLoader();
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
 		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
