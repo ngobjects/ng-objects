@@ -141,14 +141,14 @@ public interface NGKeyValueCoding {
 			}
 
 			final CacheKey cacheKey = new CacheKey( object.getClass(), key );
-			KVCReadBinding entry = _readBindingCache.get( cacheKey );
+			KVCReadBinding readBinding = _readBindingCache.get( cacheKey );
 
-			if( entry == null ) {
-				entry = locateBindingForKey( object, key );
-				_readBindingCache.put( cacheKey, entry );
+			if( readBinding == null ) {
+				readBinding = locateBindingForKey( object, key );
+				_readBindingCache.put( cacheKey, readBinding );
 			}
 
-			return entry;
+			return readBinding;
 		}
 
 		/**
