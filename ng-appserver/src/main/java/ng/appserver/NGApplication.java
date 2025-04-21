@@ -629,8 +629,10 @@ public class NGApplication implements NGPlugin {
 	private static void addDefaultResourcesourcesForNamespace( final NGResourceLoader loader, final String namespace ) {
 		loader.addResourceSource( namespace, StandardResourceType.App, new JavaClasspathResourceSource( "ng/%s/app-resources".formatted( namespace ) ) );
 		loader.addResourceSource( namespace, StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/%s/webserver-resources".formatted( namespace ) ) );
-		loader.addResourceSource( namespace, StandardResourceType.Public, new JavaClasspathResourceSource( "ng/%s/public".formatted( namespace ) ) );
 		loader.addResourceSource( namespace, StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/%s/components".formatted( namespace ) ) );
+
+		// FIXME: It's highly questionable whether we want to define a public resource folder for every namespace, since this is really just a feature of the application itself // Hugi 2025-04-21
+		loader.addResourceSource( namespace, StandardResourceType.Public, new JavaClasspathResourceSource( "ng/%s/public".formatted( namespace ) ) );
 	}
 
 	/**
