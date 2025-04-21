@@ -78,6 +78,6 @@ public class NGCorePlugin implements NGPlugin {
 				.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH + "*", new NGResourceRequestHandlerDynamic() )
 				.map( NGDirectActionRequestHandler.DEFAULT_PATH + "*", new NGDirectActionRequestHandler() )
 				.map( WOMPRequestHandler.DEFAULT_PATH, new WOMPRequestHandler() )
-				.map( "/sessionCookieReset", request -> NGApplication.application().resetSessionCookie() );
+				.map( "/ng/sessionCookieReset", request -> NGApplication.application().resetSessionCookie() );
 	}
 }
