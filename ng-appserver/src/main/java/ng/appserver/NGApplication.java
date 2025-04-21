@@ -372,8 +372,7 @@ public class NGApplication implements NGPlugin {
 	 * @return true if we're in development mode
 	 */
 	public boolean isDevelopmentMode() {
-		return false;
-		//		return _deploymentMode == StandardDeploymentMode.Development;
+		return _deploymentMode == StandardDeploymentMode.Development;
 	}
 
 	/**
