@@ -7,7 +7,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import ng.NGRuntimeException;
 
@@ -114,9 +116,45 @@ public interface NGKeyValueCoding {
 		}
 
 		/**
+		 * FIXME: Most definitely not the way we're going to use to set if KVC caching is enabled // Hugi 2025-04-21
+		 */
+		public static void setCachingEnabled( boolean value ) {
+			_cachingEnabled = value;
+		}
+
+		/**
+		 * FIXME: Most definitely not the way we're going to use to decide if KVC caching is enabled // Hugi 2025-04-21
+		 */
+		public static boolean _cachingEnabled = true;
+
+		/**
+		 * FIXME: Currently just a very primitive cache for testing // Hugi 2025-04-21
+		 */
+		private static Map<CacheKey, KVCReadBinding> _readBindingCache = new ConcurrentHashMap<>();
+
+		private record CacheKey( Class<?> clazz, String key ) {}
+
+		private static KVCReadBinding readBindingForKey( final Object object, final String key ) {
+
+			if( !_cachingEnabled ) {
+				return locateBindingForKey( object, key );
+			}
+
+			final CacheKey cacheKey = new CacheKey( object.getClass(), key );
+			KVCReadBinding entry = _readBindingCache.get( cacheKey );
+
+			if( entry == null ) {
+				entry = locateBindingForKey( object, key );
+				_readBindingCache.put( cacheKey, entry );
+			}
+
+			return entry;
+		}
+
+		/**
 		 * @return A KVC binding for the given class and key.
 		 */
-		private static KVCReadBinding readBindingForKey( final Object object, final String key ) {
+		private static KVCReadBinding locateBindingForKey( final Object object, final String key ) {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( key );
 

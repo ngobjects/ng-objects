@@ -36,6 +36,7 @@ import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementManager;
 import ng.appserver.templating.NGElementManager.ElementProvider;
 import ng.appserver.wointegration.NGDefaultLifeBeatThread;
+import ng.kvc.NGKeyValueCoding;
 import ng.plugins.Elements;
 import ng.plugins.NGCorePlugin;
 import ng.plugins.NGDevelopmentPlugin;
@@ -162,6 +163,9 @@ public class NGApplication implements NGPlugin {
 			// If we're in development mode, activate the development plugin for some bonus development features
 			if( isDevelopmentMode ) {
 				application.plugins.add( new NGDevelopmentPlugin() );
+
+				// FIXME: Most definitely not the way we're going to use to decide if KVC caching is enabled. Under development // Hugi 2025-04-21
+				NGKeyValueCoding.DefaultImplementation.setCachingEnabled( false );
 			}
 
 			// CHECKME: We probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
@@ -368,7 +372,8 @@ public class NGApplication implements NGPlugin {
 	 * @return true if we're in development mode
 	 */
 	public boolean isDevelopmentMode() {
-		return _deploymentMode == StandardDeploymentMode.Development;
+		return false;
+		//		return _deploymentMode == StandardDeploymentMode.Development;
 	}
 
 	/**
