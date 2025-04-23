@@ -253,7 +253,9 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * Locates plugins and loads them.
+	 * Locates plugins on the classpath and adds them to the framework's loaded plugins
+	 *
+	 * FIXME: Ensure proper load order // Hugi 2025-05-24
 	 */
 	private void locatePlugins() {
 		ServiceLoader.load( NGPlugin.class )
