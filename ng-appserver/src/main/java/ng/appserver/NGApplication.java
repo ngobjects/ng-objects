@@ -175,8 +175,14 @@ public class NGApplication implements NGPlugin {
 			// We add the application plugin after all the other plugins
 			application.plugins.add( application );
 
+			// We start by initializing all the located plugins...
 			for( final NGPlugin plugin : application.plugins ) {
-				application.loadPlugin( plugin );
+				application.initPlugin( plugin );
+			}
+
+			// Once all plugins have been initialized, we load them
+			for( final NGPlugin plugin : application.plugins ) {
+				plugin.load( application );
 			}
 
 			logger.info( "===== All properties =====\n" + properties._propertiesMapAsString() );
@@ -266,8 +272,11 @@ public class NGApplication implements NGPlugin {
 				} );
 	}
 
-	private void loadPlugin( NGPlugin plugin ) {
-		logger.info( "Loading plugin {}", plugin.getClass().getName() );
+	/**
+	 * Initializes the given plugin, adding routes, properties and elements provided by it
+	 */
+	private void initPlugin( final NGPlugin plugin ) {
+		logger.info( "Initializing plugin {}", plugin.getClass().getName() );
 		addDefaultResourcesourcesForNamespace( resourceManager().resourceLoader(), plugin.namespace() );
 		properties().addAndReadSource( new PropertiesSourceResource( plugin.namespace(), "Properties" ) );
 
@@ -298,8 +307,6 @@ public class NGApplication implements NGPlugin {
 			// The new route table is added at the front, corresponding with the load order of the plugins
 			_routeTables.add( 0, routeTable );
 		}
-
-		plugin.load( this );
 	}
 
 	/**
