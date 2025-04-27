@@ -220,7 +220,7 @@ public class NGProperties {
 					final String key = keyValuePair[0].substring( 2 );
 					final String value = keyValuePair[1];
 					System.setProperty( key, value );
-					properties.put( key, value );
+					properties.put( key, value ); // FIXME: It's actually questionable whether we want to add java system properties to our main properties or just to System.properties() // Hugi 2025-04-27
 				}
 				else if( currentArgument.startsWith( "-" ) ) {
 					// "our style arguments" are passed to NG only
