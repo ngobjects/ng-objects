@@ -205,34 +205,44 @@ public class NGProperties {
 
 		@Override
 		public Map<String, String> readAll() {
-			final Map<String, String> m = new HashMap<>();
+			final Map<String, String> properties = new HashMap<>();
 
-			for( int i = 0; i < _argv.length; i = i + 2 ) {
-				String key = _argv[i];
+			for( int i = 0; i < _argv.length; i++ ) {
+				String currentArgument = _argv[i];
 
-				if( key.startsWith( "-X" ) ) {
-					// JVM argument - ignore
-					// FIXME: Not sure about this functionality, experimental // Hugi  2023-04-17
+				if( currentArgument.startsWith( "-X" ) ) {
+					// Notify the user he's probably passing an argument in the wrong place
+					logger.warn( "IGNORED ARGUMENT '%s'. Arguments starting with -X are meant for the JVM".formatted( currentArgument ) );
 				}
-				else if( key.startsWith( "-D" ) ) {
-					// Java argument is passed on to System.properties
-					// FIXME: This is definitely not the place to set System properties - experimental // Hugi 2023-04-17
-					final String[] keyValuePair = key.split( "=" );
-					final String realKey = keyValuePair[0].substring( 2 );
-					final String realValue = keyValuePair[1];
-					System.setProperty( realKey, realValue );
-					m.put( realKey, realValue );
+				else if( currentArgument.startsWith( "-D" ) ) {
+					// Java-style arguments are passed on to both System.properties() and NG's properties
+					final String[] keyValuePair = currentArgument.split( "=" ); // FIXME: Look into treatment of missong or multiple equals signs // Hugi 2025-04-27
+					final String key = keyValuePair[0].substring( 2 );
+					final String value = keyValuePair[1];
+					System.setProperty( key, value );
+					properties.put( key, value );
 				}
-				else if( key.startsWith( "-" ) ) {
-					// Otherwise this is a standard property
-					key = key.substring( 1 );
+				else if( currentArgument.startsWith( "-" ) ) {
+					// "our style arguments" are passed to NG only
+					currentArgument = currentArgument.substring( 1 );
 
-					final String value = _argv[i + 1];
-					m.put( key, value );
+					// Since property/value are separated by a space in this style, they count as two arguments in the originating array.
+					// So, proceed to the next argument for treating it as as the value.
+					i++;
+					final String value = _argv[i];
+					properties.put( currentArgument, value );
+				}
+				else {
+					// FIXME:
+					// We're entirely ignoring non-prefixed arguments.
+					// Since this is _probably_ some sort of a user error,
+					// we're probably going to want to throw or notify the user in some other nice way.
+					// Hugi 2025-04-27
+					logger.warn( "IGNORED ARGUMENT '%s'. Prefix your argument with a hyphen if you want it treated as an NG property: ".formatted( currentArgument ) );
 				}
 			}
 
-			return m;
+			return properties;
 		}
 
 		@Override
