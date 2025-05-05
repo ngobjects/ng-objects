@@ -22,7 +22,7 @@ import ng.NGRuntimeException;
  * FIXME: Error handling is completely missing // Hugi 2023-03-18
  * FIXME: Bindings should be marked for directionality (read only/set only etc)
  * FIXME: Decide if we're going to go all the way and do validation and error handling
- * FIXME: We should be using cached MethodHandles for improved performance
+ * FIXME: We should be using cached MethodHandles for improved performance // https://hazelcast.com/blog/turbocharging-java-reflection-performance-with-methodhandle/ // https://dev.java/learn/introduction_to_method_handles/
  *
  * Lookup order when searching for readable binding for key 'smu':
  *
