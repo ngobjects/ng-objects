@@ -30,6 +30,7 @@ import ng.appserver.resources.NGResourceManager;
 import ng.appserver.resources.NGResourceManagerDynamic;
 import ng.appserver.resources.StandardNamespace;
 import ng.appserver.resources.StandardResourceType;
+import ng.appserver.routing.NGRouteManager;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.routing.NGRouteTable.Route;
 import ng.appserver.templating.NGComponent;
@@ -96,10 +97,9 @@ public class NGApplication implements NGPlugin {
 	private List<Pattern> _urlRewritePatterns;
 
 	/**
-	 * In the old WO world, this would have been called "requestHandlers".
-	 * Since we want to have more dynamic route resolution, it makes sense to move that to a separate object.
+	 * For handling of request routing
 	 */
-	private List<NGRouteTable> _routeTables = new ArrayList<>();
+	private NGRouteManager _routeManager = new NGRouteManager();
 
 	/**
 	 * Mode we're running in. Defaults to development mode unless explicitly set to a different mode through the application's startup parameters.
@@ -220,6 +220,7 @@ public class NGApplication implements NGPlugin {
 		_resourceManagerDynamic = new NGResourceManagerDynamic();
 		_sessionStore = new NGServerSessionStore();
 		_exceptionManager = new NGExceptionManager( this );
+		_routeManager = new NGRouteManager();
 		_urlRewritePatterns = new ArrayList<>();
 	}
 
@@ -305,7 +306,7 @@ public class NGApplication implements NGPlugin {
 			}
 
 			// The new route table is added at the front, corresponding with the load order of the plugins
-			_routeTables.add( 0, routeTable );
+			routeManager().routeTables().add( 0, routeTable );
 		}
 	}
 
@@ -361,23 +362,6 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * @return a request handler for the given route, by searching all route tables
-	 *
-	 * FIXME: This belongs in a routing related class // Hugi 2022-10-16
-	 */
-	private NGRequestHandler handlerForURL( String url ) {
-		for( final NGRouteTable routeTable : _routeTables ) {
-			final NGRequestHandler handler = routeTable.handlerForURL( url );
-
-			if( handler != null ) {
-				return handler;
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * @return true if we're in development mode
 	 */
 	public boolean isDevelopmentMode() {
@@ -418,6 +402,10 @@ public class NGApplication implements NGPlugin {
 		return _exceptionManager;
 	}
 
+	public NGRouteManager routeManager() {
+		return _routeManager;
+	}
+
 	public NGSessionStore sessionStore() {
 		return _sessionStore;
 	}
@@ -427,7 +415,7 @@ public class NGApplication implements NGPlugin {
 		try {
 			rewriteURL( request );
 
-			final NGRequestHandler requestHandler = handlerForURL( request.uri() );
+			final NGRequestHandler requestHandler = routeManager().handlerForURL( request.uri() );
 
 			if( requestHandler == null ) {
 				return noHandlerResponse( request );
