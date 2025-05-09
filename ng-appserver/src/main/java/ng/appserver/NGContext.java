@@ -132,16 +132,16 @@ public class NGContext {
 	}
 
 	/**
-	 * @return The page level component
+	 * @return The page-level component
 	 */
 	public NGComponent page() {
 		return _page;
 	}
 
 	/**
-	 * Set the page currently being rendered by this context.
+	 * Set the page-level component currently being rendered by this context.
 	 */
-	public void setPage( NGComponent value ) {
+	public void setPage( final NGComponent value ) {
 		_page = value;
 	}
 
@@ -240,7 +240,7 @@ public class NGContext {
 	 *
 	 * FIXME: Should be replaced with a variable, preferably set at the context's construction // Hugi 2024-10-15
 	 */
-	public String targetedUpdateContainerID() {
+	public String targetedUpdateContainerIDsStringValue() {
 
 		// Start by checking for targeted containers from the request parameters
 		final String fromRequestParameters = request().formValueForKey( TARGETED_CONTAINER_ID_PARAM );
@@ -256,7 +256,7 @@ public class NGContext {
 	 * @return true if we're targeting multiple containers
 	 */
 	public boolean targetsMultipleUpdateContainers() {
-		return targetedUpdateContainerID() != null && targetedUpdateContainerID().contains( MULTIPLE_CONTAINER_SEPARATOR );
+		return targetedUpdateContainerIDsStringValue() != null && targetedUpdateContainerIDsStringValue().contains( MULTIPLE_CONTAINER_SEPARATOR );
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class NGContext {
 	public String updateContainerToAppendTo() {
 		if( targetsMultipleUpdateContainers() ) {
 			// The list of containers to update is passed in to the request as a header
-			final String containerIDToUpdate = targetedUpdateContainerID();
+			final String containerIDToUpdate = targetedUpdateContainerIDsStringValue();
 
 			final String[] updateContainerIDs = containerIDToUpdate.split( MULTIPLE_CONTAINER_SEPARATOR );
 
@@ -294,7 +294,7 @@ public class NGContext {
 		}
 
 		// The list of containers to update is passed in to the request as a header
-		final String containerIDToUpdate = targetedUpdateContainerID();
+		final String containerIDToUpdate = targetedUpdateContainerIDsStringValue();
 
 		// If no containers are specified, we're doing a full page render, so always perform appendToResponse()
 		if( containerIDToUpdate == null ) {

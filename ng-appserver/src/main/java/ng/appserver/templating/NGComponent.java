@@ -256,8 +256,12 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		// At this point, the context's elementID might be off.
 		// For example, we might have ended up here by clicking/activating a hyperlink in invokeAction in the same context.
-		// In that case, the context's elementID will still be somewhere in the middle of that component's element tree,
-		// so we have to start out clean and reset the elementID before entering appendToResponse().
+		// In that case, the context's elementID will still be somewhere in the middle of that component's element tree.
+		//
+		// This may also apply if we decide to return a different page in the middle of generating a one,
+		// the most obvious example being an exception occurring, which means us switching to generating an exception page.
+		//
+		// So we have to start out clean and reset the elementID before entering appendToResponse().
 		context()._resetElementID();
 
 		// Now let's create a new response and append ourselves to it
@@ -277,8 +281,9 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		// So, we've generated the page, and it's ready to return. Now we let the context tell us whether it should be stored in the page cache for future reference.
 		// CHECKME: This *still* feels a little like the wrong place to stash the page in the cache. Not yet sure where it *should* be but my gut *still* has a feeling // Hugi 2024-09-28
+		// FIXME: We might be targeting multiple update containers, this isn't properly handled at the moment // Hugi 2025-05-09
 		if( context()._shouldSaveInPageCache() ) {
-			context().session().pageCache().savePage( context().contextID(), this, context()._originatingContextID(), context().targetedUpdateContainerID() );
+			context().session().pageCache().savePage( context().contextID(), this, context()._originatingContextID(), context().targetedUpdateContainerIDsStringValue() );
 		}
 
 		return response;
