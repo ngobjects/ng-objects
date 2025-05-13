@@ -36,7 +36,7 @@ import ng.appserver.routing.NGRouteTable.Route;
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementManager;
 import ng.appserver.templating.NGElementManager.ElementProvider;
-import ng.appserver.wointegration.NGDefaultLifeBeatThread;
+import ng.appserver.wointegration.NGWOIntegrationPlugin;
 import ng.kvc.NGKeyValueCoding;
 import ng.plugins.Elements;
 import ng.plugins.NGCorePlugin;
@@ -175,6 +175,9 @@ public class NGApplication implements NGPlugin {
 			// We add the application plugin after all the other plugins
 			application.plugins.add( application );
 
+			// CHECKME: We shouldn't really be adding this plugin by default... // Hugi 2025-05-13
+			application.plugins.add( new NGWOIntegrationPlugin() );
+
 			// We start by initializing all the located plugins...
 			for( final NGPlugin plugin : application.plugins ) {
 				application.initPlugin( plugin );
@@ -187,16 +190,8 @@ public class NGApplication implements NGPlugin {
 
 			logger.info( "===== All properties =====\n" + properties._propertiesMapAsString() );
 
-			// FIXME: Eventually the adaptor startup should probably be done by the user
+			// FIXME: Eventually, adaptor startup should be explicitly performed by the user
 			application.createAdaptor().start( application );
-
-			if( properties.d().propWOLifebeatEnabled() ) {
-				NGDefaultLifeBeatThread.start( application._properties );
-			}
-
-			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
-			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
-			application._urlRewritePatterns.add( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + properties.d().propWOApplicationName() + ".woa(/[0-9])?" ) );
 
 			logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 
@@ -235,6 +230,20 @@ public class NGApplication implements NGPlugin {
 				.create()
 				.elementPackage( getClass().getPackageName() )
 				.elementPackage( getClass().getPackageName() + ".components" );
+	}
+
+	/**
+	 * Adds an URL rewrite pattern. URLs will rewritten before any further handling by the framework.
+	 *
+	 * CHECKME:
+	 * We currently have this functionality specifically for compatibility with WO deployment environments
+	 * (to remove the path to the app and rewrite things like "/Apps/WebObjects/SomeApp.woa/bork" to just "/bork" for us to handle)
+	 * In general, this is probably a nice feature to have, but we probably want to expand it and allow it to perform generic
+	 * modifications to a request before it's handled. But that's an entire new feature waiting to be designed and implemented.
+	 * Hugi 2025-05-13
+	 */
+	public void addURLRewritePattern( final Pattern pattern ) {
+		_urlRewritePatterns.add( pattern );
 	}
 
 	/**

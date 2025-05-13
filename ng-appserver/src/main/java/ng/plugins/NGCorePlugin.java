@@ -29,7 +29,6 @@ import ng.appserver.elements.ajax.AjaxObserveField;
 import ng.appserver.elements.ajax.AjaxSubmitButton;
 import ng.appserver.elements.ajax.AjaxUpdateContainer;
 import ng.appserver.elements.ajax.AjaxUpdateLink;
-import ng.appserver.wointegration.WOMPRequestHandler;
 
 public class NGCorePlugin implements NGPlugin {
 
@@ -77,7 +76,6 @@ public class NGCorePlugin implements NGPlugin {
 				.map( NGResourceRequestHandler.DEFAULT_PATH + "*", new NGResourceRequestHandler() )
 				.map( NGResourceRequestHandlerDynamic.DEFAULT_PATH + "*", new NGResourceRequestHandlerDynamic() )
 				.map( NGDirectActionRequestHandler.DEFAULT_PATH + "*", new NGDirectActionRequestHandler() )
-				.map( WOMPRequestHandler.DEFAULT_PATH, new WOMPRequestHandler() )
 				.map( "/ng/sessionCookieReset", request -> NGApplication.application().resetSessionCookie() );
 	}
 }
