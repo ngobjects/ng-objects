@@ -49,11 +49,20 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 		_componentNameAssociation = associations.get( "componentName" );
 
 		if( _componentNameAssociation == null ) {
-			throw new NGBindingConfigurationException( "[componentName] is a reuired binding" );
+
+			// FIXME: This second check is for compatibility with WO's switch component binding // Hugi 2025-05-13
+			_componentNameAssociation = associations.get( "WOComponentName" );
+
+			if( _componentNameAssociation == null ) {
+				throw new NGBindingConfigurationException( "[componentName] is a reuired binding" );
+			}
 		}
 
 		_componentAssociations = new HashMap<>( associations );
 		_componentAssociations.remove( "componentName" );
+
+		// FIXME: This second check is for compatibility with WO's switch component binding // Hugi 2025-05-13
+		_componentAssociations.remove( "WOComponentName" );
 
 		_componentCache = new ConcurrentHashMap<>();
 		_contentTemplate = contentTemplate;
