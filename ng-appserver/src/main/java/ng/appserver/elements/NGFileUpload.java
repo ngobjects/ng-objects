@@ -58,13 +58,19 @@ public class NGFileUpload extends NGDynamicElement {
 			}
 
 			// If we have a value, that's the filename
-			final String filename = valuesFromRequest.get( 0 );
+			final String fileID = valuesFromRequest.get( 0 );
 
-			_filenameAssociation.setValue( filename, context.component() );
+			final UploadedFile file = request._uploadedFiles().get( fileID );
+
+			if( file == null ) {
+				throw new IllegalStateException( "No file with ID %s found in request".formatted( fileID ) );
+			}
+
+			if( _filenameAssociation != null ) {
+				_filenameAssociation.setValue( file.name(), context.component() );
+			}
 
 			if( _dataAssociation != null ) {
-				final UploadedFile file = request._uploadedFiles().get( filename );
-
 				try( final InputStream stream = file.stream()) {
 					_dataAssociation.setValue( stream.readAllBytes(), context.component() );
 				}
