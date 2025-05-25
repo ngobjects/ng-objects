@@ -75,7 +75,7 @@ public class NGPopUpButton extends NGDynamicElement {
 			final String name = name( context );
 			final List<String> valuesFromRequest = request.formValuesForKey( name );
 
-			// FIXME: We might have to handle probably have to handle "empty" for the multiple case
+			// FIXME: We need to handle "empty" for multiple selects. We're currently not handling the "no item selected" case // Hugi 2025-05-25
 			if( !valuesFromRequest.isEmpty() ) {
 				if( multiple( context ) ) {
 					takeMultipleValuesFromRequest( context, name, valuesFromRequest );
@@ -165,9 +165,17 @@ public class NGPopUpButton extends NGDynamicElement {
 			boolean isSelected = false;
 
 			// FIXME: Hacky way to get the currently selected item. We should be reusing logic from takeValuesFromRequest() here
+			// FIXME: Handling of multiple selections should really only be in the elements that support those // Hugi 2025-05-25
 			if( multiple( context ) ) {
 				final List<String> selectedIndexes = context.request().formValuesForKey( name( context ) );
 				isSelected = selectedIndexes.contains( String.valueOf( index ) );
+
+				// FIXME: We're doing a separate round here to check for current selections in the associated list. This is spaghetti logic by now, fix up // Hugi 2025-05-25
+				final List selectedObjects = (List)_selectionsAss.valueInComponent( context.component() );
+
+				if( selectedObjects != null && selectedObjects.contains( object ) ) {
+					isSelected = true;
+				}
 			}
 			else {
 				final String indexValue = context.request().formValueForKey( name( context ) );
@@ -177,7 +185,8 @@ public class NGPopUpButton extends NGDynamicElement {
 				}
 
 				if( _selectionAss != null ) {
-					if( object.equals( _selectionAss.valueInComponent( context.component() ) ) ) {
+					final Object selectedObject = _selectionAss.valueInComponent( context.component() );
+					if( object.equals( selectedObject ) ) {
 						isSelected = true;
 					}
 				}
