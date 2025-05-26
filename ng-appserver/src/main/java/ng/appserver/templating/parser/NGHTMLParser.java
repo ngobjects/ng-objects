@@ -112,13 +112,13 @@ public class NGHTMLParser {
 						else if( tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.startsWith( WO_COLON_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
 							endOfWebObjectTag( token );
 						}
-						else if( tagLowerCase.startsWith( NGHTMLParser.JS_START_TAG ) ) {
+						else if( tagLowerCase.startsWith( JS_START_TAG ) ) {
 							didParseText();
 							_contentText.append( token );
 							_contentText.append( '>' );
 							flag = false;
 						}
-						else if( tagLowerCase.startsWith( NGHTMLParser.JS_END_TAG ) ) {
+						else if( tagLowerCase.startsWith( JS_END_TAG ) ) {
 							didParseText();
 							_contentText.append( token );
 							_contentText.append( '>' );
