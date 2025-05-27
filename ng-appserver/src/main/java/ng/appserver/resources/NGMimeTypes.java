@@ -62,6 +62,7 @@ public class NGMimeTypes {
 		map.put( "woff2", "application/font-woff2" );
 		map.put( "eot", "application/vnd.ms-fontobject" );
 		map.put( "sfnt", "application/font-sfnt" );
+		map.put( "webp", "image/webp" );
 		return map;
 	}
 }
