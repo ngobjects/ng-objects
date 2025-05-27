@@ -145,6 +145,11 @@ public interface NGKeyValueCoding {
 
 			if( readBinding == null ) {
 				readBinding = locateBindingForKey( object, key );
+
+				if( readBinding == null ) {
+					return null;
+				}
+
 				_readBindingCache.put( cacheKey, readBinding );
 			}
 
