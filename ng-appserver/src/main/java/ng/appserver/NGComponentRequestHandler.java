@@ -110,6 +110,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			}
 			else if( actionInvocationResults instanceof NGComponent newPage ) {
 				// If an action method returns an NGComponent, that's our new page in this context. We set it, and return it
+				// FIXME: Don't we have to set the context's page as well? // Hugi 2025-05-27
 				newPage.setContextIncludingChildren( context );
 				response = newPage.generateResponse();
 			}
