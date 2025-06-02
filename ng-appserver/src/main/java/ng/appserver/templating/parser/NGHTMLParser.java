@@ -150,9 +150,6 @@ public class NGHTMLParser {
 						parserState = ParserState.Outside;
 					}
 					break;
-
-				default:
-					break;
 			}
 			token = null;
 			if( parserState == ParserState.Outside ) {
