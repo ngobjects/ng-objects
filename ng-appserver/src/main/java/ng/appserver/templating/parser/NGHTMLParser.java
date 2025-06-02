@@ -72,7 +72,7 @@ public class NGHTMLParser {
 			}
 
 			switch( parserState ) {
-				case Outside:
+				case Outside -> {
 					if( token != null ) {
 						if( token.startsWith( ">" ) ) {
 							token = token.substring( 1 );
@@ -139,9 +139,8 @@ public class NGHTMLParser {
 						_contentText.append( token );
 						_contentText.append( '>' );
 					}
-					break;
-
-				case InsideComment:
+				}
+				case InsideComment -> {
 					token = templateTokenizer.nextToken( ">" );
 					_contentText.append( token );
 					_contentText.append( '>' );
@@ -149,7 +148,7 @@ public class NGHTMLParser {
 						didParseComment();
 						parserState = ParserState.Outside;
 					}
-					break;
+				}
 			}
 			token = null;
 			if( parserState == ParserState.Outside ) {
