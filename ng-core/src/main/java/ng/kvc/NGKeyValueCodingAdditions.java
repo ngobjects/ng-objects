@@ -34,6 +34,12 @@ public interface NGKeyValueCodingAdditions extends NGKeyValueCoding {
 		}
 	}
 
+	/**
+	 * FIXME:
+	 * Our implementations of both of the interface's methods should probably use recursive invocations instead of splitting up the path on the period and invoking valueForKey on each element.
+	 * This way, our invocation of "valueForKeyPath()" would propagate down the entire path (instead of suddenly changing to valueForKey() for each object)
+	 * 	// Hugi 2025-06-02
+	 */
 	public static class DefaultImplementation {
 
 		public static Object valueForKeyPath( final Object object, final String keyPath ) {
