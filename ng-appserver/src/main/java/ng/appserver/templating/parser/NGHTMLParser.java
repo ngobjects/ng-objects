@@ -2,7 +2,6 @@ package ng.appserver.templating.parser;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -66,106 +65,106 @@ public class NGHTMLParser {
 			token = templateTokenizer.nextToken( "<" );
 		}
 
-		try {
-			while( true ) {
-				if( !templateTokenizer.hasMoreTokens() ) {
-					break;
-				}
+		//		try {
+		while( true ) {
+			if( !templateTokenizer.hasMoreTokens() ) {
+				break;
+			}
 
-				switch( parserState ) {
-					case Outside:
-						if( token != null ) {
-							if( token.startsWith( ">" ) ) {
-								token = token.substring( 1 );
-							}
-							_contentText.append( token );
+			switch( parserState ) {
+				case Outside:
+					if( token != null ) {
+						if( token.startsWith( ">" ) ) {
+							token = token.substring( 1 );
 						}
-						token = templateTokenizer.nextToken( ">" );
-						int tagIndex;
+						_contentText.append( token );
+					}
+					token = templateTokenizer.nextToken( ">" );
+					int tagIndex;
 
-						// parses non wo: tags for dynamic bindings
-						if( _parseStandardTags() ) {
-							token = checkStandardTagForInlineBindings( token );
-						}
+					// parses non wo: tags for dynamic bindings
+					if( _parseStandardTags() ) {
+						token = checkStandardTagForInlineBindings( token );
+					}
 
-						final String tagLowerCase = token.toLowerCase();
+					final String tagLowerCase = token.toLowerCase();
 
-						if( tagLowerCase.startsWith( WEBOBJECT_START_TAG ) || tagLowerCase.startsWith( WO_COLON_START_TAG ) || tagLowerCase.startsWith( WO_START_TAG ) ) {
-							if( token.endsWith( "/" ) ) {
-								startOfWebObjectTag( token.substring( 0, token.length() - 1 ) );
-								endOfWebObjectTag( "/" );
-							}
-							else {
-								startOfWebObjectTag( token );
-							}
-						}
-						else if( (tagIndex = tagLowerCase.indexOf( WEBOBJECT_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_COLON_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_START_TAG )) > 1 ) {
-							_contentText.append( token.substring( 0, token.lastIndexOf( "<" ) ) );
-							if( token.endsWith( "/" ) ) {
-								startOfWebObjectTag( token.substring( tagIndex, token.length() - 1 ) );
-								endOfWebObjectTag( "/" );
-							}
-							else {
-								startOfWebObjectTag( token.substring( tagIndex, token.length() ) );
-							}
-						}
-						else if( tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.startsWith( WO_COLON_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
-							endOfWebObjectTag( token );
-						}
-						else if( tagLowerCase.startsWith( JS_START_TAG ) ) {
-							didParseText();
-							_contentText.append( token );
-							_contentText.append( '>' );
-							flag = false;
-						}
-						else if( tagLowerCase.startsWith( JS_END_TAG ) ) {
-							didParseText();
-							_contentText.append( token );
-							_contentText.append( '>' );
-							flag = true;
-						}
-						else if( token.startsWith( "<!--" ) && flag ) {
-							didParseText();
-							_contentText.append( token );
-							if( token.endsWith( "--" ) ) {
-								_contentText.append( '>' );
-								didParseComment();
-							}
-							else {
-								_contentText.append( '>' );
-								parserState = ParserState.InsideComment;
-							}
+					if( tagLowerCase.startsWith( WEBOBJECT_START_TAG ) || tagLowerCase.startsWith( WO_COLON_START_TAG ) || tagLowerCase.startsWith( WO_START_TAG ) ) {
+						if( token.endsWith( "/" ) ) {
+							startOfWebObjectTag( token.substring( 0, token.length() - 1 ) );
+							endOfWebObjectTag( "/" );
 						}
 						else {
-							_contentText.append( token );
-							_contentText.append( '>' );
+							startOfWebObjectTag( token );
 						}
-						break;
-
-					case InsideComment:
-						token = templateTokenizer.nextToken( ">" );
+					}
+					else if( (tagIndex = tagLowerCase.indexOf( WEBOBJECT_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_COLON_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_START_TAG )) > 1 ) {
+						_contentText.append( token.substring( 0, token.lastIndexOf( "<" ) ) );
+						if( token.endsWith( "/" ) ) {
+							startOfWebObjectTag( token.substring( tagIndex, token.length() - 1 ) );
+							endOfWebObjectTag( "/" );
+						}
+						else {
+							startOfWebObjectTag( token.substring( tagIndex, token.length() ) );
+						}
+					}
+					else if( tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.startsWith( WO_COLON_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
+						endOfWebObjectTag( token );
+					}
+					else if( tagLowerCase.startsWith( JS_START_TAG ) ) {
+						didParseText();
 						_contentText.append( token );
 						_contentText.append( '>' );
+						flag = false;
+					}
+					else if( tagLowerCase.startsWith( JS_END_TAG ) ) {
+						didParseText();
+						_contentText.append( token );
+						_contentText.append( '>' );
+						flag = true;
+					}
+					else if( token.startsWith( "<!--" ) && flag ) {
+						didParseText();
+						_contentText.append( token );
 						if( token.endsWith( "--" ) ) {
+							_contentText.append( '>' );
 							didParseComment();
-							parserState = ParserState.Outside;
 						}
-						break;
+						else {
+							_contentText.append( '>' );
+							parserState = ParserState.InsideComment;
+						}
+					}
+					else {
+						_contentText.append( token );
+						_contentText.append( '>' );
+					}
+					break;
 
-					default:
-						break;
-				}
-				token = null;
-				if( parserState == ParserState.Outside ) {
-					token = templateTokenizer.nextToken( "<" );
-				}
+				case InsideComment:
+					token = templateTokenizer.nextToken( ">" );
+					_contentText.append( token );
+					_contentText.append( '>' );
+					if( token.endsWith( "--" ) ) {
+						didParseComment();
+						parserState = ParserState.Outside;
+					}
+					break;
+
+				default:
+					break;
+			}
+			token = null;
+			if( parserState == ParserState.Outside ) {
+				token = templateTokenizer.nextToken( "<" );
 			}
 		}
-		catch( NoSuchElementException e ) {
-			logger.error( "No Such element dude", e );
-			didParseText();
-			return;
-		}
+		//		}
+		//		catch( NoSuchElementException e ) {
+		//			logger.error( "No Such element dude", e );
+		//			didParseText();
+		//			return;
+		//		}
 
 		if( token != null ) {
 			if( token.startsWith( ">" ) ) {
