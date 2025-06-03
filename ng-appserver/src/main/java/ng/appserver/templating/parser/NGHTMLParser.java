@@ -96,15 +96,16 @@ public class NGHTMLParser {
 						}
 					}
 					else if( (tagIndex = tagLowerCase.indexOf( WEBOBJECT_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_COLON_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_START_TAG )) > 1 ) {
-						throw new IllegalStateException( "tagIndex > 1, i.e '%s'. tagLowerCase is: '%s'".formatted( tagIndex, tagLowerCase ) );
-						//						_contentText.append( token.substring( 0, token.lastIndexOf( "<" ) ) );
-						//						if( token.endsWith( "/" ) ) {
-						//							startOfWebObjectTag( token.substring( tagIndex, token.length() - 1 ) );
-						//							endOfWebObjectTag( "/" );
-						//						}
-						//						else {
-						//							startOfWebObjectTag( token.substring( tagIndex, token.length() ) );
-						//						}
+						// OK, so there's actually at least one valid use case for this block.
+						// It's used if you have a comment block that contains a dynamic tag, an example being <!-- <wo:str value="$someMessage" /> -->
+						_contentText.append( token.substring( 0, token.lastIndexOf( "<" ) ) );
+						if( token.endsWith( "/" ) ) {
+							startOfWebObjectTag( token.substring( tagIndex, token.length() - 1 ) );
+							endOfWebObjectTag( "/" );
+						}
+						else {
+							startOfWebObjectTag( token.substring( tagIndex, token.length() ) );
+						}
 					}
 					else if( tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.startsWith( WO_COLON_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
 						endOfWebObjectTag( token );
