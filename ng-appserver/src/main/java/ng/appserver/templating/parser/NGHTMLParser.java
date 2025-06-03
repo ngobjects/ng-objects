@@ -80,9 +80,9 @@ public class NGHTMLParser {
 					int tagIndex;
 
 					// parses non wo: tags for dynamic bindings
-					if( _parseStandardTags() ) {
-						token = checkStandardTagForInlineBindings( token );
-					}
+					// if( _parseStandardTags() ) {
+					//		token = checkStandardTagForInlineBindings( token );
+					// }
 
 					final String tagLowerCase = token.toLowerCase();
 
