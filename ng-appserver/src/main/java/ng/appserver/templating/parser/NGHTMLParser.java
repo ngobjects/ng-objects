@@ -66,10 +66,7 @@ public class NGHTMLParser {
 		}
 
 		//		try {
-		while( true ) {
-			if( !templateTokenizer.hasMoreTokens() ) {
-				break;
-			}
+		while( templateTokenizer.hasMoreTokens() ) {
 
 			switch( parserState ) {
 				case Outside -> {
