@@ -54,7 +54,7 @@ public class NGHTMLParser {
 		_stackDict = new HashMap<>();
 
 		final NGStringTokenizer templateTokenizer = new NGStringTokenizer( _unparsedTemplate, "<" );
-		boolean isNotInScriptTag = true;
+		boolean isInScriptTag = false;
 		ParserState parserState = ParserState.Normal;
 		String token;
 
@@ -112,15 +112,15 @@ public class NGHTMLParser {
 						didParseText();
 						_contentText.append( token );
 						_contentText.append( '>' );
-						isNotInScriptTag = false;
+						isInScriptTag = true;
 					}
 					else if( tagLowerCase.startsWith( SCRIPT_END_TAG ) ) {
 						didParseText();
 						_contentText.append( token );
 						_contentText.append( '>' );
-						isNotInScriptTag = true;
+						isInScriptTag = false;
 					}
-					else if( token.startsWith( "<!--" ) && isNotInScriptTag ) {
+					else if( token.startsWith( "<!--" ) && !isInScriptTag ) {
 						didParseText();
 						_contentText.append( token );
 						if( token.endsWith( "--" ) ) {
@@ -147,7 +147,9 @@ public class NGHTMLParser {
 					}
 				}
 			}
+
 			token = null;
+
 			if( parserState == ParserState.Normal ) {
 				token = templateTokenizer.nextToken( "<" );
 			}
