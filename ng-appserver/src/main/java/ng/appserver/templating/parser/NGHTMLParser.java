@@ -13,7 +13,7 @@ public class NGHTMLParser {
 	private static final Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
 
 	private enum ParserState {
-		Outside,
+		Normal,
 		InsideComment
 	}
 
@@ -55,7 +55,7 @@ public class NGHTMLParser {
 
 		final NGStringTokenizer templateTokenizer = new NGStringTokenizer( _unparsedTemplate, "<" );
 		boolean isNotInScriptTag = true;
-		ParserState parserState = ParserState.Outside;
+		ParserState parserState = ParserState.Normal;
 		String token;
 
 		if( _unparsedTemplate.startsWith( "<" ) || !templateTokenizer.hasMoreTokens() ) {
@@ -69,7 +69,7 @@ public class NGHTMLParser {
 		while( templateTokenizer.hasMoreTokens() ) {
 
 			switch( parserState ) {
-				case Outside -> {
+				case Normal -> {
 					if( token != null ) {
 						if( token.startsWith( ">" ) ) {
 							token = token.substring( 1 );
@@ -143,12 +143,12 @@ public class NGHTMLParser {
 					_contentText.append( '>' );
 					if( token.endsWith( "--" ) ) {
 						didParseComment();
-						parserState = ParserState.Outside;
+						parserState = ParserState.Normal;
 					}
 				}
 			}
 			token = null;
-			if( parserState == ParserState.Outside ) {
+			if( parserState == ParserState.Normal ) {
 				token = templateTokenizer.nextToken( "<" );
 			}
 		}
