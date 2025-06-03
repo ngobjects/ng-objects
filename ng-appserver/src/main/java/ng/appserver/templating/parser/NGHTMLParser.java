@@ -17,8 +17,8 @@ public class NGHTMLParser {
 		InsideComment
 	}
 
-	private static final String JS_START_TAG = "<script";
-	private static final String JS_END_TAG = "</script";
+	private static final String SCRIPT_START_TAG = "<script";
+	private static final String SCRIPT_END_TAG = "</script";
 	private static final String WO_END_TAG = "</wo";
 	private static final String WO_START_TAG = "<wo ";
 	private static final String WEBOBJECT_END_TAG = "</webobject";
@@ -108,13 +108,13 @@ public class NGHTMLParser {
 					else if( tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.startsWith( WO_COLON_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
 						endOfWebObjectTag( token );
 					}
-					else if( tagLowerCase.startsWith( JS_START_TAG ) ) {
+					else if( tagLowerCase.startsWith( SCRIPT_START_TAG ) ) {
 						didParseText();
 						_contentText.append( token );
 						_contentText.append( '>' );
 						isNotInScriptTag = false;
 					}
-					else if( tagLowerCase.startsWith( JS_END_TAG ) ) {
+					else if( tagLowerCase.startsWith( SCRIPT_END_TAG ) ) {
 						didParseText();
 						_contentText.append( token );
 						_contentText.append( '>' );
