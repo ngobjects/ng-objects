@@ -80,6 +80,7 @@ public class NGHTMLParser {
 					int tagIndex;
 
 					// parses non wo: tags for dynamic bindings
+					// CHECKME: This isn't really a feature I want to support, but I'm keeping it around for a little while // Hugi 2022-10-13
 					// if( _parseStandardTags() ) {
 					//		token = checkStandardTagForInlineBindings( token );
 					// }
@@ -245,15 +246,6 @@ public class NGHTMLParser {
 		}
 
 		throw new IllegalStateException( "Went beyond the template length. This should never happen. " );
-	}
-
-	/**
-	 * Indicates that we want to parse the attributes of "standard tags", i.e. non dynamic tags for dynamic bindings
-	 *
-	 * CHECKME: This isn't really a feature I want to support, but I'm keeping it around for a little while // Hugi 2022-10-13
-	 */
-	private static final boolean _parseStandardTags() {
-		return false;
 	}
 
 	/**
