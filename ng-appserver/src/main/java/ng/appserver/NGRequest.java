@@ -142,6 +142,7 @@ public class NGRequest extends NGMessage {
 	 */
 	public void setURI( final String uri ) {
 		_uri = uri;
+		_parsedURI = null; // parsedURI() is lazily initialized so reset it's storage. Again. This class really wants to be immutable.
 	}
 
 	/**
