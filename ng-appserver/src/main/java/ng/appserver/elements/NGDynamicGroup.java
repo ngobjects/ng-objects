@@ -80,7 +80,7 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 						child.appendToResponse( response, context );
 					}
 					catch( UnknownKeyException unknownKeyException ) {
-						new NGErrorMessageElement( "Unknown key", child.getClass().getSimpleName(), unknownKeyException.getMessage() ).appendToResponse( response, context );
+						new NGErrorMessageElement( "VOFF! VOFF! Unknown key", child.getClass().getSimpleName(), unknownKeyException.getMessage() ).appendToResponse( response, context );
 					}
 
 					if( appendElementTreeDebugInfo ) {
