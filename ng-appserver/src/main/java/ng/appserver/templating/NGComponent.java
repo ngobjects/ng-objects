@@ -270,7 +270,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		// FIXME: It feels wrong to determine here the type of response we're constructing, but going with it for testing for now // Hugi 2025-04-13
 		if( context().targetsMultipleUpdateContainers() ) {
 			response = new NGResponseMultipart( context() );
-			response.setHeader( "content-type", "multipart/form-data; boundary=12345" );
+			response.setHeader( "content-type", "multipart/form-data; boundary=" + NGResponseMultipart.BOUNDARY );
 		}
 		else {
 			response = new NGResponse();

@@ -147,7 +147,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			try( final OutputStream out = Content.Sink.asOutputStream( jettyResponse )) {
 				if( ngResponse instanceof NGResponseMultipart mp && !mp._contentParts.isEmpty() ) {
-					final String boundary = "12345"; // FIXME: Use a proper boundary // Hugi 2025-04-14
+					final String boundary = NGResponseMultipart.BOUNDARY;
 
 					final ContentSource cs = new MultiPartFormData.ContentSource( boundary );
 

@@ -16,6 +16,11 @@ import java.util.Map;
 public class NGResponseMultipart extends NGResponse {
 
 	/**
+	 * The boundary string used in our multipart messages
+	 */
+	public static final String BOUNDARY = "IAmTheTotallyRandomMultiPartBoundaryString";
+
+	/**
 	 * A single part of content within a multipart response
 	 */
 	public record ContentPart( String name, StringBuilder content ) {}
