@@ -288,9 +288,14 @@ public class NGAdaptorJetty extends NGAdaptor {
 				}
 			} );
 
-			final NGRequest request = new NGRequest( jettyRequest.getMethod(), jettyRequest.getHttpURI().getCanonicalPath(), "FIXME", headerMap( jettyRequest ), new byte[] {} ); // FIXME: It makes little sense to set the request content to be empty here... // Hugi 2025-04-05
-			request._setFormValues( formValues );
-			request._setCookieValues( cookieValues( Request.getCookies( jettyRequest ) ) );
+			final String method = jettyRequest.getMethod();
+			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
+			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
+			final Map<String, List<String>> headers = headerMap( jettyRequest );
+			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
+			final byte[] content = new byte[] {}; // FIXME: This just kind of reflects the badness of our request data model. The request's "content" is really the part list ... // Hugi 2025-04-05
+
+			final NGRequest request = new NGRequest( method, uri, httpVersion, headers, formValues, cookieValues, content );
 			uploadedFiles.entrySet().forEach( p -> request._uploadedFiles().put( p.getKey(), p.getValue() ) ); // FIXME: Adding uploaded files this way is really, really temporary // Hugi 2025-04-05
 			return request;
 		}
@@ -305,6 +310,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
+			// FIXME: we're always consuming the request's entire body at this point. Allowing us to pass in a stream would be... sensible // Hugi 2025-06-09
 			try( final InputStream is = Request.asInputStream( jettyRequest )) {
 				is.transferTo( bos );
 			}
@@ -316,17 +322,10 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
 			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
+			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
 			final byte[] content = bos.toByteArray();
 
-			final NGRequest request = new NGRequest( method, uri, httpVersion, headers, content );
-
-			// FIXME: Form value parsing should really happen within the request object, not in the adaptor // Hugi 2021-12-31
-			request._setFormValues( formValues );
-
-			// FIXME: Cookie parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
-			request._setCookieValues( cookieValues( Request.getCookies( jettyRequest ) ) );
-
-			return request;
+			return new NGRequest( method, uri, httpVersion, headers, formValues, cookieValues, content );
 		}
 
 		/**
