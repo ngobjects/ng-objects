@@ -312,8 +312,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 				throw new UncheckedIOException( "Failed to consume the HTTP request's inputstream", e );
 			}
 
-			// FIXME: Get the protocol
-			final NGRequest request = new NGRequest( jettyRequest.getMethod(), jettyRequest.getHttpURI().getCanonicalPath(), "FIXME", headerMap( jettyRequest ), bos.toByteArray() );
+			final String method = jettyRequest.getMethod();
+			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
+			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
+			final Map<String, List<String>> headers = headerMap( jettyRequest );
+			final byte[] content = bos.toByteArray();
+
+			final NGRequest request = new NGRequest( method, uri, httpVersion, headers, content );
 
 			// FIXME: Form value parsing should really happen within the request object, not in the adaptor // Hugi 2021-12-31
 			request._setFormValues( formValues );
