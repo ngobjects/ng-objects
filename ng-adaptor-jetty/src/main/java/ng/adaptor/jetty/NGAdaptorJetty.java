@@ -77,10 +77,10 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		final Server server = new Server();
 
-		final HttpConfiguration http = new HttpConfiguration();
-		final HttpConnectionFactory http11 = new HttpConnectionFactory( http );
+		final HttpConfiguration config = new HttpConfiguration();
+		final HttpConnectionFactory connectionFactory = new HttpConnectionFactory( config );
 
-		final ServerConnector connector = new ServerConnector( server, http11 );
+		final ServerConnector connector = new ServerConnector( server, connectionFactory );
 		connector.setPort( port );
 		server.addConnector( connector );
 		server.setHandler( new NGHandler() );
@@ -162,29 +162,25 @@ public class NGAdaptorJetty extends NGAdaptor {
 				else {
 
 					// FIXME: If a content-length header is already present it has probably been set by the user, so perhaps we should skip this and leave that header alone? // Hugi 2025-04-14
-					final long contentLength;
 
 					if( ngResponse.contentInputStream() != null ) {
 						// If an inputstream is present, use the stream's manually specified length value
-						contentLength = ngResponse.contentInputStreamLength();
+						final long contentLength = ngResponse.contentInputStreamLength();
 
 						if( contentLength == -1 ) {
 							throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
 						}
-					}
-					else {
-						// Otherwise we go for the length of the response's contained data/bytes.
-						contentLength = ngResponse.contentBytesLength();
-					}
 
-					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+						jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
 
-					if( ngResponse.contentInputStream() != null ) {
 						try( final InputStream inputStream = ngResponse.contentInputStream()) {
 							inputStream.transferTo( out );
 						}
 					}
 					else {
+						// Otherwise we go for the length of the response's contained data/bytes.
+						final long contentLength = ngResponse.contentBytesLength();
+						jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
 						ngResponse.contentByteStream().writeTo( out );
 					}
 
