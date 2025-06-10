@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.Servlet;
 import jakarta.websocket.server.ServerEndpointConfig;
-import ng.adaptor.jetty.experimental.websockets.NGWebSocketEndpoint;
+import ng.adaptor.jetty.experimental.NGWebSocketEndpoint;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.privates.NGDevelopmentInstanceStopper;

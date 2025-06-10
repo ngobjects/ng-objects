@@ -1,4 +1,4 @@
-package x.multipartserver;
+package ng.adaptor.jetty.experimental;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

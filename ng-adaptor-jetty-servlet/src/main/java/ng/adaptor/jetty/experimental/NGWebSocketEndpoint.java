@@ -1,4 +1,4 @@
-package ng.adaptor.jetty.experimental.websockets;
+package ng.adaptor.jetty.experimental;
 
 import java.util.ArrayList;
 import java.util.List;
