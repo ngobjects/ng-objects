@@ -137,14 +137,14 @@ public interface NGKeyValueCoding {
 		private static KVCReadBinding readBindingForKey( final Object object, final String key ) {
 
 			if( !_cachingEnabled ) {
-				return locateBindingForKey( object, key );
+				return locateReadBindingForKey( object, key );
 			}
 
 			final CacheKey cacheKey = new CacheKey( object.getClass(), key );
 			KVCReadBinding readBinding = _readBindingCache.get( cacheKey );
 
 			if( readBinding == null ) {
-				readBinding = locateBindingForKey( object, key );
+				readBinding = locateReadBindingForKey( object, key );
 
 				if( readBinding == null ) {
 					return null;
@@ -159,7 +159,7 @@ public interface NGKeyValueCoding {
 		/**
 		 * @return A KVC binding for the given class and key.
 		 */
-		private static KVCReadBinding locateBindingForKey( final Object object, final String key ) {
+		private static KVCReadBinding locateReadBindingForKey( final Object object, final String key ) {
 			Objects.requireNonNull( object );
 			Objects.requireNonNull( key );
 
@@ -299,22 +299,24 @@ public interface NGKeyValueCoding {
 		 *
 		 * // FIXME: Are we checking the method's return type? I.e. does it actually return something? If not, do so // Hugi 2022-12-27
 		 */
-		private static Method readMethod( final Object object, final String key ) {
-			return method( object, key );
+		private static Method readMethod( final Object object, final String methodName ) {
+			return locateMethod( object, methodName );
 		}
 
 		/**
 		 * @return The (exactly) named method if the class responds to it, null if not.
+		 *
+		 * @param The Object we're locating the method on
 		 */
-		private static Method method( final Object object, final String key, Class<?>... signature ) {
+		private static Method locateMethod( final Object object, final String methodName, Class<?>... signature ) {
 			Objects.requireNonNull( object );
-			Objects.requireNonNull( key );
+			Objects.requireNonNull( methodName );
 
 			Class<?> currentClass = object.getClass();
 
 			try {
 				while( currentClass != null ) {
-					final Method classMethod = currentClass.getMethod( key, signature );
+					final Method classMethod = currentClass.getMethod( methodName, signature );
 
 					final boolean canAccess;
 
@@ -338,7 +340,7 @@ public interface NGKeyValueCoding {
 					// FIXME: We're missing a check on "parent interfaces", i.e. interfaces that these interfaces inherit from // Hugi 2022-10-21
 					for( Class<?> interfaceClass : currentClass.getInterfaces() ) {
 						try {
-							final Method interfaceMethod = interfaceClass.getMethod( key, signature );
+							final Method interfaceMethod = interfaceClass.getMethod( methodName, signature );
 
 							if( interfaceMethod.canAccess( object ) ) {
 								return interfaceMethod;
