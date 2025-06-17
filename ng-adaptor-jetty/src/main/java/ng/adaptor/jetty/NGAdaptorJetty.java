@@ -148,9 +148,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			}
 
 			if( ngResponse instanceof NGResponseMultipart mp && !mp._contentParts.isEmpty() ) {
-				final String boundary = NGResponseMultipart.BOUNDARY;
-
-				final ContentSource cs = new MultiPartFormData.ContentSource( boundary );
+				final ContentSource cs = new MultiPartFormData.ContentSource( NGResponseMultipart.BOUNDARY );
 
 				for( ContentPart part : mp._contentParts.values() ) {
 					cs.addPart( createStringPart( part.name(), part.content().toString() ) );
@@ -160,39 +158,38 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 				Content.copy( cs, jettyResponse, callback );
 			}
+			else if( ngResponse.contentInputStream() != null ) {
+				final long contentLength = ngResponse.contentInputStreamLength(); // If an InputStream is present, the stream's length must be present as well
+
+				if( contentLength == -1 ) {
+					throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
+				}
+
+				jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+
+				//	try( final InputStream inputStream = ngResponse.contentInputStream()) {
+				//		inputStream.transferTo( out );
+				//	}
+				//
+				//	callback.succeeded();
+				//
+				// FIXME:
+				// Above is the old way we served streaming resources. Below is what's probably the proper way to serve streams.
+				// Keeping the old version around for some reviewing/performance/correctness testing.
+				// Mostly becomes relevant once we're generally serving resources using streams (which will require a little more work on
+				// resource management in general, especially having resources keep track of their length.
+				// Hugi 2025-06-17
+
+				final Content.Source cs = Content.Source.from( ngResponse.contentInputStream() );
+				Content.copy( cs, jettyResponse, callback );
+				System.out.println( "whee!" );
+			}
 			else {
 				try( final OutputStream out = Content.Sink.asOutputStream( jettyResponse )) {
-					if( ngResponse.contentInputStream() != null ) {
-						final long contentLength = ngResponse.contentInputStreamLength(); // If an InputStream is present, the stream's length must be present as well
-
-						if( contentLength == -1 ) {
-							throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
-						}
-
-						jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
-
-						try( final InputStream inputStream = ngResponse.contentInputStream()) {
-							inputStream.transferTo( out );
-						}
-
-						callback.succeeded();
-
-						// FIXME:
-						// This is probably the proper way to serve the stream (and then remove this whole thing from the try-with block).
-						// Finish this up once we're generally serving resources using streams (which will require a little more work on
-						// resource management in general, especially having resources keep track of their length.
-						// Hugi 2025-06-17
-						//
-						// final Content.Source cs = Content.Source.from( ngResponse.contentInputStream() );
-						// Content.copy( cs, jettyResponse, callback );
-					}
-					else {
-						final long contentLength = ngResponse.contentBytesLength();
-						jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
-						ngResponse.contentByteStream().writeTo( out );
-
-						callback.succeeded();
-					}
+					final long contentLength = ngResponse.contentBytesLength();
+					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+					ngResponse.contentByteStream().writeTo( out );
+					callback.succeeded();
 				}
 			}
 		}
