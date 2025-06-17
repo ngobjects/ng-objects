@@ -162,9 +162,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 					Content.copy( cs, jettyResponse, callback );
 				}
 				else {
-
-					// FIXME: If a content-length header is already present it has probably been set by the user, so perhaps we should skip this and leave that header alone? // Hugi 2025-04-14
-
 					if( ngResponse.contentInputStream() != null ) {
 						// If an inputstream is present, use the stream's manually specified length value
 						final long contentLength = ngResponse.contentInputStreamLength();
