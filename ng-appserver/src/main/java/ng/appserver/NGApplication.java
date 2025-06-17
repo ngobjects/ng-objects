@@ -582,12 +582,13 @@ public class NGApplication implements NGPlugin {
 	private void rewriteURL( final NGRequest request ) {
 
 		for( Pattern pattern : _urlRewritePatterns ) {
-			final Matcher matcher = pattern.matcher( request.uri() );
+			final String originalURI = request.uri();
+
+			final Matcher matcher = pattern.matcher( originalURI );
 
 			if( matcher.find() ) {
-				logger.debug( "Rewriting: {}", request.uri() );
-				request.setURI( request.uri().substring( matcher.group().length() ) );
-				logger.debug( "Rewrote: {}", request.uri() );
+				request.setURI( originalURI.substring( matcher.group().length() ) );
+				logger.info( "Rewrote URI '{}' -> '{}'", originalURI, request.uri() );
 			}
 		}
 
