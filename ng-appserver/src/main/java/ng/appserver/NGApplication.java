@@ -588,7 +588,7 @@ public class NGApplication implements NGPlugin {
 
 			if( matcher.find() ) {
 				request.setURI( originalURI.substring( matcher.group().length() ) );
-				logger.info( "Rewrote URI '{}' -> '{}'", originalURI, request.uri() );
+				logger.debug( "Rewrote URI '{}' -> '{}'", originalURI, request.uri() );
 			}
 		}
 
