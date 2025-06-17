@@ -176,6 +176,15 @@ public class NGAdaptorJetty extends NGAdaptor {
 						}
 
 						callback.succeeded();
+
+						// FIXME:
+						// This is probably the proper way to serve the stream (and then remove this whole thing from the try-with block).
+						// Finish this up once we're generally serving resources using streams (which will require a little more work on
+						// resource management in general, especially having resources keep track of their length.
+						// Hugi 2025-06-17
+						//
+						// final Content.Source cs = Content.Source.from( ngResponse.contentInputStream() );
+						// Content.copy( cs, jettyResponse, callback );
 					}
 					else {
 						final long contentLength = ngResponse.contentBytesLength();
