@@ -147,24 +147,23 @@ public class NGAdaptorJetty extends NGAdaptor {
 				}
 			}
 
-			try( final OutputStream out = Content.Sink.asOutputStream( jettyResponse )) {
-				if( ngResponse instanceof NGResponseMultipart mp && !mp._contentParts.isEmpty() ) {
-					final String boundary = NGResponseMultipart.BOUNDARY;
+			if( ngResponse instanceof NGResponseMultipart mp && !mp._contentParts.isEmpty() ) {
+				final String boundary = NGResponseMultipart.BOUNDARY;
 
-					final ContentSource cs = new MultiPartFormData.ContentSource( boundary );
+				final ContentSource cs = new MultiPartFormData.ContentSource( boundary );
 
-					for( ContentPart part : mp._contentParts.values() ) {
-						cs.addPart( createStringPart( part.name(), part.content().toString() ) );
-					}
-
-					cs.close();
-
-					Content.copy( cs, jettyResponse, callback );
+				for( ContentPart part : mp._contentParts.values() ) {
+					cs.addPart( createStringPart( part.name(), part.content().toString() ) );
 				}
-				else {
+
+				cs.close();
+
+				Content.copy( cs, jettyResponse, callback );
+			}
+			else {
+				try( final OutputStream out = Content.Sink.asOutputStream( jettyResponse )) {
 					if( ngResponse.contentInputStream() != null ) {
-						// If an inputstream is present, use the stream's manually specified length value
-						final long contentLength = ngResponse.contentInputStreamLength();
+						final long contentLength = ngResponse.contentInputStreamLength(); // If an InputStream is present, the stream's length must be present as well
 
 						if( contentLength == -1 ) {
 							throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
@@ -175,15 +174,16 @@ public class NGAdaptorJetty extends NGAdaptor {
 						try( final InputStream inputStream = ngResponse.contentInputStream()) {
 							inputStream.transferTo( out );
 						}
+
+						callback.succeeded();
 					}
 					else {
-						// Otherwise we go for the length of the response's contained data/bytes.
 						final long contentLength = ngResponse.contentBytesLength();
 						jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
 						ngResponse.contentByteStream().writeTo( out );
-					}
 
-					callback.succeeded();
+						callback.succeeded();
+					}
 				}
 			}
 		}
