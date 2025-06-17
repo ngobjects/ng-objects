@@ -99,7 +99,7 @@ public class NGApplication implements NGPlugin {
 	/**
 	 * For handling of request routing
 	 */
-	private NGRouteManager _routeManager = new NGRouteManager();
+	private NGRouteManager _routeManager;
 
 	/**
 	 * Mode we're running in. Defaults to development mode unless explicitly set to a different mode through the application's startup parameters.
@@ -111,7 +111,7 @@ public class NGApplication implements NGPlugin {
 	/**
 	 * The list of loaded plugins
 	 */
-	private List<NGPlugin> plugins = new ArrayList<>();
+	private List<NGPlugin> _plugins;
 
 	/**
 	 * Run the application
@@ -158,11 +158,11 @@ public class NGApplication implements NGPlugin {
 			application._properties = properties;
 
 			// We're manually adding the "ng" plugin, defining it's elements and routes.
-			application.plugins.add( new NGCorePlugin() );
+			application._plugins.add( new NGCorePlugin() );
 
 			// If we're in development mode, activate the development plugin for some bonus development features
 			if( isDevelopmentMode ) {
-				application.plugins.add( new NGDevelopmentPlugin() );
+				application._plugins.add( new NGDevelopmentPlugin() );
 
 				// FIXME: Most definitely not the way we're going to use to decide if KVC caching is enabled. Under development // Hugi 2025-04-21
 				NGKeyValueCoding.DefaultImplementation.setCachingEnabled( false );
@@ -173,18 +173,18 @@ public class NGApplication implements NGPlugin {
 			application.locatePlugins();
 
 			// We add the application plugin after all the other plugins
-			application.plugins.add( application );
+			application._plugins.add( application );
 
 			// CHECKME: We shouldn't really be adding this plugin by default... // Hugi 2025-05-13
-			application.plugins.add( new NGWOIntegrationPlugin() );
+			application._plugins.add( new NGWOIntegrationPlugin() );
 
 			// We start by initializing all the located plugins...
-			for( final NGPlugin plugin : application.plugins ) {
+			for( final NGPlugin plugin : application._plugins ) {
 				application.initPlugin( plugin );
 			}
 
 			// Once all plugins have been initialized, we load them
-			for( final NGPlugin plugin : application.plugins ) {
+			for( final NGPlugin plugin : application._plugins ) {
 				plugin.load( application );
 			}
 
@@ -217,6 +217,7 @@ public class NGApplication implements NGPlugin {
 		_exceptionManager = new NGExceptionManager( this );
 		_routeManager = new NGRouteManager();
 		_urlRewritePatterns = new ArrayList<>();
+		_plugins = new ArrayList<>();
 	}
 
 	@Override
@@ -278,7 +279,7 @@ public class NGApplication implements NGPlugin {
 				.stream()
 				.map( Provider::get )
 				.forEach( plugin -> {
-					plugins.add( plugin );
+					_plugins.add( plugin );
 				} );
 	}
 
