@@ -3,17 +3,26 @@ package ng.testapp;
 import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
 import ng.appserver.NGResponse;
+import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.plugins.Routes;
 import ng.testapp.components.ExampleComponent;
 import ng.testapp.components.FormComponent;
 import ng.testapp.components.ProgrammaticDynamicComponent;
 import ng.testapp.components.RepetitionComponent;
 import ng.testapp.components.SingleFileComponent;
+import ng.testapp.da.DirectAction;
+import ng.testapp.da.JSONAction;
 
 public class Application extends NGApplication {
 
 	public static void main( String[] args ) {
 		NGApplication.run( args, Application.class );
+	}
+
+	public Application() {
+		// FIXME: Just a reminder that this sucks // Hugi 2025-06-19
+		NGDirectActionRequestHandler.registerDirectActionClass( DirectAction.class );
+		NGDirectActionRequestHandler.registerDirectActionClass( JSONAction.class );
 	}
 
 	@Override
