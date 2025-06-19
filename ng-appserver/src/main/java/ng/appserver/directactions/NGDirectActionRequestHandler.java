@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGRequest;
@@ -29,23 +28,23 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 	public NGResponse handleRequest( NGRequest request ) {
 		final NGParsedURI parsedURI = NGParsedURI.of( request.uri() );
 
-		final Optional<String> directActionClassName = parsedURI.getStringOptional( 1 );
+		final String directActionClassName = parsedURI.getString( 1 );
 
-		if( directActionClassName.isEmpty() ) {
+		if( directActionClassName == null ) {
 			return new NGResponse( "No direct action class name specified", 404 );
 		}
 
-		Optional<String> directActionMethodName = parsedURI.getStringOptional( 2 );
+		String directActionMethodName = parsedURI.getString( 2 );
 
-		if( directActionMethodName.isEmpty() ) {
-			directActionMethodName = Optional.of( "default" );
+		if( directActionMethodName == null ) {
+			directActionMethodName = "default";
 		}
 
 		try {
-			final Class<? extends NGDirectAction> directActionClass = _directActionClasses.get( directActionClassName.get() );
+			final Class<? extends NGDirectAction> directActionClass = _directActionClasses.get( directActionClassName );
 			final Constructor<? extends NGDirectAction> constructor = directActionClass.getConstructor( NGRequest.class );
 			final NGDirectAction instance = constructor.newInstance( request );
-			final NGActionResults actionResults = instance.performActionNamed( directActionMethodName.get() );
+			final NGActionResults actionResults = instance.performActionNamed( directActionMethodName );
 			return actionResults.generateResponse();
 		}
 		catch( /* ClassNotFoundException |*/ InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {

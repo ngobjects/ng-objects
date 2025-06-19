@@ -11,7 +11,7 @@ public class TestNGParsedURI {
 	@Test
 	public void testOfEmptyURI() {
 		NGParsedURI parsedURI = NGParsedURI.of( "/" );
-		assertTrue( parsedURI.getStringOptional( 0 ).isEmpty() );
+		assertNull( parsedURI.getString( 0 ) );
 	}
 
 	@Test

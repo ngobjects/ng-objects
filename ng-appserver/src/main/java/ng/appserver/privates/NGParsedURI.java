@@ -1,7 +1,6 @@
 package ng.appserver.privates;
 
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Wraps URL paths for easy access to its components.
@@ -120,12 +119,5 @@ public class NGParsedURI {
 	 */
 	public int length() {
 		return pathElements().length;
-	}
-
-	/**
-	 * @return An optional version of the getString the named String
-	 */
-	public Optional<String> getStringOptional( final int index ) {
-		return Optional.ofNullable( getString( index ) );
 	}
 }

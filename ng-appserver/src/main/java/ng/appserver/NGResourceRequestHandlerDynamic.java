@@ -23,16 +23,16 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
-		final Optional<String> resourceID = NGParsedURI.of( request.uri() ).getStringOptional( 1 );
+		final String resourceID = NGParsedURI.of( request.uri() ).getString( 1 );
 
-		if( resourceID.isEmpty() ) {
+		if( resourceID == null ) {
 			return new NGResponse( "No resource name specified", 400 );
 		}
 
-		final NGDynamicResource resource = NGApplication.application().resourceManagerDynamic().pop( resourceID.get() );
+		final NGDynamicResource resource = NGApplication.application().resourceManagerDynamic().pop( resourceID );
 
 		if( resource == null ) {
-			return new NGResponse( "Dynamic resource '" + resourceID.get() + "' does not exist", 404 );
+			return new NGResponse( "Dynamic resource '" + resourceID + "' does not exist", 404 );
 		}
 
 		final NGResponse response = new NGResponse();
