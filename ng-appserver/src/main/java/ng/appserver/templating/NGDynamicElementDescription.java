@@ -26,12 +26,19 @@ import ng.appserver.elements.NGSwitchComponent;
 import ng.appserver.elements.NGTextField;
 
 /**
- * Provides a description of a dynamic element, particularly what it's bindings are and how they work.
+ * A description of a dynamic element and it's bindings. The eventual goal of this class is to combine:
  *
- * FIXME: Specify required bindings/binding combinations
- * FIXME: Specify default values for bindings
- * FIXME: Specify binding directionality, i.e. if they are pull/push or both.
- * FIXME: Specify allowed binding types
+ * 1) The documentation of a dynamic element and it's bindings, usable for both publication and for display inline (in an IDE)
+ * 2) To provide runtime validation of binding configuration
+ *
+ * FIXME: Add support for binding validation
+ * FIXME: Required bindings/valid binding combinations
+ * FIXME: Allow marking a binding as deprecated (including an explanation/docs, e.g, what bindings to use instead)
+ * FIXME: Default values for bindings (i.e. what it defaults to if the binding is not bound)
+ * FIXME: Specify binding directionality, i.e. if they pull/push or both.
+ * FIXME: Specify types allowed to be passed to a binding
+ * FIXME: And if an element pushes values, _what_ do they push. An element might accept a variety of types for a binding but always push back a single type (e.g. a textfield will take whatever and use whatever.toString() - but always push back a String (well, unless you use a formatter, which is an entire different story)
+ * FIXME: Support "sets" of valid values that can be passed to a binding, i.e, a list of values, the legal values of a certain enum etc.
  */
 
 public record NGDynamicElementDescription( Class<? extends NGDynamicElement> elementClass, List<String> aliases, List<NGBindingDescription> bindings, String text ) {
