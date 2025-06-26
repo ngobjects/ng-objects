@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import ng.appserver.templating.parser.NGDynamicHTMLTag;
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
+import ng.appserver.templating.parser.NGDynamicHTMLTag;
 
 public record PBasicNode( NGDynamicHTMLTag tag ) implements PNode {
 
@@ -27,5 +27,9 @@ public record PBasicNode( NGDynamicHTMLTag tag ) implements PNode {
 
 	public List<PNode> children() {
 		return tag().childrenWithStringsProcessedAndCombined();
+	}
+
+	public String declarationName() {
+		return tag().declaration().name();
 	}
 }
