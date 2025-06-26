@@ -109,7 +109,13 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( message );
 		}
 
-		final PNode node = new PBasicNode( _currentDynamicTag );
+		final PNode node = new PBasicNode(
+				_currentDynamicTag.declaration().type(),
+				_currentDynamicTag.declaration().bindings(),
+				_currentDynamicTag.childrenWithStringsProcessedAndCombined(),
+				_currentDynamicTag.declaration().isInline(),
+				_currentDynamicTag.declaration().name() );
+
 		_currentDynamicTag = parentDynamicTag;
 		_currentDynamicTag.addChild( node );
 	}

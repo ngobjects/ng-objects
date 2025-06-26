@@ -5,31 +5,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
-import ng.appserver.templating.parser.NGDynamicHTMLTag;
 
-public record PBasicNode( NGDynamicHTMLTag tag ) implements PNode {
+public record PBasicNode( String type, Map<String, NGBindingValue> bindings, List<PNode> children, boolean isInline, String declarationName ) implements PNode {
 
 	public PBasicNode {
-		Objects.requireNonNull( tag );
-	}
-
-	public boolean isInline() {
-		return tag().declaration().isInline();
-	}
-
-	public String type() {
-		return tag().declaration().type();
-	}
-
-	public Map<String, NGBindingValue> bindings() {
-		return tag().declaration().bindings();
-	}
-
-	public List<PNode> children() {
-		return tag().childrenWithStringsProcessedAndCombined();
-	}
-
-	public String declarationName() {
-		return tag().declaration().name();
+		Objects.requireNonNull( type );
+		Objects.requireNonNull( bindings );
+		Objects.requireNonNull( children );
+		Objects.requireNonNull( declarationName );
 	}
 }
