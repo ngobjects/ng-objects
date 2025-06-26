@@ -225,6 +225,9 @@ public class NGApplication implements NGPlugin {
 		return StandardNamespace.App.identifier();
 	}
 
+	/**
+	 * FIXME: If this method is overridden by an application subclass, we lose the registration of the default packages. Not great // Hugi 2025-06-26
+	 */
 	@Override
 	public Elements elements() {
 		return Elements
