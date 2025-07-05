@@ -36,6 +36,7 @@ import ng.appserver.elements.NGTextField;
  * FIXME: Allow marking a binding as deprecated (including an explanation/docs, e.g, what bindings to use instead)
  * FIXME: Default values for bindings (i.e. what it defaults to if the binding is not bound)
  * FIXME: Specify binding directionality, i.e. if they pull/push or both.
+ * FIXME: Speciy whether an element allows "additional attributes", and what happens to them. I.e. in the case of a <wo:img />, additional attributes get pushed to the tag. In some cases, we also might want to specify that additional bindings are illegal (or at least discouraged, if they're not documented)
  * FIXME: Specify types allowed to be passed to a binding
  * FIXME: And if an element pushes values, _what_ do they push. An element might accept a variety of types for a binding but always push back a single type (e.g. a textfield will take whatever and use whatever.toString() - but always push back a String (well, unless you use a formatter, which is an entire different story)
  * FIXME: Support "sets" of valid values that can be passed to a binding, i.e, a list of values, the legal values of a certain enum etc.
