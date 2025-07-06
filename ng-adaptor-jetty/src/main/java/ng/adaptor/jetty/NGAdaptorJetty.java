@@ -147,7 +147,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 				}
 			}
 
-			if( ngResponse instanceof NGResponseMultipart mp /*  && !mp._contentParts.isEmpty() // FIXME: Disabled for deletion. A multipart response should just always be served as such, making this check feel a lot like "if it's neccessary it must be a bug" // Hugi 2025-06-25 */ ) {
+			if( ngResponse instanceof NGResponseMultipart mp ) {
 				final ContentSource cs = new MultiPartFormData.ContentSource( NGResponseMultipart.BOUNDARY );
 
 				for( ContentPart part : mp._contentParts.values() ) {
