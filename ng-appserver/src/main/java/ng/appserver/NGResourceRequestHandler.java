@@ -80,10 +80,14 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		final String resourceName = resourcePath.substring( resourcePath.lastIndexOf( "/" ) + 1 );
 		final String mimeType = NGMimeTypes.mimeTypeForResourceName( resourcePath );
 
-		// FIXME: We need to allow some control over the headers for the returned resource, especially with regard to caching // Hugi 2023-02-17
+		// FIXME: We need to allow some control over the headers for the returned resource // Hugi 2023-02-17
 		final NGResponse response = new NGResponse( resource.bytes(), 200 );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName ) );
 		response.setHeader( "Content-Type", mimeType );
+
+		// FIXME: Allowing header control for resource headers becomes especially important WRT caching. We might want to consider encapsulating construction of the cache-control header in an API // Hugi 2025-07-06
+		response.setHeader( "cache-control", "max-age=3600" );
+
 		return response;
 	}
 
