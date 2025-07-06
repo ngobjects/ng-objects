@@ -151,16 +151,26 @@ public class NGPopUpButton extends NGDynamicElement {
 		int index = 0;
 
 		for( Object object : list ) {
-			// Set the value of the item binding in our current context
-			// FIXME: we have to assume that item isn't neccessarily bound // Hugi 2023-05-01
-			_itemAss.setValue( object, context.component() );
+
+			// Set the value of the item binding if bound
+			if( _itemAss != null ) {
+				_itemAss.setValue( object, context.component() );
+			}
 
 			// Set the value of the index binding if bound
 			if( _indexAss != null ) {
 				_indexAss.setValue( index, context.component() );
 			}
 
-			final Object displayString = _displayStringAss.valueInComponent( context.component() );
+			final Object displayString;
+
+			if( _displayStringAss != null ) {
+				displayString = _displayStringAss.valueInComponent( context.component() );
+			}
+			else {
+				final Object current = list.get( index );
+				displayString = current != null ? current.toString() : "<null>";
+			}
 
 			boolean isSelected = false;
 
