@@ -25,6 +25,7 @@ import org.eclipse.jetty.http.MultiPart;
 import org.eclipse.jetty.http.MultiPartConfig;
 import org.eclipse.jetty.http.MultiPartFormData;
 import org.eclipse.jetty.http.MultiPartFormData.ContentSource;
+import org.eclipse.jetty.http.MultiPartFormData.Parts;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.io.Content.Source;
 import org.eclipse.jetty.server.Handler;
@@ -37,7 +38,6 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Fields;
 import org.eclipse.jetty.util.Fields.Field;
-import org.eclipse.jetty.util.Promise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -243,51 +243,85 @@ public class NGAdaptorJetty extends NGAdaptor {
 			// The uploaded files, if any
 			final Map<String, UploadedFile> uploadedFiles = new HashMap<>();
 
-			MultiPartFormData.onParts( jettyRequest, jettyRequest, contentType, config, new Promise.Invocable<MultiPartFormData.Parts>() {
+			final Parts parts = MultiPartFormData.getParts( jettyRequest, jettyRequest, contentType, config );
 
-				@Override
-				public void succeeded( MultiPartFormData.Parts parts ) {
-					parts.forEach( p -> {
-						final String partContentType = p.getHeaders().get( HttpHeader.CONTENT_TYPE );
+			parts.forEach( p -> {
+				final String partContentType = p.getHeaders().get( HttpHeader.CONTENT_TYPE );
 
-						final String parameterName = p.getName();
-						final String parameterValue;
+				final String parameterName = p.getName();
+				final String parameterValue;
 
-						// We're assuming that if this part does not have a content type, it's a regular ol' form value, to be added to the requests formValues map as usual.
-						if( partContentType == null ) {
-							parameterValue = p.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
-						}
-						else {
-							// We're generating a unique ID here to store the attachment under in the request. This value will be stored in the request's formValues, and can be used to fetch the uploaded data in the request's uploadedFiles map
-							final String uniqueID = UUID.randomUUID().toString();
+				// We're assuming that if this part does not have a content type, it's a regular ol' form value, to be added to the requests formValues map as usual.
+				if( partContentType == null ) {
+					parameterValue = p.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
+				}
+				else {
+					// We're generating a unique ID here to store the attachment under in the request. This value will be stored in the request's formValues, and can be used to fetch the uploaded data in the request's uploadedFiles map
+					final String uniqueID = UUID.randomUUID().toString();
 
-							parameterValue = uniqueID;
+					parameterValue = uniqueID;
 
-							// Now we add the uploaded file to the request
-							final UploadedFile file = new UploadedFile( p.getFileName(), partContentType, Content.Source.asInputStream( p.getContentSource() ), p.getLength() );
-							uploadedFiles.put( uniqueID, file );
-						}
-
-						List<String> list = formValues.get( parameterName );
-
-						if( list == null ) {
-							list = new ArrayList<>();
-							formValues.put( p.getName(), list );
-						}
-
-						list.add( parameterValue );
-					} );
+					// Now we add the uploaded file to the request
+					final UploadedFile file = new UploadedFile( p.getFileName(), partContentType, Content.Source.asInputStream( p.getContentSource() ), p.getLength() );
+					uploadedFiles.put( uniqueID, file );
 				}
 
-				@Override
-				public void failed( Throwable failure ) {
-					// FIXME: This is here temporarily for some debugging. We should have better error handling overall for multipart uploads // Hugi 2025-07-19
-					System.out.println( "================ Start multipart fail =====================" );
-					failure.printStackTrace();
-					System.out.println( "================ End multipart fail =====================" );
-					// throw new RuntimeException( failure );
+				List<String> list = formValues.get( parameterName );
+
+				if( list == null ) {
+					list = new ArrayList<>();
+					formValues.put( p.getName(), list );
 				}
+
+				list.add( parameterValue );
 			} );
+
+			//			FIXME: Old method of getting the parts // Hugi 2025-07-19
+			//			MultiPartFormData.onParts( jettyRequest, jettyRequest, contentType, config, new Promise.Invocable<MultiPartFormData.Parts>() {
+			//
+			//				@Override
+			//				public void succeeded( MultiPartFormData.Parts parts ) {
+			//					parts.forEach( p -> {
+			//						final String partContentType = p.getHeaders().get( HttpHeader.CONTENT_TYPE );
+			//
+			//						final String parameterName = p.getName();
+			//						final String parameterValue;
+			//
+			//						// We're assuming that if this part does not have a content type, it's a regular ol' form value, to be added to the requests formValues map as usual.
+			//						if( partContentType == null ) {
+			//							parameterValue = p.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
+			//						}
+			//						else {
+			//							// We're generating a unique ID here to store the attachment under in the request. This value will be stored in the request's formValues, and can be used to fetch the uploaded data in the request's uploadedFiles map
+			//							final String uniqueID = UUID.randomUUID().toString();
+			//
+			//							parameterValue = uniqueID;
+			//
+			//							// Now we add the uploaded file to the request
+			//							final UploadedFile file = new UploadedFile( p.getFileName(), partContentType, Content.Source.asInputStream( p.getContentSource() ), p.getLength() );
+			//							uploadedFiles.put( uniqueID, file );
+			//						}
+			//
+			//						List<String> list = formValues.get( parameterName );
+			//
+			//						if( list == null ) {
+			//							list = new ArrayList<>();
+			//							formValues.put( p.getName(), list );
+			//						}
+			//
+			//						list.add( parameterValue );
+			//					} );
+			//				}
+			//
+			//				@Override
+			//				public void failed( Throwable failure ) {
+			//					// FIXME: This is here temporarily for some debugging. We should have better error handling overall for multipart uploads // Hugi 2025-07-19
+			//					System.out.println( "================ Start multipart fail =====================" );
+			//					failure.printStackTrace();
+			//					System.out.println( "================ End multipart fail =====================" );
+			//					// throw new RuntimeException( failure );
+			//				}
+			//			} );
 
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
