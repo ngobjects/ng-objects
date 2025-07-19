@@ -235,7 +235,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType, final Callback callback ) {
 
 			// Regular formValues to set on the request
-			final Map<String, List<String>> formValues = new HashMap<>();
+			// FIXME: Verify that we're doing the right thing with query parameters here // Hugi 2025-07-19
+			final Map<String, List<String>> formValues = formValuesFromRequest( jettyRequest );
 
 			// Uploaded files to set on the request
 			final Map<String, UploadedFile> uploadedFiles = new HashMap<>();
