@@ -281,7 +281,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 				@Override
 				public void failed( Throwable failure ) {
-					throw new RuntimeException( failure );
+					// FIXME: This is here temporarily for some debugging. We should have better error handling overall for multipart uploads // Hugi 2025-07-19
+					System.out.println( "Multipart fail?" );
+					// throw new RuntimeException( failure );
 				}
 			} );
 
