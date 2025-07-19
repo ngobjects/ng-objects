@@ -283,14 +283,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 				public void failed( Throwable failure ) {
 					throw new RuntimeException( failure );
 				}
-
-				/**
-				 * FIXME: I'm not entirely sure we should be blocking here // Hugi 2025-04-06
-				 */
-				@Override
-				public InvocationType getInvocationType() {
-					return InvocationType.BLOCKING;
-				}
 			} );
 
 			final String method = jettyRequest.getMethod();
