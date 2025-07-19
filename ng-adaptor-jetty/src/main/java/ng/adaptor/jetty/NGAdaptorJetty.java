@@ -25,7 +25,6 @@ import org.eclipse.jetty.http.MultiPart;
 import org.eclipse.jetty.http.MultiPartConfig;
 import org.eclipse.jetty.http.MultiPartFormData;
 import org.eclipse.jetty.http.MultiPartFormData.ContentSource;
-import org.eclipse.jetty.http.MultiPartFormData.Parts;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.io.Content.Source;
 import org.eclipse.jetty.server.Handler;
@@ -103,15 +102,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 	}
 
 	public class NGHandler extends Handler.Abstract {
-
-		/**
-		 * The directory used by Jetty to store cached data during processing of multipart requests
-		 *
-		 * FIXME: This should probably be specified in a property // Hugi 2025-06-17
-		 */
-		private static final String multipartTemporaryDirectory() {
-			return "/tmp/ngmultijet";
-		}
 
 		@Override
 		public boolean handle( Request request, Response response, Callback callback ) throws Exception {
@@ -229,52 +219,52 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		/**
+		 * @return Jetty's configuration for handling of multipart request parsing
+		 *
+		 * FIXME: MultiPart configuration needs to be configurable on ng's side. Or we need to expose the Jetty configuration (which I'd prefer not to, since that makes configuration implementation dependent) // Hugi 2025-06-17
+		 */
+		private static MultiPartConfig multiPartConfig() {
+			return new MultiPartConfig.Builder()
+					.location( Path.of( "/tmp/ngmultijet" ) ) // Path to a directory used by Jetty to store cached data during processing of multipart requests
+					.build();
+		}
+
+		/**
 		 * @return the given Request converted to an NGRequest
 		 */
 		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType, final Callback callback ) {
 
-			final MultiPartConfig config = new MultiPartConfig.Builder()
-					.location( Path.of( multipartTemporaryDirectory() ) )
-					.build();
-
-			// The formValues that will get set on the request
+			// Regular formValues to set on the request
 			final Map<String, List<String>> formValues = new HashMap<>();
 
-			// The uploaded files, if any
+			// Uploaded files to set on the request
 			final Map<String, UploadedFile> uploadedFiles = new HashMap<>();
 
-			final Parts parts = MultiPartFormData.getParts( jettyRequest, jettyRequest, contentType, config );
+			MultiPartFormData
+					.getParts( jettyRequest, jettyRequest, contentType, multiPartConfig() )
+					.forEach( part -> {
+						final String partContentType = part.getHeaders().get( HttpHeader.CONTENT_TYPE );
 
-			parts.forEach( p -> {
-				final String partContentType = p.getHeaders().get( HttpHeader.CONTENT_TYPE );
+						final String parameterValue;
 
-				final String parameterName = p.getName();
-				final String parameterValue;
+						if( partContentType == null ) {
+							// If this part does not have a content type, we treat it like a regular ol' form value, added to the request's formValues map as usual
+							parameterValue = part.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
+						}
+						else {
+							// We generate a unique ID to store the attachment under. The ID will be stored as a value under the part's name in the request's formValues, where it can be used to obtaing the uploaded file from the request's uploadedFiles map
+							parameterValue = UUID.randomUUID().toString();
 
-				// We're assuming that if this part does not have a content type, it's a regular ol' form value, to be added to the requests formValues map as usual.
-				if( partContentType == null ) {
-					parameterValue = p.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
-				}
-				else {
-					// We're generating a unique ID here to store the attachment under in the request. This value will be stored in the request's formValues, and can be used to fetch the uploaded data in the request's uploadedFiles map
-					final String uniqueID = UUID.randomUUID().toString();
+							// Now we add the uploaded file to the request
+							final UploadedFile file = new UploadedFile( part.getFileName(), partContentType, Content.Source.asInputStream( part.getContentSource() ), part.getLength() );
+							uploadedFiles.put( parameterValue, file );
+						}
 
-					parameterValue = uniqueID;
-
-					// Now we add the uploaded file to the request
-					final UploadedFile file = new UploadedFile( p.getFileName(), partContentType, Content.Source.asInputStream( p.getContentSource() ), p.getLength() );
-					uploadedFiles.put( uniqueID, file );
-				}
-
-				List<String> list = formValues.get( parameterName );
-
-				if( list == null ) {
-					list = new ArrayList<>();
-					formValues.put( p.getName(), list );
-				}
-
-				list.add( parameterValue );
-			} );
+						// Finally, we add our "value" to the request's form values
+						formValues
+								.computeIfAbsent( part.getName(), _unused -> new ArrayList<>() )
+								.add( parameterValue );
+					} );
 
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
