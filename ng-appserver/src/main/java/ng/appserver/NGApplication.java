@@ -146,7 +146,7 @@ public class NGApplication implements NGPlugin {
 		try {
 			NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
 
-			addDeprecatedDefaultResourceSources( application.resourceManager() );
+			addDefaultResourceSourcesDeprecated( application.resourceManager() );
 
 			// FIXME: Assigning that unwanted global application...
 			_application = application;
@@ -291,7 +291,7 @@ public class NGApplication implements NGPlugin {
 	 */
 	private void initPlugin( final NGPlugin plugin ) {
 		logger.info( "Initializing plugin {}", plugin.getClass().getName() );
-		addDefaultResourcesourcesForNamespace( resourceManager().resourceLoader(), plugin.namespace() );
+		addDefaultResourcesourcesForNamespace( resourceManager(), plugin.namespace() );
 		properties().addAndReadSource( new PropertiesSourceResource( plugin.namespace(), "Properties" ) );
 
 		// FIXME: We're greedily loading everything now. We need to modify element loading and caching to make it dynamic during development // Hugi 2025-04-19
@@ -623,21 +623,23 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * CHECKME: These is for registering the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future and should probably be deleted // Hugi 2024-06-19
+	 * CHECKME: Registers the "unnamespaced" resource locations we started out with. They'll still work fine, but we'll need to consider their future. They should probably be deleted // Hugi 2024-06-19
 	 */
 	@Deprecated
-	private static void addDeprecatedDefaultResourceSources( final NGResourceManager resourceManager ) {
+	private static void addDefaultResourceSourcesDeprecated( final NGResourceManager resourceManager ) {
 		final NGResourceLoader loader = resourceManager.resourceLoader();
-		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
-		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
-		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
-		loader.addResourceSource( StandardNamespace.App.identifier(), StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
+		final String namespace = StandardNamespace.App.identifier();
+		loader.addResourceSource( namespace, StandardResourceType.App, new JavaClasspathResourceSource( "app-resources" ) );
+		loader.addResourceSource( namespace, StandardResourceType.WebServer, new JavaClasspathResourceSource( "webserver-resources" ) );
+		loader.addResourceSource( namespace, StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "components" ) );
+		loader.addResourceSource( namespace, StandardResourceType.Public, new JavaClasspathResourceSource( "public" ) );
 	}
 
 	/**
-	 * Declare resource sources for the standard resource types in the given namespace
+	 * Declare resource sources for standard resource types in the given namespace
 	 */
-	private static void addDefaultResourcesourcesForNamespace( final NGResourceLoader loader, final String namespace ) {
+	private static void addDefaultResourcesourcesForNamespace( final NGResourceManager resourceManager, final String namespace ) {
+		final NGResourceLoader loader = resourceManager.resourceLoader();
 		loader.addResourceSource( namespace, StandardResourceType.App, new JavaClasspathResourceSource( "ng/%s/app-resources".formatted( namespace ) ) );
 		loader.addResourceSource( namespace, StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/%s/webserver-resources".formatted( namespace ) ) );
 		loader.addResourceSource( namespace, StandardResourceType.ComponentTemplate, new JavaClasspathResourceSource( "ng/%s/components".formatted( namespace ) ) );
