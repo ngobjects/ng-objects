@@ -76,13 +76,6 @@ public class NGElementManager {
 	}
 
 	/**
-	 * @return A new component reference element for inserting into a template being rendered
-	 */
-	private static NGComponentReference componentReference( final NGComponentDefinition componentDefinition, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		return NGComponentReference.of( componentDefinition, associations, contentTemplate );
-	}
-
-	/**
 	 * @param name The name identifying what element we're getting
 	 * @param associations Associations used to bind the generated element to it's parent
 	 * @param contentTemplate The content wrapped by the element (if a container element)
@@ -109,7 +102,7 @@ public class NGElementManager {
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
 			final NGComponentDefinition componentDefinition = componentDefinition( elementName );
-			return componentReference( componentDefinition, associations, contentTemplate );
+			return createComponentReference( componentDefinition, associations, contentTemplate );
 		}
 
 		// First we check if this is a dynamic element
@@ -120,7 +113,7 @@ public class NGElementManager {
 		// If it's not an element, let's move on to creating a component reference instead
 		if( NGComponent.class.isAssignableFrom( elementClass ) ) {
 			final NGComponentDefinition componentDefinition = componentDefinition( (Class<? extends NGComponent>)elementClass );
-			return componentReference( componentDefinition, associations, contentTemplate );
+			return createComponentReference( componentDefinition, associations, contentTemplate );
 		}
 
 		// We should never end up here unless we got an incorrect/non-existent element name
@@ -128,9 +121,7 @@ public class NGElementManager {
 	}
 
 	/**
-	 * @return A new NGDynamicElement constructed using the given parameters
-	 *
-	 * Really just a shortcut for invoking a dynamic element class' constructor via reflection.
+	 * @return A new NGDynamicElement constructed using the given parameters. Really just a shortcut for invoking a dynamic element class' constructor via reflection.
 	 */
 	private static <E extends NGDynamicElement> E createDynamicElementInstance( final Class<E> elementClass, final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		final Class<?>[] parameterTypes = { String.class, Map.class, NGElement.class };
@@ -143,6 +134,13 @@ public class NGElementManager {
 		catch( NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
 			throw new RuntimeException( e );
 		}
+	}
+
+	/**
+	 * @return A new component reference element for inserting into a template being rendered
+	 */
+	private static NGComponentReference createComponentReference( final NGComponentDefinition componentDefinition, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+		return NGComponentReference.of( componentDefinition, associations, contentTemplate );
 	}
 
 	/**
