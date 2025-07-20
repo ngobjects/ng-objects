@@ -97,7 +97,7 @@ public class NGElementManager {
 		final String elementName = resolveTagName( elementIdentifier );
 
 		// Check if we can find a class representing the element we're going to render.
-		final Class<? extends NGElement> elementClass = classWithNameNullIfNotFound( elementName );
+		final Class<? extends NGElement> elementClass = classWithSimpleNameNullIfNotFound( elementName );
 
 		// If we don't find a class for the element, we're going to try going down the route of a classless component.
 		if( elementClass == null ) {
@@ -116,8 +116,8 @@ public class NGElementManager {
 			return createComponentReference( componentDefinition, associations, contentTemplate );
 		}
 
-		// We should never end up here unless we got an incorrect/non-existent element name
-		throw new NGElementNotFoundException( "I could not construct a dynamic element named '%s'".formatted( elementName ), elementName );
+		// We should never end up here unless the element name resolves to some random class
+		throw new NGElementNotFoundException( "Class '%s' (obtained for element identifier %s) does not extend NGComponent or NGDynamicElement".formatted( elementClass, elementIdentifier ), elementName );
 	}
 
 	/**
@@ -188,13 +188,13 @@ public class NGElementManager {
 	}
 
 	/**
-	 * @return A class matching classNameToSearch for. Searches by fully qualified class name and simpleName.
+	 * @return A class with the given simpleClassName
 	 */
-	public Class classWithNameNullIfNotFound( String classNameToSearchFor ) {
+	public Class classWithSimpleNameNullIfNotFound( String simpleClassName ) {
 
-		Objects.requireNonNull( classNameToSearchFor );
+		Objects.requireNonNull( simpleClassName );
 
-		final Class<?> elementClass = _elementClasses.get( classNameToSearchFor );
+		final Class<?> elementClass = _elementClasses.get( simpleClassName );
 
 		if( elementClass != null ) {
 			return elementClass;
@@ -202,7 +202,7 @@ public class NGElementManager {
 
 		for( final String packageName : _elementPackages ) {
 			try {
-				final String className = packageName + "." + classNameToSearchFor;
+				final String className = packageName + "." + simpleClassName;
 				return Class.forName( className );
 			}
 			catch( ClassNotFoundException e ) {}

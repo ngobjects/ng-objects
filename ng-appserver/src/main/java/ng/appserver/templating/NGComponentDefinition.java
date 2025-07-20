@@ -122,7 +122,7 @@ public class NGComponentDefinition {
 		}
 
 		if( componentClass == null ) {
-			componentClass = NGApplication.application().elementManager().classWithNameNullIfNotFound( componentName );
+			componentClass = NGApplication.application().elementManager().classWithSimpleNameNullIfNotFound( componentName );
 
 			if( componentClass == null ) {
 				componentClass = NGComponent.class;
