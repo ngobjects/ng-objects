@@ -18,9 +18,7 @@ import ng.appserver.templating.NGStructuralElement;
 import ng.appserver.templating.assications.NGAssociation;
 
 /**
- * Implementation based on Project Wonder's ERXWOSwitchComponent by
- *
- * Original author from Project Wonder: ak
+ * Implementation based on Project Wonder's ERXWOSwitchComponent by ak
  */
 
 public class NGSwitchComponent extends NGDynamicElement implements NGStructuralElement {
@@ -43,30 +41,25 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 	private final Map<String, NGElement> _componentCache;
 	private final Map<String, String> _elementIDByName;
 
-	public NGSwitchComponent( final String paramString, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
+	public NGSwitchComponent( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		super( null, null, null );
 
-		_componentNameAssociation = associations.get( "componentName" );
+		_componentNameAssociation = associations.remove( "componentName" );
 
 		if( _componentNameAssociation == null ) {
 
-			// FIXME: This second check is for compatibility with WO's switch component binding // Hugi 2025-05-13
-			_componentNameAssociation = associations.get( "WOComponentName" );
+			// CHECKME: Old binding name from WO, to eventually be removed (see our notes on binding deprecation) // Hugi 2025-05-13
+			_componentNameAssociation = associations.remove( "WOComponentName" );
 
 			if( _componentNameAssociation == null ) {
-				throw new NGBindingConfigurationException( "[componentName] is a reuired binding" );
+				throw new NGBindingConfigurationException( "[componentName] is a required binding" );
 			}
 		}
 
+		// Keep the remaining associations for passing on to the component
 		_componentAssociations = new HashMap<>( associations );
-		_componentAssociations.remove( "componentName" );
-
-		// FIXME: This second check is for compatibility with WO's switch component binding // Hugi 2025-05-13
-		_componentAssociations.remove( "WOComponentName" );
-
-		_componentCache = new ConcurrentHashMap<>();
 		_contentTemplate = contentTemplate;
-
+		_componentCache = new ConcurrentHashMap<>();
 		_elementIDByName = new ConcurrentHashMap<>();
 	}
 
@@ -74,7 +67,7 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 		return (String)_componentNameAssociation.valueInComponent( localWOComponent );
 	}
 
-	public String _elementNameInContext( String name, final NGContext paramWOContext ) {
+	private String elementNameInContext( String name, final NGContext context ) {
 		String id = _elementIDByName.get( name );
 
 		if( id == null ) {
@@ -87,33 +80,33 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 		return name;
 	}
 
-	public NGElement _realComponentWithName( final String name, final String elementIDString ) {
+	private NGElement realComponentWithName( final String name, final String elementIDString ) {
 
 		// Check if we've already rendered the given component, in that case get the instance.
-		NGElement localWOElement = _componentCache.get( elementIDString );
+		NGElement elementInstance = _componentCache.get( elementIDString );
 
 		// No component instance found so we're going to have to construct a new one
-		if( localWOElement == null ) {
-			localWOElement = NGApplication.application().elementManager().dynamicElementWithName( NGElementManager.GLOBAL_UNNAMESPACED_NAMESPACE, name, _componentAssociations, _contentTemplate );
+		if( elementInstance == null ) {
+			elementInstance = NGApplication.application().elementManager().dynamicElementWithName( NGElementManager.GLOBAL_UNNAMESPACED_NAMESPACE, name, _componentAssociations, _contentTemplate );
 
-			if( localWOElement == null ) {
-				throw new RuntimeException( "<" + getClass().getName() + "> : cannot find component or dynamic element named " + name );
+			if( elementInstance == null ) {
+				throw new RuntimeException( "%s  : cannot find component or dynamic element named %s".formatted( getClass().getName(), name ) );
 			}
 
-			_componentCache.put( elementIDString, localWOElement );
+			_componentCache.put( elementIDString, elementInstance );
 		}
 
-		return localWOElement;
+		return elementInstance;
 	}
 
 	@Override
 	public void takeValuesFromRequest( final NGRequest request, final NGContext context ) {
 		final String name = componentName( context.component() );
-		final String id = _elementNameInContext( name, context );
+		final String id = elementNameInContext( name, context );
 
 		context.elementID().addBranchAndSet( Integer.parseInt( id ) );
 
-		final NGElement componentElement = _realComponentWithName( name, id );
+		final NGElement componentElement = realComponentWithName( name, id );
 
 		componentElement.takeValuesFromRequest( request, context );
 
@@ -123,11 +116,11 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 	@Override
 	public NGActionResults invokeAction( final NGRequest request, final NGContext context ) {
 		final String name = componentName( context.component() );
-		final String id = _elementNameInContext( name, context );
+		final String id = elementNameInContext( name, context );
 
 		context.elementID().addBranchAndSet( Integer.parseInt( id ) );
 
-		final NGElement componentElement = _realComponentWithName( name, id );
+		final NGElement componentElement = realComponentWithName( name, id );
 
 		final NGActionResults localWOActionResults = componentElement.invokeAction( request, context );
 
@@ -144,11 +137,11 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 	@Override
 	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 		final String name = componentName( context.component() );
-		final String id = _elementNameInContext( name, context );
+		final String id = elementNameInContext( name, context );
 
 		context.elementID().addBranchAndSet( Integer.parseInt( id ) );
 
-		final NGElement componentElement = _realComponentWithName( name, id );
+		final NGElement componentElement = realComponentWithName( name, id );
 
 		componentElement.appendToResponse( response, context );
 
