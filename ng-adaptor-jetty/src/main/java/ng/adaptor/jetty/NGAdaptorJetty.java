@@ -234,9 +234,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 		 */
 		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType, final Callback callback ) {
 
-			// Regular formValues to set on the request
-			// FIXME: Verify that we're doing the right thing with query parameters here // Hugi 2025-07-19
-			final Map<String, List<String>> formValues = formValuesFromRequest( jettyRequest );
+			// Start by obtaining the regular formValues from the request (for example, query parameters)
+			final Map<String, List<String>> formValues = parametersFromRequest( jettyRequest );
 
 			// Uploaded files to set on the request
 			final Map<String, UploadedFile> uploadedFiles = new HashMap<>();
@@ -285,7 +284,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		private static NGRequest requestToNGRequest( final Request jettyRequest ) {
 
 			// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
-			final Map<String, List<String>> formValues = formValuesFromRequest( jettyRequest );
+			final Map<String, List<String>> formValues = parametersFromRequest( jettyRequest );
 
 			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -310,7 +309,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		/**
 		 * @return The queryParameters as a formValue Map (our format)
 		 */
-		private static Map<String, List<String>> formValuesFromRequest( final Request jettyRequest ) {
+		private static Map<String, List<String>> parametersFromRequest( final Request jettyRequest ) {
 
 			Fields parameters;
 
