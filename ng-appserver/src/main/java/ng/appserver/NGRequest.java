@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ng.appserver.privates.NGParsedURI;
 
 /**
@@ -17,8 +14,6 @@ import ng.appserver.privates.NGParsedURI;
  */
 
 public class NGRequest extends NGMessage {
-
-	private static final Logger logger = LoggerFactory.getLogger( NGRequest.class );
 
 	/**
 	 * Name of the cookie that stores our session ID on the client
@@ -207,7 +202,6 @@ public class NGRequest extends NGMessage {
 
 				// No session found, loudly notify the user
 				if( _session == null && throwIfIDPresentButNoCorrespondingSessionFound ) {
-					logger.debug( "No session found with id '{}'", _sessionIDFromCookie() );
 					throw new NGSessionRestorationException( this );
 				}
 			}
