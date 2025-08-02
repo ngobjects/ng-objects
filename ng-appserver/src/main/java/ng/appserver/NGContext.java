@@ -137,18 +137,17 @@ public class NGContext {
 	public NGComponent page() {
 		return _page;
 
-		//		FIXME:
-		//		We theoretically could just walk up the tree and check for the root-level component to get the page
-		//		We're going to have to look into that while considering (a) performance and (b) stateless components
-		//		// Hugi 2025-06-08
+		// CHECKME: Theoretically we can just walk the component tree to get the root level component; i.e. the "page"
+		// We're going to have to look into that while considering (a) performance and (b) stateless components
+		// Hugi 2025-06-08
 		//
-		//		NGComponent current = component();
+		//	NGComponent current = component();
 		//
-		//		while( current.parent() != null ) {
-		//			current = current.parent();
-		//		}
+		//	while( current.parent() != null ) {
+		//	current = current.parent();
+		//	}
 		//
-		//		return current;
+		//	return current;
 	}
 
 	/**
