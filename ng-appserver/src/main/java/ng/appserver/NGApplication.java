@@ -251,28 +251,6 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * The framework's default session reset response
-	 */
-	public NGActionResults resetSessionCookie() {
-		return resetSessionCookieWithRedirectToURL( "/" );
-	}
-
-	/**
-	 * CHECKME: This method should probably not exist. Ideally, we probably just want the user to construct his own response and add the session ID killer cookie // Hugi 2025-04-16
-	 */
-	protected NGActionResults resetSessionCookieWithRedirectToURL( final String url ) {
-		final NGResponse response = new NGResponse();
-
-		response.setStatus( 302 );
-		response.setHeader( "location", url );
-		response.setHeader( "content-type", "text/html" );
-		response.setHeader( "content-length", "0" );
-		response.addCookie( createSessionResetCookie() );
-
-		return response;
-	}
-
-	/**
 	 * Locates plugins on the classpath and adds them to the framework's loaded plugins
 	 *
 	 * FIXME: Ensure proper load order // Hugi 2025-05-24
@@ -531,6 +509,28 @@ public class NGApplication implements NGPlugin {
 	 */
 	public NGCookie createSessionResetCookie() {
 		return createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 );
+	}
+
+	/**
+	 * The framework's default session reset response
+	 */
+	public NGActionResults resetSessionCookie() {
+		return resetSessionCookieWithRedirectToURL( "/" );
+	}
+
+	/**
+	 * CHECKME: This method should probably not exist. Ideally, we probably just want the user to construct his own response and add the session ID killer cookie // Hugi 2025-04-16
+	 */
+	protected NGActionResults resetSessionCookieWithRedirectToURL( final String url ) {
+		final NGResponse response = new NGResponse();
+
+		response.setStatus( 302 );
+		response.setHeader( "location", url );
+		response.setHeader( "content-type", "text/html" );
+		response.setHeader( "content-length", "0" );
+		response.addCookie( createSessionResetCookie() );
+
+		return response;
 	}
 
 	/**
