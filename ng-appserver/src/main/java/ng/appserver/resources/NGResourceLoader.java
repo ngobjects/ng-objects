@@ -150,7 +150,7 @@ public class NGResourceLoader {
 				return Optional.empty();
 			}
 
-			return Optional.of( NGResource.of( resourceURL::openStream ) );
+			return Optional.of( NGResource.of( resourceURL ) );
 		}
 
 		/**
