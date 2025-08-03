@@ -1,4 +1,4 @@
-package ng.appserver.elements.ajax;
+package ng.appserver.templating.elements;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,33 +12,38 @@ import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
 
-public class AjaxSubmitButton extends NGDynamicElement {
+/**
+ * An HTML submit button, specifically useful for submitting/invoking component actions
+ */
 
-	private final NGAssociation _actionAssociation;
-	private final NGAssociation _updateContainerIDAssociation;
+public class NGSubmitButton extends NGDynamicElement {
 
 	/**
-	 * Stores associations that get passed through to the generated tag as attributes
+	 * The action to invoke when this button is pressed
+	 */
+	private final NGAssociation _actionAssociation;
+
+	/**
+	 * Pass-through attributes
 	 */
 	private final Map<String, NGAssociation> _additionalAssociations;
 
-	public AjaxSubmitButton( String name, Map<String, NGAssociation> associations, NGElement contentTemplate ) {
+	public NGSubmitButton( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
 		_additionalAssociations = new HashMap<>( associations );
+
 		_actionAssociation = _additionalAssociations.remove( "action" );
-		_updateContainerIDAssociation = _additionalAssociations.remove( "updateContainerID" );
+
+		if( _actionAssociation == null ) {
+			throw new IllegalArgumentException( "'action' is a required binding" );
+		}
 	}
 
 	@Override
 	public void appendToResponse( NGResponse response, NGContext context ) {
-
-		// FIXME: We should be allowing for a form submission to be performed without an updateContainer update
-		final String onclick = "ajaxSubmitButtonClick(this,%s)".formatted( updateContainerIDParameter( context ) );
-
 		final Map<String, String> attributes = new HashMap<>();
-		attributes.put( "type", "button" );
+		attributes.put( "type", "submit" );
 		attributes.put( "name", context.elementID().toString() );
-		attributes.put( "onclick", onclick );
 
 		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
@@ -46,22 +51,16 @@ public class AjaxSubmitButton extends NGDynamicElement {
 		response.appendContentString( htmlString );
 	}
 
-	/**
-	 * @return The id of the updateContainer
-	 */
-	private String updateContainerIDParameter( NGContext context ) {
-		if( _updateContainerIDAssociation != null ) {
-			final String updateContainerID = (String)_updateContainerIDAssociation.valueInComponent( context.component() );
-			return "'%s'".formatted( updateContainerID );
-		}
-
-		return "null";
-	}
-
 	@Override
 	public NGActionResults invokeAction( NGRequest request, NGContext context ) {
 
-		// FIXME: If this button is invoked without an action binding, it should perform the containing form's action
+		// This would be our regular way of checking for a senderID:
+		// if( context.currentElementIsSender() ) {...}
+		// ....HOWEVER....
+		// The pressed button is not actually the submitting element, the form that contains the button is.
+		// The pressed submit button's name will be in the query parameter dictionary, so that's what we check for.
+		// I have a feeling this is going to cause us grief with regard to state management, i.e. the same form/elementID can now result in different actions being invoked. Very exciting.
+		// CHECKME: This might actually be a perfect application for the formaction attributes (which would allow for a more traditional handling of the invoked button) // Hugi 2024-06-01
 		if( request.formValues().get( context.elementID().toString() ) != null ) {
 			return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 		}

@@ -1,4 +1,4 @@
-package ng.appserver.elements.ajax;
+package ng.appserver.templating.elements.ajax;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,11 +7,11 @@ import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
-import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.elements.NGDynamicGroup;
 
 public class AjaxUpdateLink extends NGDynamicGroup {
 

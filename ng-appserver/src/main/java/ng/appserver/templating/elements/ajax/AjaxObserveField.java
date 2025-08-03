@@ -1,12 +1,12 @@
-package ng.appserver.elements.ajax;
+package ng.appserver.templating.elements.ajax;
 
 import java.util.Map;
 
 import ng.appserver.NGContext;
 import ng.appserver.NGResponse;
-import ng.appserver.elements.NGDynamicGroup;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.elements.NGDynamicGroup;
 
 public class AjaxObserveField extends NGDynamicGroup {
 

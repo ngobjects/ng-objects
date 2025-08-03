@@ -1,4 +1,4 @@
-package ng.appserver.elements;
+package ng.appserver.templating.elements;
 
 import java.io.IOException;
 import java.io.InputStream;

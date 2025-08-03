@@ -8,22 +8,22 @@ import java.util.Map.Entry;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
-import ng.appserver.elements.NGComponentContent;
-import ng.appserver.elements.NGConditional;
-import ng.appserver.elements.NGDynamicGroup;
-import ng.appserver.elements.NGForm;
-import ng.appserver.elements.NGGenericContainer;
-import ng.appserver.elements.NGGenericElement;
-import ng.appserver.elements.NGHyperlink;
-import ng.appserver.elements.NGImage;
-import ng.appserver.elements.NGJavaScript;
-import ng.appserver.elements.NGPopUpButton;
-import ng.appserver.elements.NGRepetition;
-import ng.appserver.elements.NGString;
-import ng.appserver.elements.NGStylesheet;
-import ng.appserver.elements.NGSubmitButton;
-import ng.appserver.elements.NGSwitchComponent;
-import ng.appserver.elements.NGTextField;
+import ng.appserver.templating.elements.NGComponentContent;
+import ng.appserver.templating.elements.NGConditional;
+import ng.appserver.templating.elements.NGDynamicGroup;
+import ng.appserver.templating.elements.NGForm;
+import ng.appserver.templating.elements.NGGenericContainer;
+import ng.appserver.templating.elements.NGGenericElement;
+import ng.appserver.templating.elements.NGHyperlink;
+import ng.appserver.templating.elements.NGImage;
+import ng.appserver.templating.elements.NGJavaScript;
+import ng.appserver.templating.elements.NGPopUpButton;
+import ng.appserver.templating.elements.NGRepetition;
+import ng.appserver.templating.elements.NGString;
+import ng.appserver.templating.elements.NGStylesheet;
+import ng.appserver.templating.elements.NGSubmitButton;
+import ng.appserver.templating.elements.NGSwitchComponent;
+import ng.appserver.templating.elements.NGTextField;
 
 /**
  * A description of a dynamic element and it's bindings. The eventual goal of this class is to combine:
