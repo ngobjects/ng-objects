@@ -26,27 +26,18 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 	private final List<NGElement> _children;
 
 	/**
-	 * Construct a new Dynamic Group from a content template.
-	 *
-	 * Note that in the case of an empty tag (i.e. <tag></tag>), contentTemplate will be null.
+	 * Construct a new group from a content template
 	 */
 	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		this( name, associations, childrenFromTemplate( contentTemplate ) );
+		this( childrenFromTemplate( contentTemplate ) );
 	}
 
 	/**
-	 * FIXME: Kind of don't like having this constructor around. Needs thinking // Hugi 2024-11-16
+	 * Construct a new group from an element list
 	 */
-	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final List<NGElement> children ) {
+	public NGDynamicGroup( final List<NGElement> children ) {
 		super( null, null, null );
 		_children = children;
-	}
-
-	/**
-	 * FIXME: OK, we're including this method, just to get rid of that constructor that I feel is getting in our way. The whole construction of groups is a little iffy at the moment // Hugi 2024-11-16
-	 */
-	public static NGDynamicGroup of( final List<NGElement> children ) {
-		return new NGDynamicGroup( null, null, children );
 	}
 
 	@Override

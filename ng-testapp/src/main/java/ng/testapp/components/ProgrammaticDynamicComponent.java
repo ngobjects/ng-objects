@@ -1,7 +1,6 @@
 package ng.testapp.components;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ public class ProgrammaticDynamicComponent extends NGComponent {
 
 	@Override
 	public NGElement template() {
-		final NGDynamicGroup g = new NGDynamicGroup( "wat?", Collections.emptyMap(), new ArrayList<>() );
+		final NGDynamicGroup g = new NGDynamicGroup( new ArrayList<>() );
 
 		g.children().add( new NGHTMLBareString( "<!doctype html>\n" ) );
 		g.children().add( new NGHTMLBareString( "<html>\n" ) );
