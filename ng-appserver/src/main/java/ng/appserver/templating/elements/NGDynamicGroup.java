@@ -65,26 +65,12 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 
 			for( final NGElement child : children() ) {
 				if( context.shouldAppendToResponse() ) {
-					// FIXME: Certainly butt-ugly element display of some element debugging info, but being able to display the elementID tree while debugging is kind of useful, so we want to build something from this // Hugi 2024-09-28
-					final boolean appendElementTreeDebugInfo = false;
-
-					if( appendElementTreeDebugInfo ) {
-						final String elementDebugWrapper = """
-								<span style="border: 1px solid red; margin: 0px; padding: 0px"><span style="margin: 0px; padding: 0px; background-color: rgba(255,0,0,0.5); overflow-x: hidden; font-size: 10px">%s</span>
-								""".formatted( context.elementID() + " : " + child.getClass().getSimpleName() );
-						response.appendContentString( elementDebugWrapper );
-					}
-
 					// FIXME: This try/catch clause is experimental, let's see how this works out and work from there // Hugi 2024-11-19
 					try {
 						child.appendToResponse( response, context );
 					}
 					catch( UnknownKeyException unknownKeyException ) {
 						new NGErrorMessageElement( "VOFF! VOFF! Unknown key", child.getClass().getSimpleName(), unknownKeyException.getMessage() ).appendToResponse( response, context );
-					}
-
-					if( appendElementTreeDebugInfo ) {
-						response.appendContentString( "</span>" );
 					}
 				}
 				else if( child instanceof NGStructuralElement structuralChild ) {
