@@ -47,14 +47,14 @@ public class NGLifebeatThread extends Thread {
 	public MessageGenerator _messageGenerator;
 
 	/**
-	 * FIXME: Yeah, this sucks
+	 * The standard messages we will send
 	 */
 	public static class MessageGenerator {
-		private byte[] _hasStarted;
-		private byte[] _lifebeat;
-		public byte[] _willStop;
-		private byte[] _willCrash;
-		private byte[] _versionRequest;
+		private final byte[] _hasStarted;
+		private final byte[] _lifebeat;
+		public final byte[] _willStop;
+		private final byte[] _willCrash;
+		private final byte[] _versionRequest;
 
 		public MessageGenerator( final String appName, final String localhostName, final int appPort ) {
 			final String preString = "GET /cgi-bin/WebObjects/wotaskd.woa/wlb?";
