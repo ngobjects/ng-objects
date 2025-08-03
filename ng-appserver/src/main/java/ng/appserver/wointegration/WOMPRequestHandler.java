@@ -65,7 +65,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 		logger.info( "Terminating application by request from wotaskd..." );
 
 		logger.info( "Sending willStop..." );
-		NGDefaultLifeBeatThread._lifebeatThread.sendMessage( NGDefaultLifeBeatThread._lifebeatThread._messageGenerator._willStop );
+		NGDefaultLifeBeatThread.lifebeatThread().sendMessage( NGDefaultLifeBeatThread.lifebeatThread()._messageGenerator._willStop );
 		logger.info( "Sent willstop." );
 
 		// We perform the shutdown in a thread that executes after we've returned the response to the client.

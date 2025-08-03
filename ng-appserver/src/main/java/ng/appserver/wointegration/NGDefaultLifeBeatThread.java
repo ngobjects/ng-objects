@@ -12,10 +12,7 @@ import ng.appserver.properties.NGProperties;
 
 public class NGDefaultLifeBeatThread {
 
-	/**
-	 * FIXME: public for the benefit of WOMPRequestHandler, which uses it to generate messages to send to wotaskd. Let's look into that // Hugi 2021-12-29
-	 */
-	public static NGLifebeatThread _lifebeatThread;
+	private static NGLifebeatThread _lifebeatThread;
 
 	/**
 	 * Starts a lifebeat thread for communicating with wotaskd.
@@ -40,5 +37,12 @@ public class NGDefaultLifeBeatThread {
 		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, lifeBeatIntervalInMilliseconds );
 		_lifebeatThread.setDaemon( true );
 		_lifebeatThread.start();
+	}
+
+	/**
+	 * Public for the benefit of WOMPRequestHandler which will use it to generate messages to send to wotaskd
+	 */
+	public static NGLifebeatThread lifebeatThread() {
+		return _lifebeatThread;
 	}
 }
