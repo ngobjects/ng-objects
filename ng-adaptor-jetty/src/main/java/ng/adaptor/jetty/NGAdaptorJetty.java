@@ -116,7 +116,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final NGRequest ngRequest;
 
 			if( contentType != null && contentType.contains( "multipart/form-data" ) ) {
-				ngRequest = multipartRequestToNGRequest( jettyRequest, contentType, callback );
+				ngRequest = multipartRequestToNGRequest( jettyRequest, contentType );
 			}
 			else {
 				ngRequest = requestToNGRequest( jettyRequest );
@@ -232,7 +232,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		/**
 		 * @return the given Request converted to an NGRequest
 		 */
-		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType, final Callback callback ) {
+		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType ) {
 
 			// Start by obtaining the regular formValues from the request (for example, query parameters)
 			final Map<String, List<String>> formValues = parametersFromRequest( jettyRequest );
