@@ -28,7 +28,7 @@ public class NGDefaultLifeBeatThread {
 		final Integer lifeBeatIntervalInSeconds = properties.d().propWOLifebeatIntervalInSeconds();
 		final long lifeBeatIntervalInMilliseconds = TimeUnit.MILLISECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.SECONDS );
 
-		InetAddress hostAddress = null;
+		final InetAddress hostAddress;
 
 		try {
 			hostAddress = InetAddress.getByName( hostName );
