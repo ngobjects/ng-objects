@@ -415,7 +415,7 @@ public class NGApplication implements NGPlugin {
 			final NGResponse response = requestHandler.handleRequest( request );
 
 			if( response == null ) {
-				throw new NullPointerException( String.format( "'%s' returned a null response. That's just rude.", requestHandler.getClass().getName() ) );
+				throw new NullPointerException( "'%s' returned a null response".formatted( requestHandler.getClass().getName() ) );
 			}
 
 			addSessionCookieToResponse( request, response );
