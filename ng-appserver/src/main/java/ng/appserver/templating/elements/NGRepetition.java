@@ -239,6 +239,6 @@ public class NGRepetition extends NGDynamicGroup {
 			return List.of( sc.toArray() );
 		}
 
-		throw new IllegalArgumentException( "NGRepetition only accepts java.util.List and java Arrays. You sent me a %s".formatted( listAssociationValue.getClass() ) );
+		throw new IllegalArgumentException( "%s only accepts java.util.List, java arrays and java.util.SequencedCollection. You sent me a %s".formatted( getClass().getSimpleName(), listAssociationValue.getClass() ) );
 	}
 }
