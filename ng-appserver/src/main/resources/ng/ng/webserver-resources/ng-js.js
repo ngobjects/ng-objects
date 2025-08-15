@@ -22,11 +22,10 @@ function ajaxRequest( url, fetchOptions, updateContainerID ) {
 	.then(
 		response => {
 			// When the response arrives, we determine if it's a multipart response or a "regular" response.
-			// If it's a multipart response, we assume that each part corresponds to a container to be updated
-			// FIXME: Not certain we're using the best method to determine if this is a multipart response. Investigate // Hugi 2025-04-13
+			// If it's a multipart response, we assume each part corresponds to a container to be updated
 			var contentType = response.headers.get('content-type')
 			
-			if( contentType.includes('multipart') ) { 
+			if( contentType.startsWith('multipart/form-data') ) { 
 				return response.formData();
 			}
 			else {
