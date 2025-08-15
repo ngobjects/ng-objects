@@ -34,6 +34,7 @@ import ng.appserver.templating.elements.NGTextField;
  * FIXME: Add support for binding validation
  * FIXME: Required bindings/valid binding combinations
  * FIXME: Allow marking a binding as deprecated (including an explanation/docs, e.g, what bindings to use instead)
+ * FIXME: Allow a binding to be marked "in progress" or "incomplete", at least while we're developing.
  * FIXME: Default values for bindings (i.e. what it defaults to if the binding is not bound)
  * FIXME: Specify binding directionality, i.e. if they pull/push or both.
  * FIXME: Speciy whether an element allows "additional attributes", and what happens to them. I.e. in the case of a <wo:img />, additional attributes get pushed to the tag. In some cases, we also might want to specify that additional bindings are illegal (or at least discouraged, if they're not documented)
