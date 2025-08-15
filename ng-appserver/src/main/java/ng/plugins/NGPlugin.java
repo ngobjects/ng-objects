@@ -42,7 +42,7 @@ public interface NGPlugin {
 	/**
 	 * @return A list of plugin classes that this plugin requires (and potentially depends on being loaded and initialized before itself)
 	 */
-	public default List<Class<? extends NGPlugin>> dependsOn() {
+	public default List<Class<? extends NGPlugin>> requires() {
 		return Collections.emptyList();
 	}
 }
