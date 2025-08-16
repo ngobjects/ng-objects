@@ -1,4 +1,4 @@
-package ng.appserver.templating;
+package ng.xperimental;
 
 /**
  * Primarily intended for wrapping checked exceptions thrown during the rendering process.
