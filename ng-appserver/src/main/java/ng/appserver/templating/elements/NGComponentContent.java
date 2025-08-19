@@ -19,17 +19,12 @@ public class NGComponentContent extends NGDynamicElement implements NGStructural
 	}
 
 	@Override
-	public void appendToResponse( NGResponse response, NGContext context ) {
-		appendStructureToResponse( response, context );
-	}
-
-	@Override
 	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 		final NGComponent component = context.component();
 
 		if( component.contentElement() != null ) {
 			context.setComponent( component.parent() );
-			component.contentElement().appendToResponse( response, context );
+			component.contentElement().appendOrTraverse( response, context );
 			context.setComponent( component );
 		}
 	}

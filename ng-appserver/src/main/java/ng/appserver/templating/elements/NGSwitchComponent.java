@@ -143,7 +143,7 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 
 		final NGElement componentElement = realComponentWithName( name, id );
 
-		componentElement.appendToResponse( response, context );
+		componentElement.appendOrTraverse( response, context );
 
 		context.elementID().removeBranch();
 	}

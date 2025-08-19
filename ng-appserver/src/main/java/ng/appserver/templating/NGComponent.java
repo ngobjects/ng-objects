@@ -277,7 +277,7 @@ public class NGComponent implements NGElement, NGActionResults {
 			response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
 		}
 
-		appendToResponse( response, context() );
+		appendOrTraverse( response, context() );
 
 		// So, we've generated the page, and it's ready to return. Now we let the context tell us whether it should be stored in the page cache for future reference.
 		// CHECKME: This *still* feels a little like the wrong place to stash the page in the cache. Not yet sure where it *should* be but my gut *still* has a feeling // Hugi 2024-09-28
@@ -300,17 +300,8 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	@Override
-	public void appendToResponse( NGResponse response, NGContext context ) {
-
-		final NGElement template = template();
-
-		// FIXME: I think this actually belongs in NGComponentReference // Hugi 2025-04-15
-		if( context.shouldAppendToResponse() ) {
-			template.appendToResponse( response, context );
-		}
-		else if( template instanceof NGStructuralElement se ) {
-			se.appendStructureToResponse( response, context );
-		}
+	public void appendOrTraverse( NGResponse response, NGContext context ) {
+		template().appendOrTraverse( response, context );
 	}
 
 	/**

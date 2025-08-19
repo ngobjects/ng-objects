@@ -8,7 +8,12 @@ import ng.appserver.NGResponse;
  * See implementing elements and you'll know what that means.
  */
 
-public interface NGStructuralElement {
+public interface NGStructuralElement extends NGElement {
+
+	@Override
+	public default void appendToResponse( NGResponse response, NGContext context ) {
+		appendStructureToResponse( response, context );
+	}
 
 	public void appendStructureToResponse( NGResponse response, NGContext context );
 }

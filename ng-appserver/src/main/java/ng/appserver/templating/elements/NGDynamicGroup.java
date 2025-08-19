@@ -11,8 +11,6 @@ import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.NGStructuralElement;
 import ng.appserver.templating.assications.NGAssociation;
-import ng.kvc.NGKeyValueCoding.UnknownKeyException;
-import ng.xperimental.NGErrorMessageElement;
 
 /**
  * A common superclass for dynamic elements that have multiple children in our template element tree
@@ -41,11 +39,6 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 	}
 
 	@Override
-	public void appendToResponse( NGResponse response, NGContext context ) {
-		appendChildrenToResponse( response, context );
-	}
-
-	@Override
 	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 		appendChildrenToResponse( response, context );
 	}
@@ -55,19 +48,7 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 			context.elementID().addBranch();
 
 			for( final NGElement child : children() ) {
-				if( context.shouldAppendToResponse() ) {
-					// FIXME: This try/catch clause is experimental, let's see how this works out and work from there // Hugi 2024-11-19
-					try {
-						child.appendToResponse( response, context );
-					}
-					catch( UnknownKeyException unknownKeyException ) {
-						new NGErrorMessageElement( "VOFF! VOFF! Unknown key", child.getClass().getSimpleName(), unknownKeyException.getMessage() ).appendToResponse( response, context );
-					}
-				}
-				else if( child instanceof NGStructuralElement structuralChild ) {
-					structuralChild.appendStructureToResponse( response, context );
-				}
-
+				child.appendOrTraverse( response, context );
 				context.elementID().increment();
 			}
 

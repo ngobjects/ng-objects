@@ -98,14 +98,9 @@ public class NGComponentReference extends NGDynamicElement implements NGStructur
 	}
 
 	@Override
-	public void appendToResponse( NGResponse response, NGContext context ) {
-		appendStructureToResponse( response, context );
-	}
-
-	@Override
 	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 		beforeComponent( context );
-		context.component().appendToResponse( response, context );
+		context.component().appendOrTraverse( response, context );
 		afterComponent( context );
 	}
 
