@@ -25,6 +25,7 @@ public interface NGElement extends WOElement {
 				appendToResponse( response, context );
 			}
 			catch( UnknownKeyException unknownKeyException ) {
+				// FIXME: We should integrate element-level exception handling with our application's "exception manager", allowing us to customize message generation based on response type // Hugi 2025-08-20
 				new NGErrorMessageElement( "VOFF! VOFF! Unknown key", getClass().getSimpleName(), unknownKeyException.getMessage() ).appendToResponse( response, context );
 			}
 		}
