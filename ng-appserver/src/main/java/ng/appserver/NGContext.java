@@ -251,6 +251,7 @@ public class NGContext {
 	 * ID of the update containers targeted for rendering this request
 	 *
 	 * FIXME: Should be replaced with a variable, preferably set at the context's construction // Hugi 2024-10-15
+	 * FIXME: We need to decide and document what happens when both a header and parameters are present. One overrides the other? Combine values form both? // Hugi 2025-08-25
 	 */
 	public String targetedUpdateContainerIDsStringValue() {
 
