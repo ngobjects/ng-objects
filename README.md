@@ -22,10 +22,11 @@ We haven't made a release yet, so to try the framework you need to either clone 
 
 ```
 	$ git clone git@github.com:ngobjects/ng-objects.git
+	$ cd ng-objects
 	$ mvn install
 	$ cd ng-testapp
 	$ mvn package
-	$ ./target/ng-testapp-1.0.0-SNAPSHOT.woa/ng-testapp
+	$ ./target/ng-testapp-0.1.0-SNAPSHOT.woa/ng-testapp
 ```
 
 Then point your browser to [localhost:1200](http://localhost:1200/). Yay!
