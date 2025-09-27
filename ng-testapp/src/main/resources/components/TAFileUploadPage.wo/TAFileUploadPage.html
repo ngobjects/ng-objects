@@ -1,0 +1,20 @@
+<wo:TALook>
+	<h5>File upload example</h5>
+	<p>Demonstrates a basic file upload. Upload some images and it will be displayed in a list below. We've hardcoded the mimetype to image/jpeg, but it shouldn't really matter</p>
+
+	<hr style="margin: 50px"/>
+
+	<wo:form enctype="multipart/form-data">	
+		<wo:fileUpload data="$uploadedData" filename="$uploadedFilename" />
+		<wo:submit action="$upload" class="btn btn-primary" value="Upload image" />
+	</wo:form>
+
+	<hr style="margin: 50px"/>
+
+	<wo:repetition list="$images" item="$currentImage">
+		<div class="card mb-3 p-3">
+			<wo:img data="$currentImage.data" mimeType="image/jpeg" style="max-width:500px" /><br>
+			<wo:str value="$currentImage.filename" />
+		</div>
+	</wo:repetition>
+</wo:TALook>

@@ -1,23 +1,62 @@
 <wo:TALook>
-	<h2>Ajax functionality</h2>
+	<h2>Partial page updates (Ajax)</h2>
 
 	<p>
-		Ajax functionality is still very primitive (as can be seen from the look of ng-js.js).
+		<strong>Ajax functionality is still very experimental (as can be seen from the look of ng-js.js).</strong>
 	</p>
 	<p>
-		We do have one feature missing from WO's Ajax.framework - we allow the updating of multiple update containers (from one action/response).<br>
+		We have one feature missing from Wonder's Ajax; we allow updating multiple containers in one action (using one response).<br>
 		We do this by constructing a multipart response, with each part of the response corresponding to a targeted container.<br>
-		The approach seems to work fine, but we'll see whether we keep it as-is (or if we'll resort to something more complex). I like the multipart response-approach though, since it's a pretty well established standard method of returning many things in one resposne. 
+		The approach seems to work fine, but we'll see whether we keep it as-is or if we resort to something we have more control over, since at some point we might want to return metadata/control-data with each response. 
 	</p>
 	<p>
 		Another thing is that our page cachce is designed from the ground up to handle Ajax requests. Still needs some work to properly handle multi-container updates though. 
 	</p>
 
-	<hr />
+	<hr style="margin: 50px" />
 
 	<h5>Basic UpdateLink, updates the current time in the container below the button</h5>
 	<wo:AjaxUpdateLink action="$context.page" updateContainerID="timeUC" class="btn btn-primary">Show current time</wo:AjaxUpdateLink>
 	<wo:AjaxUpdateContainer id="timeUC" class="card mt-3 mb-3 p-3">
 		<wo:str value="$currentTime" />
 	</wo:AjaxUpdateContainer>
+
+	<hr style="margin: 50px" />
+
+	<h5>Updating multiple containers using one action</h5>
+	<wo:AjaxUpdateLink action="$context.page" updateContainerID="uc1;uc2" class="btn btn-primary">Update both</wo:AjaxUpdateLink>
+	<div class="row">
+		<div class="col">
+			<wo:AjaxUpdateContainer id="uc1" class="card mt-3 mb-3 p-3">
+				<h5>Container 1</h5>
+				<wo:str value="$currentTime" />
+			</wo:AjaxUpdateContainer>
+		</div>
+		<div class="col">
+			<wo:AjaxUpdateContainer id="uc2" class="card mt-3 mb-3 p-3">
+				<h5>Container 2</h5>
+				<wo:str value="$currentTime" />
+			</wo:AjaxUpdateContainer>
+		</div>
+	</div>
+
+	<hr style="margin: 50px" />
+
+	<h5>Submit a form using Ajax</h5>
+	<p>Note that pushing "return" will just submit the page. You need to click the button. Yeah. Work in progress.</p>
+
+	<wo:form>
+		<label>What's your name?</label>
+		<wo:textfield value="$myName" />
+		<wo:AjaxSubmitButton action="$context.page" updateContainerID="helloUC" value="Say hello" class="btn btn-primary" />
+	</wo:form>
+	<div class="row">
+		<div class="col">
+			<wo:AjaxUpdateContainer id="helloUC" class="card mt-3 mb-3 p-3">
+				<wo:if condition="$myName.length">
+					Hello <wo:str value="$myName" />
+				</wo:if>
+			</wo:AjaxUpdateContainer>
+		</div>
+	</div>
 </wo:TALook>

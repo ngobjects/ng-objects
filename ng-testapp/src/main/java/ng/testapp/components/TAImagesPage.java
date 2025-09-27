@@ -2,6 +2,7 @@ package ng.testapp.components;
 
 import java.util.List;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
 import ng.appserver.templating.NGComponent;
 
@@ -25,5 +26,11 @@ public class TAImagesPage extends NGComponent {
 
 	public byte[] testImage3Data() {
 		return application().resourceManager().obtainAppResource( "app", "test-image-3.jpg" ).get().bytes();
+	}
+
+	public NGActionResults selectImage() {
+		final TAImageDetailPage detailPage = pageWithName( TAImageDetailPage.class );
+		detailPage.image = currentImage;
+		return detailPage;
 	}
 }

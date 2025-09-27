@@ -1,18 +1,23 @@
 <wo:TALook>
 	<h2>Some images</h2>
-	<p>Exactly what it says on the tin. Some images, to demonstrate the use of NGImage.</p>
-	<p>Kind of boring, but kept around with the plan to enrich it with more complex samples.</p>
+	
+	<p>
+		Exactly what it says on the tin. Some images, to demonstrate the use of NGImage.Kind of boring, but kept around with the plan to enrich it with more complex samples.
+	</p>
+	<p>
+		Oh, you can click a single image in the list below to go to a different page, with the image selected.
+	</p>
 
-	<hr />
+	<hr style="margin: 50px"/>
 
 	<wo:repetition list="$images" item="$currentImage">
-		<p>
+		<wo:link action="$selectImage" class="card p-2 m-3">
 			<wo:img filename="$currentImage.filename" width="200" />
 			<wo:str value="$currentImage.title" />
-		</p> 
+		</wo:link> 
 	</wo:repetition>
 	
-	<hr />
+	<hr style="margin: 50px"/>
 	
 	<h3>Let's look at the three different ways to load up an image (filename,src,data)</h3>
 	<p>

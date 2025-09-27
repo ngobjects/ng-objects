@@ -1,0 +1,29 @@
+<wo:TALook>
+	<h2>Very simple form</h2>
+
+	<p>
+		Page intended to demonstrate forms. FIXME: Need to add the rest of our input elements.  
+	</p>
+
+	<hr />
+
+	<wo:form>
+		<label>Text field</label>
+		<wo:textfield value="$textFieldValue" class="form-control" /><br>
+
+		<label>Popup</label>
+		<wo:popUpButton list="$popUpItems" item="$currentPopUpItem" displayString="$currentPopUpItem.name" selection="$selectedPopUpItem" noSelectionString="Select one..." class="form-select" /><br>
+
+		<wo:submit action="$submit" class="btn btn-primary mt-3" /><br>
+	</wo:form>
+	<wo:if condition="$submitResult">
+		<div class="row mt-3">
+			<div class="col">
+				<div class="card p-3">
+					<h4>Your entered values</h4>
+					<pre><wo:str value="$submitResult" /></pre>
+				</div>
+			</div>
+		</div>
+	</wo:if>
+</wo:TALook>

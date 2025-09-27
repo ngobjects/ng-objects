@@ -10,6 +10,8 @@ import ng.appserver.templating.NGComponent;
 
 public class TAAjaxPage extends NGComponent {
 
+	public String myName;
+
 	public TAAjaxPage( NGContext context ) {
 		super( context );
 	}

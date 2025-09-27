@@ -1,0 +1,34 @@
+<wo:TALook>
+	<h3>The guestbook</h3>
+	<p>You know. It's a classic basics example. Form submission, iterating over values etc.</p>
+	
+	<hr style="margin: 50px">
+	
+	<wo:if condition="$errorMessage">
+		<div class="alert alert-danger">
+			<wo:str value="$errorMessage" />
+		</div>
+	</wo:if>
+
+	<wo:form>
+		<label>Your name</label>
+		<wo:textfield value="$myName" class="form-control" /><br />
+		<wo:submit action="$addName" class="btn btn-primary" value="Add" />
+	</wo:form>
+	
+	<wo:if condition="$entries.size">
+		<h3 class="mt-4">Entered names</h3>
+		<table class="table table-striped">
+			<tr>
+				<th>Name</th>
+				<th>Date</th>
+			</tr>
+			<wo:repetition list="$entries" item="$currentEntry">
+				<tr>
+					<td><wo:str value="$currentEntry.name" /></td>
+					<td><wo:str value="$currentEntry.date" /></td>
+				</tr>
+			</wo:repetition>
+		</table>
+	</wo:if>
+</wo:TALook>

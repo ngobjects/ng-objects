@@ -6,18 +6,23 @@ import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
 import ng.appserver.templating.NGComponent;
 
-public class TAFormComponent extends NGComponent {
+public class TAFormPage extends NGComponent {
+
+	public record PopUpItem( String name, String value ) {}
+
+	public record SubmitResult( String textFieldValue, PopUpItem popUpValue ) {}
 
 	public String textFieldValue;
 
 	// Iteration variable forthe pop up menu
-	public PopUpItem popUpItem;
+	public PopUpItem currentPopUpItem;
+	public PopUpItem selectedPopUpItem;
 
-	public TAFormComponent( NGContext context ) {
+	public SubmitResult submitResult;
+
+	public TAFormPage( NGContext context ) {
 		super( context );
 	}
-
-	public record PopUpItem( String name, String value ) {}
 
 	public List<PopUpItem> popUpItems() {
 		return List.of(
@@ -36,6 +41,7 @@ public class TAFormComponent extends NGComponent {
 	}
 
 	public NGActionResults submit() {
+		submitResult = new SubmitResult( textFieldValue, selectedPopUpItem );
 		return null;
 	}
 }
