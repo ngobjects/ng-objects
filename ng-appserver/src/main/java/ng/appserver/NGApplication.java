@@ -269,7 +269,7 @@ public class NGApplication implements NGPlugin {
 	 */
 	private void initPlugin( final NGPlugin plugin ) {
 		logger.info( "Initializing plugin {}", plugin.getClass().getName() );
-		addDefaultResourcesourcesForNamespace( resourceManager(), plugin.namespace() );
+		addDefaultResourceSourcesForNamespace( resourceManager(), plugin.namespace() );
 		properties().addAndReadSource( new PropertiesSourceResource( plugin.namespace(), "Properties" ) );
 
 		// FIXME: We're greedily loading everything now. We need to modify element loading and caching to make it dynamic during development // Hugi 2025-04-19
@@ -640,7 +640,7 @@ public class NGApplication implements NGPlugin {
 	/**
 	 * Declare resource sources for standard resource types in the given namespace
 	 */
-	private static void addDefaultResourcesourcesForNamespace( final NGResourceManager resourceManager, final String namespace ) {
+	private static void addDefaultResourceSourcesForNamespace( final NGResourceManager resourceManager, final String namespace ) {
 		final NGResourceLoader loader = resourceManager.resourceLoader();
 		loader.addResourceSource( namespace, StandardResourceType.App, new JavaClasspathResourceSource( "ng/%s/app-resources".formatted( namespace ) ) );
 		loader.addResourceSource( namespace, StandardResourceType.WebServer, new JavaClasspathResourceSource( "ng/%s/webserver-resources".formatted( namespace ) ) );
