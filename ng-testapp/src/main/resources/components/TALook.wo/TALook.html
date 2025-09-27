@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Welcome to ng</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<wo:stylesheet filename="bootstrap-5.3.8/bootstrap.min.css" />
+		<wo:script filename="bootstrap-5.3.8/bootstrap.min.js" />
+		
+		<!-- Note that we're manually adding the ng.js file separately since element's currently do not have a standard method to modify the resource (for example, add resources) -->
+		<wo:script namespace="ng" filename="ng-js.js" />
+	</head>
+	<body>
+		<div class="container mt-3">
+			<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+				<a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+					<svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+					<span class="fs-4">ng-testapp</span>
+				</a>
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a href="https://www.fermentedshark.com/" class="nav-link">Website</a></li>
+					<li class="nav-item"><a href="https://github.com/ngobjects" class="nav-link">GitHub</a></li>
+				</ul>
+			</header>
+			<div class="row">
+				<div class="col-md-2">
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<wo:link pageName="TAImagesPage" class="nav-link">Images</wo:link>
+							<wo:link pageName="TAFormComponent" class="nav-link">Forms</wo:link>
+							<wo:link pageName="TAFileUpload" class="nav-link">File upload</wo:link>
+							<wo:link pageName="TAAjaxPage" class="nav-link">Ajax</wo:link>
+						</li>
+					</ul> 
+				</div>
+				<div class="col-md-10">
+					<wo:content />
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

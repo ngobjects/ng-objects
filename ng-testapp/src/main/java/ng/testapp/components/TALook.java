@@ -3,9 +3,13 @@ package ng.testapp.components;
 import ng.appserver.NGContext;
 import ng.appserver.templating.NGComponent;
 
-public class SingleFileComponent extends NGComponent {
+/**
+ * Our look/wrapper component
+ */
 
-	public SingleFileComponent( NGContext context ) {
+public class TALook extends NGComponent {
+
+	public TALook( NGContext context ) {
 		super( context );
 	}
 }

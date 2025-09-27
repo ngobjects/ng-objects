@@ -17,9 +17,9 @@ import ng.appserver.templating.elements.NGImage;
 import ng.appserver.templating.elements.NGString;
 import ng.appserver.templating.elements.NGStylesheet;
 
-public class ProgrammaticDynamicComponent extends NGComponent {
+public class TAProgrammaticDynamicComponent extends NGComponent {
 
-	public ProgrammaticDynamicComponent( NGContext context ) {
+	public TAProgrammaticDynamicComponent( NGContext context ) {
 		super( context );
 	}
 

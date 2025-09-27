@@ -1,12 +1,12 @@
-package ng.testapp.da;
+package ng.testapp;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.directactions.NGDirectAction;
-import ng.testapp.components.ExampleComponent;
-import ng.testapp.components.ProgrammaticDynamicComponent;
+import ng.testapp.components.TAMain;
+import ng.testapp.components.TAProgrammaticDynamicComponent;
 
 public class DirectAction extends NGDirectAction {
 
@@ -20,11 +20,11 @@ public class DirectAction extends NGDirectAction {
 	}
 
 	public NGActionResults componentAction() {
-		return pageWithName( ExampleComponent.class );
+		return pageWithName( TAMain.class );
 	}
 
 	public NGActionResults programmaticAction() {
-		return pageWithName( ProgrammaticDynamicComponent.class );
+		return pageWithName( TAProgrammaticDynamicComponent.class );
 	}
 
 	public NGActionResults htmlAction() {

@@ -3,9 +3,9 @@ package ng.testapp.components;
 import ng.appserver.NGContext;
 import ng.appserver.templating.NGComponent;
 
-public class WrapperComponent extends NGComponent {
+public class TAWrapperComponent extends NGComponent {
 
-	public WrapperComponent( NGContext context ) {
+	public TAWrapperComponent( NGContext context ) {
 		super( context );
 	}
 

@@ -1,4 +1,4 @@
-package ng.testapp.da;
+package ng.testapp.directaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,10 @@ import ng.appserver.NGActionResults;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.directactions.NGDirectAction;
+
+/**
+ * Merely created to test using an additional direct action class
+ */
 
 public class JSONAction extends NGDirectAction {
 

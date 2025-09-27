@@ -6,7 +6,7 @@ import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
 import ng.appserver.templating.NGComponent;
 
-public class ExampleComponent extends NGComponent {
+public class TAMain extends NGComponent {
 
 	public String valueForTheTestTextField = "I am a field value";
 
@@ -16,7 +16,7 @@ public class ExampleComponent extends NGComponent {
 
 	public boolean showHiddenPart;
 
-	public ExampleComponent( NGContext context ) {
+	public TAMain( NGContext context ) {
 		super( context );
 	}
 
@@ -40,10 +40,6 @@ public class ExampleComponent extends NGComponent {
 
 	public String showHideToggleString() {
 		return showHiddenPart ? "Hide" : "Show";
-	}
-
-	public byte[] testImage3Data() {
-		return application().resourceManager().obtainAppResource( "app", "test-image-3.jpg" ).get().bytes();
 	}
 
 	public NGActionResults testAction() {

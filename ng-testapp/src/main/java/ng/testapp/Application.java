@@ -1,17 +1,17 @@
 package ng.testapp;
 
+import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
+import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
+import ng.plugins.Elements;
 import ng.plugins.Routes;
-import ng.testapp.components.ExampleComponent;
-import ng.testapp.components.FormComponent;
-import ng.testapp.components.ProgrammaticDynamicComponent;
-import ng.testapp.components.RepetitionComponent;
-import ng.testapp.components.SingleFileComponent;
-import ng.testapp.da.DirectAction;
-import ng.testapp.da.JSONAction;
+import ng.testapp.components.TAMain;
+import ng.testapp.components.TAProgrammaticDynamicComponent;
+import ng.testapp.components.TASingleFileComponent;
+import ng.testapp.directaction.JSONAction;
 
 public class Application extends NGApplication {
 
@@ -19,75 +19,85 @@ public class Application extends NGApplication {
 		NGApplication.run( args, Application.class );
 	}
 
+	/**
+	 * Registration of direct action classes is very primitive, since DAs have received little love through ng's development process.
+	 *
+	 * DAs are still included, mostly because I believe they might be important for migrating older projects (which often contain plenty of DAs).
+	 *
+	 * But I think actual routes really mostly replace DAs (they give you the static URLs, but in a nicer way)
+	 */
 	public Application() {
 		// FIXME: Just a reminder that this sucks // Hugi 2025-06-19
 		NGDirectActionRequestHandler.registerDirectActionClass( DirectAction.class );
 		NGDirectActionRequestHandler.registerDirectActionClass( JSONAction.class );
 	}
 
+	/**
+	 * Demonstrates how you can map URLs to actions in your application (our version of routing, as seen in most web frameworks).
+	 *
+	 * As seen, we generate our route table by invoking super.routes() and then adding routes to it by invoking map().
+	 *
+	 * Route patterns are very simple in this current incarnation.
+	 * You can either map an exact URL, or end the URL pattern with "*" to map everything starting with the given string (as in the /print route shown below).
+	 * Note that unlike most other frameworks, we don't differentiate between methods when defining a route. .map()-ing a route will handle the URL, regardless of the request method.
+	 * Like most other things, that may change in the future, if we feel it's useful.
+	 *
+	 * You can .map() a URL to
+	 *
+	 * 1) A component instance (will just construct an instance of the component and generate a response from it)
+	 * 2) A function accepting the request as a parameter and returning NGActionResults (Function<NGRequest,NGActionResults)
+	 * 3) A method accepting no parameters and returning NGActionResults (Supplier<NGActionResults)
+	 * 4) An instance of an NGRequestHandler. In this case you can think of .map like  a fancy version of WO's .registerRequestHandler
+	 */
 	@Override
 	public Routes routes() {
-		return Routes
-				.create()
-				.map( "/", ExampleComponent.class )
-				.map( "/response-plain", ( request ) -> {
-					NGResponse response = new NGResponse( "Oh look, a response!", 200 );
+		return super.routes()
+				.map( "/", TAMain.class )
+
+				// A little Hello World demo for demonstration of a wildcard patterned URL
+				.map( "/print/*", request -> {
+					final String responseContent = "Hello " + request.parsedURI().getString( 1 );
+
+					// Note that NGResponse's constructors are deprecated.
+					// This is because NGResponse and NGRequest are seriously being considered for conversion to interfaces,
+					// so we can have separate response/request types based on the content they serve (string, byte[], stream, multipart etc.).
+					// In that case, generic response construction would possible be performed using factory methods instead (NGResponse.of() or something like that)
+					return new NGResponse( responseContent, 200 );
+				} )
+
+				// Demonstrates how we can map a URL to a response-generating method accepting the request as a parameter
+				.map( "/response-image", this::imageReponse )
+
+				// Test adding cookies to the response. Mainly to demonstrate
+				.map( "/response-with-cookie", () -> {
+					final NGResponse response = new NGResponse( "Oh look, a response!", 200 );
 					response.addCookie( new NGCookie( "nafn", "Hugi" ) );
 					return response;
 				} )
-				.map( "/response-image", ( request ) -> {
-					final byte[] bytes = application().resourceManager().obtainWebserverResource( "app", "test-image-4.jpg" ).get().bytes();
 
-					NGResponse response = new NGResponse();
-					response.setContentBytes( bytes );
-					response.setHeader( "content-type", "image/jpeg" );
-					return response;
-				} )
-				.map( "/component-programmatic", ( request ) -> {
-					return pageWithName( ProgrammaticDynamicComponent.class, request.context() );
-				} )
+				// A component with a single-file-template
+				.map( "/single-file", TASingleFileComponent.class )
 
-				.map( "/component-plain", ( request ) -> {
-					return pageWithName( ExampleComponent.class, request.context() );
-				} )
+				// A classless component with a single-file-template
+				.map( "/single-file-classless", request -> pageWithName( "TASingleFileClasslessComponent", request.context() ) )
 
-				.map( "/component-repetition", ( request ) -> {
-					return pageWithName( RepetitionComponent.class, request.context() );
-				} )
+				// Testing of programmatic component generation
+				// FIXME: Doesn't really belong in the demo project, find a new home // Hugi 2025-09-27
+				.map( "/component-programmatic", TAProgrammaticDynamicComponent.class );
+	}
 
-				.map( "/component-form", ( request ) -> {
-					return pageWithName( FormComponent.class, request.context() );
-				} )
+	@Override
+	public Elements elements() {
+		return super.elements();
+	}
 
-				.map( "/single-file-classless", ( request ) -> {
-					return pageWithName( "SingleFileClasslessComponent", request.context() );
-				} )
-				.map( "/single-file", ( request ) -> {
-					return pageWithName( SingleFileComponent.class, request.context() );
-				} )
-				.map( "/form-handler", ( request ) -> {
-					System.out.println( request.contentString() );
-					System.out.println( request.formValues() );
-					return new NGResponse();
-				} );
-		//				.map( "/print-routes", ( request ) -> {
-		//					StringBuilder b = new StringBuilder();
-		//
-		//					b.append( "<h2>These are the routes registered with the application</h2>" );
-		//					b.append( "<style>body{ font-family: sans-serif}</style>" );
-		//
-		//					routeTable().routes().forEach( route -> {
-		//						b.append( String.format( "<a style=\"display:inline-block; width:200px\" href=\"%s\">%s</a>", route.pattern(), route.pattern() ) );
-		//						b.append( " -> " );
-		//						b.append( route.routeHandler().getClass().getName() );
-		//						b.append( "<br>" );
-		//					} );
-		//
-		//					NGResponse response = new NGResponse();
-		//					response.setContentString( b.toString() );
-		//					response.setHeader( "content-type", "text/html" );
-		//					return response;
-		//				} );
+	private NGActionResults imageReponse( NGRequest request ) {
+		final byte[] bytes = application().resourceManager().obtainWebserverResource( "app", "test-image-4.jpg" ).get().bytes();
+
+		final NGResponse response = new NGResponse();
+		response.setContentBytes( bytes );
+		response.setHeader( "content-type", "image/jpeg" );
+		return response;
 	}
 
 	//	@Override

@@ -1,3 +1,0 @@
-MyDefinitionComesFromTheWodFile : NGString {
-	value = someValueBoundInTheWodFile;
-}

@@ -1,0 +1,43 @@
+<wo:TALook>
+	<h2>Welcome to the ng-objects test page</h2>
+	
+	<p>This project demonstrates some of the basics of ng. Currently very simple.</p>
+
+	<h3>How about conditionals</h3>
+
+	<wo:if condition="$true">
+		<p>This paragraph is inside a conditional with constant value association <code>$true</code></p>
+	</wo:if>
+
+	<p>
+		<wo:link action="$toggleShowHidden"><wo:str value="$showHideToggleString" /> horrible secret</wo:link>
+		<wo:if condition="$showHiddenPart"><br>I sometimes like light beer. Also, you just flipped a boolean bound to a wo:conditional</wo:if>
+	</p>
+
+	<h3>Let's see a repetition</h3>
+
+	<table>
+		<wo:repetition list="$names" item="$currentName" index="$index">
+			<tr>
+				<td><wo:str value="$index" /></td>
+				<td><wo:str value="$currentName" /></td>
+				<td><wo:str value="$context.elementID" /></td>
+				<td><wo:link action="$printCurrentName">Print</wo:link></td>
+			</tr>
+		</wo:repetition>
+	</table>
+
+	<h3>And of course, a wrapper component</h3>
+
+	<wo:TAWrapperComponent>
+		<p>This paragraph is inside a wrapper component</p>
+	</wo:TAWrapperComponent>
+
+	<h3>Let's try a form</h3>
+
+	<wo:form>
+		<wo:NGTextField value="$valueForTheTestTextField" /> <wo:submit action="$testAction" />
+	</wo:form>
+	<p>The field's value is: <strong><wo:str value="$valueForTheTestTextField" /></strong></p>
+	<p>Form values: <wo:str value="$context.request.formValues" /></p>
+</wo:TALook>

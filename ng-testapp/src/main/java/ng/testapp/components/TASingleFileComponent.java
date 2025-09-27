@@ -3,9 +3,9 @@ package ng.testapp.components;
 import ng.appserver.NGContext;
 import ng.appserver.templating.NGComponent;
 
-public class FormComponent extends NGComponent {
+public class TASingleFileComponent extends NGComponent {
 
-	public FormComponent( NGContext context ) {
+	public TASingleFileComponent( NGContext context ) {
 		super( context );
 	}
 }

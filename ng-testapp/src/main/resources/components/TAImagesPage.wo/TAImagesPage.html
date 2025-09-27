@@ -1,0 +1,24 @@
+<wo:TALook>
+	<h2>Some images</h2>
+	<p>Exactly what it says on the tin. Some images, to demonstrate the use of NGImage.</p>
+	<p>Kind of boring, but kept around with the plan to enrich it with more complex samples.</p>
+
+	<hr />
+
+	<wo:repetition list="$images" item="$currentImage">
+		<p>
+			<wo:img filename="$currentImage.filename" width="200" />
+			<wo:str value="$currentImage.title" />
+		</p> 
+	</wo:repetition>
+	
+	<hr />
+	
+	<h3>Let's look at the three different ways to load up an image (filename,src,data)</h3>
+	<p>
+		<wo:img filename="test-image-1.jpg" height="150" />
+		<wo:img src="/wr/app/test-image-2.jpg" height="150" />
+		<wo:img data="$testImage3Data" mimeType="image/jpeg" height="150" />
+	</p>
+	
+</wo:TALook>		
