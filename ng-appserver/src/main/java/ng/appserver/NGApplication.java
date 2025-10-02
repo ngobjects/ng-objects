@@ -706,4 +706,12 @@ public class NGApplication implements NGPlugin {
 	public <E extends NGComponent> E pageWithName( final Class<E> componentClass, final NGContext context ) {
 		return elementManager().pageWithName( componentClass, context );
 	}
+
+	/**
+	 * Invoked when the adaptor serving this application is up and running.
+	 * Override in your application subclass to run logic that requires the http adaptor to be ready to accept requests.
+	 *
+	 * FIXME: Temporary method, until we have an actual application initialization lifecycle // Hugi 2025-10-02
+	 */
+	public void adaptorListening() {}
 }

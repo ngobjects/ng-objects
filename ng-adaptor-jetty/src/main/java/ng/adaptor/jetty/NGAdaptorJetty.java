@@ -37,6 +37,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Fields;
 import org.eclipse.jetty.util.Fields.Field;
+import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +84,14 @@ public class NGAdaptorJetty extends NGAdaptor {
 		connector.setPort( port );
 		server.addConnector( connector );
 		server.setHandler( new NGHandler() );
+
+		// FIXME: Temporary lifecycle event. Probably removed once we have a stable application initialization cycle // Hugi 2025-10-02
+		server.addBean( new LifeCycle.Listener() {
+			@Override
+			public void lifeCycleStarted( LifeCycle event ) {
+				application.adaptorListening();
+			}
+		} );
 
 		try {
 			server.start();
