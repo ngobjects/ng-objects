@@ -132,9 +132,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			}
 
 			for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
-				for( final String headerValue : entry.getValue() ) {
-					jettyResponse.getHeaders().add( entry.getKey(), headerValue );
-				}
+				jettyResponse.getHeaders().add( entry.getKey(), entry.getValue() );
 			}
 
 			if( ngResponse instanceof NGResponseMultipart mp ) {
