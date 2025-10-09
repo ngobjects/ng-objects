@@ -25,9 +25,13 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
 			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
 
-			// CHECKME: Deciding whether to perform URL rewrites based on the lifebeat property is a little iffy // Hugi 2025-05-13
-			application.addURLRewritePattern( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + application.properties().d().propWOApplicationName() + ".woa(/[0-9])?" ) );
 		}
+
+		// CHECKME: URL rewrites shouldn't really be performed in development. Add by property? // Hugi 2025-05-13
+		application.addURLRewritePattern( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/(.*).woa(/[0-9])?" ) );
+
+		// FIXME: Old pattern included the application name which is probably redundant (and not even desirable, since we might be deploying under a different name) // Hugi 2025-10-09
+		// application.addURLRewritePattern( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + application.properties().d().propWOApplicationName() + ".woa(/[0-9])?" ) );
 	}
 
 	@Override
