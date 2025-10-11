@@ -3,7 +3,7 @@
  */
 function setUpdateContainerContent( updateContainerID, content ) {
 
-	var updateContainer = document.getElementById(updateContainerID);
+	const updateContainer = document.getElementById(updateContainerID);
 
 	if( !updateContainer ) {
 		alert( 'No UpdateContainer found on page with id ' + updateContainerID );
@@ -23,7 +23,7 @@ function ajaxRequest( url, fetchOptions, updateContainerID ) {
 		response => {
 			// When the response arrives, we determine if it's a multipart response or a "regular" response.
 			// If it's a multipart response, we assume each part corresponds to a container to be updated
-			var contentType = response.headers.get('content-type')
+			const contentType = response.headers.get('content-type')
 			
 			if( contentType.startsWith('multipart/form-data') ) { 
 				return response.formData();
@@ -37,8 +37,8 @@ function ajaxRequest( url, fetchOptions, updateContainerID ) {
 		responseData => {
 			if( responseData instanceof FormData ) {
 				for (const pair of responseData.entries()) {
-					var partName = pair[0];
-					var partData = pair[1];
+					const partName = pair[0];
+					const partData = pair[1];
 					setUpdateContainerContent( partName, partData );
 				}
 			}
@@ -77,15 +77,15 @@ function ajaxUpdateLinkClick( url, updateContainerID ) {
 function ajaxSubmitButtonClick( button, updateContainerID ) {
 
 	// The form we are submitting is always the clicked button's containing form
-	var form = button.form;
+	const form = button.form;
 
 	// The URL we'll be targeting is the form's action URL.
 	// Just like with regular forms, deciding which button was actually clicked is based on the element name of the button.
 	// Due to this The name of the button gets added to the request's query parameters below.
-	var url = form.action;
+	const url = form.action;
 	
 	// Get the values from the form to submit and wrap them in URLSearchParams for x-www-form-urlencoded
-	var params = new URLSearchParams(new FormData(form));
+	const params = new URLSearchParams(new FormData(form));
 	
 	// Since JS won't add the name of the clicked button to the request's parameters for us
 	// (as is usually done by a regular form submit using an input type="submit"),
@@ -111,7 +111,7 @@ function ajaxSubmitButtonClick( button, updateContainerID ) {
  * Submits an observed field's form every time a change is observed
  */
 function performSubmit( form ) {
-    var data = new FormData(form);
+    const data = new FormData(form);
     
     // Add extra data to form if required submission.
     // We can use this to submit a subset of the form fields!
@@ -120,9 +120,9 @@ function performSubmit( form ) {
 	// Obtain the form's action url for use when submitting    
 	const uri = form.getAttribute('action');
 
-	// var data = '3.1.1=0&3.1.3=200&3.1.5=0&3.1.7=200';
+	// const data = '3.1.1=0&3.1.3=200&3.1.5=0&3.1.7=200';
 
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
 	xhr.open('POST',uri);
     // xhr.setRequestHeader('content-type','application/x-www-form-urlencoded')
     xhr.send(data);
