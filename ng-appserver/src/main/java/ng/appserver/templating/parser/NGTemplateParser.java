@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 import ng.appserver.templating.parser.model.PBasicNode;
 import ng.appserver.templating.parser.model.PCommentNode;
-import ng.appserver.templating.parser.model.PGroupNode;
+import ng.appserver.templating.parser.model.PRootNode;
 import ng.appserver.templating.parser.model.PNode;
 
 /**
@@ -68,7 +68,7 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( _currentDynamicTag.declaration().name() ) );
 		}
 
-		return new PGroupNode( _currentDynamicTag.childrenWithStringsProcessedAndCombined() );
+		return new PRootNode( _currentDynamicTag.childrenWithStringsProcessedAndCombined() );
 	}
 
 	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException, NGDeclarationFormatException {
