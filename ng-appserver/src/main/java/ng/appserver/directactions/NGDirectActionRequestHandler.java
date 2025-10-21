@@ -13,6 +13,7 @@ import ng.appserver.privates.NGParsedURI;
 
 /**
  * CHECKME: We need to cache both action classes and methods // Hugi 2024-08-14
+ * FIXME: MIssing ability to define default DA class // // Hugi 2025-10-21
  */
 
 public class NGDirectActionRequestHandler extends NGRequestHandler {
@@ -47,13 +48,13 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 			final NGActionResults actionResults = instance.performActionNamed( directActionMethodName );
 			return actionResults.generateResponse();
 		}
-		catch( /* ClassNotFoundException |*/ InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
+		catch( InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ) {
 			throw new RuntimeException( e );
 		}
 	}
 
 	/**
-	 * FIXME: This is a horrid method of registering Zdirect action classes // Hugi 2025-04-18
+	 * FIXME: Horrid method of registering direct action classes // Hugi 2025-04-18
 	 */
 	public static void registerDirectActionClass( Class<? extends NGDirectAction> directActionClass ) {
 		_directActionClasses.put( directActionClass.getName(), directActionClass );
