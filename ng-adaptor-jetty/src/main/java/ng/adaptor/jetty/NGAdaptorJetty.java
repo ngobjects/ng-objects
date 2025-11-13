@@ -55,8 +55,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGAdaptorJetty.class );
 
-	private NGApplication _application;
-
 	/**
 	 * Port used if no port number is specified in properties
 	 *
@@ -66,7 +64,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 	@Override
 	public void start( NGApplication application ) {
-		_application = application;
 
 		Integer port = application.properties().d().propWOPort(); // FIXME: Ugly way to get the port number
 
@@ -83,7 +80,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final ServerConnector connector = new ServerConnector( server, connectionFactory );
 		connector.setPort( port );
 		server.addConnector( connector );
-		server.setHandler( new NGHandler() );
+		server.setHandler( new NGHandler( application ) );
 
 		// FIXME: Temporary lifecycle event. Probably removed once we have a stable application initialization cycle // Hugi 2025-10-02
 		server.addBean( new LifeCycle.Listener() {
@@ -110,7 +107,13 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 	}
 
-	public class NGHandler extends Handler.Abstract {
+	public static class NGHandler extends Handler.Abstract {
+
+		private final NGApplication _application;
+
+		public NGHandler( NGApplication application ) {
+			_application = application;
+		}
 
 		@Override
 		public boolean handle( Request request, Response response, Callback callback ) throws Exception {
