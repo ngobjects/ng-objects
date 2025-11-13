@@ -189,8 +189,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 					final long contentLength = ngResponse.contentBytesLength();
 					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
 					ngResponse.contentByteStream().writeTo( out );
-					callback.succeeded();
 				}
+				callback.succeeded();
 			}
 		}
 
