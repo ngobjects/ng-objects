@@ -21,12 +21,10 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 
 		if( application.properties().d().propWOLifebeatEnabled() ) {
 			NGDefaultLifeBeatThread.start( application.properties() );
-
-			// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
-			// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
-
 		}
 
+		// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
+		// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
 		// CHECKME: URL rewrites shouldn't really be performed in development. Add by property? // Hugi 2025-05-13
 		application.addURLRewritePattern( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/(.*).woa(/[0-9])?" ) );
 
