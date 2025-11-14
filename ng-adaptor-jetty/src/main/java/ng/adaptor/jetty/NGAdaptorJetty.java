@@ -169,27 +169,15 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 				final Content.Source cs = Content.Source.from( ngResponse.contentInputStream() );
 				Content.copy( cs, jettyResponse, callback );
-
-				// FIXME:
-				// Below is the old way we served streaming resources. Above is what's probably the proper way to serve streams.
-				// Keeping the old version around for some reviewing/performance/correctness testing.
-				// Mostly becomes relevant once we're generally serving resources using streams (which will require a little more work
-				// on resource management in general, especially having resources keep track of their length).
-				// Also; double check that ng's InputStream is getting closed by Jetty once copied, otherwise keep the auto-closing from below.
-				// Hugi 2025-06-17
-				//
-				//	try( final InputStream inputStream = ngResponse.contentInputStream()) {
-				//		inputStream.transferTo( out );
-				//	}
-				//
-				//	callback.succeeded();
 			}
 			else {
-				try( final OutputStream out = Content.Sink.asOutputStream( jettyResponse )) {
-					final long contentLength = ngResponse.contentBytesLength();
-					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+				final long contentLength = ngResponse.contentBytesLength();
+				jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+
+				try( final OutputStream out = Response.asBufferedOutputStream( jettyRequest, jettyResponse )) {
 					ngResponse.contentByteStream().writeTo( out );
 				}
+
 				callback.succeeded();
 			}
 		}
