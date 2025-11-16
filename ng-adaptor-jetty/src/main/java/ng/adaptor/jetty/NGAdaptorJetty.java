@@ -75,6 +75,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final Server server = new Server();
 
 		final HttpConfiguration config = new HttpConfiguration();
+		config.setSendServerVersion( false );
 		final HttpConnectionFactory connectionFactory = new HttpConnectionFactory( config );
 
 		final ServerConnector connector = new ServerConnector( server, connectionFactory );
