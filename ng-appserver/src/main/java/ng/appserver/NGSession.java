@@ -122,7 +122,7 @@ public class NGSession {
 	/**
 	 * @return true if this session should be harvested/terminated by session storage. This essentially means the session has timed out, or has been manually terminated
 	 */
-	public boolean shouldTerminate() {
+	public boolean shouldReap() {
 		return _manuallyTerminated || isTimedOut();
 	}
 

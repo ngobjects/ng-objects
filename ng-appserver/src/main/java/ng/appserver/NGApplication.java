@@ -439,7 +439,7 @@ public class NGApplication implements NGPlugin {
 			final NGSession session = request.existingSession();
 
 			if( session != null ) {
-				if( session.shouldTerminate() ) {
+				if( session.shouldReap() ) {
 					// If the session is terminating, delete the client side session cookie
 					response.addCookie( createSessionResetCookie() );
 					// CHECKME: This might be a better location to ask session storage to dispose of a terminated session.
@@ -457,7 +457,7 @@ public class NGApplication implements NGPlugin {
 	private void touchSessionIfPresentAndNotTerminating( final NGRequest request ) {
 		final NGSession session = request.existingSession();
 
-		if( session != null && !session.shouldTerminate() ) {
+		if( session != null && !session.shouldReap() ) {
 			session.touch();
 		}
 	}

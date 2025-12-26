@@ -35,7 +35,7 @@ public class NGServerSessionStore extends NGSessionStore {
 
 				// CHECKME: Iterating through every session every five seconds itsn't exactly efficient. We might want to look into some alternative methods // Hugi 2023-01-21
 				for( final NGSession session : sessions() ) {
-					if( session.shouldTerminate() ) {
+					if( session.shouldReap() ) {
 						_sessions.remove( session.sessionID() );
 						logger.debug( "Terminated session with ID {}", session.sessionID() );
 					}
