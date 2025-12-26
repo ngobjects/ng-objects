@@ -8,8 +8,8 @@ import java.util.StringTokenizer;
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 import ng.appserver.templating.parser.model.PBasicNode;
 import ng.appserver.templating.parser.model.PCommentNode;
-import ng.appserver.templating.parser.model.PRootNode;
 import ng.appserver.templating.parser.model.PNode;
+import ng.appserver.templating.parser.model.PRootNode;
 
 /**
  * The primary entry point for component parsing

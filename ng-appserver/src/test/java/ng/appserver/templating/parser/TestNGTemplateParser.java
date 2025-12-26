@@ -5,9 +5,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.templating.parser.NGHTMLFormatException;
-import ng.appserver.templating.parser.NGTemplateParser;
-
 public class TestNGTemplateParser {
 
 	//	@Test
