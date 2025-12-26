@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.templating.assications.NGAssociationFactory;
+import ng.appserver.templating.associations.NGAssociationFactory;
 
 public class TestNGAssociationFactory {
 

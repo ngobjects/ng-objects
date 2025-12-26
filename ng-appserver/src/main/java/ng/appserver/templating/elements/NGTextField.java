@@ -12,8 +12,8 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.assications.NGAssociation;
-import ng.appserver.templating.assications.NGAssociationUtils;
+import ng.appserver.templating.associations.NGAssociation;
+import ng.appserver.templating.associations.NGAssociationUtils;
 import ng.xperimental.NGCheckedExceptionWrapper;
 
 public class NGTextField extends NGDynamicElement {

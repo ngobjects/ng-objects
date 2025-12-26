@@ -1,4 +1,4 @@
-package ng.appserver.templating.assications;
+package ng.appserver.templating.associations;
 
 import java.util.Objects;
 

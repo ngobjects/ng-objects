@@ -10,7 +10,7 @@ import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.NGStructuralElement;
-import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.associations.NGAssociation;
 
 public class NGComponentContent extends NGDynamicElement implements NGStructuralElement {
 

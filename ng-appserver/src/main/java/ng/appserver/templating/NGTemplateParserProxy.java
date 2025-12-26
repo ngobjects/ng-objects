@@ -9,8 +9,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import ng.appserver.NGApplication;
-import ng.appserver.templating.assications.NGAssociation;
-import ng.appserver.templating.assications.NGAssociationFactory;
+import ng.appserver.templating.associations.NGAssociation;
+import ng.appserver.templating.associations.NGAssociationFactory;
 import ng.appserver.templating.elements.NGDynamicGroup;
 import ng.appserver.templating.elements.NGHTMLBareString;
 import ng.appserver.templating.elements.NGHTMLCommentString;

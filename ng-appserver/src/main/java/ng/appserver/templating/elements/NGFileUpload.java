@@ -11,7 +11,7 @@ import ng.appserver.NGRequest.UploadedFile;
 import ng.appserver.NGResponse;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.associations.NGAssociation;
 
 public class NGFileUpload extends NGDynamicElement {
 

@@ -12,7 +12,7 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGSession;
-import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.associations.NGAssociation;
 import ng.kvc.NGKeyValueCoding;
 
 /**

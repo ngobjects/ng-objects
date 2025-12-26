@@ -8,7 +8,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.associations.NGAssociation;
 
 /**
  * CHECKME: NGGenericElement and NGGenericContainer share a lot of code, we could probably simplify this // Hugi 2022-10-13

@@ -8,8 +8,8 @@ import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.assications.NGAssociation;
-import ng.appserver.templating.assications.NGAssociationUtils;
+import ng.appserver.templating.associations.NGAssociation;
+import ng.appserver.templating.associations.NGAssociationUtils;
 
 /**
  * Container element that will only render it's contained content if the binding [condition] evaluates to true.

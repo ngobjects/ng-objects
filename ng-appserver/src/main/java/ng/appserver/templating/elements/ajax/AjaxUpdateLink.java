@@ -10,7 +10,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.associations.NGAssociation;
 import ng.appserver.templating.elements.NGDynamicGroup;
 
 public class AjaxUpdateLink extends NGDynamicGroup {

@@ -10,7 +10,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.NGStructuralElement;
-import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.associations.NGAssociation;
 
 /**
  * A common superclass for dynamic elements that have multiple children in our template element tree

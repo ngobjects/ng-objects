@@ -19,7 +19,7 @@ import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.associations.NGAssociation;
 
 /**
  * An image element

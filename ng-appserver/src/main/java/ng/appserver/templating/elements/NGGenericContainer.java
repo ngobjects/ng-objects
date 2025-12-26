@@ -7,8 +7,8 @@ import ng.appserver.NGContext;
 import ng.appserver.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.assications.NGAssociation;
-import ng.appserver.templating.assications.NGAssociationUtils;
+import ng.appserver.templating.associations.NGAssociation;
+import ng.appserver.templating.associations.NGAssociationUtils;
 
 public class NGGenericContainer extends NGDynamicGroup {
 

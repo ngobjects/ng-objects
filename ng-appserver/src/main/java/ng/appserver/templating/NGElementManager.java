@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import ng.appserver.NGContext;
-import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.associations.NGAssociation;
 import ng.appserver.templating.elements.NGComponentReference;
 
 /**

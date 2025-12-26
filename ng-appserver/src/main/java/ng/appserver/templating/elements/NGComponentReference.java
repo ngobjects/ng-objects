@@ -11,7 +11,7 @@ import ng.appserver.templating.NGComponentDefinition;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.NGStructuralElement;
-import ng.appserver.templating.assications.NGAssociation;
+import ng.appserver.templating.associations.NGAssociation;
 
 /**
  * NGComponentReference holds a reference to a component being rendered in the template tree.

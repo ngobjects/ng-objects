@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.templating.assications.NGAssociationUtils;
+import ng.appserver.templating.associations.NGAssociationUtils;
 
 public class TestNGAssociationUtils {
 
