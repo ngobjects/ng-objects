@@ -1,4 +1,4 @@
-package ng.appserver.templating.assications;
+package ng.appserver.templating.associations;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
