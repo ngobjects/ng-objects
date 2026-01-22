@@ -144,51 +144,8 @@ public class NGApplication implements NGPlugin {
 		logger.info( "===== Properties from arguments =====\n" + properties._propertiesMapAsString() );
 
 		try {
-			NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
 
-			addDefaultResourceSourcesDeprecated( application.resourceManager() );
-
-			// FIXME: Assigning that unwanted global application...
-			_application = application;
-
-			// FIXME: Setting the application's mode. This should really be done in the constructor, since that's somewhere you'd _really_ like to be able to access the mode // Hugi 2025-03-16
-			application._deploymentMode = deploymentMode;
-
-			// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
-			application._properties = properties;
-
-			// We're manually adding the "ng" plugin, defining it's elements and routes.
-			application._plugins.add( new NGCorePlugin() );
-
-			// If we're in development mode, activate the development plugin for some bonus development features
-			if( isDevelopmentMode ) {
-				application._plugins.add( new NGDevelopmentPlugin() );
-
-				// FIXME: Most definitely not the way we're going to use to decide if KVC caching is enabled. Under development // Hugi 2025-04-21
-				NGKeyValueCoding.DefaultImplementation.setCachingEnabled( false );
-			}
-
-			// CHECKME: We probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
-			// CHECKME: We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath // Hugi 2025-04-19
-			application.locatePlugins();
-
-			// We add the application plugin after all the other plugins
-			application._plugins.add( application );
-
-			// CHECKME: We shouldn't really be adding this plugin by default... // Hugi 2025-05-13
-			application._plugins.add( new NGWOIntegrationPlugin() );
-
-			// We start by initializing all the located plugins...
-			for( final NGPlugin plugin : application._plugins ) {
-				application.initPlugin( plugin );
-			}
-
-			// Once all plugins have been initialized, we load them
-			for( final NGPlugin plugin : application._plugins ) {
-				plugin.load( application );
-			}
-
-			logger.info( "===== All properties =====\n" + properties._propertiesMapAsString() );
+			final NGApplication application = create( applicationClass, properties, deploymentMode, isDevelopmentMode );
 
 			// FIXME: Eventually, adaptor startup should be explicitly performed by the user
 			application.createAdaptor().start( application );
@@ -204,6 +161,61 @@ public class NGApplication implements NGPlugin {
 			// Dead return to satisfy the java compiler (which isn't aware that it's just been violently stabbed to death using System.exit())
 			return null;
 		}
+	}
+
+	/**
+	 * @return a new NGApplication instance
+	 *
+	 * FIXME: Temporary instance initialization
+	 */
+	public static NGApplication create( Class<? extends NGApplication> applicationClass, NGProperties properties, DeploymentMode deploymentMode, boolean isDevelopmentMode ) throws Exception {
+		NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
+
+		addDefaultResourceSourcesDeprecated( application.resourceManager() );
+
+		// FIXME: Assigning that unwanted global application...
+		_application = application;
+
+		// FIXME: Setting the application's mode. This should really be done in the constructor, since that's somewhere you'd _really_ like to be able to access the mode // Hugi 2025-03-16
+		application._deploymentMode = deploymentMode;
+
+		// FIXME: Properties should be accessible during application initialization, probably passed to NGApplication's constructor
+		application._properties = properties;
+
+		// We're manually adding the "ng" plugin, defining it's elements and routes.
+		application._plugins.add( new NGCorePlugin() );
+
+		// If we're in development mode, activate the development plugin for some bonus development features
+		if( isDevelopmentMode ) {
+			application._plugins.add( new NGDevelopmentPlugin() );
+
+			// FIXME: Most definitely not the way we're going to use to decide if KVC caching is enabled. Under development // Hugi 2025-04-21
+			NGKeyValueCoding.DefaultImplementation.setCachingEnabled( false );
+		}
+
+		// CHECKME: We probably need more extension points for plugin initialization (pre-constructor, post-constructor etc.) // Hugi 2023-07-28
+		// CHECKME: We should also allow users to manually register plugins they're going to use for each NGApplication instance, as an alternative to greedily autoloading every provided plugin on the classpath // Hugi 2025-04-19
+		application.locatePlugins();
+
+		// We add the application plugin after all the other plugins
+		application._plugins.add( application );
+
+		// CHECKME: We shouldn't really be adding this plugin by default... // Hugi 2025-05-13
+		application._plugins.add( new NGWOIntegrationPlugin() );
+
+		// We start by initializing all the located plugins...
+		for( final NGPlugin plugin : application._plugins ) {
+			application.initPlugin( plugin );
+		}
+
+		// Once all plugins have been initialized, we load them
+		for( final NGPlugin plugin : application._plugins ) {
+			plugin.load( application );
+		}
+
+		logger.info( "===== All properties =====\n" + properties._propertiesMapAsString() );
+
+		return application;
 	}
 
 	/**
