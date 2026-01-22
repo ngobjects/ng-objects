@@ -1,7 +1,5 @@
 package ng.appserver.templating;
 
-import com.webobjects.appserver.WOElement;
-
 import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
 import ng.appserver.NGRequest;
@@ -9,7 +7,7 @@ import ng.appserver.NGResponse;
 import ng.kvc.NGKeyValueCoding.UnknownKeyException;
 import ng.xperimental.NGErrorMessageElement;
 
-public interface NGElement extends WOElement {
+public interface NGElement /*extends WOElement */ {
 
 	public default void takeValuesFromRequest( NGRequest request, NGContext context ) {}
 
