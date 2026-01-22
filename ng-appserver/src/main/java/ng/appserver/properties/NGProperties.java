@@ -86,8 +86,9 @@ public class NGProperties {
 	 * Add a property source. The source's properties will override previously inserted resource sources, except the first one (CLI arguments, which always maintain highest priority)
 	 */
 	public void addAndReadSource( final PropertiesSource source ) {
-		// We assume that the sources already contains one object, the command line arguments
-		final int index = _sources.size() - 1;
+		// If an object is present, assume it's the command line arguments which will always maintain priority
+		// FIXME: Hacky stuff // Hugi 2026-01-22
+		final int index = _sources.isEmpty() ? 0 : _sources.size() - 1;
 		_sources.add( index, source );
 		_readAllSources();
 	}
