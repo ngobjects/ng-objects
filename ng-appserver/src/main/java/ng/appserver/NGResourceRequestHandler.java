@@ -17,7 +17,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	/**
 	 * The default path prefix for this request handler
 	 */
-	public static final String DEFAULT_PATH = "/wr/";
+	public static final String DEFAULT_PATH = "/nr/";
 
 	@Override
 	public NGResponse handleRequest( final NGRequest request ) {

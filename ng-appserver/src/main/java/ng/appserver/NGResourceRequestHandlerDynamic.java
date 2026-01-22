@@ -19,7 +19,7 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 	/**
 	 * The default path prefix for this request handler
 	 */
-	public static final String DEFAULT_PATH = "/wd/";
+	public static final String DEFAULT_PATH = "/nd/";
 
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {

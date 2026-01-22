@@ -23,7 +23,7 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 	/**
 	 * The default path prefix for this request handler
 	 */
-	public static final String DEFAULT_PATH = "/wa/";
+	public static final String DEFAULT_PATH = "/na/";
 
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {

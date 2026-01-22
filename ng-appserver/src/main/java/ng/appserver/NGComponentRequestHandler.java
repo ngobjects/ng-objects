@@ -25,7 +25,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 	/**
 	 * The default path prefix for this request handler
 	 */
-	public static String DEFAULT_PATH = "/wo/";
+	public static String DEFAULT_PATH = "/no/";
 
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
