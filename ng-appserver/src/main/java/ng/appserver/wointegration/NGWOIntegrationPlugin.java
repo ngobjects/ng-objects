@@ -20,7 +20,7 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 	public void load( NGApplication application ) {
 
 		if( application.properties().d().propWOLifebeatEnabled() ) {
-			NGDefaultLifeBeatThread.start( application.properties() );
+			NGLifebeatThreadRunner.start( application.properties() );
 		}
 
 		// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.

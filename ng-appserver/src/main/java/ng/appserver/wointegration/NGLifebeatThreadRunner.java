@@ -10,7 +10,7 @@ import ng.appserver.properties.NGProperties;
  * Created as a temporary holder class for the LifeBeatThread, just to get it out of NGApplication // Hugi 2022-04-18
  */
 
-public class NGDefaultLifeBeatThread {
+public class NGLifebeatThreadRunner {
 
 	private static NGLifebeatThread _lifebeatThread;
 
