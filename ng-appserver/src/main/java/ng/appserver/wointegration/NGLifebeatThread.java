@@ -35,6 +35,7 @@ public class NGLifebeatThread extends Thread {
 	private final InetAddress _localAddress;
 	private final int _lifebeatDestinationPort;
 	private final long _lifebeatIntervalMS;
+	private final MessageGenerator _messageGenerator;
 
 	private int _deathCounter;
 	private Socket lifebeatSocket;
@@ -44,19 +45,18 @@ public class NGLifebeatThread extends Thread {
 	private final byte[] _buffer = new byte[1000];
 	private DatagramPacket incomingDatagramPacket;
 	private DatagramPacket outgoingDatagramPacket;
-	public MessageGenerator _messageGenerator;
 
 	/**
 	 * The standard messages we will send
 	 */
-	public static class MessageGenerator {
+	private static class MessageGenerator {
 		private final byte[] _hasStarted;
 		private final byte[] _lifebeat;
-		public final byte[] _willStop;
+		private final byte[] _willStop;
 		private final byte[] _willCrash;
 		private final byte[] _versionRequest;
 
-		public MessageGenerator( final String appName, final String localhostName, final int appPort ) {
+		private MessageGenerator( final String appName, final String localhostName, final int appPort ) {
 			final String preString = "GET /cgi-bin/WebObjects/wotaskd.woa/wlb?";
 			final String postString = "&" + appName + "&" + localhostName + "&" + appPort + " HTTP/1.1\r\n\r\n";
 			final String versionString = WOMPRequestHandler.KEY + "://queryVersion";
@@ -96,6 +96,10 @@ public class NGLifebeatThread extends Thread {
 		setName( "LifebeatSendReceiveThread" );
 
 		_messageGenerator = new MessageGenerator( appName, appHost.getHostName(), appPort );
+	}
+
+	public void sendWillStop() {
+		sendMessage( _messageGenerator._willStop );
 	}
 
 	public void sendMessage( byte[] aMessage ) {
