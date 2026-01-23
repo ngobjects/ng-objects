@@ -144,7 +144,6 @@ public class NGApplication implements NGPlugin {
 		logger.info( "===== Properties from arguments =====\n" + properties._propertiesMapAsString() );
 
 		try {
-
 			final NGApplication application = create( applicationClass, properties, deploymentMode, isDevelopmentMode );
 
 			// FIXME: Eventually, adaptor startup should be explicitly performed by the user
@@ -169,7 +168,7 @@ public class NGApplication implements NGPlugin {
 	 * FIXME: Temporary instance initialization
 	 */
 	public static NGApplication create( Class<? extends NGApplication> applicationClass, NGProperties properties, DeploymentMode deploymentMode, boolean isDevelopmentMode ) throws Exception {
-		NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
+		final NGApplication application = applicationClass.getDeclaredConstructor().newInstance();
 
 		addDefaultResourceSourcesDeprecated( application.resourceManager() );
 
@@ -238,7 +237,7 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * FIXME: If this method is overridden by an application subclass, we lose the registration of the default packages. Not great // Hugi 2025-06-26
+	 * CHECKME: If a subclass overrides this method, it must invoke super.elements() to get an Elements instance, otherwise it loses the registration of the default packages. Could be nicer // Hugi 2025-06-26
 	 */
 	@Override
 	public Elements elements() {
