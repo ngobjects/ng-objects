@@ -476,28 +476,41 @@ public class NGApplication implements NGPlugin {
 	/**
 	 * Invoked to generate a response if no requestHandler was found for the given request. Essentially a 404 response.
 	 *
-	 * CHECKME: This currently incorporates a very experimental "public resources" handler, essentially a plain web server. This is not final // Hugi 2023-07-20
+	 * Override to provide your own response if no handler was found to handle the given request.
+	 *
+	 * CHECKME: Currently incorporates an experimental "public resources" handler, essentially a plain web server. Not final // Hugi 2023-07-20
 	 */
-	private NGResponse noHandlerResponse( final NGRequest request ) {
+	protected NGResponse noHandlerResponse( final NGRequest request ) {
 
-		// FIXME: We've not decided what to do about namespacing and public resources // Hugi 2024-06-26
+		// FIXME: Haven't decided what to do about namespaces and public resources // Hugi 2024-06-26
 		final String namespace = "app";
 		final String resourcePath = request.uri();
 
+		final Optional<NGResource> resource;
+
 		if( resourcePath.isEmpty() ) {
-			return new NGResponse( "No resource name specified", 400 );
+			resource = Optional.empty();
+		}
+		else {
+			resource = resourceManager().obtainPublicResource( namespace, resourcePath );
 		}
 
-		final Optional<NGResource> resource = resourceManager().obtainPublicResource( namespace, resourcePath );
-
-		// FIXME: Shouldn't we allow the user to customize the response for a non-existent resource? // Hugi 2024-02-05
 		if( resource.isEmpty() ) {
-			final NGResponse errorResponse = new NGResponse( "public resource '" + resourcePath + "' does not exist", 404 );
-			errorResponse.setHeader( "content-type", "text/html" );
-			return errorResponse;
+			return noPublicResourceResponse( request );
 		}
 
 		return NGResourceRequestHandler.responseForResource( resource.get(), resourcePath );
+	}
+
+	/**
+	 * The response returned if no handler was found and then, no public resource was found either.
+	 *
+	 * Override to provide your own response if no handler/public resource was found to handle the given request.
+	 */
+	protected NGResponse noPublicResourceResponse( final NGRequest request ) {
+		final NGResponse response = new NGResponse( "URL '%s' not found".formatted( request.uri() ), 404 );
+		response.setHeader( "content-type", "text/html" );
+		return response;
 	}
 
 	/**
