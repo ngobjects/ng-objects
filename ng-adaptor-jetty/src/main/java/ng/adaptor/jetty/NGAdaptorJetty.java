@@ -81,7 +81,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		final ServerConnector connector = new ServerConnector( server, connectionFactory );
 		connector.setPort( port );
 		server.addConnector( connector );
-		server.setHandler( new NGHandler( application ) );
+		server.setHandler( new NGJettyHandler( application ) );
 
 		// FIXME: Temporary lifecycle event. Probably removed once we have a stable application initialization cycle // Hugi 2025-10-02
 		server.addBean( new LifeCycle.Listener() {
@@ -108,11 +108,11 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 	}
 
-	public static class NGHandler extends Handler.Abstract {
+	public static class NGJettyHandler extends Handler.Abstract {
 
 		private final NGApplication _application;
 
-		public NGHandler( NGApplication application ) {
+		public NGJettyHandler( NGApplication application ) {
 			_application = application;
 		}
 
