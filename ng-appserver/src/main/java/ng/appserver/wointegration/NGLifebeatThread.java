@@ -61,17 +61,32 @@ public class NGLifebeatThread {
 	}
 
 	public void start() {
-		sendMessage( "hasStarted" );
+		sendHasStarted();
 
 		_scheduler.scheduleAtFixedRate(
-				() -> sendMessage( "lifebeat" ),
+				() -> sendLifebeat(),
 				_lifebeatIntervalMS,
 				_lifebeatIntervalMS,
 				TimeUnit.MILLISECONDS );
 	}
 
+	private void sendHasStarted() {
+		sendMessage( "hasStarted" );
+	}
+
+	private void sendLifebeat() {
+		sendMessage( "lifebeat" );
+	}
+
 	public void sendWillStop() {
 		sendMessage( "willStop" );
+	}
+
+	/**
+	 * FIXME: Note, we might be entering a loop here if wotaskd returns status 500 again for the willCrash message(s). Check wotaskd's behaviour (or use a different method for sending the message) // Hugi 2026-02-03
+	 */
+	private void sendWillCrash() {
+		sendMessage( "willCrash" );
 	}
 
 	private void sendMessage( final String action ) {
@@ -92,7 +107,7 @@ public class NGLifebeatThread {
 			}
 			else if( status == 500 ) {
 				logger.info( "Force quit received from wotaskd. Exiting." );
-				sendMessage( "willCrash" );
+				sendWillCrash();
 				System.exit( 1 );
 			}
 			else {
