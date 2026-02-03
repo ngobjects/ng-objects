@@ -1,7 +1,5 @@
 package ng.appserver.wointegration;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 import ng.appserver.properties.NGProperties;
@@ -25,17 +23,7 @@ public class NGLifebeatThreadRunner {
 		final Integer lifeBeatIntervalInSeconds = properties.d().propWOLifebeatIntervalInSeconds();
 		final long lifeBeatIntervalInMilliseconds = TimeUnit.MILLISECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.SECONDS );
 
-		final InetAddress hostAddress;
-
-		try {
-			hostAddress = InetAddress.getByName( hostName );
-		}
-		catch( final UnknownHostException e ) {
-			throw new RuntimeException( "Failed to start LifebeatThread", e );
-		}
-
-		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostAddress, lifeBeatDestinationPort, lifeBeatIntervalInMilliseconds );
-		_lifebeatThread.setDaemon( true );
+		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostName, lifeBeatDestinationPort, lifeBeatIntervalInMilliseconds );
 		_lifebeatThread.start();
 	}
 

@@ -1,242 +1,106 @@
 package ng.appserver.wointegration;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Lives alongside the application and sends regular "lifebeats" (as in "Hello, I'm still here) to the wotaskd).
- *
- * Also manages other communication with wotaskd
- * - hasStarted
- * - willStop
- * - willCrash
+ * Sends regular "lifebeats" to wotaskd to report application liveness.
  */
 
-public class NGLifebeatThread extends Thread {
+public class NGLifebeatThread {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGLifebeatThread.class );
 
-	/**
-	 * Stores the value of the response to the last sent lifebeat (FIXME: I think)
-	 */
-	private final byte[] lifebeatResponseBuffer = new byte["HTTP/1.X XXX".length() + " Apple WebObjects\r\n".length() + "\r\n\r\n".length()];
-
-	private final InetAddress _localAddress;
-	private final int _lifebeatDestinationPort;
+	private final HttpClient _httpClient;
+	private final ScheduledExecutorService _scheduler;
+	private final String _baseUrl;
 	private final long _lifebeatIntervalMS;
-	private final MessageGenerator _messageGenerator;
 
-	private int _deathCounter;
-	private Socket lifebeatSocket;
-	private OutputStream lifebeatOS;
-	private InputStream lifebeatIS;
-	private DatagramSocket datagramSocket;
-	private final byte[] _buffer = new byte[1000];
-	private DatagramPacket incomingDatagramPacket;
-	private DatagramPacket outgoingDatagramPacket;
+	public NGLifebeatThread( final String appName, final int appPort, final String wotaskdHost, final int wotaskdPort, final long lifebeatIntervalMS ) {
+		logger.info( "Creating LifebeatThread: appName={}, appPort={}, wotaskdHost={}, wotaskdPort={}, intervalMS={}", appName, appPort, wotaskdHost, wotaskdPort, lifebeatIntervalMS );
 
-	/**
-	 * The standard messages we will send
-	 */
-	private static class MessageGenerator {
-		private final byte[] _hasStarted;
-		private final byte[] _lifebeat;
-		private final byte[] _willStop;
-		private final byte[] _willCrash;
-		private final byte[] _versionRequest;
-
-		private MessageGenerator( final String appName, final String localhostName, final int appPort ) {
-			final String preString = "GET /cgi-bin/WebObjects/wotaskd.woa/wlb?";
-			final String postString = "&" + appName + "&" + localhostName + "&" + appPort + " HTTP/1.1\r\n\r\n";
-			final String versionString = WOMPRequestHandler.KEY + "://queryVersion";
-
-			_hasStarted = (preString + "hasStarted" + postString).getBytes();
-			_lifebeat = (preString + "lifebeat" + postString).getBytes();
-			_willStop = (preString + "willStop" + postString).getBytes();
-			_willCrash = (preString + "willCrash" + postString).getBytes();
-			_versionRequest = versionString.getBytes();
-		}
-	}
-
-	public NGLifebeatThread( final String appName, final int appPort, final InetAddress appHost, final int lifebeatDestinationPort, final long lifebeatIntervalMS ) {
-		logger.info( "Attempting to create LifebeatThread: {}, {}, {}, {}, {} ", appName, appPort, appHost, lifebeatDestinationPort, lifebeatIntervalMS );
-
-		Objects.requireNonNull( appName );
+		Objects.requireNonNull( appName, "appName" );
+		Objects.requireNonNull( wotaskdHost, "wotaskdHost" );
 
 		if( appPort < 1 ) {
 			throw new IllegalArgumentException( "appPort must be a positive number" );
 		}
 
-		Objects.requireNonNull( appHost );
-
-		if( lifebeatDestinationPort < 1 ) {
-			throw new IllegalArgumentException( "lifebeatDestinationPort must be a positive number" );
+		if( wotaskdPort < 1 ) {
+			throw new IllegalArgumentException( "wotaskdPort must be a positive number" );
 		}
 
 		if( lifebeatIntervalMS < 1 ) {
 			throw new IllegalArgumentException( "lifebeatIntervalMS must be a positive number" );
 		}
 
-		_lifebeatDestinationPort = lifebeatDestinationPort;
 		_lifebeatIntervalMS = lifebeatIntervalMS;
 
-		_localAddress = appHost;
+		// Base URL: http://wotaskdHost:wotaskdPort/cgi-bin/WebObjects/wotaskd.woa/wlb?{action}&{appName}&{wotaskdHost}&{appPort}
+		_baseUrl = "http://" + wotaskdHost + ":" + wotaskdPort + "/cgi-bin/WebObjects/wotaskd.woa/wlb?%s&" + appName + "&" + wotaskdHost + "&" + appPort;
 
-		setName( "LifebeatSendReceiveThread" );
+		_httpClient = HttpClient.newBuilder()
+				.connectTimeout( Duration.ofSeconds( 5 ) )
+				.build();
 
-		_messageGenerator = new MessageGenerator( appName, appHost.getHostName(), appPort );
+		_scheduler = Executors.newSingleThreadScheduledExecutor( r -> {
+			final Thread t = new Thread( r, "LifebeatThread" );
+			t.setDaemon( true );
+			return t;
+		} );
+	}
+
+	public void start() {
+		sendMessage( "hasStarted" );
+
+		_scheduler.scheduleAtFixedRate(
+				() -> sendMessage( "lifebeat" ),
+				_lifebeatIntervalMS,
+				_lifebeatIntervalMS,
+				TimeUnit.MILLISECONDS );
 	}
 
 	public void sendWillStop() {
-		sendMessage( _messageGenerator._willStop );
+		sendMessage( "willStop" );
 	}
 
-	public void sendMessage( byte[] aMessage ) {
-		Objects.requireNonNull( aMessage );
+	private void sendMessage( final String action ) {
+		final String url = String.format( _baseUrl, action );
 
 		try {
-			if( lifebeatSocket == null ) {
-				logger.debug( "Creating new lifebeat socket" );
+			final HttpRequest request = HttpRequest.newBuilder()
+					.uri( URI.create( url ) )
+					.timeout( Duration.ofSeconds( 5 ) )
+					.GET()
+					.build();
 
-				lifebeatSocket = new Socket( _localAddress, _lifebeatDestinationPort, _localAddress, 0 );
-				lifebeatSocket.setTcpNoDelay( true );
-				lifebeatSocket.setSoLinger( false, 0 );
-				lifebeatIS = lifebeatSocket.getInputStream();
-				lifebeatOS = lifebeatSocket.getOutputStream();
+			final HttpResponse<Void> response = _httpClient.send( request, HttpResponse.BodyHandlers.discarding() );
+			final int status = response.statusCode();
+
+			if( status == 200 ) {
+				logger.debug( "Lifebeat '{}' acknowledged", action );
 			}
-
-			// write the message
-			lifebeatOS.write( aMessage );
-			lifebeatOS.flush();
-
-			// read response
-			// 200 == OK, 400 == Bad Request, 500 == Force Quit
-			int fetched = 0;
-			int thisFetch = -1;
-			while( fetched < lifebeatResponseBuffer.length ) {
-				thisFetch = lifebeatIS.read( lifebeatResponseBuffer, fetched, lifebeatResponseBuffer.length - fetched );
-				if( thisFetch != -1 ) {
-					fetched += thisFetch;
-				}
-				else {
-					break;
-				}
-			}
-
-			if( (thisFetch == -1) || (lifebeatResponseBuffer[9] == '4') ) {
-				// Trash this connection and create a new one
-				// Note this means that we don't support 5.2 apps talking to 5.1 wotaskd
-				// we'll increment the deathCounter each time!
-				_closeLifebeatSocket();
-			}
-			else if( lifebeatResponseBuffer[9] == '5' ) {
-				try {
-					logger.info( "Force Quit received. Exiting now..." );
-					// Send a crash message if we can
-					lifebeatSocket = new Socket( _localAddress, _lifebeatDestinationPort, _localAddress, 0 );
-					lifebeatOS = lifebeatSocket.getOutputStream();
-					lifebeatOS.write( _messageGenerator._willCrash );
-					lifebeatOS.flush();
-					_closeLifebeatSocket();
-				}
-				finally {
-					// OK to exit - code unused in Servlet Containers
-					System.exit( 1 );
-				}
+			else if( status == 500 ) {
+				logger.info( "Force quit received from wotaskd. Exiting." );
+				sendMessage( "willCrash" );
+				System.exit( 1 );
 			}
 			else {
-				_deathCounter = 0;
+				logger.debug( "Lifebeat '{}' returned status {}", action, status );
 			}
 		}
-		catch( final java.io.IOException e ) {
-			logger.debug( "Exception sending lifebeat to wotaskd: " + e );
-			_closeLifebeatSocket();
-		}
-	}
-
-	private void _closeLifebeatSocket() {
-		// Closing everything
-		lifebeatOS = null;
-		lifebeatIS = null;
-		if( lifebeatSocket != null ) {
-			try {
-				lifebeatSocket.close();
-			}
-			catch( final IOException ioe ) {
-				logger.debug( "Exception closing lifebeat socket: " + ioe );
-			}
-			lifebeatSocket = null;
-		}
-
-		_deathCounter++;
-	}
-
-	private void udpMessage() {
-		try {
-			datagramSocket.send( outgoingDatagramPacket );
-			incomingDatagramPacket.setLength( _buffer.length );
-			datagramSocket.receive( incomingDatagramPacket );
-			final String reply = new String( incomingDatagramPacket.getData(), StandardCharsets.UTF_8 );
-			if( reply.startsWith( WOMPRequestHandler.KEY ) ) {
-				_deathCounter = 0;
-			}
-		}
-		catch( final Throwable e ) {
-			logger.debug( "Exception checking for wotaskd using UDP: " + e );
-		}
-	}
-
-	@Override
-	public void run() {
-
-		boolean _udpSocketNotAvailable = false;
-
-		try {
-			datagramSocket = new DatagramSocket( 0, _localAddress );
-			datagramSocket.setSoTimeout( 5000 );
-			outgoingDatagramPacket = new DatagramPacket( _messageGenerator._versionRequest, _messageGenerator._versionRequest.length, _localAddress, _lifebeatDestinationPort );
-			incomingDatagramPacket = new DatagramPacket( _buffer, _buffer.length );
-		}
-		catch( final SocketException e ) {
-			logger.error( "<_LifebeatThread> Exception creating datagramSocket ", e );
-			_udpSocketNotAvailable = true;
-		}
-
-		sendMessage( _messageGenerator._hasStarted );
-
-		try {
-			Thread.sleep( _lifebeatIntervalMS );
-		}
-		catch( final InterruptedException ex ) {
-			logger.debug( "Comms failure", ex );
-		}
-
-		while( true ) {
-			// FIXME: Document what exactly we're doing here
-			if( _deathCounter < 10 || _udpSocketNotAvailable ) {
-				sendMessage( _messageGenerator._lifebeat );
-			}
-			else {
-				udpMessage();
-			}
-
-			try {
-				Thread.sleep( _lifebeatIntervalMS );
-			}
-			catch( final InterruptedException ex ) {
-				logger.debug( "Thread interrupted", ex );
-			}
+		catch( final Exception e ) {
+			logger.debug( "Failed to send lifebeat '{}': {}", action, e.getMessage() );
 		}
 	}
 }
