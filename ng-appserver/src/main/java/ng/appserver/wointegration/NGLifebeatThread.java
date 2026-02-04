@@ -49,9 +49,9 @@ public class NGLifebeatThread {
 		_wotaskdPort = wotaskdPort;
 		_lifebeatIntervalMS = lifebeatIntervalMS;
 
-		// Request template: GET /path HTTP/1.0\r\nHost: host:port\r\n\r\n
-		// Using HTTP/1.0 to signal wotaskd to close the connection after responding
-		_requestTemplate = "GET /cgi-bin/WebObjects/wotaskd.woa/wlb?%s&" + appName + "&" + wotaskdHost + "&" + appPort + " HTTP/1.0\r\nHost: " + wotaskdHost + ":" + wotaskdPort + "\r\n\r\n";
+		// Request template: GET /path HTTP/1.1\r\nHost: host:port\r\nConnection: close\r\n\r\n
+		// Using HTTP/1.1 to get a response, with Connection: close so wotaskd closes after responding
+		_requestTemplate = "GET /cgi-bin/WebObjects/wotaskd.woa/wlb?%s&" + appName + "&" + wotaskdHost + "&" + appPort + " HTTP/1.1\r\nHost: " + wotaskdHost + ":" + wotaskdPort + "\r\nConnection: close\r\n\r\n";
 
 		_scheduler = Executors.newSingleThreadScheduledExecutor( r -> {
 			final Thread t = new Thread( r, "LifebeatThread" );
