@@ -106,7 +106,7 @@ public class NGLifebeatThread {
 			final String statusLine = reader.readLine();
 
 			if( statusLine == null ) {
-				logger.info( "No response from wotaskd for '{}'", action );
+				logger.debug( "No response from wotaskd for '{}'", action );
 				return;
 			}
 
@@ -114,7 +114,7 @@ public class NGLifebeatThread {
 			final int status = parseStatusCode( statusLine );
 
 			if( status == 200 ) {
-				logger.info( "Lifebeat '{}' acknowledged", action );
+				logger.debug( "Lifebeat '{}' acknowledged", action );
 			}
 			else if( status == 500 ) {
 				logger.info( "Force quit received from wotaskd. Exiting." );
@@ -122,11 +122,11 @@ public class NGLifebeatThread {
 				System.exit( 1 );
 			}
 			else {
-				logger.info( "Lifebeat '{}' returned status {}", action, status );
+				logger.debug( "Lifebeat '{}' returned status {}", action, status );
 			}
 		}
 		catch( final Exception e ) {
-			logger.info( "Failed to send lifebeat '{}': {}", action, e.getMessage() );
+			logger.debug( "Failed to send lifebeat '{}': {}", action, e.getMessage() );
 		}
 	}
 
