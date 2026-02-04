@@ -22,16 +22,16 @@ public class NGLifebeatThread {
 	private static final Logger logger = LoggerFactory.getLogger( NGLifebeatThread.class );
 
 	private final ScheduledExecutorService _scheduler;
-	private final String _wotaskdHost;
+	private final String _appHost;
 	private final int _wotaskdPort;
 	private final String _requestTemplate;
 	private final long _lifebeatIntervalMS;
 
-	public NGLifebeatThread( final String appName, final int appPort, final String wotaskdHost, final int wotaskdPort, final long lifebeatIntervalMS ) {
-		logger.info( "Creating LifebeatThread: appName={}, appPort={}, wotaskdHost={}, wotaskdPort={}, intervalMS={}", appName, appPort, wotaskdHost, wotaskdPort, lifebeatIntervalMS );
+	public NGLifebeatThread( final String appName, final int appPort, final String appHost, final int wotaskdPort, final long lifebeatIntervalMS ) {
+		logger.info( "Creating LifebeatThread: appName={}, appPort={}, appHost={}, wotaskdPort={}, intervalMS={}", appName, appPort, appHost, wotaskdPort, lifebeatIntervalMS );
 
 		Objects.requireNonNull( appName, "appName" );
-		Objects.requireNonNull( wotaskdHost, "wotaskdHost" );
+		Objects.requireNonNull( appHost, "appHost" );
 
 		if( appPort < 1 ) {
 			throw new IllegalArgumentException( "appPort must be a positive number" );
@@ -45,13 +45,13 @@ public class NGLifebeatThread {
 			throw new IllegalArgumentException( "lifebeatIntervalMS must be a positive number" );
 		}
 
-		_wotaskdHost = wotaskdHost;
+		_appHost = appHost;
 		_wotaskdPort = wotaskdPort;
 		_lifebeatIntervalMS = lifebeatIntervalMS;
 
 		// Request template: GET /path HTTP/1.1\r\nHost: host:port\r\nConnection: close\r\n\r\n
 		// Using HTTP/1.1 to get a response, with Connection: close so wotaskd closes after responding
-		_requestTemplate = "GET /cgi-bin/WebObjects/wotaskd.woa/wlb?%s&" + appName + "&" + wotaskdHost + "&" + appPort + " HTTP/1.1\r\nHost: " + wotaskdHost + ":" + wotaskdPort + "\r\nConnection: close\r\n\r\n";
+		_requestTemplate = "GET /cgi-bin/WebObjects/wotaskd.woa/wlb?%s&" + appName + "&" + appHost + "&" + appPort + " HTTP/1.1\r\nHost: " + appHost + ":" + wotaskdPort + "\r\nConnection: close\r\n\r\n";
 
 		_scheduler = Executors.newSingleThreadScheduledExecutor( r -> {
 			final Thread t = new Thread( r, "LifebeatThread" );
@@ -93,7 +93,7 @@ public class NGLifebeatThread {
 	private void sendMessage( final String action ) {
 		final String request = String.format( _requestTemplate, action );
 
-		try( final Socket socket = new Socket( _wotaskdHost, _wotaskdPort )) {
+		try( final Socket socket = new Socket( _appHost, _wotaskdPort )) {
 			socket.setSoTimeout( 5000 );
 
 			// Send request
