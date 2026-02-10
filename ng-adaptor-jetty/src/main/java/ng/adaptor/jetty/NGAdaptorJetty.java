@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.BindException;
 import java.nio.charset.StandardCharsets;
@@ -159,27 +158,26 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 				Content.copy( cs, jettyResponse, callback );
 			}
-			else if( ngResponse.contentInputStream() != null ) {
-				final long contentLength = ngResponse.contentInputStreamLength(); // If an InputStream is present, the stream's length must be present as well
-
-				if( contentLength == -1 ) {
-					throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
-				}
-
-				jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
-
-				final Content.Source cs = Content.Source.from( ngResponse.contentInputStream() );
-				Content.copy( cs, jettyResponse, callback );
-			}
 			else {
-				final long contentLength = ngResponse.contentBytesLength();
-				jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+				final Content.Source cs;
+				final long contentLength;
 
-				try( final OutputStream out = Response.asBufferedOutputStream( jettyRequest, jettyResponse )) {
-					ngResponse.contentByteStream().writeTo( out );
+				if( ngResponse.contentInputStream() != null ) {
+					contentLength = ngResponse.contentInputStreamLength();
+
+					if( contentLength == -1 ) {
+						throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
+					}
+
+					cs = Content.Source.from( ngResponse.contentInputStream() );
+				}
+				else {
+					contentLength = ngResponse.contentBytesLength();
+					cs = Content.Source.from( new ByteArrayInputStream( ngResponse.contentBytes() ) );
 				}
 
-				callback.succeeded();
+				jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+				Content.copy( cs, jettyResponse, callback );
 			}
 		}
 
