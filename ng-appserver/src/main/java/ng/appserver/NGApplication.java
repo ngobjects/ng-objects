@@ -44,6 +44,7 @@ import ng.plugins.NGDevelopmentPlugin;
 import ng.plugins.NGPlugin;
 import ng.xperimental.NGExceptionPage;
 import ng.xperimental.NGExceptionPageDevelopment;
+import ng.xperimental.NGNotFoundResponse;
 import ng.xperimental.NGSessionTimeoutPage;
 import ng.xperimental.NGWelcomePage;
 
@@ -508,7 +509,7 @@ public class NGApplication implements NGPlugin {
 	 * Override to provide your own response if no handler/public resource was found to handle the given request.
 	 */
 	protected NGResponse noPublicResourceResponse( final NGRequest request ) {
-		final NGResponse response = new NGResponse( "URL '%s' not found".formatted( request.uri() ), 404 );
+		final NGResponse response = new NGNotFoundResponse( "URL '%s' not found".formatted( request.uri() ), 404 );
 		response.setHeader( "content-type", "text/html" );
 		return response;
 	}

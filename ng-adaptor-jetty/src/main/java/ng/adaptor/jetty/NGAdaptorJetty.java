@@ -117,11 +117,10 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		@Override
 		public boolean handle( Request request, Response response, Callback callback ) throws Exception {
-			doRequest( request, response, callback );
-			return true;
+			return doRequest( request, response, callback );
 		}
 
-		private void doRequest( final Request jettyRequest, final Response jettyResponse, Callback callback ) throws IOException {
+		private boolean doRequest( final Request jettyRequest, final Response jettyResponse, Callback callback ) throws IOException {
 
 			final String contentType = jettyRequest.getHeaders().get( HttpHeader.CONTENT_TYPE );
 
@@ -136,6 +135,11 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			// This is where the application logic will perform it's actual work
 			final NGResponse ngResponse = _application.dispatchRequest( ngRequest );
+
+			//			FIXME: We need to explicitly enable this to enable "control flow" for the next Jetty Handler // Hugi 2026-02-14
+			//			if( ngResponse instanceof NGNotFoundResponse ) {
+			//				return false;
+			//			}
 
 			jettyResponse.setStatus( ngResponse.status() );
 
@@ -179,6 +183,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 				jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
 				Content.copy( cs, jettyResponse, callback );
 			}
+
+			return true;
 		}
 
 		/**
