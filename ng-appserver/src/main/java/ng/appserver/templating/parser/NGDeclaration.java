@@ -6,12 +6,14 @@ import java.util.Objects;
 /**
  * Represents a declaration of a dynamic tag
  *
+ * @param isInline true if the declaration was parsed from an inline tag
  * @param name The declaration's name (used to reference the declaration from the HTML template)
+ * @param namespace The namespace of the tag (e.g. "wo" for <wo:String />, "ui" for <ui:Button />)
  * @param type The declaration's type (name of dynamic element or component)
- * @param associations A Map of associations (bindings) on the declaration
+ * @param bindings A Map of associations (bindings) on the declaration
  */
 
-public record NGDeclaration( boolean isInline, String name, String type, Map<String, NGBindingValue> bindings ) {
+public record NGDeclaration( boolean isInline, String name, String namespace, String type, Map<String, NGBindingValue> bindings ) {
 
 	public record NGBindingValue( boolean isQuoted, String value ) {
 
@@ -22,6 +24,7 @@ public record NGDeclaration( boolean isInline, String name, String type, Map<Str
 
 	public NGDeclaration {
 		Objects.requireNonNull( name );
+		Objects.requireNonNull( namespace );
 		Objects.requireNonNull( type );
 		Objects.requireNonNull( bindings );
 	}

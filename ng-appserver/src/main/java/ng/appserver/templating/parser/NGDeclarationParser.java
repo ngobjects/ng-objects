@@ -161,7 +161,7 @@ public class NGDeclarationParser {
 			}
 
 			final Map<String, NGBindingValue> bindings = _bindingsForDictionaryString( declarationHeader, declarationBody );
-			final NGDeclaration declaration = new NGDeclaration( false, tagName, type, bindings );
+			final NGDeclaration declaration = new NGDeclaration( false, tagName, "wo", type, bindings );
 			declarations.put( tagName, declaration );
 		}
 

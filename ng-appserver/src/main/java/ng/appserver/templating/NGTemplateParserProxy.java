@@ -19,10 +19,12 @@ import ng.appserver.templating.parser.NGDeclarationFormatException;
 import ng.appserver.templating.parser.NGHTMLFormatException;
 import ng.appserver.templating.parser.NGTemplateParser;
 import ng.appserver.templating.parser.model.PBasicNode;
-import ng.appserver.templating.parser.model.PCommentNode;
+import ng.appserver.templating.parser.model.PHTMLComment;
 import ng.appserver.templating.parser.model.PHTMLNode;
+import ng.appserver.templating.parser.model.PLiteralComment;
 import ng.appserver.templating.parser.model.PNode;
 import ng.appserver.templating.parser.model.PRootNode;
+import ng.appserver.templating.parser.model.PTemplateComment;
 import ng.xperimental.NGElementNotFoundElement;
 import ng.xperimental.NGErrorMessageElement;
 
@@ -60,7 +62,9 @@ public class NGTemplateParserProxy {
 			case PBasicNode n -> toDynamicElement( n );
 			case PRootNode n -> toTemplate( n.children() );
 			case PHTMLNode n -> new NGHTMLBareString( n.value() );
-			case PCommentNode n -> new NGHTMLCommentString( n.value() );
+			case PHTMLComment n -> new NGHTMLCommentString( toTemplate( n.children() ) );
+			case PLiteralComment n -> new NGHTMLCommentString( n.value() );
+			case PTemplateComment n -> NGHTMLBareString.EMPTY; // Template comments are stripped from output
 		};
 	}
 
@@ -71,7 +75,7 @@ public class NGTemplateParserProxy {
 		final NGElement childTemplate = toTemplate( node.children() );
 
 		try {
-			return NGApplication.application().elementManager().dynamicElementWithName( NGElementManager.GLOBAL_UNNAMESPACED_NAMESPACE, type, associations, childTemplate );
+			return NGApplication.application().elementManager().dynamicElementWithName( node.namespace(), type, associations, childTemplate );
 		}
 		catch( NGElementNotFoundException e ) {
 			// FIXME: Experimental functionality, probably doesn't belong with the parser part of the framework.

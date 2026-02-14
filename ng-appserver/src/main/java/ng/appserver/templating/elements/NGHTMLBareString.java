@@ -10,6 +10,11 @@ import ng.appserver.templating.NGElement;
 
 public class NGHTMLBareString implements NGElement {
 
+	/**
+	 * An empty bare string that renders nothing. Useful as a placeholder for stripped content (e.g. template comments).
+	 */
+	public static final NGHTMLBareString EMPTY = new NGHTMLBareString( "" );
+
 	private final String _string;
 
 	public NGHTMLBareString( final String string ) {

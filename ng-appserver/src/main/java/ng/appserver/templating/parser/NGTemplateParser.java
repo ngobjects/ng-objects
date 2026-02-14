@@ -1,21 +1,30 @@
 package ng.appserver.templating.parser;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
+import ng.appserver.templating.parser.NGHTMLParser.CommentType;
 import ng.appserver.templating.parser.model.PBasicNode;
-import ng.appserver.templating.parser.model.PCommentNode;
+import ng.appserver.templating.parser.model.PHTMLComment;
+import ng.appserver.templating.parser.model.PLiteralComment;
 import ng.appserver.templating.parser.model.PNode;
 import ng.appserver.templating.parser.model.PRootNode;
+import ng.appserver.templating.parser.model.PTemplateComment;
 
 /**
  * The primary entry point for component parsing
  */
 
 public class NGTemplateParser {
+
+	/**
+	 * The default namespace used for wod-style declarations and the legacy "wo" prefix
+	 */
+	private static final String DEFAULT_NAMESPACE = "wo";
 
 	/**
 	 * Our context, i.e. the dynamic tag currently being parsed
@@ -110,6 +119,7 @@ public class NGTemplateParser {
 		}
 
 		final PNode node = new PBasicNode(
+				_currentDynamicTag.declaration().namespace(),
 				_currentDynamicTag.declaration().type(),
 				_currentDynamicTag.declaration().bindings(),
 				_currentDynamicTag.childrenWithStringsProcessedAndCombined(),
@@ -120,12 +130,63 @@ public class NGTemplateParser {
 		_currentDynamicTag.addChild( node );
 	}
 
-	public void didParseComment( final String parsedString ) {
-		_currentDynamicTag.addChild( new PCommentNode( parsedString ) );
+	public void didParseComment( final String parsedString, final CommentType commentType ) {
+
+		final String commentContent = extractCommentContent( parsedString, commentType );
+
+		final PNode commentNode = switch( commentType ) {
+			case HTML -> {
+				// For HTML comments, parse the inner content as template so dynamic tags inside are processed
+				final List<PNode> children = parseCommentContentAsTemplate( commentContent );
+				yield new PHTMLComment( children );
+			}
+			case LITERAL -> new PLiteralComment( commentContent );
+			case TEMPLATE -> new PTemplateComment( commentContent );
+		};
+
+		_currentDynamicTag.addChild( commentNode );
 	}
 
 	public void didParseText( final String parsedString ) {
 		_currentDynamicTag.addChild( parsedString );
+	}
+
+	/**
+	 * Extracts the content between the comment delimiters, stripping the <!-- / <!--! / <!--# prefix and the --> suffix
+	 */
+	private static String extractCommentContent( final String rawComment, final CommentType commentType ) {
+		// Determine prefix length based on comment type
+		final int prefixLength = switch( commentType ) {
+			case HTML -> 4;     // "<!--"
+			case LITERAL -> 5;  // "<!--!"
+			case TEMPLATE -> 5; // "<!--#"
+		};
+
+		// Strip prefix and the trailing "-->", return content
+		final int suffixLength = 3; // "-->"
+		return rawComment.substring( prefixLength, rawComment.length() - suffixLength );
+	}
+
+	/**
+	 * Parses the content of an HTML comment as a template, allowing dynamic tags inside comments to be processed.
+	 * Uses a fresh NGTemplateParser instance with the same declarations.
+	 */
+	private List<PNode> parseCommentContentAsTemplate( final String commentContent ) {
+		try {
+			final NGTemplateParser subParser = new NGTemplateParser( commentContent, "" );
+			subParser._declarations = this._declarations;
+			final PNode result = subParser.parseHTML();
+
+			if( result instanceof PRootNode rootNode ) {
+				return rootNode.children();
+			}
+
+			return List.of( result );
+		}
+		catch( NGHTMLFormatException | NGDeclarationFormatException e ) {
+			// If parsing fails, treat the comment content as a raw text node within the comment
+			return List.of( new ng.appserver.templating.parser.model.PHTMLNode( commentContent ) );
+		}
 	}
 
 	/**
@@ -164,6 +225,9 @@ public class NGTemplateParser {
 	}
 
 	private static NGDeclaration parseDeclarationFromInlineTag( final String tag, final int colonIndex, final int nextInlineBindingNumber ) throws NGHTMLFormatException {
+
+		// Extract the namespace (everything between the leading '<' and the colon)
+		final String namespace = tag.substring( tag.indexOf( '<' ) + 1, colonIndex );
 
 		final StringBuilder keyBuffer = new StringBuilder();
 		final StringBuilder valueBuffer = new StringBuilder();
@@ -254,6 +318,6 @@ public class NGTemplateParser {
 		// }
 
 		final String declarationName = "%s_%s".formatted( elementType, nextInlineBindingNumber );
-		return new NGDeclaration( true, declarationName, elementType, bindings );
+		return new NGDeclaration( true, declarationName, namespace, elementType, bindings );
 	}
 }
