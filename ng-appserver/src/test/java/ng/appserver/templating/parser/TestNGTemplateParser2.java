@@ -14,6 +14,7 @@ import ng.appserver.templating.parser.model.PHTMLNode;
 import ng.appserver.templating.parser.model.PNode;
 import ng.appserver.templating.parser.model.PRawNode;
 import ng.appserver.templating.parser.model.PRootNode;
+import ng.appserver.templating.parser.model.SourceRange;
 
 /**
  * Tests for the new recursive descent parser (NGTemplateParser2).
@@ -220,6 +221,72 @@ public class TestNGTemplateParser2 {
 		final String html = "<webobject name=\"Greeting\">Hello</webobject>";
 		final String wod = "Greeting : String { value = \"hello\"; }";
 		compareWithOldParser( html, wod );
+	}
+
+	// ---- Source range tracking ----
+
+	@Test
+	public void sourceRangeForRootNode() throws Exception {
+		final String html = "<div>Hello</div>";
+		final PRootNode root = parse( html, "" );
+		assertEquals( new SourceRange( 0, html.length() ), root.sourceRange() );
+	}
+
+	@Test
+	public void sourceRangeForHTMLNode() throws Exception {
+		final PRootNode root = parse( "<p>text</p>", "" );
+		final PHTMLNode html = assertInstanceOf( PHTMLNode.class, root.children().getFirst() );
+		assertEquals( new SourceRange( 0, 11 ), html.sourceRange() );
+	}
+
+	@Test
+	public void sourceRangeForSelfClosingElement() throws Exception {
+		final String html = "<wo:String value=\"$x\" />";
+		final PRootNode root = parse( html, "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( new SourceRange( 0, html.length() ), node.sourceRange() );
+	}
+
+	@Test
+	public void sourceRangeForContainerElement() throws Exception {
+		final String html = "<wo:Conditional condition=\"$a\">text</wo:Conditional>";
+		final PRootNode root = parse( html, "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( new SourceRange( 0, html.length() ), node.sourceRange() );
+	}
+
+	@Test
+	public void sourceRangesForMixedContent() throws Exception {
+		// Positions:  0         1         2         3         4         5
+		//             0123456789012345678901234567890123456789012345678901234
+		final String html = "<p>Before</p><wo:String value=\"$x\" /><p>After</p>";
+		final PRootNode root = parse( html, "" );
+		assertEquals( 3, root.children().size() );
+
+		final PHTMLNode before = assertInstanceOf( PHTMLNode.class, root.children().get( 0 ) );
+		assertEquals( new SourceRange( 0, 13 ), before.sourceRange() );
+
+		final PBasicNode element = assertBasicNode( root.children().get( 1 ) );
+		assertEquals( new SourceRange( 13, 37 ), element.sourceRange() );
+
+		final PHTMLNode after = assertInstanceOf( PHTMLNode.class, root.children().get( 2 ) );
+		assertEquals( new SourceRange( 37, html.length() ), after.sourceRange() );
+	}
+
+	@Test
+	public void sourceRangeForRawDirective() throws Exception {
+		final String html = "<p:raw>verbatim content</p:raw>";
+		final PRootNode root = parse( html, "" );
+		final PRawNode raw = assertInstanceOf( PRawNode.class, root.children().getFirst() );
+		assertEquals( new SourceRange( 0, html.length() ), raw.sourceRange() );
+	}
+
+	@Test
+	public void sourceRangeForCommentDirective() throws Exception {
+		final String html = "<p:comment>hidden</p:comment>";
+		final PRootNode root = parse( html, "" );
+		final PCommentNode comment = assertInstanceOf( PCommentNode.class, root.children().getFirst() );
+		assertEquals( new SourceRange( 0, html.length() ), comment.sourceRange() );
 	}
 
 	// ---- Helpers ----

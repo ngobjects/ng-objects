@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import ng.appserver.templating.parser.model.PHTMLNode;
 import ng.appserver.templating.parser.model.PNode;
+import ng.appserver.templating.parser.model.SourceRange;
 
 /**
  * Represents a dynamic tag in the HTML part of a template
@@ -93,7 +94,7 @@ public class NGDynamicHTMLTag {
 				// If we encounter any other element and we still have unwrapped strings in our builder,
 				// we take the string data we've collected, wrap it up and add it to the element list.
 				if( sb.length() > 0 ) {
-					final PHTMLNode bareString = new PHTMLNode( sb.toString() );
+					final PHTMLNode bareString = new PHTMLNode( sb.toString(), SourceRange.EMPTY );
 					childElements.add( bareString );
 					sb.setLength( 0 );
 				}
@@ -105,7 +106,7 @@ public class NGDynamicHTMLTag {
 
 		// If the last element happened to be a string, the StringBuilder will still have data so we wrap it here
 		if( sb.length() > 0 ) {
-			final PHTMLNode bareString = new PHTMLNode( sb.toString() );
+			final PHTMLNode bareString = new PHTMLNode( sb.toString(), SourceRange.EMPTY );
 			childElements.add( bareString );
 			sb.setLength( 0 );
 		}

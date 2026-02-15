@@ -81,8 +81,9 @@ public class NGTemplateParser2 {
 	 * @return The parsed template as a PNode tree
 	 */
 	public PNode parse() throws NGHTMLFormatException, NGDeclarationFormatException {
+		final int startPos = _pos;
 		final List<PNode> children = parseChildren( null );
-		return new PRootNode( children );
+		return new PRootNode( children, new SourceRange( startPos, _pos ) );
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class NGTemplateParser2 {
 	private List<PNode> parseChildren( final String expectedClosingTag ) throws NGHTMLFormatException, NGDeclarationFormatException {
 		final List<PNode> children = new ArrayList<>();
 		final StringBuilder htmlBuffer = new StringBuilder();
-		final int htmlStart = _pos;
+		int htmlStart = _pos;
 
 		while( _pos < _source.length() ) {
 
@@ -105,7 +106,7 @@ public class NGTemplateParser2 {
 				if( lookingAt( "</" ) ) {
 					if( expectedClosingTag != null && lookingAtClosingTag( expectedClosingTag ) ) {
 						// Flush any accumulated HTML
-						flushHTML( htmlBuffer, htmlStart, children );
+						htmlStart = flushHTML( htmlBuffer, htmlStart, children );
 						// Consume the closing tag
 						consumeClosingTag( expectedClosingTag );
 						return children;
@@ -118,21 +119,24 @@ public class NGTemplateParser2 {
 
 				// Check for parser directives
 				if( lookingAtIgnoreCase( "<p:raw>" ) || lookingAtIgnoreCase( "<p:raw " ) || lookingAtIgnoreCase( "<p:raw/>" ) ) {
-					flushHTML( htmlBuffer, htmlStart, children );
+					htmlStart = flushHTML( htmlBuffer, htmlStart, children );
 					children.add( parseRawDirective() );
+					htmlStart = _pos;
 					continue;
 				}
 
 				if( lookingAtIgnoreCase( "<p:comment>" ) || lookingAtIgnoreCase( "<p:comment " ) || lookingAtIgnoreCase( "<p:comment/>" ) ) {
-					flushHTML( htmlBuffer, htmlStart, children );
+					htmlStart = flushHTML( htmlBuffer, htmlStart, children );
 					children.add( parseCommentDirective() );
+					htmlStart = _pos;
 					continue;
 				}
 
 				// Check for namespaced start tag (inline dynamic element)
 				if( isAtNamespacedStartTag() ) {
-					flushHTML( htmlBuffer, htmlStart, children );
+					htmlStart = flushHTML( htmlBuffer, htmlStart, children );
 					children.add( parseNamespacedElement() );
+					htmlStart = _pos;
 					continue;
 				}
 
@@ -141,8 +145,9 @@ public class NGTemplateParser2 {
 					// Disambiguate: <wo name="..."> (legacy) vs <wo:Type> (inline namespace)
 					// If we got here, it's NOT a namespaced tag (that was checked above), so it's legacy
 					if( !isAtNamespacedStartTag() ) {
-						flushHTML( htmlBuffer, htmlStart, children );
+						htmlStart = flushHTML( htmlBuffer, htmlStart, children );
 						children.add( parseLegacyElement() );
+						htmlStart = _pos;
 						continue;
 					}
 				}
@@ -197,7 +202,7 @@ public class NGTemplateParser2 {
 		if( lookingAt( "/>" ) ) {
 			_pos += 2;
 			final String declarationName = "%s_%s".formatted( type, _inlineTagCount++ );
-			return new PBasicNode( namespace, type, bindings, List.of(), true, declarationName );
+			return new PBasicNode( namespace, type, bindings, List.of(), true, declarationName, new SourceRange( startPos, _pos ) );
 		}
 
 		// Container tag — expect '>'
@@ -209,7 +214,7 @@ public class NGTemplateParser2 {
 		final List<PNode> children = parseChildren( closingTagName );
 
 		final String declarationName = "%s_%s".formatted( type, _inlineTagCount++ );
-		return new PBasicNode( namespace, type, bindings, children, true, declarationName );
+		return new PBasicNode( namespace, type, bindings, children, true, declarationName, new SourceRange( startPos, _pos ) );
 	}
 
 	/**
@@ -245,7 +250,7 @@ public class NGTemplateParser2 {
 		// Self-closing?
 		if( lookingAt( "/>" ) ) {
 			_pos += 2;
-			return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), List.of(), false, declarationName );
+			return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), List.of(), false, declarationName, new SourceRange( startPos, _pos ) );
 		}
 
 		// Container tag — expect '>'
@@ -254,7 +259,7 @@ public class NGTemplateParser2 {
 		// Parse children recursively
 		final List<PNode> children = parseChildren( tagKeyword );
 
-		return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), children, false, declarationName );
+		return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), children, false, declarationName, new SourceRange( startPos, _pos ) );
 	}
 
 	/**
@@ -298,13 +303,13 @@ public class NGTemplateParser2 {
 		final String consumed = _source.substring( startPos, _pos );
 
 		if( consumed.endsWith( "/>" ) ) {
-			return new PRawNode( "" );
+			return new PRawNode( "", new SourceRange( startPos, _pos ) );
 		}
 
 		// Scan for closing </p:raw> with nesting
 		final String content = scanDirectiveContent( DIRECTIVE_RAW );
 
-		return new PRawNode( content );
+		return new PRawNode( content, new SourceRange( startPos, _pos ) );
 	}
 
 	/**
@@ -320,12 +325,12 @@ public class NGTemplateParser2 {
 		final String consumed = _source.substring( startPos, _pos );
 
 		if( consumed.endsWith( "/>" ) ) {
-			return new PCommentNode( "" );
+			return new PCommentNode( "", new SourceRange( startPos, _pos ) );
 		}
 
 		final String content = scanDirectiveContent( DIRECTIVE_COMMENT );
 
-		return new PCommentNode( content );
+		return new PCommentNode( content, new SourceRange( startPos, _pos ) );
 	}
 
 	/**
@@ -744,11 +749,15 @@ public class NGTemplateParser2 {
 	/**
 	 * Flushes accumulated HTML text into the children list as a PHTMLNode (if non-empty),
 	 * then resets the buffer.
+	 *
+	 * @return The current position, to be used as the start of the next HTML buffer
 	 */
-	private void flushHTML( final StringBuilder buffer, final int htmlStart, final List<PNode> children ) {
+	private int flushHTML( final StringBuilder buffer, final int htmlStart, final List<PNode> children ) {
 		if( buffer.length() > 0 ) {
-			children.add( new PHTMLNode( buffer.toString() ) );
+			children.add( new PHTMLNode( buffer.toString(), new SourceRange( htmlStart, _pos ) ) );
 			buffer.setLength( 0 );
 		}
+
+		return _pos;
 	}
 }

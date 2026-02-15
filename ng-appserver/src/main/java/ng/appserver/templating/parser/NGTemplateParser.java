@@ -11,6 +11,7 @@ import ng.appserver.templating.parser.model.PCommentNode;
 import ng.appserver.templating.parser.model.PNode;
 import ng.appserver.templating.parser.model.PRawNode;
 import ng.appserver.templating.parser.model.PRootNode;
+import ng.appserver.templating.parser.model.SourceRange;
 
 /**
  * The primary entry point for component parsing
@@ -109,7 +110,7 @@ public class NGTemplateParser {
 			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( _currentDynamicTag.declaration().name() ) );
 		}
 
-		return new PRootNode( _currentDynamicTag.childrenWithStringsProcessedAndCombined() );
+		return new PRootNode( _currentDynamicTag.childrenWithStringsProcessedAndCombined(), SourceRange.EMPTY );
 	}
 
 	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException, NGDeclarationFormatException {
@@ -182,10 +183,10 @@ public class NGTemplateParser {
 					final PNode node;
 
 					if( DIRECTIVE_RAW.equals( _currentDirective ) ) {
-						node = new PRawNode( content );
+						node = new PRawNode( content, SourceRange.EMPTY );
 					}
 					else {
-						node = new PCommentNode( content );
+						node = new PCommentNode( content, SourceRange.EMPTY );
 					}
 
 					_currentDirective = null;
@@ -213,7 +214,8 @@ public class NGTemplateParser {
 				_currentDynamicTag.declaration().bindings(),
 				_currentDynamicTag.childrenWithStringsProcessedAndCombined(),
 				_currentDynamicTag.declaration().isInline(),
-				_currentDynamicTag.declaration().name() );
+				_currentDynamicTag.declaration().name(),
+				SourceRange.EMPTY );
 
 		_currentDynamicTag = parentDynamicTag;
 		_currentDynamicTag.addChild( node );

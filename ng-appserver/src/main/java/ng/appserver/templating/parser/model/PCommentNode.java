@@ -7,9 +7,10 @@ import java.util.Objects;
  * Content is NOT processed as template and is stripped entirely from the rendered output.
  */
 
-public record PCommentNode( String value ) implements PNode {
+public record PCommentNode( String value, SourceRange sourceRange ) implements PNode {
 
 	public PCommentNode {
 		Objects.requireNonNull( value );
+		Objects.requireNonNull( sourceRange );
 	}
 }

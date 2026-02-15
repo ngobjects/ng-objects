@@ -9,6 +9,11 @@ package ng.appserver.templating.parser.model;
 
 public record SourceRange( int start, int end ) {
 
+	/**
+	 * A sentinel value for when source position is not available (e.g. nodes produced by the legacy parser)
+	 */
+	public static final SourceRange EMPTY = new SourceRange( 0, 0 );
+
 	public SourceRange {
 		if( start < 0 ) {
 			throw new IllegalArgumentException( "start must be non-negative, was: " + start );

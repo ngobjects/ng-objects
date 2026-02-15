@@ -7,9 +7,10 @@ import java.util.Objects;
  * Included in the rendered output as-is.
  */
 
-public record PRawNode( String value ) implements PNode {
+public record PRawNode( String value, SourceRange sourceRange ) implements PNode {
 
 	public PRawNode {
 		Objects.requireNonNull( value );
+		Objects.requireNonNull( sourceRange );
 	}
 }
