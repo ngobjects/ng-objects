@@ -100,6 +100,10 @@ public class NGTemplateParser {
 					if( isAtMalformedClosingTag() ) {
 						throw error( "Unexpected space after '</' in closing tag" );
 					}
+					// Catch mismatched namespaced closing tags like </wo:Repetition> inside a <wo:Conditional> block
+					if( expectedClosingTag != null && isAtNamespacedClosingTag() ) {
+						throw error( "Unexpected closing tag. Expected </%s>".formatted( expectedClosingTag ) );
+					}
 					// Not our closing tag — it's just HTML text (could be a regular HTML closing tag like </div>)
 					htmlBuffer.append( current() );
 					_pos++;
@@ -810,6 +814,38 @@ public class NGTemplateParser {
 
 		// Only flag it if there's a colon (namespaced tag) — </ div> is probably not our concern
 		return i < _source.length() && _source.charAt( i ) == ':';
+	}
+
+	/**
+	 * @return true if the current position is at a namespaced closing tag ({@code </letters:letters}).
+	 *
+	 * Used to detect mismatched closing tags — e.g. {@code </wo:Repetition>} inside a {@code <wo:Conditional>} block.
+	 */
+	private boolean isAtNamespacedClosingTag() {
+		if( !lookingAt( "</" ) ) {
+			return false;
+		}
+
+		int i = _pos + 2; // skip "</"
+
+		// Need at least one letter before ':'
+		while( i < _source.length() && Character.isLetter( _source.charAt( i ) ) ) {
+			i++;
+		}
+
+		if( i == _pos + 2 ) {
+			return false;
+		}
+
+		// Expect ':'
+		if( i >= _source.length() || _source.charAt( i ) != ':' ) {
+			return false;
+		}
+
+		i++; // skip ':'
+
+		// Need at least one letter/digit after ':'
+		return i < _source.length() && Character.isLetterOrDigit( _source.charAt( i ) );
 	}
 
 	/**

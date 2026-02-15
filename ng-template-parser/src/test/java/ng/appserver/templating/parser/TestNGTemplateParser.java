@@ -194,6 +194,15 @@ public class TestNGTemplateParser {
 	}
 
 	@Test
+	public void mismatchedClosingTag() {
+		final NGHTMLFormatException ex = assertThrows( NGHTMLFormatException.class, () -> {
+			parse( "<wo:Conditional condition=\"$a\">hello</wo:Repetition>", "" );
+		} );
+		assert ex.getMessage().contains( "Unexpected closing tag" ) : "Expected mismatch error, got: " + ex.getMessage();
+		assert ex.getMessage().contains( "wo:Conditional" ) : "Error should mention expected tag, got: " + ex.getMessage();
+	}
+
+	@Test
 	public void spaceAfterSlashInClosingTag() {
 		assertThrows( NGHTMLFormatException.class, () -> {
 			parse( "<wo:Conditional condition=\"$a\">hello</ wo:Conditional>", "" );
