@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
-import ng.appserver.templating.parser.legacy.NGTemplateParser;
 import ng.appserver.templating.parser.model.PBasicNode;
 import ng.appserver.templating.parser.model.PCommentNode;
 import ng.appserver.templating.parser.model.PHTMLNode;
@@ -19,13 +18,13 @@ import ng.appserver.templating.parser.model.PRootNode;
 import ng.appserver.templating.parser.model.SourceRange;
 
 /**
- * Tests for the new recursive descent parser (NGTemplateParser2).
+ * Tests for the recursive descent parser (NGTemplateParser).
  *
  * Verifies that it produces identical PNode trees to the old parser,
  * and tests edge cases specific to the new implementation.
  */
 
-public class TestNGTemplateParser2 {
+public class TestNGTemplateParser {
 
 	// ---- Plain HTML ----
 
@@ -406,7 +405,7 @@ public class TestNGTemplateParser2 {
 	// ---- Helpers ----
 
 	private static PRootNode parse( final String html, final String wod ) throws NGDeclarationFormatException, NGHTMLFormatException {
-		final PNode result = new NGTemplateParser2( html, wod ).parse();
+		final PNode result = new NGTemplateParser( html, wod ).parse();
 		return assertInstanceOf( PRootNode.class, result );
 	}
 
@@ -432,8 +431,8 @@ public class TestNGTemplateParser2 {
 	 * Parses the same template with both old and new parsers and verifies structural equivalence
 	 */
 	private static void compareWithOldParser( final String html, final String wod ) throws Exception {
-		final PRootNode newResult = (PRootNode)new NGTemplateParser2( html, wod ).parse();
-		final PRootNode oldResult = (PRootNode)new NGTemplateParser( html, wod ).parse();
+		final PRootNode newResult = (PRootNode)new NGTemplateParser( html, wod ).parse();
+		final PRootNode oldResult = (PRootNode)new ng.appserver.templating.parser.legacy.NGTemplateParser( html, wod ).parse();
 		assertNodesEqual( oldResult, newResult, "" );
 	}
 

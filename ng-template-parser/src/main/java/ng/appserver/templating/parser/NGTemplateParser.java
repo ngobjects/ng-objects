@@ -25,7 +25,7 @@ import ng.appserver.templating.parser.model.SourceRange;
  * knows its start position, so SourceRange can be attached to nodes trivially.
  */
 
-public class NGTemplateParser2 {
+public class NGTemplateParser {
 
 	/**
 	 * Parser directive: raw/verbatim block (content not processed, included in output)
@@ -52,7 +52,7 @@ public class NGTemplateParser2 {
 	 */
 	private int _pos;
 
-	public NGTemplateParser2( final String htmlString, final String declarationString ) throws NGDeclarationFormatException {
+	public NGTemplateParser( final String htmlString, final String declarationString ) throws NGDeclarationFormatException {
 		Objects.requireNonNull( htmlString );
 		Objects.requireNonNull( declarationString );
 

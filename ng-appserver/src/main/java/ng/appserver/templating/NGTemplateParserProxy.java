@@ -16,7 +16,7 @@ import ng.appserver.templating.elements.NGHTMLBareString;
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 import ng.appserver.templating.parser.NGDeclarationFormatException;
 import ng.appserver.templating.parser.NGHTMLFormatException;
-import ng.appserver.templating.parser.NGTemplateParser2;
+import ng.appserver.templating.parser.NGTemplateParser;
 import ng.appserver.templating.parser.model.PBasicNode;
 import ng.appserver.templating.parser.model.PCommentNode;
 import ng.appserver.templating.parser.model.PHTMLNode;
@@ -51,7 +51,7 @@ public class NGTemplateParserProxy {
 	 * @return A parsed element template
 	 */
 	public NGElement parse() throws NGDeclarationFormatException, NGHTMLFormatException {
-		final PNode rootNode = new NGTemplateParser2( _htmlString, _wodString ).parse();
+		final PNode rootNode = new NGTemplateParser( _htmlString, _wodString ).parse();
 		return toDynamicElement( rootNode );
 	}
 
