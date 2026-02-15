@@ -95,6 +95,10 @@ public class NGTemplateParser {
 						consumeClosingTag( expectedClosingTag );
 						return children;
 					}
+					// Catch typos like </ wo:Conditional> where a space follows </
+					if( isAtMalformedClosingTag() ) {
+						throw error( "Unexpected space after '</' in closing tag" );
+					}
 					// Not our closing tag — it's just HTML text (could be a regular HTML closing tag like </div>)
 					htmlBuffer.append( current() );
 					_pos++;
@@ -629,7 +633,7 @@ public class NGTemplateParser {
 	 * Matches </name> or </name followed by whitespace then >
 	 */
 	private boolean lookingAtClosingTag( final String tagName ) {
-		if( !lookingAtIgnoreCase( "</" + tagName ) ) {
+		if( !lookingAt( "</" + tagName ) ) {
 			return false;
 		}
 
@@ -649,10 +653,10 @@ public class NGTemplateParser {
 	private void consumeClosingTag( final String tagName ) throws NGHTMLFormatException {
 		_pos += 2; // "</"
 
-		// Skip the tag name (case-insensitive)
+		// Skip the tag name (case-sensitive)
 		final String actual = _source.substring( _pos, Math.min( _pos + tagName.length(), _source.length() ) );
 
-		if( !actual.equalsIgnoreCase( tagName ) ) {
+		if( !actual.equals( tagName ) ) {
 			throw error( "Expected closing tag </%s> but found </%s>".formatted( tagName, actual ) );
 		}
 
@@ -772,6 +776,39 @@ public class NGTemplateParser {
 
 		// The tell: a space right after the colon
 		return i < _source.length() && _source.charAt( i ) == ' ';
+	}
+
+	/**
+	 * @return true if the current position looks like a malformed closing tag with a space after {@code </}.
+	 *
+	 * Matches the pattern: {@code </ letters:} — e.g. {@code </ wo:Conditional>}
+	 * Only matches namespaced tags (with a colon) to avoid false positives on regular HTML like {@code </ div>}.
+	 */
+	private boolean isAtMalformedClosingTag() {
+		if( !lookingAt( "</ " ) ) {
+			return false;
+		}
+
+		int i = _pos + 3; // skip "</ "
+
+		// Skip any extra whitespace
+		while( i < _source.length() && _source.charAt( i ) == ' ' ) {
+			i++;
+		}
+
+		// Need at least one letter
+		final int nameStart = i;
+
+		while( i < _source.length() && Character.isLetter( _source.charAt( i ) ) ) {
+			i++;
+		}
+
+		if( i == nameStart ) {
+			return false;
+		}
+
+		// Only flag it if there's a colon (namespaced tag) — </ div> is probably not our concern
+		return i < _source.length() && _source.charAt( i ) == ':';
 	}
 
 	/**

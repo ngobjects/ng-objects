@@ -193,6 +193,20 @@ public class TestNGTemplateParser {
 		} );
 	}
 
+	@Test
+	public void spaceAfterSlashInClosingTag() {
+		assertThrows( NGHTMLFormatException.class, () -> {
+			parse( "<wo:Conditional condition=\"$a\">hello</ wo:Conditional>", "" );
+		} );
+	}
+
+	@Test
+	public void closingTagCaseMismatch() {
+		assertThrows( NGHTMLFormatException.class, () -> {
+			parse( "<wo:Repetition list=\"$items\" item=\"$item\">hello</wo:repetition>", "" );
+		} );
+	}
+
 	// ---- Error position reporting ----
 
 	@Test
