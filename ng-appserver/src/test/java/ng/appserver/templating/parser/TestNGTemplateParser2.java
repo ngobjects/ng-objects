@@ -1,0 +1,288 @@
+package ng.appserver.templating.parser;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+import ng.appserver.templating.parser.model.PBasicNode;
+import ng.appserver.templating.parser.model.PCommentNode;
+import ng.appserver.templating.parser.model.PHTMLNode;
+import ng.appserver.templating.parser.model.PNode;
+import ng.appserver.templating.parser.model.PRawNode;
+import ng.appserver.templating.parser.model.PRootNode;
+
+/**
+ * Tests for the new recursive descent parser (NGTemplateParser2).
+ *
+ * Verifies that it produces identical PNode trees to the old parser,
+ * and tests edge cases specific to the new implementation.
+ */
+
+public class TestNGTemplateParser2 {
+
+	// ---- Plain HTML ----
+
+	@Test
+	public void plainHTML() throws Exception {
+		final PRootNode root = parse( "<div>Hello</div>", "" );
+		assertEquals( 1, root.children().size() );
+		assertHTML( "<div>Hello</div>", root.children().getFirst() );
+	}
+
+	@Test
+	public void emptyTemplate() throws Exception {
+		final PRootNode root = parse( "", "" );
+		assertEquals( 0, root.children().size() );
+	}
+
+	@Test
+	public void htmlWithComment() throws Exception {
+		final PRootNode root = parse( "<!-- a comment --><p>text</p>", "" );
+		assertEquals( 1, root.children().size() );
+		assertHTML( "<!-- a comment --><p>text</p>", root.children().getFirst() );
+	}
+
+	// ---- Inline namespaced elements ----
+
+	@Test
+	public void selfClosingInlineElement() throws Exception {
+		final PRootNode root = parse( "<wo:String value=\"$name\" />", "" );
+		assertEquals( 1, root.children().size() );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( "wo", node.namespace() );
+		assertEquals( "String", node.type() );
+		assertEquals( true, node.isInline() );
+		assertEquals( 0, node.children().size() );
+		assertEquals( "\"$name\"", node.bindings().get( "value" ).value() );
+	}
+
+	@Test
+	public void containerInlineElement() throws Exception {
+		final PRootNode root = parse( "<wo:Conditional condition=\"$showIt\">Hello</wo:Conditional>", "" );
+		assertEquals( 1, root.children().size() );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( "wo", node.namespace() );
+		assertEquals( "Conditional", node.type() );
+		assertEquals( 1, node.children().size() );
+		assertHTML( "Hello", node.children().getFirst() );
+	}
+
+	@Test
+	public void nestedInlineElements() throws Exception {
+		final PRootNode root = parse( "<wo:Conditional condition=\"$a\"><wo:String value=\"$b\" /></wo:Conditional>", "" );
+		final PBasicNode outer = assertBasicNode( root.children().getFirst() );
+		assertEquals( "Conditional", outer.type() );
+		assertEquals( 1, outer.children().size() );
+		final PBasicNode inner = assertBasicNode( outer.children().getFirst() );
+		assertEquals( "String", inner.type() );
+	}
+
+	@Test
+	public void customNamespace() throws Exception {
+		final PRootNode root = parse( "<ui:Button label=\"Click\" />", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( "ui", node.namespace() );
+		assertEquals( "Button", node.type() );
+	}
+
+	@Test
+	public void mixedHTMLAndDynamic() throws Exception {
+		final PRootNode root = parse( "<p>Before</p><wo:String value=\"$x\" /><p>After</p>", "" );
+		assertEquals( 3, root.children().size() );
+		assertHTML( "<p>Before</p>", root.children().get( 0 ) );
+		assertBasicNode( root.children().get( 1 ) );
+		assertHTML( "<p>After</p>", root.children().get( 2 ) );
+	}
+
+	// ---- Legacy WOD-style elements ----
+
+	@Test
+	public void legacyWebobjectTag() throws Exception {
+		final String wod = "MyString : String { value = \"hello\"; }";
+		final PRootNode root = parse( "<webobject name=\"MyString\"></webobject>", wod );
+		assertEquals( 1, root.children().size() );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( "wo", node.namespace() );
+		assertEquals( "String", node.type() );
+		assertEquals( false, node.isInline() );
+	}
+
+	@Test
+	public void legacyWoTag() throws Exception {
+		final String wod = "MyString : String { value = \"hello\"; }";
+		final PRootNode root = parse( "<wo name=\"MyString\"></wo>", wod );
+		assertEquals( 1, root.children().size() );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( "String", node.type() );
+		assertEquals( false, node.isInline() );
+	}
+
+	@Test
+	public void legacyMissingDeclaration() {
+		assertThrows( NGDeclarationFormatException.class, () -> {
+			parse( "<webobject name=\"Missing\"></webobject>", "" );
+		} );
+	}
+
+	// ---- Parser directives ----
+
+	@Test
+	public void rawDirective() throws Exception {
+		final PRootNode root = parse( "<p:raw><wo:String value=\"$x\" /></p:raw>", "" );
+		assertEquals( 1, root.children().size() );
+		final PRawNode raw = assertInstanceOf( PRawNode.class, root.children().getFirst() );
+		assertEquals( "<wo:String value=\"$x\" />", raw.value() );
+	}
+
+	@Test
+	public void commentDirective() throws Exception {
+		final PRootNode root = parse( "<p:comment>This is hidden</p:comment>", "" );
+		assertEquals( 1, root.children().size() );
+		assertInstanceOf( PCommentNode.class, root.children().getFirst() );
+	}
+
+	@Test
+	public void nestedRawDirective() throws Exception {
+		final PRootNode root = parse( "<p:raw>outer<p:raw>inner</p:raw>outer</p:raw>", "" );
+		assertEquals( 1, root.children().size() );
+		final PRawNode raw = assertInstanceOf( PRawNode.class, root.children().getFirst() );
+		assertEquals( "outer<p:raw>inner</p:raw>outer", raw.value() );
+	}
+
+	@Test
+	public void selfClosingRawDirective() throws Exception {
+		final PRootNode root = parse( "<p:raw/>", "" );
+		assertEquals( 1, root.children().size() );
+		final PRawNode raw = assertInstanceOf( PRawNode.class, root.children().getFirst() );
+		assertEquals( "", raw.value() );
+	}
+
+	// ---- Error cases ----
+
+	@Test
+	public void unclosedDynamicTag() {
+		assertThrows( NGHTMLFormatException.class, () -> {
+			parse( "<wo:Conditional condition=\"$a\">oops", "" );
+		} );
+	}
+
+	@Test
+	public void unclosedRawDirective() {
+		assertThrows( NGHTMLFormatException.class, () -> {
+			parse( "<p:raw>no closing tag", "" );
+		} );
+	}
+
+	@Test
+	public void unclosedQuotedBinding() {
+		assertThrows( NGHTMLFormatException.class, () -> {
+			parse( "<wo:String value=\"unclosed />", "" );
+		} );
+	}
+
+	// ---- Multiple bindings ----
+
+	@Test
+	public void multipleBindings() throws Exception {
+		final PRootNode root = parse( "<wo:TextField value=\"$name\" size=\"$fieldSize\" />", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( 2, node.bindings().size() );
+		assertEquals( "\"$name\"", node.bindings().get( "value" ).value() );
+		assertEquals( "\"$fieldSize\"", node.bindings().get( "size" ).value() );
+	}
+
+	// ---- Comparison with old parser ----
+
+	@Test
+	public void matchesOldParserForSimpleInline() throws Exception {
+		final String html = "<wo:String value=\"$name\" />";
+		compareWithOldParser( html, "" );
+	}
+
+	@Test
+	public void matchesOldParserForContainer() throws Exception {
+		final String html = "<wo:Conditional condition=\"$show\"><p>Content</p></wo:Conditional>";
+		compareWithOldParser( html, "" );
+	}
+
+	@Test
+	public void matchesOldParserForMixedContent() throws Exception {
+		final String html = "<h1>Title</h1><wo:String value=\"$body\" /><p>Footer</p>";
+		compareWithOldParser( html, "" );
+	}
+
+	@Test
+	public void matchesOldParserForLegacy() throws Exception {
+		final String html = "<webobject name=\"Greeting\">Hello</webobject>";
+		final String wod = "Greeting : String { value = \"hello\"; }";
+		compareWithOldParser( html, wod );
+	}
+
+	// ---- Helpers ----
+
+	private static PRootNode parse( final String html, final String wod ) throws NGDeclarationFormatException, NGHTMLFormatException {
+		final PNode result = new NGTemplateParser2( html, wod ).parse();
+		return assertInstanceOf( PRootNode.class, result );
+	}
+
+	private static void assertHTML( final String expected, final PNode node ) {
+		final PHTMLNode html = assertInstanceOf( PHTMLNode.class, node );
+		assertEquals( expected, html.value() );
+	}
+
+	private static PBasicNode assertBasicNode( final PNode node ) {
+		return assertInstanceOf( PBasicNode.class, node );
+	}
+
+	/**
+	 * Parses the same template with both old and new parsers and verifies structural equivalence
+	 */
+	private static void compareWithOldParser( final String html, final String wod ) throws Exception {
+		final PRootNode newResult = (PRootNode)new NGTemplateParser2( html, wod ).parse();
+		final PRootNode oldResult = (PRootNode)new NGTemplateParser( html, wod ).parse();
+		assertNodesEqual( oldResult, newResult, "" );
+	}
+
+	private static void assertNodesEqual( final PNode expected, final PNode actual, final String path ) {
+		assertEquals( expected.getClass(), actual.getClass(), "Node type mismatch at " + path );
+
+		switch( expected ) {
+			case PRootNode e -> {
+				final PRootNode a = (PRootNode)actual;
+				assertChildrenEqual( e.children(), a.children(), path + "/root" );
+			}
+			case PHTMLNode e -> {
+				final PHTMLNode a = (PHTMLNode)actual;
+				assertEquals( e.value(), a.value(), "HTML content mismatch at " + path );
+			}
+			case PBasicNode e -> {
+				final PBasicNode a = (PBasicNode)actual;
+				assertEquals( e.namespace(), a.namespace(), "Namespace mismatch at " + path );
+				assertEquals( e.type(), a.type(), "Type mismatch at " + path );
+				assertEquals( e.isInline(), a.isInline(), "isInline mismatch at " + path );
+				assertEquals( e.bindings(), a.bindings(), "Bindings mismatch at " + path );
+				assertChildrenEqual( e.children(), a.children(), path + "/" + e.type() );
+			}
+			case PRawNode e -> {
+				final PRawNode a = (PRawNode)actual;
+				assertEquals( e.value(), a.value(), "Raw content mismatch at " + path );
+			}
+			case PCommentNode e -> {
+				final PCommentNode a = (PCommentNode)actual;
+				assertEquals( e.value(), a.value(), "Comment content mismatch at " + path );
+			}
+		}
+	}
+
+	private static void assertChildrenEqual( final List<PNode> expected, final List<PNode> actual, final String path ) {
+		assertEquals( expected.size(), actual.size(), "Children count mismatch at " + path );
+
+		for( int i = 0; i < expected.size(); i++ ) {
+			assertNodesEqual( expected.get( i ), actual.get( i ), path + "[" + i + "]" );
+		}
+	}
+}
