@@ -628,7 +628,7 @@ public class NGTemplateParser {
 	}
 
 	/**
-	 * @return true if the current position is at a closing tag matching the given name (case-insensitive).
+	 * @return true if the current position is at a closing tag matching the given name (case-sensitive).
 	 *
 	 * Matches </name> or </name followed by whitespace then >
 	 */

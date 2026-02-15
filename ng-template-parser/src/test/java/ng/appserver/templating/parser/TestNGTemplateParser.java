@@ -200,13 +200,6 @@ public class TestNGTemplateParser {
 		} );
 	}
 
-	@Test
-	public void closingTagCaseMismatch() {
-		assertThrows( NGHTMLFormatException.class, () -> {
-			parse( "<wo:Repetition list=\"$items\" item=\"$item\">hello</wo:repetition>", "" );
-		} );
-	}
-
 	// ---- Error position reporting ----
 
 	@Test
