@@ -28,11 +28,6 @@ import ng.appserver.templating.parser.model.SourceRange;
 public class NGTemplateParser2 {
 
 	/**
-	 * The namespace reserved for parser directives
-	 */
-	private static final String PARSER_NAMESPACE = "p";
-
-	/**
 	 * Parser directive: raw/verbatim block (content not processed, included in output)
 	 */
 	private static final String DIRECTIVE_RAW = "raw";
@@ -41,11 +36,6 @@ public class NGTemplateParser2 {
 	 * Parser directive: developer comment (content not processed, stripped from output)
 	 */
 	private static final String DIRECTIVE_COMMENT = "comment";
-
-	/**
-	 * The default namespace used for wod-style declarations and the legacy "wo" prefix
-	 */
-	private static final String DEFAULT_NAMESPACE = "wo";
 
 	/**
 	 * The template source string
@@ -62,11 +52,6 @@ public class NGTemplateParser2 {
 	 */
 	private int _pos;
 
-	/**
-	 * Counter for generating inline tag declaration names
-	 */
-	private int _inlineTagCount;
-
 	public NGTemplateParser2( final String htmlString, final String declarationString ) throws NGDeclarationFormatException {
 		Objects.requireNonNull( htmlString );
 		Objects.requireNonNull( declarationString );
@@ -74,7 +59,6 @@ public class NGTemplateParser2 {
 		_source = htmlString;
 		_declarations = NGDeclarationParser.declarationsWithString( declarationString );
 		_pos = 0;
-		_inlineTagCount = 0;
 	}
 
 	/**
@@ -201,8 +185,7 @@ public class NGTemplateParser2 {
 		// Self-closing?
 		if( lookingAt( "/>" ) ) {
 			_pos += 2;
-			final String declarationName = "%s_%s".formatted( type, _inlineTagCount++ );
-			return new PBasicNode( namespace, type, bindings, List.of(), true, declarationName, new SourceRange( startPos, _pos ) );
+			return new PBasicNode( namespace, type, bindings, List.of(), true, type, new SourceRange( startPos, _pos ) );
 		}
 
 		// Container tag — expect '>'
@@ -213,8 +196,7 @@ public class NGTemplateParser2 {
 		// Parse children recursively
 		final List<PNode> children = parseChildren( closingTagName );
 
-		final String declarationName = "%s_%s".formatted( type, _inlineTagCount++ );
-		return new PBasicNode( namespace, type, bindings, children, true, declarationName, new SourceRange( startPos, _pos ) );
+		return new PBasicNode( namespace, type, bindings, children, true, type, new SourceRange( startPos, _pos ) );
 	}
 
 	/**
