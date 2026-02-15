@@ -187,6 +187,71 @@ public class TestNGTemplateParser2 {
 		} );
 	}
 
+	// ---- Error position reporting ----
+
+	@Test
+	public void errorPositionForUnclosedDynamicTag() {
+		final String html = "<wo:Conditional condition=\"$a\">oops";
+		final NGHTMLFormatException ex = assertThrows( NGHTMLFormatException.class, () -> parse( html, "" ) );
+		assertEquals( 1, ex.line() );
+		assertEquals( html.length() + 1, ex.column() );
+		assertEquals( html.length(), ex.position() );
+	}
+
+	@Test
+	public void errorPositionForUnclosedQuotedBinding() {
+		final String html = "<wo:String value=\"unclosed />";
+		final NGHTMLFormatException ex = assertThrows( NGHTMLFormatException.class, () -> parse( html, "" ) );
+		// The error position should point at the opening quote of the unclosed value
+		assertEquals( 1, ex.line() );
+		assertEquals( 18, ex.column() ); // position of the opening " in value="unclosed
+		assertEquals( 17, ex.position() );
+	}
+
+	@Test
+	public void errorPositionForUnclosedRawDirective() {
+		final String html = "<p:raw>no closing tag";
+		final NGHTMLFormatException ex = assertThrows( NGHTMLFormatException.class, () -> parse( html, "" ) );
+		assertEquals( 1, ex.line() );
+		assertEquals( html.length() + 1, ex.column() );
+	}
+
+	@Test
+	public void errorPositionOnMultilineTemplate() {
+		// Position at "condition" start is right after the \n on line 2
+		final String html = "<div>\n<wo:Conditional condition=\"$show>\nMore text";
+		final NGHTMLFormatException ex = assertThrows( NGHTMLFormatException.class, () -> parse( html, "" ) );
+		// The unclosed quoted value starts at the " before $show> — which is on line 2
+		assertEquals( 2, ex.line() );
+	}
+
+	@Test
+	public void errorMessageContainsLineAndColumn() {
+		final String html = "<wo:String value=\"unclosed />";
+		final NGHTMLFormatException ex = assertThrows( NGHTMLFormatException.class, () -> parse( html, "" ) );
+		// The exception message should contain the line and column info
+		final String message = ex.getMessage();
+		assert message.contains( "line" ) : "Error message should contain 'line': " + message;
+		assert message.contains( "column" ) : "Error message should contain 'column': " + message;
+	}
+
+	@Test
+	public void errorPositionOnThirdLine() {
+		final String html = "line one\nline two\n<wo:Bad";
+		final NGHTMLFormatException ex = assertThrows( NGHTMLFormatException.class, () -> parse( html, "" ) );
+		// The error should be on line 3
+		assertEquals( 3, ex.line() );
+	}
+
+	@Test
+	public void legacyExceptionHasNoPosition() {
+		// The old-style constructor should produce -1 for position, line, and column
+		final NGHTMLFormatException ex = new NGHTMLFormatException( "simple error" );
+		assertEquals( -1, ex.position() );
+		assertEquals( -1, ex.line() );
+		assertEquals( -1, ex.column() );
+	}
+
 	// ---- Multiple bindings ----
 
 	@Test

@@ -146,7 +146,7 @@ public class NGTemplateParser2 {
 		flushHTML( htmlBuffer, htmlStart, children );
 
 		if( expectedClosingTag != null ) {
-			throw new NGHTMLFormatException( "Unexpected end of template. Expected closing tag </%s>".formatted( expectedClosingTag ) );
+			throw error( "Unexpected end of template. Expected closing tag </%s>".formatted( expectedClosingTag ) );
 		}
 
 		return children;
@@ -165,7 +165,7 @@ public class NGTemplateParser2 {
 		final String namespace = readIdentifier();
 
 		if( namespace.isEmpty() ) {
-			throw new NGHTMLFormatException( "Expected namespace identifier at position %d".formatted( startPos ) );
+			throw error( "Expected namespace identifier", startPos );
 		}
 
 		expect( ':' );
@@ -174,7 +174,7 @@ public class NGTemplateParser2 {
 		final String type = readIdentifier();
 
 		if( type.isEmpty() ) {
-			throw new NGHTMLFormatException( "Expected element type after '%s:' at position %d".formatted( namespace, startPos ) );
+			throw error( "Expected element type after '%s:'".formatted( namespace ) );
 		}
 
 		// Parse bindings
@@ -212,7 +212,7 @@ public class NGTemplateParser2 {
 		final String tagKeyword = readIdentifier();
 
 		if( !"webobject".equalsIgnoreCase( tagKeyword ) && !"wo".equalsIgnoreCase( tagKeyword ) ) {
-			throw new NGHTMLFormatException( "Expected 'webobject' or 'wo' at position %d".formatted( startPos ) );
+			throw error( "Expected 'webobject' or 'wo'", startPos );
 		}
 
 		skipWhitespace();
@@ -252,7 +252,7 @@ public class NGTemplateParser2 {
 		final String attrName = readIdentifier();
 
 		if( !"name".equalsIgnoreCase( attrName ) ) {
-			throw new NGHTMLFormatException( "Expected 'name' attribute but found '%s'".formatted( attrName ) );
+			throw error( "Expected 'name' attribute but found '%s'".formatted( attrName ) );
 		}
 
 		skipWhitespace();
@@ -380,7 +380,7 @@ public class NGTemplateParser2 {
 			_pos++;
 		}
 
-		throw new NGHTMLFormatException( "Unclosed parser directive <p:%s>".formatted( directiveName ) );
+		throw error( "Unclosed parser directive <p:%s>".formatted( directiveName ) );
 	}
 
 	// ---- Binding parsing ----
@@ -418,7 +418,7 @@ public class NGTemplateParser2 {
 			final String key = readIdentifier();
 
 			if( key.isEmpty() ) {
-				throw new NGHTMLFormatException( "Expected binding key at position %d, found '%c'".formatted( _pos, current() ) );
+				throw error( "Expected binding key, found '%c'".formatted( current() ) );
 			}
 
 			skipWhitespace();
@@ -471,7 +471,7 @@ public class NGTemplateParser2 {
 				}
 			}
 
-			throw new NGHTMLFormatException( "Unclosed quoted binding value starting at position %d".formatted( start ) );
+			throw error( "Unclosed quoted binding value", start );
 		}
 		else {
 			// Unquoted value
@@ -488,7 +488,7 @@ public class NGTemplateParser2 {
 			}
 
 			if( _pos == start ) {
-				throw new NGHTMLFormatException( "Expected binding value at position %d".formatted( start ) );
+				throw error( "Expected binding value", start );
 			}
 
 			return _source.substring( start, _pos );
@@ -509,11 +509,11 @@ public class NGTemplateParser2 {
 	 */
 	private void expect( final char expected ) throws NGHTMLFormatException {
 		if( _pos >= _source.length() ) {
-			throw new NGHTMLFormatException( "Unexpected end of template, expected '%c'".formatted( expected ) );
+			throw error( "Unexpected end of template, expected '%c'".formatted( expected ) );
 		}
 
 		if( current() != expected ) {
-			throw new NGHTMLFormatException( "Expected '%c' at position %d but found '%c'".formatted( expected, _pos, current() ) );
+			throw error( "Expected '%c' but found '%c'".formatted( expected, current() ) );
 		}
 
 		_pos++;
@@ -567,7 +567,7 @@ public class NGTemplateParser2 {
 		}
 
 		if( _pos >= _source.length() ) {
-			throw new NGHTMLFormatException( "Unclosed quoted string starting at position %d".formatted( start - 1 ) );
+			throw error( "Unclosed quoted string", start - 1 );
 		}
 
 		final String value = _source.substring( start, _pos );
@@ -648,7 +648,7 @@ public class NGTemplateParser2 {
 		final String actual = _source.substring( _pos, Math.min( _pos + tagName.length(), _source.length() ) );
 
 		if( !actual.equalsIgnoreCase( tagName ) ) {
-			throw new NGHTMLFormatException( "Expected closing tag </%s> but found </%s>".formatted( tagName, actual ) );
+			throw error( "Expected closing tag </%s> but found </%s>".formatted( tagName, actual ) );
 		}
 
 		_pos += tagName.length();
@@ -662,7 +662,7 @@ public class NGTemplateParser2 {
 	 */
 	private void consumeOpeningTagFully() throws NGHTMLFormatException {
 		if( _pos >= _source.length() || current() != '<' ) {
-			throw new NGHTMLFormatException( "Expected '<' at position %d".formatted( _pos ) );
+			throw error( "Expected '<'" );
 		}
 
 		while( _pos < _source.length() ) {
@@ -674,7 +674,7 @@ public class NGTemplateParser2 {
 			_pos++;
 		}
 
-		throw new NGHTMLFormatException( "Unclosed tag starting at position %d".formatted( _pos ) );
+		throw error( "Unclosed tag" );
 	}
 
 	/**
@@ -690,7 +690,7 @@ public class NGTemplateParser2 {
 			_pos++;
 		}
 
-		throw new NGHTMLFormatException( "Expected '%c' but reached end of template".formatted( target ) );
+		throw error( "Expected '%c' but reached end of template".formatted( target ) );
 	}
 
 	/**
@@ -750,5 +750,21 @@ public class NGTemplateParser2 {
 		}
 
 		return _pos;
+	}
+
+	// ---- Error reporting ----
+
+	/**
+	 * Creates an NGHTMLFormatException with the current parser position and source context.
+	 */
+	private NGHTMLFormatException error( final String message ) {
+		return new NGHTMLFormatException( message, _pos, _source );
+	}
+
+	/**
+	 * Creates an NGHTMLFormatException with an explicit position and source context.
+	 */
+	private NGHTMLFormatException error( final String message, final int position ) {
+		return new NGHTMLFormatException( message, position, _source );
 	}
 }
