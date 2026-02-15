@@ -1,25 +1,37 @@
 package ng.appserver.templating.parser;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
-import ng.appserver.templating.parser.NGHTMLParser.CommentType;
 import ng.appserver.templating.parser.model.PBasicNode;
-import ng.appserver.templating.parser.model.PHTMLComment;
-import ng.appserver.templating.parser.model.PLiteralComment;
+import ng.appserver.templating.parser.model.PCommentNode;
 import ng.appserver.templating.parser.model.PNode;
+import ng.appserver.templating.parser.model.PRawNode;
 import ng.appserver.templating.parser.model.PRootNode;
-import ng.appserver.templating.parser.model.PTemplateComment;
 
 /**
  * The primary entry point for component parsing
  */
 
 public class NGTemplateParser {
+
+	/**
+	 * The namespace reserved for parser directives
+	 */
+	private static final String PARSER_NAMESPACE = "p";
+
+	/**
+	 * Parser directive: raw/verbatim block (content not processed, included in output)
+	 */
+	private static final String DIRECTIVE_RAW = "raw";
+
+	/**
+	 * Parser directive: developer comment (content not processed, stripped from output)
+	 */
+	private static final String DIRECTIVE_COMMENT = "comment";
 
 	/**
 	 * The default namespace used for wod-style declarations and the legacy "wo" prefix
@@ -54,6 +66,22 @@ public class NGTemplateParser {
 	 */
 	private final String _declarationString;
 
+	/**
+	 * When inside a parser directive block (p:raw or p:comment), this tracks the directive type.
+	 * Null when not inside a directive block.
+	 */
+	private String _currentDirective;
+
+	/**
+	 * Accumulates raw content while inside a parser directive block
+	 */
+	private StringBuilder _directiveContent;
+
+	/**
+	 * Tracks nesting depth of tags with the same name as the current directive, to handle nested occurrences
+	 */
+	private int _directiveNestingDepth;
+
 	public NGTemplateParser( final String htmlString, final String declarationString ) {
 		Objects.requireNonNull( htmlString );
 		Objects.requireNonNull( declarationString );
@@ -73,6 +101,10 @@ public class NGTemplateParser {
 
 		new NGHTMLParser( this, _htmlString ).parseHTML();
 
+		if( _currentDirective != null ) {
+			throw new NGHTMLFormatException( "Unclosed parser directive <p:%s>".formatted( _currentDirective ) );
+		}
+
 		if( !_currentDynamicTag.isRoot() ) {
 			throw new NGHTMLFormatException( "There is an unbalanced dynamic tag named '%s'.".formatted( _currentDynamicTag.declaration().name() ) );
 		}
@@ -81,6 +113,17 @@ public class NGTemplateParser {
 	}
 
 	public void didParseOpeningWebObjectTag( String parsedString ) throws NGHTMLFormatException, NGDeclarationFormatException {
+
+		// If we're inside a directive block, accumulate everything as raw text
+		if( _currentDirective != null ) {
+			// Check for nested <p:directive> tags to track depth
+			if( isParserDirectiveTag( parsedString, _currentDirective ) ) {
+				_directiveNestingDepth++;
+			}
+			_directiveContent.append( parsedString );
+			_directiveContent.append( '>' );
+			return;
+		}
 
 		final int spaceIndex = parsedString.indexOf( ' ' );
 		int colonIndex;
@@ -93,6 +136,19 @@ public class NGTemplateParser {
 		}
 
 		final boolean isInlineTag = colonIndex != -1;
+
+		// Check if this is a parser directive
+		if( isInlineTag ) {
+			final String namespace = parsedString.substring( parsedString.indexOf( '<' ) + 1, colonIndex );
+			final String tagName = extractTagName( parsedString, colonIndex );
+
+			if( PARSER_NAMESPACE.equals( namespace ) && (DIRECTIVE_RAW.equals( tagName ) || DIRECTIVE_COMMENT.equals( tagName )) ) {
+				_currentDirective = tagName;
+				_directiveContent = new StringBuilder();
+				_directiveNestingDepth = 0;
+				return;
+			}
+		}
 
 		final NGDeclaration declaration;
 
@@ -111,6 +167,39 @@ public class NGTemplateParser {
 	}
 
 	public void didParseClosingWebObjectTag( final String parsedString ) throws NGHTMLFormatException {
+
+		// If we're inside a directive block, check if this is the closing tag for it
+		if( _currentDirective != null ) {
+			if( isParserDirectiveClosingTag( parsedString, _currentDirective ) ) {
+				if( _directiveNestingDepth > 0 ) {
+					_directiveNestingDepth--;
+					_directiveContent.append( parsedString );
+					_directiveContent.append( '>' );
+				}
+				else {
+					// End of directive block
+					final String content = _directiveContent.toString();
+					final PNode node;
+
+					if( DIRECTIVE_RAW.equals( _currentDirective ) ) {
+						node = new PRawNode( content );
+					}
+					else {
+						node = new PCommentNode( content );
+					}
+
+					_currentDirective = null;
+					_directiveContent = null;
+					_currentDynamicTag.addChild( node );
+				}
+			}
+			else {
+				_directiveContent.append( parsedString );
+				_directiveContent.append( '>' );
+			}
+			return;
+		}
+
 		final NGDynamicHTMLTag parentDynamicTag = _currentDynamicTag.parent();
 
 		if( parentDynamicTag == null ) {
@@ -130,63 +219,44 @@ public class NGTemplateParser {
 		_currentDynamicTag.addChild( node );
 	}
 
-	public void didParseComment( final String parsedString, final CommentType commentType ) {
-
-		final String commentContent = extractCommentContent( parsedString, commentType );
-
-		final PNode commentNode = switch( commentType ) {
-			case HTML -> {
-				// For HTML comments, parse the inner content as template so dynamic tags inside are processed
-				final List<PNode> children = parseCommentContentAsTemplate( commentContent );
-				yield new PHTMLComment( children );
-			}
-			case LITERAL -> new PLiteralComment( commentContent );
-			case TEMPLATE -> new PTemplateComment( commentContent );
-		};
-
-		_currentDynamicTag.addChild( commentNode );
-	}
-
 	public void didParseText( final String parsedString ) {
+
+		// If we're inside a directive block, accumulate as raw content
+		if( _currentDirective != null ) {
+			_directiveContent.append( parsedString );
+			return;
+		}
+
 		_currentDynamicTag.addChild( parsedString );
 	}
 
 	/**
-	 * Extracts the content between the comment delimiters, stripping the <!-- / <!--! / <!--# prefix and the --> suffix
+	 * Extracts just the tag name from an inline tag string, i.e. the part after the colon up to the first whitespace
 	 */
-	private static String extractCommentContent( final String rawComment, final CommentType commentType ) {
-		// Determine prefix length based on comment type
-		final int prefixLength = switch( commentType ) {
-			case HTML -> 4;     // "<!--"
-			case LITERAL -> 5;  // "<!--!"
-			case TEMPLATE -> 5; // "<!--#"
-		};
+	private static String extractTagName( final String parsedString, final int colonIndex ) {
+		final int end = parsedString.indexOf( ' ', colonIndex );
 
-		// Strip prefix and the trailing "-->", return content
-		final int suffixLength = 3; // "-->"
-		return rawComment.substring( prefixLength, rawComment.length() - suffixLength );
+		if( end == -1 ) {
+			return parsedString.substring( colonIndex + 1 );
+		}
+
+		return parsedString.substring( colonIndex + 1, end );
 	}
 
 	/**
-	 * Parses the content of an HTML comment as a template, allowing dynamic tags inside comments to be processed.
-	 * Uses a fresh NGTemplateParser instance with the same declarations.
+	 * @return true if the parsed opening tag string is a parser directive with the given name
 	 */
-	private List<PNode> parseCommentContentAsTemplate( final String commentContent ) {
-		try {
-			final NGTemplateParser subParser = new NGTemplateParser( commentContent, "" );
-			subParser._declarations = this._declarations;
-			final PNode result = subParser.parseHTML();
+	private static boolean isParserDirectiveTag( final String parsedString, final String directiveName ) {
+		final String lowerCase = parsedString.toLowerCase();
+		return lowerCase.startsWith( "<p:" + directiveName );
+	}
 
-			if( result instanceof PRootNode rootNode ) {
-				return rootNode.children();
-			}
-
-			return List.of( result );
-		}
-		catch( NGHTMLFormatException | NGDeclarationFormatException e ) {
-			// If parsing fails, treat the comment content as a raw text node within the comment
-			return List.of( new ng.appserver.templating.parser.model.PHTMLNode( commentContent ) );
-		}
+	/**
+	 * @return true if the parsed closing tag string closes a parser directive with the given name
+	 */
+	private static boolean isParserDirectiveClosingTag( final String parsedString, final String directiveName ) {
+		final String lowerCase = parsedString.toLowerCase();
+		return lowerCase.startsWith( "</p:" + directiveName );
 	}
 
 	/**

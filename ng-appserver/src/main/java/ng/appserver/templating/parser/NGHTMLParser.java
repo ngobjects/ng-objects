@@ -12,31 +12,11 @@ public class NGHTMLParser {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGHTMLParser.class );
 
-	private enum ParserState {
-		Normal,
-		InsideComment
-	}
-
-	/**
-	 * The type of comment being parsed
-	 */
-	public enum CommentType {
-		HTML,     // <!-- ... -->  content is parsed as template, included in output
-		LITERAL,  // <!--! ... --> content is NOT parsed, included in output
-		TEMPLATE  // <!--# ... --> content is NOT parsed, NOT included in output
-	}
-
-	private static final String SCRIPT_START_TAG = "<script";
-	private static final String SCRIPT_END_TAG = "</script";
 	private static final String WO_END_TAG = "</wo";
 	private static final String WO_START_TAG = "<wo ";
 	private static final String WEBOBJECT_END_TAG = "</webobject";
 	private static final String WEBOBJECT_START_TAG = "<webobject";
 	private static final String XML_CDATA_START_TAG = "<![CDATA[";
-
-	private static final String COMMENT_START = "<!--";
-	private static final String LITERAL_COMMENT_START = "<!--!";
-	private static final String TEMPLATE_COMMENT_START = "<!--#";
 
 	/**
 	 * This is only used for tags that are "dynamified" when _parseStandardTags is set to true.
@@ -53,11 +33,6 @@ public class NGHTMLParser {
 	private final String _unparsedTemplate;
 	private final StringBuilder _contentText;
 
-	/**
-	 * Tracks the type of comment currently being parsed (when parserState is InsideComment)
-	 */
-	private CommentType _currentCommentType;
-
 	public NGHTMLParser( final NGTemplateParser parserDelegate, final String unparsedTemplate ) {
 		Objects.requireNonNull( parserDelegate );
 		Objects.requireNonNull( unparsedTemplate );
@@ -70,8 +45,6 @@ public class NGHTMLParser {
 		_stackDict = new HashMap<>();
 
 		final NGStringTokenizer templateTokenizer = new NGStringTokenizer( _unparsedTemplate, "<" );
-		boolean isInScriptTag = false;
-		ParserState parserState = ParserState.Normal;
 		String token;
 
 		if( _unparsedTemplate.startsWith( "<" ) || !templateTokenizer.hasMoreTokens() ) {
@@ -82,104 +55,46 @@ public class NGHTMLParser {
 		}
 
 		while( templateTokenizer.hasMoreTokens() ) {
-
-			switch( parserState ) {
-				case Normal -> {
-					if( token != null ) {
-						if( token.startsWith( ">" ) ) {
-							token = token.substring( 1 );
-						}
-						_contentText.append( token );
-					}
-					token = templateTokenizer.nextToken( ">" );
-					int tagIndex;
-
-					final String tagLowerCase = token.toLowerCase();
-
-					if( isNamespacedStartTag( tagLowerCase ) || tagLowerCase.startsWith( WEBOBJECT_START_TAG ) || tagLowerCase.startsWith( WO_START_TAG ) ) {
-						if( token.endsWith( "/" ) ) {
-							startOfWebObjectTag( token.substring( 0, token.length() - 1 ) );
-							endOfWebObjectTag( "/" );
-						}
-						else {
-							startOfWebObjectTag( token );
-						}
-					}
-					else if( (tagIndex = indexOfNamespacedStartTag( tagLowerCase )) > 1 || (tagIndex = tagLowerCase.indexOf( WEBOBJECT_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_START_TAG )) > 1 ) {
-						// Used if you have a comment block that contains a dynamic tag, an example being <!-- <wo:str value="$someMessage" /> -->
-						_contentText.append( token.substring( 0, token.lastIndexOf( "<" ) ) );
-						if( token.endsWith( "/" ) ) {
-							startOfWebObjectTag( token.substring( tagIndex, token.length() - 1 ) );
-							endOfWebObjectTag( "/" );
-						}
-						else {
-							startOfWebObjectTag( token.substring( tagIndex, token.length() ) );
-						}
-					}
-					else if( isNamespacedEndTag( tagLowerCase ) || tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
-						endOfWebObjectTag( token );
-					}
-					else if( tagLowerCase.startsWith( SCRIPT_START_TAG ) ) {
-						didParseText();
-						_contentText.append( token );
-						_contentText.append( '>' );
-						isInScriptTag = true;
-					}
-					else if( tagLowerCase.startsWith( SCRIPT_END_TAG ) ) {
-						didParseText();
-						_contentText.append( token );
-						_contentText.append( '>' );
-						isInScriptTag = false;
-					}
-					else if( token.startsWith( COMMENT_START ) && !isInScriptTag ) {
-						didParseText();
-
-						// Determine comment type based on prefix
-						final CommentType commentType;
-
-						if( token.startsWith( TEMPLATE_COMMENT_START ) ) {
-							commentType = CommentType.TEMPLATE;
-						}
-						else if( token.startsWith( LITERAL_COMMENT_START ) ) {
-							commentType = CommentType.LITERAL;
-						}
-						else {
-							commentType = CommentType.HTML;
-						}
-
-						_contentText.append( token );
-						if( token.endsWith( "--" ) ) {
-							_contentText.append( '>' );
-							didParseComment( commentType );
-						}
-						else {
-							_contentText.append( '>' );
-							_currentCommentType = commentType;
-							parserState = ParserState.InsideComment;
-						}
-					}
-					else {
-						_contentText.append( token );
-						_contentText.append( '>' );
-					}
+			if( token != null ) {
+				if( token.startsWith( ">" ) ) {
+					token = token.substring( 1 );
 				}
-				case InsideComment -> {
-					token = templateTokenizer.nextToken( ">" );
-					_contentText.append( token );
-					_contentText.append( '>' );
-					if( token.endsWith( "--" ) ) {
-						didParseComment( _currentCommentType );
-						_currentCommentType = null;
-						parserState = ParserState.Normal;
-					}
+				_contentText.append( token );
+			}
+			token = templateTokenizer.nextToken( ">" );
+			int tagIndex;
+
+			final String tagLowerCase = token.toLowerCase();
+
+			if( isNamespacedStartTag( tagLowerCase ) || tagLowerCase.startsWith( WEBOBJECT_START_TAG ) || tagLowerCase.startsWith( WO_START_TAG ) ) {
+				if( token.endsWith( "/" ) ) {
+					startOfWebObjectTag( token.substring( 0, token.length() - 1 ) );
+					endOfWebObjectTag( "/" );
+				}
+				else {
+					startOfWebObjectTag( token );
 				}
 			}
-
-			token = null;
-
-			if( parserState == ParserState.Normal ) {
-				token = templateTokenizer.nextToken( "<" );
+			else if( (tagIndex = indexOfNamespacedStartTag( tagLowerCase )) > 1 || (tagIndex = tagLowerCase.indexOf( WEBOBJECT_START_TAG )) > 1 || (tagIndex = tagLowerCase.indexOf( WO_START_TAG )) > 1 ) {
+				// Used if you have a comment block that contains a dynamic tag, an example being <!-- <wo:str value="$someMessage" /> -->
+				_contentText.append( token.substring( 0, token.lastIndexOf( "<" ) ) );
+				if( token.endsWith( "/" ) ) {
+					startOfWebObjectTag( token.substring( tagIndex, token.length() - 1 ) );
+					endOfWebObjectTag( "/" );
+				}
+				else {
+					startOfWebObjectTag( token.substring( tagIndex, token.length() ) );
+				}
 			}
+			else if( isNamespacedEndTag( tagLowerCase ) || tagLowerCase.startsWith( WEBOBJECT_END_TAG ) || tagLowerCase.equals( WO_END_TAG ) ) {
+				endOfWebObjectTag( token );
+			}
+			else {
+				_contentText.append( token );
+				_contentText.append( '>' );
+			}
+
+			token = templateTokenizer.nextToken( "<" );
 		}
 
 		if( token != null ) {
@@ -301,15 +216,6 @@ public class NGHTMLParser {
 
 		if( _contentText.length() > 0 ) {
 			_parserDelegate.didParseClosingWebObjectTag( _contentText.toString() );
-			_contentText.setLength( 0 );
-		}
-	}
-
-	private void didParseComment( final CommentType commentType ) {
-		logger.debug( "Parsed Comment [{}] ({}) : {}", commentType, _contentText.length(), _contentText );
-
-		if( _contentText.length() > 0 ) {
-			_parserDelegate.didParseComment( _contentText.toString(), commentType );
 			_contentText.setLength( 0 );
 		}
 	}

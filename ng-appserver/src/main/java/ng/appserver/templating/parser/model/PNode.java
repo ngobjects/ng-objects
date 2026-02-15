@@ -1,3 +1,3 @@
 package ng.appserver.templating.parser.model;
 
-public sealed interface PNode permits PBasicNode, PRootNode, PHTMLNode, PHTMLComment, PLiteralComment, PTemplateComment {}
+public sealed interface PNode permits PBasicNode, PRootNode, PHTMLNode, PRawNode, PCommentNode {}
