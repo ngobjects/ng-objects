@@ -1,4 +1,4 @@
-package ng.appserver.templating.parser;
+package ng.appserver.templating.parser.legacy;
 
 import java.util.NoSuchElementException;
 

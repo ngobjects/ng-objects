@@ -16,7 +16,7 @@ import ng.appserver.templating.elements.NGHTMLBareString;
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 import ng.appserver.templating.parser.NGDeclarationFormatException;
 import ng.appserver.templating.parser.NGHTMLFormatException;
-import ng.appserver.templating.parser.NGTemplateParser;
+import ng.appserver.templating.parser.legacy.NGTemplateParser;
 import ng.appserver.templating.parser.NGTemplateParser2;
 import ng.appserver.templating.parser.model.PBasicNode;
 import ng.appserver.templating.parser.model.PCommentNode;

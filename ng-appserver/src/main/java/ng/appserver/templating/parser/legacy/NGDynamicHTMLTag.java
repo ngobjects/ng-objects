@@ -1,9 +1,11 @@
-package ng.appserver.templating.parser;
+package ng.appserver.templating.parser.legacy;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import ng.appserver.templating.parser.NGDeclaration;
+import ng.appserver.templating.parser.NGHTMLFormatException;
 import ng.appserver.templating.parser.model.PHTMLNode;
 import ng.appserver.templating.parser.model.PNode;
 import ng.appserver.templating.parser.model.SourceRange;

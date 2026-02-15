@@ -14,11 +14,10 @@ public class NGAssociationFactory {
 	 */
 	public static NGAssociation associationForBindingValue( final NGBindingValue bindingValue, final boolean isInline ) {
 
-		if( isInline ) {
-			return associationForInlineBindingValue( bindingValue.value() );
-		}
-
-		return associationForWodBindingValue( bindingValue.value(), bindingValue.isQuoted() );
+		return switch( bindingValue ) {
+			case NGBindingValue.BooleanPresence b -> TRUE;
+			case NGBindingValue.Value v -> isInline ? associationForInlineBindingValue( v.value() ) : associationForWodBindingValue( v.value(), v.isQuoted() );
+		};
 	}
 
 	/**

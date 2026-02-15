@@ -1,4 +1,4 @@
-package ng.appserver.templating.parser;
+package ng.appserver.templating.parser.legacy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +7,9 @@ import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ng.appserver.templating.parser.NGDeclarationFormatException;
+import ng.appserver.templating.parser.NGHTMLFormatException;
 
 public class NGHTMLParser {
 

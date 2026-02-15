@@ -1,11 +1,15 @@
-package ng.appserver.templating.parser;
+package ng.appserver.templating.parser.legacy;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+import ng.appserver.templating.parser.NGDeclaration;
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
+import ng.appserver.templating.parser.NGDeclarationFormatException;
+import ng.appserver.templating.parser.NGDeclarationParser;
+import ng.appserver.templating.parser.NGHTMLFormatException;
 import ng.appserver.templating.parser.model.PBasicNode;
 import ng.appserver.templating.parser.model.PCommentNode;
 import ng.appserver.templating.parser.model.PNode;
@@ -350,7 +354,7 @@ public class NGTemplateParser {
 						currentBuffer = valueBuffer;
 					}
 					else if( currentBuffer == valueBuffer ) {
-						bindings.put( keyBuffer.toString().trim(), new NGBindingValue( false, valueBuffer.toString().trim() ) );
+						bindings.put( keyBuffer.toString().trim(), new NGBindingValue.Value( false, valueBuffer.toString().trim() ) );
 						currentBuffer = keyBuffer;
 					}
 					currentBuffer.setLength( 0 );
@@ -369,7 +373,7 @@ public class NGTemplateParser {
 
 		if( keyBuffer.length() > 0 ) {
 			if( valueBuffer.length() > 0 ) {
-				bindings.put( keyBuffer.toString().trim(), new NGBindingValue( false, valueBuffer.toString().trim() ) );
+				bindings.put( keyBuffer.toString().trim(), new NGBindingValue.Value( false, valueBuffer.toString().trim() ) );
 			}
 			else {
 				throw new NGHTMLFormatException( "'%s' defines a key but no value.".formatted( tag ) );

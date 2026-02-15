@@ -15,11 +15,29 @@ import java.util.Objects;
 
 public record NGDeclaration( boolean isInline, String name, String namespace, String type, Map<String, NGBindingValue> bindings ) {
 
-	public record NGBindingValue( boolean isQuoted, String value ) {
+	/**
+	 * Represents a binding value in a declaration or inline tag.
+	 */
+	public sealed interface NGBindingValue {
 
-		public NGBindingValue {
-			Objects.requireNonNull( value );
+		/**
+		 * A binding with a value, e.g. value="$name" or value = someKeyPath
+		 *
+		 * @param isQuoted true if the value was quoted in the source (WOD-style)
+		 * @param value The binding value string
+		 */
+		record Value( boolean isQuoted, String value ) implements NGBindingValue {
+
+			public Value {
+				Objects.requireNonNull( value );
+			}
 		}
+
+		/**
+		 * A boolean (valueless) binding, representing an HTML boolean attribute.
+		 * Its semantic meaning is solely its presence, e.g. "disabled" in {@code <my:Widget disabled />}
+		 */
+		record BooleanPresence() implements NGBindingValue {}
 	}
 
 	public NGDeclaration {

@@ -225,7 +225,7 @@ public class NGDeclarationParser {
 					value = quotedValue;
 				}
 
-				bindings.put( key, new NGBindingValue( valueIsQuoted, value ) );
+				bindings.put( key, new NGBindingValue.Value( valueIsQuoted, value ) );
 			}
 		}
 

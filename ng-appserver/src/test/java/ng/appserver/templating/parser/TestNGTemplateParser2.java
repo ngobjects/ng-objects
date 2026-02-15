@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
+import ng.appserver.templating.parser.legacy.NGTemplateParser;
 import ng.appserver.templating.parser.model.PBasicNode;
 import ng.appserver.templating.parser.model.PCommentNode;
 import ng.appserver.templating.parser.model.PHTMLNode;
@@ -58,7 +60,7 @@ public class TestNGTemplateParser2 {
 		assertEquals( "String", node.type() );
 		assertEquals( true, node.isInline() );
 		assertEquals( 0, node.children().size() );
-		assertEquals( "\"$name\"", node.bindings().get( "value" ).value() );
+		assertValueBinding( "\"$name\"", node.bindings().get( "value" ) );
 	}
 
 	@Test
@@ -192,8 +194,55 @@ public class TestNGTemplateParser2 {
 		final PRootNode root = parse( "<wo:TextField value=\"$name\" size=\"$fieldSize\" />", "" );
 		final PBasicNode node = assertBasicNode( root.children().getFirst() );
 		assertEquals( 2, node.bindings().size() );
-		assertEquals( "\"$name\"", node.bindings().get( "value" ).value() );
-		assertEquals( "\"$fieldSize\"", node.bindings().get( "size" ).value() );
+		assertValueBinding( "\"$name\"", node.bindings().get( "value" ) );
+		assertValueBinding( "\"$fieldSize\"", node.bindings().get( "size" ) );
+	}
+
+	// ---- Boolean attributes ----
+
+	@Test
+	public void booleanAttribute() throws Exception {
+		final PRootNode root = parse( "<wo:Widget disabled />", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( 1, node.bindings().size() );
+		assertBooleanBinding( node.bindings().get( "disabled" ) );
+	}
+
+	@Test
+	public void booleanAttributeWithValueBindings() throws Exception {
+		final PRootNode root = parse( "<wo:TextField value=\"$name\" disabled size=\"$s\" />", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( 3, node.bindings().size() );
+		assertValueBinding( "\"$name\"", node.bindings().get( "value" ) );
+		assertBooleanBinding( node.bindings().get( "disabled" ) );
+		assertValueBinding( "\"$s\"", node.bindings().get( "size" ) );
+	}
+
+	@Test
+	public void multipleBooleanAttributes() throws Exception {
+		final PRootNode root = parse( "<wo:Widget disabled readonly hidden />", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( 3, node.bindings().size() );
+		assertBooleanBinding( node.bindings().get( "disabled" ) );
+		assertBooleanBinding( node.bindings().get( "readonly" ) );
+		assertBooleanBinding( node.bindings().get( "hidden" ) );
+	}
+
+	@Test
+	public void booleanAttributeOnContainerElement() throws Exception {
+		final PRootNode root = parse( "<wo:Conditional negate>Content</wo:Conditional>", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertBooleanBinding( node.bindings().get( "negate" ) );
+		assertEquals( 1, node.children().size() );
+		assertHTML( "Content", node.children().getFirst() );
+	}
+
+	@Test
+	public void booleanAttributeBeforeClosingSlash() throws Exception {
+		final PRootNode root = parse( "<wo:Widget checked/>", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( 1, node.bindings().size() );
+		assertBooleanBinding( node.bindings().get( "checked" ) );
 	}
 
 	// ---- Comparison with old parser ----
@@ -303,6 +352,15 @@ public class TestNGTemplateParser2 {
 
 	private static PBasicNode assertBasicNode( final PNode node ) {
 		return assertInstanceOf( PBasicNode.class, node );
+	}
+
+	private static void assertValueBinding( final String expectedValue, final NGBindingValue binding ) {
+		final NGBindingValue.Value value = assertInstanceOf( NGBindingValue.Value.class, binding );
+		assertEquals( expectedValue, value.value() );
+	}
+
+	private static void assertBooleanBinding( final NGBindingValue binding ) {
+		assertInstanceOf( NGBindingValue.BooleanPresence.class, binding );
 	}
 
 	/**

@@ -404,15 +404,16 @@ public class NGTemplateParser2 {
 	// ---- Binding parsing ----
 
 	/**
-	 * Parses inline binding key=value pairs from the current position until '>' or '/>'.
+	 * Parses inline binding key=value pairs and boolean (valueless) attributes from
+	 * the current position until '>' or '/>'.
 	 *
 	 * IMPORTANT: Inline binding values are stored raw, including their surrounding quotes.
-	 * For example, value="$hello" is stored as NGBindingValue(false, "\"$hello\"").
+	 * For example, value="$hello" is stored as NGBindingValue.Value(false, "\"$hello\"").
 	 * The downstream NGAssociationFactory expects this format and handles quote stripping,
 	 * escape processing, and '$' detection itself.
 	 *
-	 * This is different from WOD-style bindings where isQuoted=true means the value was
-	 * quoted in the source and the quotes have been stripped.
+	 * Boolean attributes (e.g. "disabled" in {@code <my:Widget disabled />}) are stored
+	 * as NGBindingValue.BooleanPresence instances — their meaning is solely their presence.
 	 */
 	private Map<String, NGBindingValue> parseBindings() throws NGHTMLFormatException {
 		final Map<String, NGBindingValue> bindings = new HashMap<>();
@@ -439,12 +440,20 @@ public class NGTemplateParser2 {
 			}
 
 			skipWhitespace();
-			expect( '=' );
-			skipWhitespace();
 
-			// Read binding value — stored raw (with quotes if present) for inline binding processing
-			final String value = readInlineBindingValue();
-			bindings.put( key, new NGBindingValue( false, value ) );
+			// Check if this is a boolean attribute (no '=' follows) or a key=value binding
+			if( _pos < _source.length() && current() == '=' ) {
+				_pos++; // consume '='
+				skipWhitespace();
+
+				// Read binding value — stored raw (with quotes if present) for inline binding processing
+				final String value = readInlineBindingValue();
+				bindings.put( key, new NGBindingValue.Value( false, value ) );
+			}
+			else {
+				// Boolean attribute — present with no value
+				bindings.put( key, new NGBindingValue.BooleanPresence() );
+			}
 		}
 
 		return bindings;
