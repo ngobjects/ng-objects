@@ -66,7 +66,7 @@ public class NGTemplateParser {
 	 */
 	public PNode parse() throws NGHTMLFormatException, NGDeclarationFormatException {
 		final int startPos = _pos;
-		final List<PNode> children = parseChildren( null );
+		final List<PNode> children = parseChildren( null, -1 );
 		return new PRootNode( children, new SourceRange( startPos, _pos ) );
 	}
 
@@ -74,9 +74,10 @@ public class NGTemplateParser {
 	 * Parses a sequence of child nodes until we hit the expected closing tag or end of input.
 	 *
 	 * @param expectedClosingTag The tag name we expect to close this block (e.g. "wo:SomeComponent"), or null if we're at the root level
+	 * @param openingTagPosition The source position where the opening tag started, used for error reporting if the closing tag is missing. -1 if at root level.
 	 * @return The list of child PNodes
 	 */
-	private List<PNode> parseChildren( final String expectedClosingTag ) throws NGHTMLFormatException, NGDeclarationFormatException {
+	private List<PNode> parseChildren( final String expectedClosingTag, final int openingTagPosition ) throws NGHTMLFormatException, NGDeclarationFormatException {
 		final List<PNode> children = new ArrayList<>();
 		final StringBuilder htmlBuffer = new StringBuilder();
 		int htmlStart = _pos;
@@ -155,7 +156,7 @@ public class NGTemplateParser {
 		flushHTML( htmlBuffer, htmlStart, children );
 
 		if( expectedClosingTag != null ) {
-			throw error( "Unexpected end of template. Expected closing tag </%s>".formatted( expectedClosingTag ) );
+			throw error( "Unexpected end of template. Expected closing tag </%s>".formatted( expectedClosingTag ), openingTagPosition );
 		}
 
 		return children;
@@ -203,7 +204,7 @@ public class NGTemplateParser {
 		final String closingTagName = namespace + ":" + type;
 
 		// Parse children recursively
-		final List<PNode> children = parseChildren( closingTagName );
+		final List<PNode> children = parseChildren( closingTagName, startPos );
 
 		return new PBasicNode( namespace, type, bindings, children, true, type, new SourceRange( startPos, _pos ) );
 	}
@@ -248,7 +249,7 @@ public class NGTemplateParser {
 		expect( '>' );
 
 		// Parse children recursively
-		final List<PNode> children = parseChildren( tagKeyword );
+		final List<PNode> children = parseChildren( tagKeyword, startPos );
 
 		return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), children, false, declarationName, new SourceRange( startPos, _pos ) );
 	}

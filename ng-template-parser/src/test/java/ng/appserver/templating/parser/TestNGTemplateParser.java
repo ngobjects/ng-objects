@@ -206,9 +206,22 @@ public class TestNGTemplateParser {
 	public void errorPositionForUnclosedDynamicTag() {
 		final String html = "<wo:Conditional condition=\"$a\">oops";
 		final NGHTMLFormatException ex = assertThrows( NGHTMLFormatException.class, () -> parse( html, "" ) );
+		// Error should point at the opening tag, not at EOF
 		assertEquals( 1, ex.line() );
-		assertEquals( html.length() + 1, ex.column() );
-		assertEquals( html.length(), ex.position() );
+		assertEquals( 1, ex.column() );
+		assertEquals( 0, ex.position() );
+	}
+
+	@Test
+	public void errorPositionForUnclosedDynamicTagOnLaterLine() {
+		// "<div>\n\t<wo:Conditional condition="$a">\n\t\toops\n</div>"
+		//  01234  5 6
+		final String html = "<div>\n\t<wo:Conditional condition=\"$a\">\n\t\toops\n</div>";
+		final NGHTMLFormatException ex = assertThrows( NGHTMLFormatException.class, () -> parse( html, "" ) );
+		// Error should point at the opening <wo:Conditional> tag on line 2
+		assertEquals( 2, ex.line() );
+		assertEquals( 2, ex.column() ); // tab + '<' → column 2
+		assertEquals( 7, ex.position() ); // "<div>" (0-4) + "\n" (5) + "\t" (6) + "<" at position 7
 	}
 
 	@Test
