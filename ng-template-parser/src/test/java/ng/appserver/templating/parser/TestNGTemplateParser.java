@@ -186,6 +186,13 @@ public class TestNGTemplateParser {
 		} );
 	}
 
+	@Test
+	public void spaceAfterColonInNamespacedTag() {
+		assertThrows( NGHTMLFormatException.class, () -> {
+			parse( "<wo: Repetition list=\"$items\" item=\"$item\">hello</wo: Repetition>", "" );
+		} );
+	}
+
 	// ---- Error position reporting ----
 
 	@Test

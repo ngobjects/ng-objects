@@ -124,6 +124,11 @@ public class NGTemplateParser {
 					continue;
 				}
 
+				// Catch typos like <wo: repetition> where a space follows the colon
+				if( isAtMalformedNamespacedTag() ) {
+					throw error( "Unexpected space after ':' in tag — did you mean to write a namespaced element?" );
+				}
+
 				// Check for legacy <webobject name="..."> or <wo name="...">
 				if( lookingAtIgnoreCase( "<webobject " ) || lookingAtIgnoreCase( "<wo " ) ) {
 					// Disambiguate: <wo name="..."> (legacy) vs <wo:Type> (inline namespace)
@@ -735,6 +740,38 @@ public class NGTemplateParser {
 		}
 
 		return true;
+	}
+
+	/**
+	 * @return true if the current position looks like a malformed namespaced tag with a space after the colon.
+	 *
+	 * Matches the pattern: '<' letters ':' space — e.g. {@code <wo: Repetition>}
+	 */
+	private boolean isAtMalformedNamespacedTag() {
+		if( _pos >= _source.length() || current() != '<' ) {
+			return false;
+		}
+
+		int i = _pos + 1;
+
+		// Need at least one letter before ':'
+		while( i < _source.length() && Character.isLetter( _source.charAt( i ) ) ) {
+			i++;
+		}
+
+		if( i == _pos + 1 ) {
+			return false;
+		}
+
+		// Expect ':'
+		if( i >= _source.length() || _source.charAt( i ) != ':' ) {
+			return false;
+		}
+
+		i++; // skip ':'
+
+		// The tell: a space right after the colon
+		return i < _source.length() && _source.charAt( i ) == ' ';
 	}
 
 	/**
