@@ -3,8 +3,10 @@ package ng.appserver.templating.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -59,7 +61,7 @@ public class TestNGTemplateParser {
 		assertEquals( "String", node.type() );
 		assertEquals( true, node.isInline() );
 		assertEquals( 0, node.children().size() );
-		assertValueBinding( "\"$name\"", node.bindings().get( "value" ) );
+		assertValueBinding( true, "$name", node.bindings().get( "value" ) );
 	}
 
 	@Test
@@ -294,8 +296,8 @@ public class TestNGTemplateParser {
 		final PRootNode root = parse( "<wo:TextField value=\"$name\" size=\"$fieldSize\" />", "" );
 		final PBasicNode node = assertBasicNode( root.children().getFirst() );
 		assertEquals( 2, node.bindings().size() );
-		assertValueBinding( "\"$name\"", node.bindings().get( "value" ) );
-		assertValueBinding( "\"$fieldSize\"", node.bindings().get( "size" ) );
+		assertValueBinding( true, "$name", node.bindings().get( "value" ) );
+		assertValueBinding( true, "$fieldSize", node.bindings().get( "size" ) );
 	}
 
 	// ---- Boolean attributes ----
@@ -313,9 +315,9 @@ public class TestNGTemplateParser {
 		final PRootNode root = parse( "<wo:TextField value=\"$name\" disabled size=\"$s\" />", "" );
 		final PBasicNode node = assertBasicNode( root.children().getFirst() );
 		assertEquals( 3, node.bindings().size() );
-		assertValueBinding( "\"$name\"", node.bindings().get( "value" ) );
+		assertValueBinding( true, "$name", node.bindings().get( "value" ) );
 		assertBooleanBinding( node.bindings().get( "disabled" ) );
-		assertValueBinding( "\"$s\"", node.bindings().get( "size" ) );
+		assertValueBinding( true, "$s", node.bindings().get( "size" ) );
 	}
 
 	@Test
@@ -454,8 +456,9 @@ public class TestNGTemplateParser {
 		return assertInstanceOf( PBasicNode.class, node );
 	}
 
-	private static void assertValueBinding( final String expectedValue, final NGBindingValue binding ) {
+	private static void assertValueBinding( final boolean expectedIsQuoted, final String expectedValue, final NGBindingValue binding ) {
 		final NGBindingValue.Value value = assertInstanceOf( NGBindingValue.Value.class, binding );
+		assertEquals( expectedIsQuoted, value.isQuoted() );
 		assertEquals( expectedValue, value.value() );
 	}
 
@@ -489,7 +492,7 @@ public class TestNGTemplateParser {
 				assertEquals( e.namespace(), a.namespace(), "Namespace mismatch at " + path );
 				assertEquals( e.type(), a.type(), "Type mismatch at " + path );
 				assertEquals( e.isInline(), a.isInline(), "isInline mismatch at " + path );
-				assertEquals( e.bindings(), a.bindings(), "Bindings mismatch at " + path );
+				assertBindingsEqual( e.bindings(), a.bindings(), path );
 				assertChildrenEqual( e.children(), a.children(), path + "/" + e.type() );
 			}
 			case PRawNode e -> {
@@ -508,6 +511,39 @@ public class TestNGTemplateParser {
 
 		for( int i = 0; i < expected.size(); i++ ) {
 			assertNodesEqual( expected.get( i ), actual.get( i ), path + "[" + i + "]" );
+		}
+	}
+
+	/**
+	 * Compares binding maps between old and new parser, accounting for the known difference
+	 * in how inline quoted values are stored:
+	 * - Old parser: Value(isQuoted=false, "\"$name\"") — raw with quotes
+	 * - New parser: Value(isQuoted=true, "$name") — quotes stripped
+	 */
+	private static void assertBindingsEqual( final Map<String, NGBindingValue> expected, final Map<String, NGBindingValue> actual, final String path ) {
+		assertEquals( expected.keySet(), actual.keySet(), "Binding keys mismatch at " + path );
+
+		for( final String key : expected.keySet() ) {
+			final NGBindingValue expectedValue = expected.get( key );
+			final NGBindingValue actualValue = actual.get( key );
+
+			if( expectedValue instanceof NGBindingValue.Value ev && actualValue instanceof NGBindingValue.Value av ) {
+				// Normalize: if old parser stored raw quotes, strip them for comparison
+				String expectedStr = ev.value();
+
+				if( !ev.isQuoted() && expectedStr.startsWith( "\"" ) && expectedStr.endsWith( "\"" ) ) {
+					expectedStr = expectedStr.substring( 1, expectedStr.length() - 1 );
+					assertTrue( av.isQuoted(), "Expected isQuoted=true for binding '%s' at %s".formatted( key, path ) );
+				}
+				else {
+					assertEquals( ev.isQuoted(), av.isQuoted(), "isQuoted mismatch for binding '%s' at %s".formatted( key, path ) );
+				}
+
+				assertEquals( expectedStr, av.value(), "Binding value mismatch for '%s' at %s".formatted( key, path ) );
+			}
+			else {
+				assertEquals( expectedValue, actualValue, "Binding mismatch for '%s' at %s".formatted( key, path ) );
+			}
 		}
 	}
 }

@@ -16,53 +16,46 @@ public class NGAssociationFactory {
 
 		return switch( bindingValue ) {
 			case NGBindingValue.BooleanPresence b -> TRUE;
-			case NGBindingValue.Value v -> isInline ? associationForInlineBindingValue( v.value() ) : associationForWodBindingValue( v.value(), v.isQuoted() );
+			case NGBindingValue.Value v -> associationForValue( v.value(), v.isQuoted(), isInline );
 		};
 	}
 
 	/**
-	 * @return An association for the given inline binding value
+	 * @return An association for a binding value.
+	 *
+	 * Both inline and WOD bindings now use isQuoted uniformly:
+	 *
+	 * For inline bindings, a quoted value may start with '$' to indicate a dynamic binding (key path),
+	 * otherwise it's a constant string. Unquoted inline values are treated as dynamic.
+	 *
+	 * For WOD bindings, quoted values are always constant strings. Unquoted values are dynamic.
 	 */
-	private static NGAssociation associationForInlineBindingValue( String value ) {
+	private static NGAssociation associationForValue( String value, final boolean isQuoted, final boolean isInline ) {
 		Objects.requireNonNull( value );
 
-		if( value.startsWith( "\"" ) ) {
-			value = value.substring( 1 );
-
-			if( value.endsWith( "\"" ) ) {
-				value = value.substring( 0, value.length() - 1 );
-			}
-			else {
-				throw new IllegalArgumentException( value + " starts with quote but does not end with one. The parser should have already failed on this" );
-			}
-
-			if( value.startsWith( "$" ) ) {
+		if( isQuoted ) {
+			if( isInline && value.startsWith( "$" ) ) {
+				// Inline quoted value starting with $ — dynamic binding (key path)
 				value = value.substring( 1 );
 
 				if( value.endsWith( "VALID" ) ) {
 					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
 				}
+
+				return associationForDynamicValue( value, true );
 			}
-			else {
+
+			// Quoted value without $ prefix (inline) or any quoted WOD value — constant string
+			if( isInline ) {
 				value = value.replace( "\\$", "$" ); // Unescape escaped dollar signs
 				value = value.replace( "\\\"", "\"" ); // Unescape escaped quotes
-				return associationForConstantStringValue( value );
 			}
+
+			return associationForConstantStringValue( value );
 		}
 
-		return associationForDynamicValue( value, true );
-	}
-
-	/**
-	 * @return An association for the given wod binding value
-	 */
-	private static NGAssociation associationForWodBindingValue( final String associationValue, final boolean isQuoted ) {
-
-		if( isQuoted ) {
-			return associationForConstantStringValue( associationValue );
-		}
-
-		return associationForDynamicValue( associationValue, false );
+		// Unquoted value — dynamic
+		return associationForDynamicValue( value, isInline );
 	}
 
 	/**

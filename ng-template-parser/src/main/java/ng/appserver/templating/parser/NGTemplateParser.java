@@ -403,10 +403,9 @@ public class NGTemplateParser {
 	 * Parses inline binding key=value pairs and boolean (valueless) attributes from
 	 * the current position until '>' or '/>'.
 	 *
-	 * IMPORTANT: Inline binding values are stored raw, including their surrounding quotes.
-	 * For example, value="$hello" is stored as NGBindingValue.Value(false, "\"$hello\"").
-	 * The downstream NGAssociationFactory expects this format and handles quote stripping,
-	 * escape processing, and '$' detection itself.
+	 * Quoted values are stored with quotes stripped and isQuoted=true, matching the
+	 * convention used by the declaration (WOD) parser. For example, value="$hello"
+	 * is stored as NGBindingValue.Value(true, "$hello").
 	 *
 	 * Boolean attributes (e.g. "disabled" in {@code <my:Widget disabled />}) are stored
 	 * as NGBindingValue.BooleanPresence instances — their meaning is solely their presence.
@@ -442,9 +441,8 @@ public class NGTemplateParser {
 				_pos++; // consume '='
 				skipWhitespace();
 
-				// Read binding value — stored raw (with quotes if present) for inline binding processing
-				final String value = readInlineBindingValue();
-				bindings.put( key, new NGBindingValue.Value( false, value ) );
+				// Read binding value
+				bindings.put( key, readInlineBindingValue() );
 			}
 			else {
 				// Boolean attribute — present with no value
@@ -456,14 +454,14 @@ public class NGTemplateParser {
 	}
 
 	/**
-	 * Reads an inline binding value, preserving quotes if present.
+	 * Reads an inline binding value.
 	 *
 	 * For quoted values: reads from opening '"' to closing '"', handling escape sequences (\")
-	 * to find the correct end, and returns the entire string including the surrounding quotes.
+	 * to find the correct end. Returns the value with quotes stripped and isQuoted=true.
 	 *
-	 * For unquoted values: reads until whitespace, '>', or '/'.
+	 * For unquoted values: reads until whitespace, '>', or '/'. Returns with isQuoted=false.
 	 */
-	private String readInlineBindingValue() throws NGHTMLFormatException {
+	private NGBindingValue readInlineBindingValue() throws NGHTMLFormatException {
 
 		if( _pos < _source.length() && current() == '"' ) {
 			// Quoted value — scan to the matching closing quote, respecting \" escapes
@@ -478,7 +476,8 @@ public class NGTemplateParser {
 				}
 				else if( ch == '"' ) {
 					_pos++; // skip closing quote
-					return _source.substring( start, _pos );
+					// Return the value between the quotes (not including the quotes themselves)
+					return new NGBindingValue.Value( true, _source.substring( start + 1, _pos - 1 ) );
 				}
 				else {
 					_pos++;
@@ -505,7 +504,7 @@ public class NGTemplateParser {
 				throw error( "Expected binding value", start );
 			}
 
-			return _source.substring( start, _pos );
+			return new NGBindingValue.Value( false, _source.substring( start, _pos ) );
 		}
 	}
 
