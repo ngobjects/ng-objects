@@ -457,10 +457,11 @@ public class NGTemplateParser {
 				break;
 			}
 
-			// Read binding key
-			final String key = readIdentifier();
+			// Read binding key (may start with '?' prefix)
+			final String prefix = ( current() == '?' ) ? String.valueOf( _source.charAt( _pos++ ) ) : "";
+			final String key = prefix + readIdentifier();
 
-			if( key.isEmpty() ) {
+			if( key.isEmpty() || key.equals( "?" ) ) {
 				throw error( "Expected binding key, found '%c'".formatted( current() ) );
 			}
 

@@ -366,6 +366,25 @@ public class TestNGTemplateParser {
 		assertValueBinding( true, "$fieldSize", node.bindings().get( "size" ) );
 	}
 
+	@Test
+	public void questionMarkPrefixedBindingKey() throws Exception {
+		final PRootNode root = parse( "<wo:ActionURL actionClass=\"ChartJS\" ?uid=\"$selectedObject.uid\" />", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( 2, node.bindings().size() );
+		assertValueBinding( true, "ChartJS", node.bindings().get( "actionClass" ) );
+		assertValueBinding( true, "$selectedObject.uid", node.bindings().get( "?uid" ) );
+	}
+
+	@Test
+	public void questionMarkPrefixedWithMultipleBindings() throws Exception {
+		final PRootNode root = parse( "<wo:Widget ?foo=\"$a\" bar=\"$b\" ?baz=\"$c\" />", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( 3, node.bindings().size() );
+		assertValueBinding( true, "$a", node.bindings().get( "?foo" ) );
+		assertValueBinding( true, "$b", node.bindings().get( "bar" ) );
+		assertValueBinding( true, "$c", node.bindings().get( "?baz" ) );
+	}
+
 	// ---- Boolean attributes ----
 
 	@Test
