@@ -37,11 +37,6 @@ public class NGAssociationFactory {
 			if( isInline && value.startsWith( "$" ) ) {
 				// Inline quoted value starting with $ — dynamic binding (key path)
 				value = value.substring( 1 );
-
-				if( value.endsWith( "VALID" ) ) {
-					value = value.replaceFirst( "\\s*//\\s*VALID", "" );
-				}
-
 				return associationForDynamicValue( value, true );
 			}
 

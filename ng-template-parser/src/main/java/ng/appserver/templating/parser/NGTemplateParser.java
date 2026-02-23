@@ -477,7 +477,10 @@ public class NGTemplateParser {
 				else if( ch == '"' ) {
 					_pos++; // skip closing quote
 					// Return the value between the quotes (not including the quotes themselves)
-					return new NGBindingValue.Value( true, _source.substring( start + 1, _pos - 1 ) );
+					String value = _source.substring( start + 1, _pos - 1 );
+					// Strip the "// VALID" annotation if present — it's an instruction to skip binding validation
+					value = value.replaceFirst( "\\s*//\\s*VALID$", "" );
+					return new NGBindingValue.Value( true, value );
 				}
 				else {
 					_pos++;
