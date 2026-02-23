@@ -150,6 +150,54 @@ public class TestNGTemplateParser {
 		} );
 	}
 
+	// ---- Legacy case insensitivity ----
+
+	@Test
+	public void legacyWebobjectTagUpperCase() throws Exception {
+		final String wod = "MyString : String { value = \"hello\"; }";
+		final PRootNode root = parse( "<WEBOBJECT NAME=\"MyString\"></WEBOBJECT>", wod );
+		assertEquals( 1, root.children().size() );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( "String", node.type() );
+	}
+
+	@Test
+	public void legacyWebobjectTagMixedCase() throws Exception {
+		final String wod = "MyString : String { value = \"hello\"; }";
+		final PRootNode root = parse( "<WebObject name=\"MyString\"></WebObject>", wod );
+		assertEquals( 1, root.children().size() );
+		assertBasicNode( root.children().getFirst() );
+	}
+
+	@Test
+	public void legacyClosingTagCaseMismatch() throws Exception {
+		// Opening tag lowercase, closing tag uppercase — should still work
+		final String wod = "MyString : String { value = \"hello\"; }";
+		final PRootNode root = parse( "<webobject name=\"MyString\"></WEBOBJECT>", wod );
+		assertEquals( 1, root.children().size() );
+		assertBasicNode( root.children().getFirst() );
+	}
+
+	@Test
+	public void legacyWoTagCaseMismatch() throws Exception {
+		// Opening <WO>, closing </wo> — should still work
+		final String wod = "MyString : String { value = \"hello\"; }";
+		final PRootNode root = parse( "<WO name=\"MyString\"></wo>", wod );
+		assertEquals( 1, root.children().size() );
+		assertBasicNode( root.children().getFirst() );
+	}
+
+	@Test
+	public void legacyWebobjectTagWildCase() throws Exception {
+		// Truly wild casing
+		final String wod = "MyString : String { value = \"hello\"; }";
+		final PRootNode root = parse( "<wEbObJeCt name=\"MyString\">Hello</WeBoBjEcT>", wod );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( "String", node.type() );
+		assertEquals( 1, node.children().size() );
+		assertHTML( "Hello", node.children().getFirst() );
+	}
+
 	// ---- Parser directives ----
 
 	@Test

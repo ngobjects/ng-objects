@@ -96,6 +96,18 @@ public class NGTemplateParser {
 	 * @return The list of child PNodes
 	 */
 	private List<PNode> parseChildren( final String expectedClosingTag, final int openingTagPosition ) throws NGHTMLFormatException, NGDeclarationFormatException {
+		return parseChildren( expectedClosingTag, openingTagPosition, false );
+	}
+
+	/**
+	 * Parses a sequence of child nodes until we hit the expected closing tag or end of input.
+	 *
+	 * @param expectedClosingTag The tag name we expect to close this block (e.g. "wo:SomeComponent"), or null if we're at the root level
+	 * @param openingTagPosition The source position where the opening tag started, used for error reporting if the closing tag is missing. -1 if at root level.
+	 * @param closingTagCaseInsensitive If true, the closing tag is matched case-insensitively (for legacy webobject/wo tags)
+	 * @return The list of child PNodes
+	 */
+	private List<PNode> parseChildren( final String expectedClosingTag, final int openingTagPosition, final boolean closingTagCaseInsensitive ) throws NGHTMLFormatException, NGDeclarationFormatException {
 		final List<PNode> children = new ArrayList<>();
 		final StringBuilder htmlBuffer = new StringBuilder();
 		int htmlStart = _pos;
@@ -107,11 +119,11 @@ public class NGTemplateParser {
 
 				// Check for closing tag first
 				if( lookingAt( "</" ) ) {
-					if( expectedClosingTag != null && lookingAtClosingTag( expectedClosingTag ) ) {
+					if( expectedClosingTag != null && lookingAtClosingTag( expectedClosingTag, closingTagCaseInsensitive ) ) {
 						// Flush any accumulated HTML
 						htmlStart = flushHTML( htmlBuffer, htmlStart, children );
 						// Consume the closing tag
-						consumeClosingTag( expectedClosingTag );
+						consumeClosingTag( expectedClosingTag, closingTagCaseInsensitive );
 						return children;
 					}
 					// Catch typos like </ wo:Conditional> where a space follows </
@@ -270,8 +282,8 @@ public class NGTemplateParser {
 		// Container tag — expect '>'
 		expect( '>' );
 
-		// Parse children recursively
-		final List<PNode> children = parseChildren( tagKeyword, startPos );
+		// Parse children recursively (legacy tags are case-insensitive)
+		final List<PNode> children = parseChildren( tagKeyword, startPos, true );
 
 		return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), children, false, false, declarationName, new SourceRange( startPos, _pos ) );
 	}
@@ -653,12 +665,16 @@ public class NGTemplateParser {
 	}
 
 	/**
-	 * @return true if the current position is at a closing tag matching the given name (case-sensitive).
+	 * @return true if the current position is at a closing tag matching the given name.
 	 *
 	 * Matches </name> or </name followed by whitespace then >
+	 *
+	 * @param caseInsensitive If true, the tag name is matched case-insensitively (for legacy webobject/wo tags)
 	 */
-	private boolean lookingAtClosingTag( final String tagName ) {
-		if( !lookingAt( "</" + tagName ) ) {
+	private boolean lookingAtClosingTag( final String tagName, final boolean caseInsensitive ) {
+		final String prefix = "</" + tagName;
+
+		if( caseInsensitive ? !lookingAtIgnoreCase( prefix ) : !lookingAt( prefix ) ) {
 			return false;
 		}
 
@@ -674,14 +690,15 @@ public class NGTemplateParser {
 
 	/**
 	 * Consumes a closing tag: </tagName> (allowing whitespace before >)
+	 *
+	 * @param caseInsensitive If true, the tag name is matched case-insensitively (for legacy webobject/wo tags)
 	 */
-	private void consumeClosingTag( final String tagName ) throws NGHTMLFormatException {
+	private void consumeClosingTag( final String tagName, final boolean caseInsensitive ) throws NGHTMLFormatException {
 		_pos += 2; // "</"
 
-		// Skip the tag name (case-sensitive)
 		final String actual = _source.substring( _pos, Math.min( _pos + tagName.length(), _source.length() ) );
 
-		if( !actual.equals( tagName ) ) {
+		if( caseInsensitive ? !actual.equalsIgnoreCase( tagName ) : !actual.equals( tagName ) ) {
 			throw error( "Expected closing tag </%s> but found </%s>".formatted( tagName, actual ) );
 		}
 
