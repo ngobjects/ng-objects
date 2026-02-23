@@ -23,25 +23,23 @@ public class NGAssociationFactory {
 	/**
 	 * @return An association for a binding value.
 	 *
-	 * Both inline and WOD bindings now use isQuoted uniformly:
-	 *
-	 * For inline bindings, a quoted value may start with '$' to indicate a dynamic binding (key path),
-	 * otherwise it's a constant string. Unquoted inline values are treated as dynamic.
+	 * For inline bindings, the '$' prefix is what determines if a value is dynamic or constant,
+	 * regardless of whether the value was quoted or not. Quotes in inline bindings are just delimiters.
 	 *
 	 * For WOD bindings, quoted values are always constant strings. Unquoted values are dynamic.
 	 */
 	private static NGAssociation associationForValue( String value, final boolean isQuoted, final boolean isInline ) {
 		Objects.requireNonNull( value );
 
-		if( isQuoted ) {
-			if( isInline && value.startsWith( "$" ) ) {
-				// Inline quoted value starting with $ — dynamic binding (key path)
+		if( isInline ) {
+			if( value.startsWith( "$" ) ) {
+				// Inline value starting with $ — dynamic binding (key path)
 				value = value.substring( 1 );
 				return associationForDynamicValue( value, true );
 			}
 
-			// Quoted value without $ prefix (inline) or any quoted WOD value — constant string
-			if( isInline ) {
+			// Inline value without $ prefix — constant string
+			if( isQuoted ) {
 				value = value.replace( "\\$", "$" ); // Unescape escaped dollar signs
 				value = value.replace( "\\\"", "\"" ); // Unescape escaped quotes
 			}
@@ -49,8 +47,12 @@ public class NGAssociationFactory {
 			return associationForConstantStringValue( value );
 		}
 
-		// Unquoted value — dynamic
-		return associationForDynamicValue( value, isInline );
+		// WOD binding
+		if( isQuoted ) {
+			return associationForConstantStringValue( value );
+		}
+
+		return associationForDynamicValue( value, false );
 	}
 
 	/**
