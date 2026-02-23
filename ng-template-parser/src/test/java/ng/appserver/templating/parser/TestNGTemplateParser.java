@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -87,7 +88,7 @@ public class TestNGTemplateParser {
 
 	@Test
 	public void customNamespace() throws Exception {
-		final PRootNode root = parse( "<ui:Button label=\"Click\" />", "" );
+		final PRootNode root = parseWithNamespaces( "<ui:Button label=\"Click\" />", "", Set.of( "wo", "ui" ) );
 		final PBasicNode node = assertBasicNode( root.children().getFirst() );
 		assertEquals( "ui", node.namespace() );
 		assertEquals( "Button", node.type() );
@@ -347,6 +348,64 @@ public class TestNGTemplateParser {
 		assertBooleanBinding( node.bindings().get( "checked" ) );
 	}
 
+	// ---- Namespace filtering ----
+
+	@Test
+	public void unregisteredNamespaceTreatedAsHTML() throws Exception {
+		final PRootNode root = parse( "<svg:rect width=\"100\" height=\"50\" />", "" );
+		assertEquals( 1, root.children().size() );
+		// svg:rect should pass through as plain HTML since "svg" is not a registered namespace
+		assertHTML( "<svg:rect width=\"100\" height=\"50\" />", root.children().getFirst() );
+	}
+
+	@Test
+	public void unregisteredNamespaceWithChildren() throws Exception {
+		final PRootNode root = parse( "<xsl:template match=\"/\"><p>Hello</p></xsl:template>", "" );
+		assertEquals( 1, root.children().size() );
+		assertHTML( "<xsl:template match=\"/\"><p>Hello</p></xsl:template>", root.children().getFirst() );
+	}
+
+	@Test
+	public void registeredNamespaceStillWorks() throws Exception {
+		final PRootNode root = parse( "<wo:String value=\"$name\" />", "" );
+		assertEquals( 1, root.children().size() );
+		assertBasicNode( root.children().getFirst() );
+	}
+
+	@Test
+	public void mixedRegisteredAndUnregisteredNamespaces() throws Exception {
+		final PRootNode root = parse( "<svg:rect /><wo:String value=\"$x\" /><svg:circle />", "" );
+		assertEquals( 3, root.children().size() );
+		assertHTML( "<svg:rect />", root.children().get( 0 ) );
+		assertBasicNode( root.children().get( 1 ) );
+		assertHTML( "<svg:circle />", root.children().get( 2 ) );
+	}
+
+	@Test
+	public void customNamespaceRegistered() throws Exception {
+		final PRootNode root = parseWithNamespaces( "<ui:Button label=\"Click\" /><svg:rect />", "", Set.of( "wo", "ui" ) );
+		assertEquals( 2, root.children().size() );
+		final PBasicNode button = assertBasicNode( root.children().get( 0 ) );
+		assertEquals( "ui", button.namespace() );
+		assertHTML( "<svg:rect />", root.children().get( 1 ) );
+	}
+
+	@Test
+	public void malformedTagIgnoredForUnregisteredNamespace() throws Exception {
+		// <svg: rect> should NOT trigger an error — svg is not a registered namespace
+		final PRootNode root = parse( "<svg: rect>content</svg: rect>", "" );
+		assertEquals( 1, root.children().size() );
+		assertHTML( "<svg: rect>content</svg: rect>", root.children().getFirst() );
+	}
+
+	@Test
+	public void malformedTagStillDetectedForRegisteredNamespace() {
+		// <wo: String> should still trigger an error
+		assertThrows( NGHTMLFormatException.class, () -> {
+			parse( "<wo: String value=\"$x\" />", "" );
+		} );
+	}
+
 	// ---- Comparison with old parser ----
 
 	@Test
@@ -444,6 +503,11 @@ public class TestNGTemplateParser {
 
 	private static PRootNode parse( final String html, final String wod ) throws NGDeclarationFormatException, NGHTMLFormatException {
 		final PNode result = new NGTemplateParser( html, wod ).parse();
+		return assertInstanceOf( PRootNode.class, result );
+	}
+
+	private static PRootNode parseWithNamespaces( final String html, final String wod, final Set<String> namespaces ) throws NGDeclarationFormatException, NGHTMLFormatException {
+		final PNode result = new NGTemplateParser( html, wod, namespaces ).parse();
 		return assertInstanceOf( PRootNode.class, result );
 	}
 

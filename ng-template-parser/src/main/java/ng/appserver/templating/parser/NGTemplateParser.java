@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 import ng.appserver.templating.parser.model.PBasicNode;
@@ -28,6 +29,11 @@ import ng.appserver.templating.parser.model.SourceRange;
 public class NGTemplateParser {
 
 	/**
+	 * The default set of namespaces recognized as dynamic elements
+	 */
+	private static final Set<String> DEFAULT_DYNAMIC_NAMESPACES = Set.of( "wo" );
+
+	/**
 	 * Parser directive: raw/verbatim block (content not processed, included in output)
 	 */
 	private static final String DIRECTIVE_RAW = "raw";
@@ -48,16 +54,28 @@ public class NGTemplateParser {
 	private final Map<String, NGDeclaration> _declarations;
 
 	/**
+	 * The set of namespaces to treat as dynamic elements.
+	 * Tags with namespaces not in this set are treated as plain HTML (e.g. svg:rect, xsl:template).
+	 */
+	private final Set<String> _dynamicNamespaces;
+
+	/**
 	 * Current position in the source string (the cursor)
 	 */
 	private int _pos;
 
 	public NGTemplateParser( final String htmlString, final String declarationString ) throws NGDeclarationFormatException {
+		this( htmlString, declarationString, DEFAULT_DYNAMIC_NAMESPACES );
+	}
+
+	public NGTemplateParser( final String htmlString, final String declarationString, final Set<String> dynamicNamespaces ) throws NGDeclarationFormatException {
 		Objects.requireNonNull( htmlString );
 		Objects.requireNonNull( declarationString );
+		Objects.requireNonNull( dynamicNamespaces );
 
 		_source = htmlString;
 		_declarations = NGDeclarationParser.declarationsWithString( declarationString );
+		_dynamicNamespaces = dynamicNamespaces;
 		_pos = 0;
 	}
 
@@ -711,8 +729,10 @@ public class NGTemplateParser {
 
 	/**
 	 * @return true if the current position is at the start of a namespaced opening tag (<ns:type)
+	 * where the namespace is one of the registered dynamic namespaces.
 	 *
-	 * Pattern: '<' followed by one or more letters, ':', then one or more letters/digits
+	 * Pattern: '<' followed by one or more letters, ':', then one or more letters/digits.
+	 * Tags with unrecognized namespaces (e.g. svg:rect, xsl:template) are treated as plain HTML.
 	 */
 	private boolean isAtNamespacedStartTag() {
 		if( _pos >= _source.length() || current() != '<' ) {
@@ -743,6 +763,13 @@ public class NGTemplateParser {
 			return false;
 		}
 
+		// Check if the namespace is registered as a dynamic namespace
+		final String namespace = _source.substring( start, i );
+
+		if( !_dynamicNamespaces.contains( namespace ) ) {
+			return false;
+		}
+
 		i++; // skip ':'
 
 		// Need at least one letter/digit after ':'
@@ -754,28 +781,38 @@ public class NGTemplateParser {
 	}
 
 	/**
-	 * @return true if the current position looks like a malformed namespaced tag with a space after the colon.
+	 * @return true if the current position looks like a malformed namespaced tag with a space after the colon,
+	 * but only for registered dynamic namespaces.
 	 *
 	 * Matches the pattern: '<' letters ':' space — e.g. {@code <wo: Repetition>}
+	 * Only triggers for recognized namespaces to avoid false positives on XML content.
 	 */
 	private boolean isAtMalformedNamespacedTag() {
 		if( _pos >= _source.length() || current() != '<' ) {
 			return false;
 		}
 
-		int i = _pos + 1;
+		final int start = _pos + 1;
+		int i = start;
 
 		// Need at least one letter before ':'
 		while( i < _source.length() && Character.isLetter( _source.charAt( i ) ) ) {
 			i++;
 		}
 
-		if( i == _pos + 1 ) {
+		if( i == start ) {
 			return false;
 		}
 
 		// Expect ':'
 		if( i >= _source.length() || _source.charAt( i ) != ':' ) {
+			return false;
+		}
+
+		// Only flag for registered dynamic namespaces
+		final String namespace = _source.substring( start, i );
+
+		if( !_dynamicNamespaces.contains( namespace ) ) {
 			return false;
 		}
 
@@ -786,10 +823,11 @@ public class NGTemplateParser {
 	}
 
 	/**
-	 * @return true if the current position looks like a malformed closing tag with a space after {@code </}.
+	 * @return true if the current position looks like a malformed closing tag with a space after {@code </},
+	 * but only for registered dynamic namespaces.
 	 *
 	 * Matches the pattern: {@code </ letters:} — e.g. {@code </ wo:Conditional>}
-	 * Only matches namespaced tags (with a colon) to avoid false positives on regular HTML like {@code </ div>}.
+	 * Only matches registered dynamic namespaces to avoid false positives on XML content.
 	 */
 	private boolean isAtMalformedClosingTag() {
 		if( !lookingAt( "</ " ) ) {
@@ -814,12 +852,18 @@ public class NGTemplateParser {
 			return false;
 		}
 
-		// Only flag it if there's a colon (namespaced tag) — </ div> is probably not our concern
-		return i < _source.length() && _source.charAt( i ) == ':';
+		// Only flag it if there's a colon (namespaced tag) with a registered namespace
+		if( i >= _source.length() || _source.charAt( i ) != ':' ) {
+			return false;
+		}
+
+		final String namespace = _source.substring( nameStart, i );
+		return _dynamicNamespaces.contains( namespace );
 	}
 
 	/**
-	 * @return true if the current position is at a namespaced closing tag ({@code </letters:letters}).
+	 * @return true if the current position is at a namespaced closing tag ({@code </letters:letters})
+	 * for a registered dynamic namespace.
 	 *
 	 * Used to detect mismatched closing tags — e.g. {@code </wo:Repetition>} inside a {@code <wo:Conditional>} block.
 	 */
@@ -828,19 +872,27 @@ public class NGTemplateParser {
 			return false;
 		}
 
-		int i = _pos + 2; // skip "</"
+		final int start = _pos + 2; // skip "</"
+		int i = start;
 
 		// Need at least one letter before ':'
 		while( i < _source.length() && Character.isLetter( _source.charAt( i ) ) ) {
 			i++;
 		}
 
-		if( i == _pos + 2 ) {
+		if( i == start ) {
 			return false;
 		}
 
 		// Expect ':'
 		if( i >= _source.length() || _source.charAt( i ) != ':' ) {
+			return false;
+		}
+
+		// Only match registered dynamic namespaces
+		final String namespace = _source.substring( start, i );
+
+		if( !_dynamicNamespaces.contains( namespace ) ) {
 			return false;
 		}
 
