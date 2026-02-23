@@ -1,6 +1,7 @@
 package ng.appserver.templating.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,6 +62,7 @@ public class TestNGTemplateParser {
 		assertEquals( "wo", node.namespace() );
 		assertEquals( "String", node.type() );
 		assertEquals( true, node.isInline() );
+		assertTrue( node.selfClosing() );
 		assertEquals( 0, node.children().size() );
 		assertValueBinding( true, "$name", node.bindings().get( "value" ) );
 	}
@@ -72,8 +74,23 @@ public class TestNGTemplateParser {
 		final PBasicNode node = assertBasicNode( root.children().getFirst() );
 		assertEquals( "wo", node.namespace() );
 		assertEquals( "Conditional", node.type() );
+		assertFalse( node.selfClosing() );
 		assertEquals( 1, node.children().size() );
 		assertHTML( "Hello", node.children().getFirst() );
+	}
+
+	@Test
+	public void selfClosingVsEmptyContainer() throws Exception {
+		// Self-closing and empty container both have zero children, but differ in selfClosing flag
+		final PRootNode selfClosed = parse( "<wo:Widget />", "" );
+		final PBasicNode selfClosedNode = assertBasicNode( selfClosed.children().getFirst() );
+		assertTrue( selfClosedNode.selfClosing() );
+		assertEquals( 0, selfClosedNode.children().size() );
+
+		final PRootNode emptyContainer = parse( "<wo:Widget></wo:Widget>", "" );
+		final PBasicNode emptyContainerNode = assertBasicNode( emptyContainer.children().getFirst() );
+		assertFalse( emptyContainerNode.selfClosing() );
+		assertEquals( 0, emptyContainerNode.children().size() );
 	}
 
 	@Test
