@@ -217,7 +217,7 @@ public class NGTemplateParser {
 		// Self-closing?
 		if( lookingAt( "/>" ) ) {
 			_pos += 2;
-			return new PBasicNode( namespace, type, bindings, List.of(), true, type, new SourceRange( startPos, _pos ) );
+			return new PBasicNode( namespace, type, bindings, List.of(), true, true, type, new SourceRange( startPos, _pos ) );
 		}
 
 		// Container tag — expect '>'
@@ -228,7 +228,7 @@ public class NGTemplateParser {
 		// Parse children recursively
 		final List<PNode> children = parseChildren( closingTagName, startPos );
 
-		return new PBasicNode( namespace, type, bindings, children, true, type, new SourceRange( startPos, _pos ) );
+		return new PBasicNode( namespace, type, bindings, children, true, false, type, new SourceRange( startPos, _pos ) );
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class NGTemplateParser {
 		// Self-closing?
 		if( lookingAt( "/>" ) ) {
 			_pos += 2;
-			return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), List.of(), false, declarationName, new SourceRange( startPos, _pos ) );
+			return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), List.of(), false, true, declarationName, new SourceRange( startPos, _pos ) );
 		}
 
 		// Container tag — expect '>'
@@ -273,7 +273,7 @@ public class NGTemplateParser {
 		// Parse children recursively
 		final List<PNode> children = parseChildren( tagKeyword, startPos );
 
-		return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), children, false, declarationName, new SourceRange( startPos, _pos ) );
+		return new PBasicNode( declaration.namespace(), declaration.type(), declaration.bindings(), children, false, false, declarationName, new SourceRange( startPos, _pos ) );
 	}
 
 	/**

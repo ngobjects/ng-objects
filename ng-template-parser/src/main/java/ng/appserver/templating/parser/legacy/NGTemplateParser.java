@@ -218,6 +218,7 @@ public class NGTemplateParser {
 				_currentDynamicTag.declaration().bindings(),
 				_currentDynamicTag.childrenWithStringsProcessedAndCombined(),
 				_currentDynamicTag.declaration().isInline(),
+				false,
 				_currentDynamicTag.declaration().name(),
 				SourceRange.EMPTY );
 

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import ng.appserver.templating.parser.NGDeclaration.NGBindingValue;
 
-public record PBasicNode( String namespace, String type, Map<String, NGBindingValue> bindings, List<PNode> children, boolean isInline, String declarationName, SourceRange sourceRange ) implements PNode {
+public record PBasicNode( String namespace, String type, Map<String, NGBindingValue> bindings, List<PNode> children, boolean isInline, boolean selfClosing, String declarationName, SourceRange sourceRange ) implements PNode {
 
 	public PBasicNode {
 		Objects.requireNonNull( namespace );
