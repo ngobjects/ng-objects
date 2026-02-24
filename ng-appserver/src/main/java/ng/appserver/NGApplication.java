@@ -585,16 +585,13 @@ public class NGApplication implements NGPlugin {
 		// Hugi 2024-10-09
 		context.setForceFullRender();
 
-		// If we're in development mode, we want to show some extra nice debugging information (sources, caches, context info etc.)
-		if( isDevelopmentMode() ) {
-			final NGExceptionPageDevelopment nextPage = pageWithName( NGExceptionPageDevelopment.class, context );
-			nextPage.setException( throwable );
-			return nextPage;
-		}
+		final Class<? extends NGExceptionPageDevelopment> pageClass = isDevelopmentMode() ? NGExceptionPageDevelopment.class : NGExceptionPage.class;
+		final NGExceptionPageDevelopment exceptionPage = pageWithName( pageClass, context );
+		exceptionPage.setException( throwable );
 
-		final NGExceptionPage nextPage = pageWithName( NGExceptionPage.class, context );
-		nextPage.setException( throwable );
-		return nextPage;
+		final NGResponse response = exceptionPage.generateResponse();
+		response.setStatus( 500 );
+		return response;
 	}
 
 	/**
