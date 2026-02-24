@@ -437,8 +437,11 @@ public interface NGKeyValueCoding {
 					throw new RuntimeException( e );
 				}
 				catch( IllegalArgumentException e ) {
-					// FIXME: Error handling is missing entirely
-					throw new RuntimeException( e );
+					// We end up here when the provided value doesn't match the setter's expected type,
+					// e.g. passing a String to a method that expects BigDecimal or LocalDate.
+					final Class<?> expectedType = _method.getParameterTypes()[0];
+					final String receivedType = value != null ? value.getClass().getName() : "null";
+					throw new RuntimeException( "Failed to set '%s' on %s: expected %s but received %s".formatted( _method.getName(), object.getClass().getSimpleName(), expectedType.getName(), receivedType ), e );
 				}
 				catch( InvocationTargetException e ) {
 					// FIXME: Error handling is missing entirely
