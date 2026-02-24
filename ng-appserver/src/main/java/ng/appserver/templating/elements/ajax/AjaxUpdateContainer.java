@@ -58,7 +58,7 @@ public class AjaxUpdateContainer extends NGDynamicGroup {
 		b.append( NGHTMLUtilities.createElementStringWithAttributes( elementName, attributes, false ) );
 		response.appendContentString( b.toString() );
 		appendChildrenToResponse( response, context );
-		response.appendContentString( "</div>" );
+		response.appendContentString( "</" + elementName + ">" );
 	}
 
 	public String id( NGContext context ) {
