@@ -11,6 +11,9 @@ import ng.appserver.templating.NGComponent;
 public class TAAjaxPage extends NGComponent {
 
 	public String myName;
+	public String observedValue = "";
+	public String containerFieldA = "";
+	public String containerFieldB = "";
 
 	public TAAjaxPage( NGContext context ) {
 		super( context );
@@ -20,6 +23,14 @@ public class TAAjaxPage extends NGComponent {
 		final String dateTime = LocalDateTime.now().format( DateTimeFormatter.ofPattern( "HH:mm:ss 'on' MMMM d YYYY" ) );
 		final String encouragingMessage = encouragingMessages().get( new Random().nextInt( 0, encouragingMessages().size() - 1 ) );
 		return "The current time is %s. %s".formatted( dateTime, encouragingMessage );
+	}
+
+	public String observedEcho() {
+		return "Echo: " + observedValue;
+	}
+
+	public String containerEcho() {
+		return "A=" + containerFieldA + ", B=" + containerFieldB;
 	}
 
 	private List<String> encouragingMessages() {

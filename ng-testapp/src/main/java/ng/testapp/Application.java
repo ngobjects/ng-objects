@@ -7,6 +7,7 @@ import ng.appserver.NGResponse;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.plugins.Elements;
 import ng.plugins.Routes;
+import ng.testapp.components.TAAjaxPage;
 import ng.testapp.components.TAMain;
 import ng.testapp.components.TAProgrammaticDynamicComponent;
 import ng.testapp.components.TASingleFileComponent;
@@ -81,7 +82,10 @@ public class Application extends NGApplication {
 
 				// Testing programmatic component generation
 				// FIXME: Doesn't really belong in the demo project, find a new home // Hugi 2025-09-27
-				.map( "/component-programmatic", TAProgrammaticDynamicComponent.class );
+				.map( "/component-programmatic", TAProgrammaticDynamicComponent.class )
+
+				// Ajax test page
+				.map( "/ajax", TAAjaxPage.class );
 	}
 
 	private NGActionResults stringReponse() {

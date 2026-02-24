@@ -42,6 +42,33 @@
 
 	<hr style="margin: 50px" />
 
+	<h5>Single-field observe (AjaxObserveField)</h5>
+	<wo:form>
+		<label>Type something:</label>
+		<wo:textfield value="$observedValue" id="observeInput" />
+		<wo:AjaxObserveField observeFieldID="observeInput" updateContainerID="observeUC" fullSubmit="$true" />
+	</wo:form>
+	<wo:AjaxUpdateContainer id="observeUC" class="card mt-3 mb-3 p-3">
+		<span id="observeEcho"><wo:str value="$observedEcho" /></span>
+	</wo:AjaxUpdateContainer>
+
+	<hr style="margin: 50px" />
+
+	<h5>Container-mode observe (AjaxObserveField wrapping descendants)</h5>
+	<wo:form>
+		<wo:AjaxObserveField updateContainerID="containerUC" fullSubmit="$true">
+			<label>Field A:</label>
+			<wo:textfield value="$containerFieldA" id="containerFieldA" />
+			<label>Field B:</label>
+			<wo:textfield value="$containerFieldB" id="containerFieldB" />
+		</wo:AjaxObserveField>
+	</wo:form>
+	<wo:AjaxUpdateContainer id="containerUC" class="card mt-3 mb-3 p-3">
+		<span id="containerEcho"><wo:str value="$containerEcho" /></span>
+	</wo:AjaxUpdateContainer>
+
+	<hr style="margin: 50px" />
+
 	<h5>Submit a form using Ajax</h5>
 	<p>Note that pushing "return" will just submit the page. You need to click the button. Yeah. Work in progress.</p>
 
