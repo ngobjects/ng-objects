@@ -314,13 +314,6 @@ function _ngObserveFieldTriggered( url, observeFieldID, updateContainerID, fullS
 function _ngBindObserveFields() {
 	const elements = document.querySelectorAll('[data-observefieldid]');
 
-	const func = function(evt) {
-		const record = _ngFieldObservers.get(this.id);
-		ngDebounce( record.observeFieldID, () => {
-			_ngObserveFieldTriggered( record.action, record.observeFieldID, record.updateContainerID, record.fullSubmit );
-		}, 300 );
-	};
-
 	for( const element of elements ) {
 		const observeFieldID = element.getAttribute('data-observefieldid');
 		const field = document.getElementById(observeFieldID);
@@ -337,11 +330,21 @@ function _ngBindObserveFields() {
 		}
 
 		if( !_ngFieldObservers.get( observeFieldID ) ) {
+			const debounceDelay = parseInt( element.getAttribute('data-debounce') ) || 300;
+
+			const func = function(evt) {
+				const record = _ngFieldObservers.get(this.id);
+				ngDebounce( record.observeFieldID, () => {
+					_ngObserveFieldTriggered( record.action, record.observeFieldID, record.updateContainerID, record.fullSubmit );
+				}, record.debounce );
+			};
+
 			const record = {};
 			record.observeFieldID = observeFieldID;
 			record.updateContainerID = element.getAttribute('data-updatecontainerid');
 			record.action = element.getAttribute('data-action');
 			record.fullSubmit = element.getAttribute('data-fullsubmit') === 'true';
+			record.debounce = debounceDelay;
 			record.func = func;
 			_ngFieldObservers.set( record.observeFieldID, record );
 
@@ -362,6 +365,7 @@ function _ngBindObserveDescendants() {
 		const updateContainerID = container.getAttribute('data-updatecontainerid');
 		const action = container.getAttribute('data-action');
 		const fullSubmit = container.getAttribute('data-fullsubmit') === 'true';
+		const debounceDelay = parseInt( container.getAttribute('data-debounce') ) || 300;
 
 		const fields = container.querySelectorAll('input, textarea, select');
 
@@ -388,7 +392,7 @@ function _ngBindObserveDescendants() {
 				const record = _ngFieldObservers.get( this.id );
 				ngDebounce( record.observeFieldID, () => {
 					_ngObserveFieldTriggered( record.action, record.observeFieldID, record.updateContainerID, record.fullSubmit );
-				}, 300 );
+				}, record.debounce );
 			};
 
 			const record = {};
@@ -396,6 +400,7 @@ function _ngBindObserveDescendants() {
 			record.updateContainerID = updateContainerID;
 			record.action = action;
 			record.fullSubmit = fullSubmit;
+			record.debounce = debounceDelay;
 			record.func = func;
 			_ngFieldObservers.set( field.id, record );
 

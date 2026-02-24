@@ -29,13 +29,12 @@ import ng.appserver.templating.elements.NGDynamicGroup;
  *   updateContainerID - (required) ID of the AjaxUpdateContainer(s) to update (semicolon-separated for multiple)
  *   action            - (optional) Server-side action to invoke when a field changes
  *   fullSubmit        - (optional) If true, submit all fields from the containing form, not just the changed field.
+ *   debounce          - (optional) Debounce delay in milliseconds. The request fires after the user stops
+ *                       typing for this duration. Default: 300. Set to 0 for immediate firing on every change.
  *   elementName       - (optional) HTML element name for container mode wrapper (default: "div")
  *   id                - (optional) Explicit HTML id for the container wrapper. Auto-generated if omitted.
  *   class             - (optional) CSS class for the container wrapper
  *   style             - (optional) CSS style for the container wrapper
- *
- * FIXME: Missing observeFieldFrequency
- * FIXME: Missing observeDelay
  */
 
 public class AjaxObserveField extends NGDynamicGroup {
@@ -44,6 +43,7 @@ public class AjaxObserveField extends NGDynamicGroup {
 	private final NGAssociation _actionAssociation;
 	private final NGAssociation _updateContainerIDAssociation;
 	private final NGAssociation _fullSubmitAssociation;
+	private final NGAssociation _debounceAssociation;
 	private final NGAssociation _elementNameAssociation;
 	private final NGAssociation _idAssociation;
 	private final NGAssociation _classAssociation;
@@ -55,6 +55,7 @@ public class AjaxObserveField extends NGDynamicGroup {
 		_updateContainerIDAssociation = associations.get( "updateContainerID" );
 		_observeFieldIDAssociation = associations.get( "observeFieldID" );
 		_fullSubmitAssociation = associations.get( "fullSubmit" );
+		_debounceAssociation = associations.get( "debounce" );
 		_elementNameAssociation = associations.get( "elementName" );
 		_idAssociation = associations.get( "id" );
 		_classAssociation = associations.get( "class" );
@@ -92,6 +93,13 @@ public class AjaxObserveField extends NGDynamicGroup {
 			tag.append( " data-action=\"" ).append( context.componentActionURL() ).append( "\"" );
 			tag.append( " data-fullsubmit=\"" ).append( fullSubmit ).append( "\"" );
 
+			if( _debounceAssociation != null ) {
+				final Object debounce = _debounceAssociation.valueInComponent( context.component() );
+				if( debounce != null ) {
+					tag.append( " data-debounce=\"" ).append( debounce ).append( "\"" );
+				}
+			}
+
 			if( _classAssociation != null ) {
 				final String cssClass = (String)_classAssociation.valueInComponent( context.component() );
 				if( cssClass != null ) {
@@ -127,6 +135,14 @@ public class AjaxObserveField extends NGDynamicGroup {
 
 			html.append( " data-action=\"" ).append( context.componentActionURL() ).append( "\"" );
 			html.append( " data-fullsubmit=\"" ).append( fullSubmit ).append( "\"" );
+
+			if( _debounceAssociation != null ) {
+				final Object debounce = _debounceAssociation.valueInComponent( context.component() );
+				if( debounce != null ) {
+					html.append( " data-debounce=\"" ).append( debounce ).append( "\"" );
+				}
+			}
+
 			html.append( "></span>" );
 
 			response.appendContentString( html.toString() );
