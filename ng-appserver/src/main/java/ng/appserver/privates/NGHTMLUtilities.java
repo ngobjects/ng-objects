@@ -97,6 +97,7 @@ public class NGHTMLUtilities {
 
 		if( a != null ) {
 			logger.warn( "Found [framework] binding. You should be using [namespace]" );
+			return a;
 		}
 
 		return null;
