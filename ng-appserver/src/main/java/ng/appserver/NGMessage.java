@@ -89,7 +89,8 @@ public abstract class NGMessage {
 
 		// Fail if multiple header values are present
 		if( values.size() > 1 ) {
-			throw new IllegalStateException( "The request contains %s headers '%s' with values (%s). If you expected multiple header values, use headersForKey() instead of headerForKey()".formatted( values.size(), key, values ) );
+			// FIXME: We should be failing here // Hugi 2026-03-03
+			//			throw new IllegalStateException( "The request contains %s headers '%s' with values (%s). If you expected multiple header values, use headersForKey() instead of headerForKey()".formatted( values.size(), key, values ) );
 		}
 
 		return values.get( 0 );
