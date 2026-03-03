@@ -178,7 +178,7 @@ public abstract class NGMessage {
 		appendContentBytes( contentBytes );
 	}
 
-	public void appendContentBytes( final byte[] contentBytes ) {
+	private void appendContentBytes( final byte[] contentBytes ) {
 		try {
 			_contentBytes.write( contentBytes );
 		}
