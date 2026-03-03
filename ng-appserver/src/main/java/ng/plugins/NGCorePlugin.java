@@ -9,6 +9,7 @@ import ng.appserver.templating.elements.NGActionURL;
 import ng.appserver.templating.elements.NGBrowser;
 import ng.appserver.templating.elements.NGComponentContent;
 import ng.appserver.templating.elements.NGConditional;
+import ng.appserver.templating.elements.NGCheckbox;
 import ng.appserver.templating.elements.NGFileUpload;
 import ng.appserver.templating.elements.NGForm;
 import ng.appserver.templating.elements.NGGenericContainer;
@@ -47,6 +48,7 @@ public class NGCorePlugin implements NGPlugin {
 				.elementClass( AjaxUpdateContainer.class, "auc" )
 				.elementClass( AjaxUpdateLink.class, "aul" )
 				.elementClass( NGActionURL.class, "actionURL" )
+				.elementClass( NGCheckbox.class, "checkbox" )
 				.elementClass( NGBrowser.class, "browser" )
 				.elementClass( NGComponentContent.class, "content" )
 				.elementClass( NGConditional.class, "if" )
