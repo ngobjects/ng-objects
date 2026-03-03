@@ -63,8 +63,14 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 		_elementIDByName = new ConcurrentHashMap<>();
 	}
 
-	private String componentName( final NGComponent localWOComponent ) {
-		return (String)_componentNameAssociation.valueInComponent( localWOComponent );
+	private String componentName( final NGComponent component ) {
+		final String name = (String)_componentNameAssociation.valueInComponent( component );
+
+		if( name == null ) {
+			throw new IllegalStateException( "wo:switch 'componentName' binding resolved to null in component '%s'. Check that the property or method providing the component name returns a valid value.".formatted( component.getClass().getName() ) );
+		}
+
+		return name;
 	}
 
 	private String elementNameInContext( String name, final NGContext context ) {
