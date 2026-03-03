@@ -16,6 +16,7 @@ import ng.appserver.templating.elements.NGGenericElement;
 import ng.appserver.templating.elements.NGHyperlink;
 import ng.appserver.templating.elements.NGImage;
 import ng.appserver.templating.elements.NGJavaScript;
+import ng.appserver.templating.elements.NGPasswordField;
 import ng.appserver.templating.elements.NGPopUpButton;
 import ng.appserver.templating.elements.NGRepetition;
 import ng.appserver.templating.elements.NGResourceURL;
@@ -56,6 +57,7 @@ public class NGCorePlugin implements NGPlugin {
 				.elementClass( NGHyperlink.class, "link" )
 				.elementClass( NGImage.class, "img" )
 				.elementClass( NGJavaScript.class, "script" )
+				.elementClass( NGPasswordField.class, "password" )
 				.elementClass( NGPopUpButton.class, "popUpButton" ) // CHECKME: We might want to consider just naming this "popup"
 				.elementClass( NGRepetition.class, "repetition" )
 				.elementClass( NGResourceURL.class, "resourceURL" )
