@@ -8,11 +8,11 @@ import ng.appserver.NGContext;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
-import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.associations.NGAssociation;
+import ng.appserver.templating.elements.NGDynamicGroup;
 
-public class AjaxSubmitButton extends NGDynamicElement {
+public class AjaxSubmitButton extends NGDynamicGroup {
 
 	private final NGAssociation _actionAssociation;
 	private final NGAssociation _updateContainerIDAssociation;
@@ -23,10 +23,17 @@ public class AjaxSubmitButton extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public AjaxSubmitButton( String name, Map<String, NGAssociation> associations, NGElement contentTemplate ) {
-		super( null, null, null );
+		super( name, associations, contentTemplate );
 		_additionalAssociations = new HashMap<>( associations );
 		_actionAssociation = _additionalAssociations.remove( "action" );
 		_updateContainerIDAssociation = _additionalAssociations.remove( "updateContainerID" );
+	}
+
+	/**
+	 * @return true if this element has children, meaning it should render as a <button> wrapping its content
+	 */
+	private boolean hasChildren() {
+		return !children().isEmpty();
 	}
 
 	@Override
@@ -42,8 +49,18 @@ public class AjaxSubmitButton extends NGDynamicElement {
 
 		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
-		final String htmlString = NGHTMLUtilities.createElementStringWithAttributes( "input", attributes, true );
-		response.appendContentString( htmlString );
+		if( hasChildren() ) {
+			// Render as <button>...children...</button>
+			final String openTag = NGHTMLUtilities.createElementStringWithAttributes( "button", attributes, false );
+			response.appendContentString( openTag );
+			appendChildrenToResponse( response, context );
+			response.appendContentString( "</button>" );
+		}
+		else {
+			// Render as self-closing <input />
+			final String htmlString = NGHTMLUtilities.createElementStringWithAttributes( "input", attributes, true );
+			response.appendContentString( htmlString );
+		}
 	}
 
 	/**
@@ -66,6 +83,19 @@ public class AjaxSubmitButton extends NGDynamicElement {
 			return (NGActionResults)_actionAssociation.valueInComponent( context.component() );
 		}
 
-		return super.invokeAction( request, context );
+		// If we have children, allow them to invoke their actions too
+		if( hasChildren() ) {
+			return invokeChildrenAction( request, context );
+		}
+
+		return null;
+	}
+
+	@Override
+	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
+		// If we have children, let them process form values
+		if( hasChildren() ) {
+			takeChildrenValuesFromRequest( request, context );
+		}
 	}
 }
