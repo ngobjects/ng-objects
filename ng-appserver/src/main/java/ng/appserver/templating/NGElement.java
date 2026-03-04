@@ -7,7 +7,7 @@ import ng.appserver.NGResponse;
 import ng.kvc.NGKeyValueCoding.UnknownKeyException;
 import ng.xperimental.NGErrorMessageElement;
 
-public interface NGElement /*extends WOElement */ {
+public interface NGElement {
 
 	public default void takeValuesFromRequest( NGRequest request, NGContext context ) {}
 
