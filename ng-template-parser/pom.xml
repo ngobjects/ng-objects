@@ -7,7 +7,7 @@
 	<description>Template parser for ng-objects</description>
 
 	<parent>
-		<groupId>is.rebbi</groupId>
+		<groupId>is.rebbi.ng</groupId>
 		<artifactId>ng-objects-reactor</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
 	</parent>
