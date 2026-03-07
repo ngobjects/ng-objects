@@ -2,6 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ng-control</artifactId>
 	<name>ng-control</name>
+	<description>Admin control panel for ng-objects</description>
 	
 	<parent>
 		<groupId>is.rebbi</groupId>

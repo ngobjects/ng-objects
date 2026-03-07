@@ -4,6 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ng-adaptor-jetty</artifactId>
 	<name>ng-adaptor-jetty</name>
+	<description>Jetty HTTP adaptor for ng-objects</description>
 
 	<parent>
 		<groupId>is.rebbi</groupId>

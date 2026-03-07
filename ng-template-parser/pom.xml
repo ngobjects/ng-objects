@@ -4,6 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ng-template-parser</artifactId>
 	<name>ng-template-parser</name>
+	<description>Template parser for ng-objects</description>
 
 	<parent>
 		<groupId>is.rebbi</groupId>
