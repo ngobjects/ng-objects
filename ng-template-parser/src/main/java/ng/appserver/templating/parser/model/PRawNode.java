@@ -3,7 +3,7 @@ package ng.appserver.templating.parser.model;
 import java.util.Objects;
 
 /**
- * Represents a raw/verbatim block (<p:raw>...</p:raw>) whose content is NOT processed as template.
+ * Represents a raw/verbatim block ({@code <p:raw>...</p:raw>}) whose content is NOT processed as template.
  * Included in the rendered output as-is.
  */
 

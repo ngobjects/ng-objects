@@ -3,7 +3,7 @@ package ng.appserver.templating.parser.model;
 import java.util.Objects;
 
 /**
- * Represents a parser/developer comment (<p:comment>...</p:comment>).
+ * Represents a parser/developer comment ({@code <p:comment>...</p:comment>}).
  * Content is NOT processed as template and is stripped entirely from the rendered output.
  */
 

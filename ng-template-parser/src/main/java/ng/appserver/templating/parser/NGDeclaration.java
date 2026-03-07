@@ -8,7 +8,7 @@ import java.util.Objects;
  *
  * @param isInline true if the declaration was parsed from an inline tag
  * @param name The declaration's name (used to reference the declaration from the HTML template)
- * @param namespace The namespace of the tag (e.g. "wo" for <wo:String />, "ui" for <ui:Button />)
+ * @param namespace The namespace of the tag (e.g. "wo" for {@code <wo:String />}, "ui" for {@code <ui:Button />})
  * @param type The declaration's type (name of dynamic element or component)
  * @param bindings A Map of associations (bindings) on the declaration
  */
