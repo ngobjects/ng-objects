@@ -211,6 +211,16 @@ public class NGComponent implements NGElement, NGActionResults {
 	}
 
 	/**
+	 * @return String value of the given binding
+	 *
+	 * FIXME: Only for bridiging migration fro the old component class, that haf a _bunch_ of methods to fetch binding values of different types. Not great, deserves an improved API 	// Hugi 2026-03-17
+	 */
+	@Deprecated
+	public String stringValueForBinding( String bindingName ) {
+		return (String)valueForBinding( bindingName );
+	}
+
+	/**
 	 * Sets the given binding to the given value
 	 */
 	public void setValueForBinding( Object value, String bindingName ) {
