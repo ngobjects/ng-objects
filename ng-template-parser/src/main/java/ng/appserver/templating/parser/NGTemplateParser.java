@@ -467,6 +467,10 @@ public class NGTemplateParser {
 
 			skipWhitespace();
 
+			if( bindings.containsKey( key ) ) {
+				throw error( "Duplicate binding '%s'".formatted( key ) );
+			}
+
 			// Check if this is a boolean attribute (no '=' follows) or a key=value binding
 			if( _pos < _source.length() && current() == '=' ) {
 				_pos++; // consume '='
