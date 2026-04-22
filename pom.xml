@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>is.rebbi.ng</groupId>
 	<artifactId>ng-objects-reactor</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>0.1.1</version>
 	<packaging>pom</packaging>
 	<name>NGObjects reactor project</name>
 	<description>A component-based Java web application framework</description>
