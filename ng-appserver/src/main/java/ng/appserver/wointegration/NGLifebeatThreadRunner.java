@@ -1,6 +1,6 @@
 package ng.appserver.wointegration;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 import ng.appserver.properties.NGProperties;
 
@@ -20,10 +20,9 @@ public class NGLifebeatThreadRunner {
 		final String appName = properties.d().propWOApplicationName();
 		final Integer appPort = properties.d().propWOPort();
 		final Integer lifeBeatDestinationPort = properties.d().propWOLifebeatDestinationPort();
-		final Integer lifeBeatIntervalInSeconds = properties.d().propWOLifebeatIntervalInSeconds();
-		final long lifeBeatIntervalInMilliseconds = TimeUnit.MILLISECONDS.convert( lifeBeatIntervalInSeconds, TimeUnit.SECONDS );
+		final Duration lifebeatInterval = Duration.ofSeconds( properties.d().propWOLifebeatIntervalInSeconds() );
 
-		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostName, lifeBeatDestinationPort, lifeBeatIntervalInMilliseconds );
+		_lifebeatThread = new NGLifebeatThread( appName, appPort, hostName, lifeBeatDestinationPort, lifebeatInterval );
 		_lifebeatThread.start();
 	}
 

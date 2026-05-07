@@ -1,10 +1,11 @@
 package ng.appserver.wointegration;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,17 +22,24 @@ public class NGLifebeatThread {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGLifebeatThread.class );
 
+	private static final HttpClient CLIENT = HttpClient.newBuilder()
+			.version( HttpClient.Version.HTTP_1_1 )
+			.connectTimeout( Duration.ofSeconds( 5 ) )
+			.build();
+
 	private final ScheduledExecutorService _scheduler;
+	private final String _appName;
+	private final int _appPort;
 	private final String _appHost;
 	private final int _wotaskdPort;
-	private final String _requestTemplate;
-	private final long _lifebeatIntervalMS;
+	private final Duration _lifebeatInterval;
 
-	public NGLifebeatThread( final String appName, final int appPort, final String appHost, final int wotaskdPort, final long lifebeatIntervalMS ) {
-		logger.info( "Creating LifebeatThread: appName={}, appPort={}, appHost={}, wotaskdPort={}, intervalMS={}", appName, appPort, appHost, wotaskdPort, lifebeatIntervalMS );
+	public NGLifebeatThread( final String appName, final int appPort, final String appHost, final int wotaskdPort, final Duration lifebeatInterval ) {
+		logger.info( "Creating LifebeatThread: appName={}, appPort={}, appHost={}, wotaskdPort={}, interval={}", appName, appPort, appHost, wotaskdPort, lifebeatInterval );
 
 		Objects.requireNonNull( appName, "appName" );
 		Objects.requireNonNull( appHost, "appHost" );
+		Objects.requireNonNull( lifebeatInterval, "lifebeatInterval" );
 
 		if( appPort < 1 ) {
 			throw new IllegalArgumentException( "appPort must be a positive number" );
@@ -41,17 +49,15 @@ public class NGLifebeatThread {
 			throw new IllegalArgumentException( "wotaskdPort must be a positive number" );
 		}
 
-		if( lifebeatIntervalMS < 1 ) {
-			throw new IllegalArgumentException( "lifebeatIntervalMS must be a positive number" );
+		if( lifebeatInterval.isZero() || lifebeatInterval.isNegative() ) {
+			throw new IllegalArgumentException( "lifebeatInterval must be positive" );
 		}
 
+		_appName = appName;
+		_appPort = appPort;
 		_appHost = appHost;
 		_wotaskdPort = wotaskdPort;
-		_lifebeatIntervalMS = lifebeatIntervalMS;
-
-		// Request template: GET /path HTTP/1.1\r\nHost: host:port\r\nConnection: close\r\n\r\n
-		// Using HTTP/1.1 to get a response, with Connection: close so wotaskd closes after responding
-		_requestTemplate = "GET /cgi-bin/WebObjects/wotaskd.woa/wlb?%s&" + appName + "&" + appHost + "&" + appPort + " HTTP/1.1\r\nHost: " + appHost + ":" + wotaskdPort + "\r\nConnection: close\r\n\r\n";
+		_lifebeatInterval = lifebeatInterval;
 
 		_scheduler = Executors.newSingleThreadScheduledExecutor( r -> {
 			final Thread t = new Thread( r, "LifebeatThread" );
@@ -65,8 +71,8 @@ public class NGLifebeatThread {
 
 		_scheduler.scheduleAtFixedRate(
 				() -> sendLifebeat(),
-				_lifebeatIntervalMS,
-				_lifebeatIntervalMS,
+				_lifebeatInterval.toMillis(),
+				_lifebeatInterval.toMillis(),
 				TimeUnit.MILLISECONDS );
 	}
 
@@ -86,32 +92,19 @@ public class NGLifebeatThread {
 		sendMessage( "willCrash" );
 	}
 
-	/**
-	 * Sends a message to wotaskd and reads just the HTTP status line.
-	 * Uses raw sockets because wotaskd doesn't send proper HTTP response termination (no Content-Length, no Connection: close for HTTP/1.1).
-	 */
 	private void sendMessage( final String action ) {
-		final String request = String.format( _requestTemplate, action );
+		final String url = "http://%s:%d/cgi-bin/WebObjects/wotaskd.woa/wlb?%s&%s&%s&%d"
+				.formatted( _appHost, _wotaskdPort, action, _appName, _appHost, _appPort );
 
-		try( final Socket socket = new Socket( _appHost, _wotaskdPort )) {
-			socket.setSoTimeout( 5000 );
+		final HttpRequest request = HttpRequest.newBuilder()
+				.uri( URI.create( url ) )
+				.timeout( Duration.ofSeconds( 5 ) )
+				.GET()
+				.build();
 
-			// Send request
-			final OutputStream out = socket.getOutputStream();
-			out.write( request.getBytes( StandardCharsets.UTF_8 ) );
-			out.flush();
-
-			// Read just the status line (e.g., "HTTP/1.0 200 Apple WebObjects")
-			final BufferedReader reader = new BufferedReader( new InputStreamReader( socket.getInputStream(), StandardCharsets.UTF_8 ) );
-			final String statusLine = reader.readLine();
-
-			if( statusLine == null ) {
-				logger.debug( "No response from wotaskd for '{}'", action );
-				return;
-			}
-
-			// Parse status code from "HTTP/1.x NNN ..."
-			final int status = parseStatusCode( statusLine );
+		try {
+			final HttpResponse<Void> response = CLIENT.send( request, BodyHandlers.discarding() );
+			final int status = response.statusCode();
 
 			if( status == 200 ) {
 				logger.debug( "Lifebeat '{}' acknowledged", action );
@@ -128,23 +121,5 @@ public class NGLifebeatThread {
 		catch( final Exception e ) {
 			logger.debug( "Failed to send lifebeat '{}': {}", action, e.getMessage() );
 		}
-	}
-
-	/**
-	 * Extracts the HTTP status code from a status line like "HTTP/1.0 200 OK"
-	 */
-	private static int parseStatusCode( final String statusLine ) {
-		final String[] parts = statusLine.split( " " );
-
-		if( parts.length >= 2 ) {
-			try {
-				return Integer.parseInt( parts[1] );
-			}
-			catch( final NumberFormatException e ) {
-				return -1;
-			}
-		}
-
-		return -1;
 	}
 }
