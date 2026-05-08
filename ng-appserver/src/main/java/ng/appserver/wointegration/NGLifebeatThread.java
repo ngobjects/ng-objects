@@ -30,15 +30,15 @@ public class NGLifebeatThread {
 	private final ScheduledExecutorService _scheduler;
 	private final String _appName;
 	private final int _appPort;
-	private final String _appHost;
+	private final String _hostName;
 	private final int _wotaskdPort;
 	private final Duration _lifebeatInterval;
 
-	public NGLifebeatThread( final String appName, final int appPort, final String appHost, final int wotaskdPort, final Duration lifebeatInterval ) {
-		logger.info( "Creating LifebeatThread: appName={}, appPort={}, appHost={}, wotaskdPort={}, interval={}", appName, appPort, appHost, wotaskdPort, lifebeatInterval );
+	public NGLifebeatThread( final String appName, final int appPort, final String hostName, final int wotaskdPort, final Duration lifebeatInterval ) {
+		logger.info( "Creating LifebeatThread: appName={}, appPort={}, hostName={}, wotaskdPort={}, interval={}", appName, appPort, hostName, wotaskdPort, lifebeatInterval );
 
 		Objects.requireNonNull( appName, "appName" );
-		Objects.requireNonNull( appHost, "appHost" );
+		Objects.requireNonNull( hostName, "hostName" );
 		Objects.requireNonNull( lifebeatInterval, "lifebeatInterval" );
 
 		if( appPort < 1 ) {
@@ -55,7 +55,7 @@ public class NGLifebeatThread {
 
 		_appName = appName;
 		_appPort = appPort;
-		_appHost = appHost;
+		_hostName = hostName;
 		_wotaskdPort = wotaskdPort;
 		_lifebeatInterval = lifebeatInterval;
 
@@ -94,7 +94,7 @@ public class NGLifebeatThread {
 
 	private void sendMessage( final String action ) {
 		final String url = "http://%s:%d/cgi-bin/WebObjects/wotaskd.woa/wlb?%s&%s&%s&%d"
-				.formatted( _appHost, _wotaskdPort, action, _appName, _appHost, _appPort );
+				.formatted( _hostName, _wotaskdPort, action, _appName, _hostName, _appPort );
 
 		final HttpRequest request = HttpRequest.newBuilder()
 				.uri( URI.create( url ) )
