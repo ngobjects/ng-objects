@@ -24,14 +24,17 @@ import ng.appserver.resources.NGResource;
  * Handles properties loading
  *
  * FIXME: A decision needs to be made on if properties should return an Optional // Hugi 2021-11-21
- * FIXME: Mark the origin of properties // Hugi 2021-11-21
- * FIXME: Properties need to get updated when a loaded Properties file is changed // Hugi 2023-02-22
+ * FIXME: Origin of the resolved value of a property should be known, and the way of resolving it obvious // Hugi 2021-11-21
+ * FIXME: Properties should be updated when a loaded PropertiesSource (usually a property file) is changed // Hugi 2023-02-22
  * FIXME: Properties should be typesafe // Hugi 2023-07-15
- * FIXME: Properties need default values // Hugi 2023-07-15
- * FIXME: Properties need watching for changes (allowing us to trigger logic when properties change, like switching loggers, flushing caches etc.) // Hugi 2024-07-10
- * FIXME: Property files loaded from resource/file need a preview feature in the control UI // Hugi 2024-07-10
- * FIXME: Configuration for different deployment modes should be previewable as well in the UI // Hugi 2024-07-10
+ * FIXME: Properties should have default values // Hugi 2023-07-15
+ * FIXME: Properties need watching for changes (allowing us to trigger logic when properties change, like switching loggers, flushing caches etc.). Something like PROPERTY.onChange( (oldValue,newValue) -> {} ) // Hugi 2024-07-10
+ * FIXME: Loaded properties need a clear preview in the control UI, showing their origin, docs etc. // Hugi 2024-07-10
+ * FIXME: Properties for different (and inactive) deployment modes/configuration sets should be previewable in the UI // Hugi 2024-07-10
  * FIXME: You probably need a "configuration set" to group certain properties together. For example, you may need to flip the dev machine to talk to the production DB. Or flip a single web service to speak to production, both of which may need multiple properties // Hugi 2025-04-20
+ * FIXME: Properties should have documentation/description (in source, viewable in the UI) // Hugi 2026-05-08
+ * FIXME: Properties should come with validation bounds // 2026-05-08
+ * FIXME: Allow marking propreties as "redacted", meaning their values are hidden when viewed in the UI/logs // 2026-05-08
  */
 
 public class NGProperties {
