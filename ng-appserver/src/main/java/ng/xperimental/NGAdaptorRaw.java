@@ -205,7 +205,8 @@ public class NGAdaptorRaw extends NGAdaptor {
 				content = new byte[0];
 			}
 
-			return new NGRequest( method, uri, httpVersion, headers, content );
+			// FIXME: We're not parsing/passing in formValues or cookies // Hugi 2026-05-11
+			return new NGRequest( method, uri, httpVersion, headers, null, null, content );
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );

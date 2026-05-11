@@ -72,14 +72,6 @@ public class NGRequest extends NGMessage {
 	}
 
 	/**
-	 * FIXME: Old constructor that doesn't set formValues and cookieValues. It's role is a little unclear at the moment, since I'm still considering if having parsing of form values/cookie values in NGRequest makes sense // Hugi 2025-06-09
-	 */
-	@Deprecated
-	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final byte[] contentBytes ) {
-		this( method, uri, httpVersion, headers, null, null, contentBytes );
-	}
-
-	/**
 	 * @return The requests form values (query parameters)
 	 */
 	public Map<String, List<String>> formValues() {

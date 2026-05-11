@@ -133,13 +133,7 @@ public class NGServletAdaptor extends HttpServlet {
 			throw new UncheckedIOException( "Failed to consume the HTTP request's inputstream", e );
 		}
 
-		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), bos.toByteArray() );
-
-		// FIXME: Form value parsing should really happen within the request object, not in the adaptor // Hugi 2021-12-31
-		request._setFormValues( formValuesFromServletRequest );
-
-		// FIXME: Cookie parsing should happen within the request object, not in the adaptor // Hugi 2021-12-31
-		request._setCookieValues( cookieValues( sr.getCookies() ) );
+		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), formValuesFromServletRequest, cookieValues( sr.getCookies() ), bos.toByteArray() );
 
 		return request;
 	}
