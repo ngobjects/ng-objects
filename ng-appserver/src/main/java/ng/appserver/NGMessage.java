@@ -19,14 +19,6 @@ public interface NGMessage {
 	public static final int DEFAULT_CONTENT_DATA_LENGTH = 8192;
 
 	/**
-	 * Creates an empty map to store headers.
-	 * Separate method since we might want to change the map type later.
-	 */
-	public static Map<String, List<String>> createEmptyHeadersMap() {
-		return new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
-	}
-
-	/**
 	 * Sets the headers from the given map.
 	 */
 	public void setHeaders( final Map<String, List<String>> newHeaders );
@@ -39,6 +31,14 @@ public interface NGMessage {
 	public void _setContentByteStream( ByteArrayOutputStream value );
 
 	public Map<String, List<String>> headers();
+
+	/**
+	 * Creates an empty map to store headers.
+	 * Separate method since we might want to change the map type later.
+	 */
+	public static Map<String, List<String>> createEmptyHeadersMap() {
+		return new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
+	}
 
 	/**
 	 * @return The headers matching the given key
