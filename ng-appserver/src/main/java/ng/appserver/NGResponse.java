@@ -15,7 +15,7 @@ import java.util.Objects;
  * // Hugi 2022-06-05
  */
 
-public class NGResponse implements NGMessageInterface, NGActionResults {
+public class NGResponse implements NGMessage, NGActionResults {
 
 	/**
 	 * The Response's status code. Defaults to 200.
@@ -104,7 +104,7 @@ public class NGResponse implements NGMessageInterface, NGActionResults {
 	/**
 	 * The headers  of this message
 	 */
-	private Map<String, List<String>> _headers = NGMessageInterface.createEmptyHeadersMap();
+	private Map<String, List<String>> _headers = NGMessage.createEmptyHeadersMap();
 
 	/**
 	 * The content of this message
@@ -114,7 +114,7 @@ public class NGResponse implements NGMessageInterface, NGActionResults {
 	 * For example, it's clear that using a StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream
 	 * // Hugi 2023-02-08
 	 */
-	private ByteArrayOutputStream _contentByteStream = new ByteArrayOutputStream( NGMessageInterface.DEFAULT_CONTENT_DATA_LENGTH );
+	private ByteArrayOutputStream _contentByteStream = new ByteArrayOutputStream( NGMessage.DEFAULT_CONTENT_DATA_LENGTH );
 
 	/**
 	 * @return The HTTP headers of this message
@@ -129,7 +129,7 @@ public class NGResponse implements NGMessageInterface, NGActionResults {
 	 */
 	@Override
 	public void setHeaders( final Map<String, List<String>> newHeaders ) {
-		_headers = NGMessageInterface.createEmptyHeadersMap();
+		_headers = NGMessage.createEmptyHeadersMap();
 
 		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
 			_headers.put( header.getKey(), header.getValue() );

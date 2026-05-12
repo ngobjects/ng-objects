@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-public interface NGMessageInterface {
+public interface NGMessage {
 
 	/**
 	 * Arbitrarily picked default length we initialize the size of the content data byte[] with.
