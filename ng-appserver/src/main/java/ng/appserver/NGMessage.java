@@ -40,7 +40,7 @@ public abstract class NGMessage implements NGMessageInterface {
 	 * For example, it's clear that using a StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream
 	 * // Hugi 2023-02-08
 	 */
-	private ByteArrayOutputStream _contentBytes = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
+	private ByteArrayOutputStream _contentByteOutputStream = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
 
 	/**
 	 * @return The HTTP version of this message
@@ -148,31 +148,31 @@ public abstract class NGMessage implements NGMessageInterface {
 	}
 
 	public byte[] contentBytes() {
-		return _contentBytes.toByteArray();
+		return _contentByteOutputStream.toByteArray();
 	}
 
 	/**
 	 * @return The length of the message's data content
 	 */
 	public long contentBytesLength() {
-		return _contentBytes.size();
+		return _contentByteOutputStream.size();
 	}
 
 	/**
 	 * @return The response's content stream
 	 */
 	public ByteArrayOutputStream contentByteStream() {
-		return _contentBytes;
+		return _contentByteOutputStream;
 	}
 
 	public void setContentBytes( final byte[] contentBytes ) {
-		_contentBytes = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
+		_contentByteOutputStream = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
 		appendContentBytes( contentBytes );
 	}
 
 	private void appendContentBytes( final byte[] contentBytes ) {
 		try {
-			_contentBytes.write( contentBytes );
+			_contentByteOutputStream.write( contentBytes );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
