@@ -10,13 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.TreeMap;
 
 /**
  * Parent class of NGResponse/NGRequest
  */
 
-public abstract class NGMessage {
+public abstract class NGMessage implements NGMessageInterface {
 
 	/**
 	 * Arbitrarily picked default length we initialize the size of the content data byte[] with.
@@ -31,7 +30,7 @@ public abstract class NGMessage {
 	/**
 	 * The headers  of this message
 	 */
-	private Map<String, List<String>> _headers = _createEmptyHeadersMap();
+	private Map<String, List<String>> _headers = NGMessageInterface.createEmptyHeadersMap();
 
 	/**
 	 * The content of this message
@@ -60,8 +59,20 @@ public abstract class NGMessage {
 	/**
 	 * @return The HTTP headers of this message
 	 */
+	@Override
 	public Map<String, List<String>> headers() {
 		return _headers;
+	}
+
+	/**
+	 * Sets the headers from the given map.
+	 */
+	public void setHeaders( final Map<String, List<String>> newHeaders ) {
+		_headers = NGMessageInterface.createEmptyHeadersMap();
+
+		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
+			_headers.put( header.getKey(), header.getValue() );
+		}
 	}
 
 	/**
@@ -94,25 +105,6 @@ public abstract class NGMessage {
 		}
 
 		return values.get( 0 );
-	}
-
-	/**
-	 * Creates an empty map to store headers.
-	 * Separate method since we might want to change the map type later.
-	 */
-	private static Map<String, List<String>> _createEmptyHeadersMap() {
-		return new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
-	}
-
-	/**
-	 * Sets the headers from the given map.
-	 */
-	public void setHeaders( final Map<String, List<String>> newHeaders ) {
-		_headers = _createEmptyHeadersMap();
-
-		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
-			_headers.put( header.getKey(), header.getValue() );
-		}
 	}
 
 	/**
