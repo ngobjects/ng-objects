@@ -23,11 +23,6 @@ public abstract class NGMessage implements NGMessageInterface {
 	private static final int DEFAULT_CONTENT_DATA_LENGTH = 8192;
 
 	/**
-	 * The HTTP version of this message
-	 */
-	private String _httpVersion = "HTTP/1.0";
-
-	/**
 	 * The headers  of this message
 	 */
 	private Map<String, List<String>> _headers = NGMessageInterface.createEmptyHeadersMap();
@@ -41,20 +36,6 @@ public abstract class NGMessage implements NGMessageInterface {
 	 * // Hugi 2023-02-08
 	 */
 	private ByteArrayOutputStream _contentByteStream = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
-
-	/**
-	 * @return The HTTP version of this message
-	 */
-	public String httpVersion() {
-		return _httpVersion;
-	}
-
-	/**
-	 * Set the HTTP version of this message
-	 */
-	public void setHttpVersion( final String value ) {
-		_httpVersion = value;
-	}
 
 	/**
 	 * @return The HTTP headers of this message
