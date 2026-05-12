@@ -1,10 +1,12 @@
 package ng.appserver;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import ng.appserver.privates.NGParsedURI;
@@ -13,7 +15,7 @@ import ng.appserver.privates.NGParsedURI;
  * Represents a request entering the system
  */
 
-public class NGRequest extends NGMessage {
+public class NGRequest implements NGMessageInterface {
 
 	/**
 	 * Name of the cookie that stores our session ID on the client
@@ -307,5 +309,55 @@ public class NGRequest extends NGMessage {
 	@Override
 	public String toString() {
 		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _headers=" + headers() + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _session=" + _session + "]";
+	}
+
+	/* ------ FIXME: below is logic from NGMessage, awaiting to be nicely factored into the class // Hugi 2026-05-12 ------  */
+
+	/**
+	 * The headers  of this message
+	 */
+	private Map<String, List<String>> _headers = NGMessageInterface.createEmptyHeadersMap();
+
+	/**
+	 * The content of this message
+	 *
+	 * FIXME:
+	 * Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming)
+	 * For example, it's clear that using a StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream
+	 * // Hugi 2023-02-08
+	 */
+	private ByteArrayOutputStream _contentByteStream = new ByteArrayOutputStream( NGMessageInterface.DEFAULT_CONTENT_DATA_LENGTH );
+
+	/**
+	 * @return The HTTP headers of this message
+	 */
+	@Override
+	public Map<String, List<String>> headers() {
+		return _headers;
+	}
+
+	/**
+	 * Sets the headers from the given map.
+	 */
+	@Override
+	public void setHeaders( final Map<String, List<String>> newHeaders ) {
+		_headers = NGMessageInterface.createEmptyHeadersMap();
+
+		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
+			_headers.put( header.getKey(), header.getValue() );
+		}
+	}
+
+	/**
+	 * @return The response's content stream
+	 */
+	@Override
+	public ByteArrayOutputStream contentByteStream() {
+		return _contentByteStream;
+	}
+
+	@Override
+	public void _setContentByteStream( ByteArrayOutputStream value ) {
+		_contentByteStream = value;
 	}
 }
