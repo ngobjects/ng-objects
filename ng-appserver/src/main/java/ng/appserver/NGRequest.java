@@ -1,7 +1,9 @@
 package ng.appserver;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -60,12 +62,12 @@ public class NGRequest implements NGMessageInterface {
 	/**
 	 * FIXME: The httpVersion parameter is currently not used. I'm keeping it around to keep the constructor's shape, since I _think_ we might eventually want to use it. But today, It's just added weight 	// Hugi 2026-05-12
 	 */
-	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final byte[] contentBytes ) {
+	public NGRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final InputStream contentStream ) {
 		Objects.requireNonNull( method );
 		Objects.requireNonNull( uri );
 		Objects.requireNonNull( httpVersion );
 		Objects.requireNonNull( headers );
-		Objects.requireNonNull( contentBytes );
+		Objects.requireNonNull( contentStream );
 
 		setMethod( method );
 		setURI( uri );
@@ -73,7 +75,14 @@ public class NGRequest implements NGMessageInterface {
 		setHeaders( headers );
 		_setFormValues( formValues );
 		_setCookieValues( cookieValues );
-		setContentBytes( contentBytes );
+
+		// FIXME: We're consuming the entire content stream at construction time for now. Eventually, whether to do this should be the consumer's decision // Hugi 2026-05-12
+		try( contentStream) {
+			contentStream.transferTo( _contentByteStream );
+		}
+		catch( IOException e ) {
+			throw new UncheckedIOException( e );
+		}
 	}
 
 	/**

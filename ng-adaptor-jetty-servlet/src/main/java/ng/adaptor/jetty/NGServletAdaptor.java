@@ -1,6 +1,5 @@
 package ng.adaptor.jetty;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -124,18 +123,12 @@ public class NGServletAdaptor extends HttpServlet {
 		// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
 		final Map<String, List<String>> formValuesFromServletRequest = formValues( sr.getParameterMap() );
 
-		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-		try( final InputStream is = sr.getInputStream()) {
-			is.transferTo( bos );
+		try {
+			return new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), formValuesFromServletRequest, cookieValues( sr.getCookies() ), sr.getInputStream() );
 		}
-		catch( final IOException e ) {
-			throw new UncheckedIOException( "Failed to consume the HTTP request's inputstream", e );
+		catch( IOException e ) {
+			throw new UncheckedIOException( e );
 		}
-
-		final NGRequest request = new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), formValuesFromServletRequest, cookieValues( sr.getCookies() ), bos.toByteArray() );
-
-		return request;
 	}
 
 	private static void logMultipartRequest( HttpServletRequest sr ) {

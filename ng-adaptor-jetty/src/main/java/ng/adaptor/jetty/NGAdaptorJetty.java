@@ -1,10 +1,8 @@
 package ng.adaptor.jetty;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.BindException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -274,9 +272,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
-			final byte[] content = new byte[] {}; // FIXME: This just kind of reflects the badness of our request data model. The request's "content" is really the part list ... // Hugi 2025-04-05
+			final ByteArrayInputStream contentStream = new ByteArrayInputStream( new byte[] {} ); // FIXME: This just kind of reflects the badness of our request data model. The request's "content" is really the part list ... // Hugi 2025-04-05
 
-			final NGRequest request = new NGRequest( method, uri, httpVersion, headers, formValues, cookieValues, content );
+			final NGRequest request = new NGRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream );
 			uploadedFiles.entrySet().forEach( p -> request._uploadedFiles().put( p.getKey(), p.getValue() ) ); // FIXME: Adding uploaded files this way is really, really temporary // Hugi 2025-04-05
 			return request;
 		}
@@ -289,24 +287,14 @@ public class NGAdaptorJetty extends NGAdaptor {
 			// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
 			final Map<String, List<String>> formValues = parametersFromRequest( jettyRequest );
 
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-			// FIXME: we're always consuming the request's entire body at this point. Allowing us to pass in a stream would be... sensible // Hugi 2025-06-09
-			try( final InputStream is = Request.asInputStream( jettyRequest )) {
-				is.transferTo( bos );
-			}
-			catch( final IOException e ) {
-				throw new UncheckedIOException( "Failed to consume the HTTP request's inputstream", e );
-			}
-
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
 			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
-			final byte[] content = bos.toByteArray();
+			final InputStream contentStream = Request.asInputStream( jettyRequest );
 
-			return new NGRequest( method, uri, httpVersion, headers, formValues, cookieValues, content );
+			return new NGRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream );
 		}
 
 		/**
