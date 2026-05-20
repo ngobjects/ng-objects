@@ -3,6 +3,7 @@ package ng.testapp;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
+import ng.appserver.NGRespBuilder;
 import ng.appserver.NGResponse;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.plugins.Elements;
@@ -65,7 +66,7 @@ public class Application extends NGApplication {
 					// based on the type of the response/request content (String, byte[], stream, multipart etc.).
 					// In that case, generic response construction could be performed using factory methods (NGResponse.of() or something like that)
 					// or we'll just allow the user to instantiate the specific implementing classes himself (new NGStringResponse(), new NGMultiPartResponse() etc.)
-					return new NGResponse( responseContent, 200 );
+					return NGRespBuilder.of( responseContent, 200 );
 				} )
 
 				// Demonstrates mapping a URL to a response-generating method (which accepts the request as a parameter)
@@ -89,13 +90,13 @@ public class Application extends NGApplication {
 	}
 
 	private NGActionResults stringReponse() {
-		return new NGResponse( "I am a string response", 200 );
+		return NGRespBuilder.of( "I am a string response", 200 );
 	}
 
 	private NGActionResults imageReponse( NGRequest request ) {
 		final byte[] bytes = application().resourceManager().obtainWebserverResource( "app", "test-image-4.jpg" ).get().bytes();
 
-		final NGResponse response = new NGResponse();
+		final NGResponse response = NGRespBuilder.of();
 		response.setContentBytes( bytes );
 		response.setHeader( "content-type", "image/jpeg" );
 		return response;

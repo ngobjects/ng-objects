@@ -1,0 +1,383 @@
+package ng.appserver;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+
+import ng.appserver.privates.NGParsedURI;
+
+public class NGStandardRequest implements NGRequest {
+
+	/**
+	 * The request's context
+	 */
+	private NGContext _context;
+
+	/**
+	 * The requests's method
+	 */
+	private String _method;
+
+	/**
+	 * The URI being accessed
+	 */
+	private String _uri;
+
+	/**
+	 * The URI being accessed, wrapped in a nice little API
+	 */
+	private NGParsedURI _parsedURI;
+
+	/**
+	 * The request's form values (a.k.a. query parameters)
+	 */
+	private Map<String, List<String>> _formValues;
+
+	/**
+	 * Values of cookies
+	 */
+	private Map<String, List<String>> _cookieValues;
+
+	/**
+	 * The request's session
+	 */
+	private NGSession _session;
+
+	/**
+	 * FIXME: The httpVersion parameter is currently not used. I'm keeping it around to keep the constructor's shape, since I _think_ we might eventually want to use it. But today, It's just added weight 	// Hugi 2026-05-12
+	 */
+	public NGStandardRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final InputStream contentStream ) {
+		Objects.requireNonNull( method );
+		Objects.requireNonNull( uri );
+		Objects.requireNonNull( httpVersion );
+		Objects.requireNonNull( headers );
+		Objects.requireNonNull( contentStream );
+
+		setMethod( method );
+		setURI( uri );
+		//		setHttpVersion( httpVersion );
+		setHeaders( headers );
+		_setFormValues( formValues );
+		_setCookieValues( cookieValues );
+
+		// FIXME: We're consuming the entire content stream at construction time for now. Eventually, whether to do this should be the consumer's decision // Hugi 2026-05-12
+		try( contentStream) {
+			contentStream.transferTo( _contentByteStream );
+		}
+		catch( IOException e ) {
+			throw new UncheckedIOException( e );
+		}
+	}
+
+	/**
+	 * @return The requests form values (query parameters)
+	 */
+	@Override
+	public Map<String, List<String>> formValues() {
+		return _formValues;
+	}
+
+	/**
+	 * @return The form values represented by given key/query parameter. Returns an empty list if the form value is not present
+	 */
+	@Override
+	public List<String> formValuesForKey( final String key ) {
+		final List<String> list = formValues().get( key );
+
+		if( list == null ) {
+			return Collections.emptyList();
+		}
+
+		return list;
+	}
+
+	@Override
+	public String formValueForKey( final String key ) {
+		final List<String> values = formValuesForKey( key );
+
+		if( values.isEmpty() ) {
+			return null;
+		}
+
+		// Fail if multiple form values are present for the same query parameter.
+		if( values.size() > 1 ) {
+			throw new IllegalStateException( "The request contains %s form values named '%s' with values (%s). If you expected multiple values, use formValuesForKey() instead of formValueForKey()".formatted( values.size(), key, values ) );
+		}
+
+		return values.get( 0 );
+	}
+
+	/**
+	 * Set the request's form values (query parameters)
+	 *
+	 * FIXME: Same goes for this as the cookieValues. The Map should be populated by the request object, not the adaptor // Hugi 2021-12-31
+	 */
+	@Override
+	public void _setFormValues( final Map<String, List<String>> formValues ) {
+		_formValues = formValues;
+	}
+
+	/**
+	 * @return the request's URL
+	 *
+	 * CHECKME: We might want to consider renaming this "url". Conventions are different between frameworks though, for example, java.net.HttpRequest uses "uri" // Hugi 2024-06-29
+	 */
+	@Override
+	public String uri() {
+		return _uri;
+	}
+
+	/**
+	 * FIXME: This should really not be settable, NGRequest wants to be immutable // Hugi 2024-08-10
+	 */
+	@Override
+	public void setURI( final String uri ) {
+		_uri = uri;
+		_parsedURI = null; // parsedURI() is lazily initialized so reset it's storage. Again. This class really wants to be immutable.
+	}
+
+	/**
+	 * @return The request's method
+	 */
+	@Override
+	public String method() {
+		return _method;
+	}
+
+	/**
+	 * FIXME: This should really not be settable, NGRequest wants to be immutable // Hugi 2024-08-10
+	 */
+	@Override
+	public void setMethod( final String method ) {
+		_method = method;
+	}
+
+	/**
+	 * @return This request's sessionID. Null if no sessionID is present.
+	 */
+	@Override
+	public String _sessionID() {
+		if( _session != null ) {
+			return _session.sessionID();
+		}
+
+		return _sessionIDFromCookie();
+	}
+
+	/**
+	 * @return The sessionID submitted by the client, if any. null if no sessionID was present in the request.
+	 */
+	private String _sessionIDFromCookie() {
+		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
+	}
+
+	/**
+	 * @return This request's session, creating a new session if no session is present. Throws NGSessionRestorationException if a sessionID is present but no corresponding session is found.
+	 */
+	@Override
+	public NGSession session() {
+		return _session( true, true );
+	}
+
+	/**
+	 * @return This request's session, null if no session present. Throws NGSessionRestorationException if a sessionID is present but no corresponding session is found.
+	 *
+	 * FIXME: We might actually want to throw on a missing sessionID here. Decide soon, otherwise this will get really annoying upon a change // Hugi 2024-10-08
+	 */
+	@Override
+	public NGSession existingSession() {
+		return _session( false, false );
+	}
+
+	/**
+	 * @return A session for this request.
+	 *
+	 * @param createIfMissing If true, we'll create a new session if no session (or sessionID) is present.
+	 * @param throwIfIDPresentButNoCorrespondingSessionFound If true, will throw an NGSessionRestorationException if a sessionID is present but no corresponding session is found.
+	 */
+	private NGSession _session( boolean createIfMissing, boolean throwIfIDPresentButNoCorrespondingSessionFound ) {
+		if( _session == null ) {
+			// OK, we have no session. Check the request for a sessionID and see if we have one to restore.
+			if( _sessionIDFromCookie() != null ) {
+				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _sessionIDFromCookie() );
+
+				// No session found, loudly notify the user
+				if( _session == null && throwIfIDPresentButNoCorrespondingSessionFound ) {
+					throw new NGSessionRestorationException( this );
+				}
+			}
+			else {
+				if( createIfMissing ) {
+					_session = NGApplication.application().createSessionForRequest( this );
+					NGApplication.application().sessionStore().storeSession( _session );
+				}
+			}
+		}
+
+		return _session;
+	}
+
+	/**
+	 * @return True if this context has an existing session
+	 */
+	@Override
+	public boolean hasSession() {
+		return existingSession() != null;
+	}
+
+	/**
+	 * @return A map of cookie values from the request.
+	 */
+	@Override
+	public Map<String, List<String>> cookieValues() {
+		return _cookieValues;
+	}
+
+	/**
+	 * FIXME: Don't like having this exposed. Cookie header deserialization should happen in NGRequest instead of in the adaptor // Hugi 20201-12-30
+	 */
+	@Override
+	public void _setCookieValues( Map<String, List<String>> cookieValues ) {
+		_cookieValues = cookieValues;
+	}
+
+	/**
+	 * @return The values of the named cookie
+	 */
+	@Override
+	public List<String> cookieValuesForKey( final String key ) {
+		Objects.requireNonNull( key );
+
+		final List<String> cookieValues = cookieValues().get( key );
+
+		if( cookieValues == null ) {
+			return Collections.emptyList();
+		}
+
+		return cookieValues;
+	}
+
+	/**
+	 * @return The value of the named cookie if there's only one cookie with that name.
+	 * @throws IllegalArgumentException If there are many cookies with the given key
+	 */
+	@Override
+	public String cookieValueForKey( final String key ) {
+		Objects.requireNonNull( key );
+
+		final List<String> values = cookieValuesForKey( key );
+
+		if( values.size() == 0 ) {
+			return null;
+		}
+
+		if( values.size() > 1 ) {
+			throw new IllegalArgumentException( "There's more than one cookie with the name '%s'".formatted( key ) );
+		}
+
+		return values.get( 0 );
+	}
+
+	/**
+	 * FIXME: This method needs to be thread safe // Hugi 2021-11-28
+	 */
+	@Override
+	public NGContext context() {
+		if( _context == null ) {
+			_context = NGApplication.application().createContextForRequest( this );
+		}
+
+		return _context;
+	}
+
+	@Override
+	public void setContext( NGContext context ) {
+		_context = context;
+	}
+
+	/**
+	 * FIXME: This method needs to be thread safe // Hugi 2021-11-28
+	 */
+	@Override
+	public NGParsedURI parsedURI() {
+		if( _parsedURI == null ) {
+			_parsedURI = NGParsedURI.of( _uri );
+		}
+
+		return _parsedURI;
+	}
+
+	/**
+	 * FIXME: This is temporary handling of multipart file uploads. Still thinking on the final design of this // Hugi 2025-04-05
+	 */
+	private final Map<String, UploadedFile> _uploadedFiles = new HashMap<>();
+
+	public record UploadedFile( String name, String contentType, InputStream stream, long length ) {}
+
+	@Override
+	public Map<String, UploadedFile> _uploadedFiles() {
+		return _uploadedFiles;
+	}
+
+	@Override
+	public String toString() {
+		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _headers=" + headers() + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _session=" + _session + "]";
+	}
+
+	/* ------ FIXME: below is logic from NGMessage, awaiting to be nicely factored into the class // Hugi 2026-05-12 ------  */
+
+	/**
+	 * The headers  of this message
+	 */
+	private Map<String, List<String>> _headers = NGMessage.createEmptyHeadersMap();
+
+	/**
+	 * The content of this message
+	 *
+	 * FIXME:
+	 * Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming)
+	 * For example, it's clear that using a StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream
+	 * // Hugi 2023-02-08
+	 */
+	private ByteArrayOutputStream _contentByteStream = new ByteArrayOutputStream( NGMessage.DEFAULT_CONTENT_DATA_LENGTH );
+
+	/**
+	 * @return The HTTP headers of this message
+	 */
+	@Override
+	public Map<String, List<String>> headers() {
+		return _headers;
+	}
+
+	/**
+	 * Sets the headers from the given map.
+	 */
+	@Override
+	public void setHeaders( final Map<String, List<String>> newHeaders ) {
+		_headers = NGMessage.createEmptyHeadersMap();
+
+		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
+			_headers.put( header.getKey(), header.getValue() );
+		}
+	}
+
+	/**
+	 * @return The response's content stream
+	 */
+	@Override
+	public ByteArrayOutputStream contentByteStream() {
+		return _contentByteStream;
+	}
+
+	@Override
+	public void _setContentByteStream( ByteArrayOutputStream value ) {
+		_contentByteStream = value;
+	}
+}

@@ -31,13 +31,13 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		String namespace = url.substring( firstSlashIndex, secondSlashIndex );
 
 		if( namespace.isEmpty() ) {
-			return new NGResponse( "No resource namespace specified", 400 );
+			return NGRespBuilder.of( "No resource namespace specified", 400 );
 		}
 
 		String resourcePath = url.substring( secondSlashIndex + 1 );
 
 		if( resourcePath.isEmpty() ) {
-			return new NGResponse( "No resource name specified", 400 );
+			return NGRespBuilder.of( "No resource name specified", 400 );
 		}
 
 		// FIXME:
@@ -63,7 +63,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	 * FIXME: Allow the user to customize the response for a non-existent resource // Hugi 2024-10-11
 	 */
 	private static NGResponse responseForNonExistentResource( final String namespace, final String resourcePath ) {
-		final NGResponse errorResponse = new NGResponse( "webserver resource '%s':'%s' does not exist".formatted( namespace, resourcePath ), 404 );
+		final NGResponse errorResponse = NGRespBuilder.of( "webserver resource '%s':'%s' does not exist".formatted( namespace, resourcePath ), 404 );
 		errorResponse.setHeader( "content-type", "text/html" );
 		return errorResponse;
 	}
@@ -81,7 +81,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		final String mimeType = NGMimeTypes.mimeTypeForResourceName( resourcePath );
 
 		// FIXME: We need to allow some control over the headers for the returned resource // Hugi 2023-02-17
-		final NGResponse response = new NGResponse( resource.bytes(), 200 );
+		final NGResponse response = NGRespBuilder.of( resource.bytes(), 200 );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName ) );
 		response.setHeader( "Content-Type", mimeType );
 

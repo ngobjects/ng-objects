@@ -26,16 +26,16 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 		final String resourceID = NGParsedURI.of( request.uri() ).getString( 1 );
 
 		if( resourceID == null ) {
-			return new NGResponse( "No resource name specified", 400 );
+			return NGRespBuilder.of( "No resource name specified", 400 );
 		}
 
 		final NGDynamicResource resource = NGApplication.application().resourceManagerDynamic().pop( resourceID );
 
 		if( resource == null ) {
-			return new NGResponse( "Dynamic resource '" + resourceID + "' does not exist", 404 );
+			return NGRespBuilder.of( "Dynamic resource '" + resourceID + "' does not exist", 404 );
 		}
 
-		final NGResponse response = new NGResponse();
+		final NGResponse response = NGRespBuilder.of();
 		response.setStatus( 200 );
 		response.setContentInputStream( resource.inputStream(), resource.length() );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resource.filename() ) );

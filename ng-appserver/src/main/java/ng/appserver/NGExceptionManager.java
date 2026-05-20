@@ -32,7 +32,7 @@ public class NGExceptionManager {
 		register(
 				NGPageRestorationException.class,
 				NGExceptionManager::doNothing,
-				exception -> new NGResponse( exception.getMessage(), 404 ) );
+				exception -> NGRespBuilder.of( exception.getMessage(), 404 ) );
 
 		register(
 				NGSessionRestorationException.class,

@@ -1,15 +1,7 @@
 package ng.appserver;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
 
 /**
  * FIXME: Need to decide what to do about responses of different types.
@@ -18,166 +10,27 @@ import java.util.Objects;
  * // Hugi 2022-06-05
  */
 
-public class NGResponse implements NGMessage, NGActionResults {
+public interface NGResponse extends NGMessage, NGActionResults {
 
-	/**
-	 * The Response's status code. Defaults to 200.
-	 */
-	private int _status = 200;
+	public int status();
 
-	/**
-	 * Cookies set by the response.
-	 */
-	private List<NGCookie> _cookies = new ArrayList<>();
+	public void setStatus( final int status );
 
-	/**
-	 * Data to be streamed to the client
-	 */
-	private InputStream _contentInputStream;
+	public List<NGCookie> cookies();
 
-	/**
-	 * Length of the stream to be streamed to the client
-	 *
-	 * The initial value is set to -1, meaning no content length has been set.
-	 * We will check if the value has been set when returning the response, to ensure it's so.
-	 */
-	private long _contentInputStreamLength = -1;
+	public void addCookie( final NGCookie cookie );
 
-	/**
-	 * Creates an empty NGResponse with status 200
-	 */
-	@Deprecated
-	public NGResponse() {}
+	public void setContentInputStream( final InputStream inputStream, final long contentInputStreamLength );
 
-	@Deprecated
-	public NGResponse( final byte[] bytes, final int status ) {
-		setContentBytes( bytes );
-		setStatus( status );
-	}
+	public InputStream contentInputStream();
 
-	@Deprecated
-	public NGResponse( final String contentString, final int status ) {
-		setContentString( contentString );
-		setStatus( status );
-	}
+	public long contentInputStreamLength();
 
-	public int status() {
-		return _status;
-	}
+	public void appendContentString( final String stringToAppend );
 
-	public void setStatus( final int status ) {
-		_status = status;
-	}
+	public void setContentBytes( final byte[] contentBytes );
 
-	/**
-	 * @return A list of HTTP cookies that this response will set (i.e. create a set-cookie header for)
-	 */
-	public List<NGCookie> cookies() {
-		return _cookies;
-	}
+	public void setContentString( final String contentString );
 
-	/**
-	 * Add the given cookie to the response.
-	 */
-	public void addCookie( final NGCookie cookie ) {
-		Objects.requireNonNull( cookie );
-		_cookies.add( cookie );
-	}
-
-	public void setContentInputStream( final InputStream inputStream, final long contentInputStreamLength ) {
-		_contentInputStream = inputStream;
-		_contentInputStreamLength = contentInputStreamLength;
-	}
-
-	public InputStream contentInputStream() {
-		return _contentInputStream;
-	}
-
-	public long contentInputStreamLength() {
-		return _contentInputStreamLength;
-	}
-
-	@Override
-	public NGResponse generateResponse() {
-		return this;
-	}
-
-	/* ------ FIXME: below is logic from NGMessage, awaiting to be nicely factored into the class // Hugi 2026-05-12 ------  */
-
-	/**
-	 * The headers  of this message
-	 */
-	private Map<String, List<String>> _headers = NGMessage.createEmptyHeadersMap();
-
-	/**
-	 * The content of this message
-	 *
-	 * FIXME:
-	 * Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming)
-	 * For example, it's clear that using a StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream
-	 * // Hugi 2023-02-08
-	 */
-	private ByteArrayOutputStream _contentByteStream = new ByteArrayOutputStream( NGMessage.DEFAULT_CONTENT_DATA_LENGTH );
-
-	/**
-	 * @return The HTTP headers of this message
-	 */
-	@Override
-	public Map<String, List<String>> headers() {
-		return _headers;
-	}
-
-	/**
-	 * Sets the headers from the given map.
-	 */
-	@Override
-	public void setHeaders( final Map<String, List<String>> newHeaders ) {
-		_headers = NGMessage.createEmptyHeadersMap();
-
-		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
-			_headers.put( header.getKey(), header.getValue() );
-		}
-	}
-
-	/**
-	 * @return The response's content stream
-	 */
-	@Override
-	public ByteArrayOutputStream contentByteStream() {
-		return _contentByteStream;
-	}
-
-	@Override
-	public void _setContentByteStream( ByteArrayOutputStream value ) {
-		_contentByteStream = value;
-	}
-
-	public void appendContentString( final String stringToAppend ) {
-		appendContentBytes( stringToAppend.getBytes( StandardCharsets.UTF_8 ) );
-	}
-
-	public void setContentBytes( final byte[] contentBytes ) {
-		_setContentByteStream( new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH ) );
-		appendContentBytes( contentBytes );
-	}
-
-	private void appendContentBytes( final byte[] contentBytes ) {
-		try {
-			contentByteStream().write( contentBytes );
-		}
-		catch( IOException e ) {
-			throw new UncheckedIOException( e );
-		}
-	}
-
-	public void setContentString( final String contentString ) {
-		setContentBytes( contentString.getBytes( StandardCharsets.UTF_8 ) );
-	}
-
-	/**
-	 * @return The length of the message's data content
-	 */
-	public long contentBytesLength() {
-		return contentByteStream().size();
-	}
+	public long contentBytesLength();
 }

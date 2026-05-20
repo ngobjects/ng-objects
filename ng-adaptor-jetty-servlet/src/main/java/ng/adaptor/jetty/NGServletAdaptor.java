@@ -23,6 +23,7 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
 import ng.appserver.NGResponse;
+import ng.appserver.NGStandardRequest;
 
 public class NGServletAdaptor extends HttpServlet {
 
@@ -124,7 +125,7 @@ public class NGServletAdaptor extends HttpServlet {
 		final Map<String, List<String>> formValuesFromServletRequest = formValues( sr.getParameterMap() );
 
 		try {
-			return new NGRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), formValuesFromServletRequest, cookieValues( sr.getCookies() ), sr.getInputStream() );
+			return new NGStandardRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), formValuesFromServletRequest, cookieValues( sr.getCookies() ), sr.getInputStream() );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );

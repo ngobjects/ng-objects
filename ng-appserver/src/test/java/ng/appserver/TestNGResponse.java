@@ -8,11 +8,11 @@ public class TestNGResponse {
 
 	@Test
 	public void defaultResponseStatusIs200() {
-		assertEquals( 200, new NGResponse().status() );
+		assertEquals( 200, NGRespBuilder.of().status() );
 	}
 
 	@Test
 	public void status() {
-		assertEquals( 400, new NGResponse( "Error", 400 ).status() );
+		assertEquals( 400, NGRespBuilder.of( "Error", 400 ).status() );
 	}
 }

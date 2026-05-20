@@ -42,10 +42,11 @@ import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.NGCookie;
 import ng.appserver.NGRequest;
-import ng.appserver.NGRequest.UploadedFile;
 import ng.appserver.NGResponse;
 import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGResponseMultipart.ContentPart;
+import ng.appserver.NGStandardRequest;
+import ng.appserver.NGStandardRequest.UploadedFile;
 import ng.appserver.privates.NGDevelopmentInstanceStopper;
 
 public class NGAdaptorJetty extends NGAdaptor {
@@ -274,7 +275,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
 			final ByteArrayInputStream contentStream = new ByteArrayInputStream( new byte[] {} ); // FIXME: This just kind of reflects the badness of our request data model. The request's "content" is really the part list ... // Hugi 2025-04-05
 
-			final NGRequest request = new NGRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream );
+			final NGRequest request = new NGStandardRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream );
 			uploadedFiles.entrySet().forEach( p -> request._uploadedFiles().put( p.getKey(), p.getValue() ) ); // FIXME: Adding uploaded files this way is really, really temporary // Hugi 2025-04-05
 			return request;
 		}
@@ -294,7 +295,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
 			final InputStream contentStream = Request.asInputStream( jettyRequest );
 
-			return new NGRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream );
+			return new NGStandardRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream );
 		}
 
 		/**

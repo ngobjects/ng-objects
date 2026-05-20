@@ -13,7 +13,7 @@ import java.util.Map;
  * Hugi 2025-04-14
  */
 
-public class NGResponseMultipart extends NGResponse {
+public class NGResponseMultipart extends NGStandardResponse {
 
 	/**
 	 * The boundary string used in our multipart messages
