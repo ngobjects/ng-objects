@@ -42,22 +42,23 @@ public class NGResponseMultipart extends NGStandardResponse {
 
 	@Override
 	public void appendContentString( final String stringToAppend ) {
-		if( _context.targetsMultipleUpdateContainers() ) {
-			final String targetContainer = _context.updateContainerToAppendTo();
 
-			// No element should be rendering content outside of a targeted update container
-			// during a multipart response. If this happens, it indicates a bug in the
-			// rendering pipeline — an element is calling appendContentString() when it
-			// should have been skipped by appendOrTraverse().
-			if( targetContainer == null ) {
-				throw new IllegalStateException( "appendContentString() invoked outside of any targeted update container. Content: '%s'".formatted( stringToAppend.length() > 100 ? stringToAppend.substring( 0, 100 ) + "..." : stringToAppend ) );
-			}
+		// FIXME: Check added for safety, can probably be removed // Hugi 2026-05-20
+		if( !_context.targetsMultipleUpdateContainers() ) {
+			throw new IllegalStateException( "The current context does not target multiple update containers, but we're working with a multipart response. Something's off" );
+		}
 
-			getContentPart( targetContainer ).content().append( stringToAppend );
+		final String targetContainer = _context.updateContainerToAppendTo();
+
+		// No element should be rendering content outside of a targeted update container
+		// during a multipart response. If this happens, it indicates a bug in the
+		// rendering pipeline — an element is calling appendContentString() when it
+		// should have been skipped by appendOrTraverse().
+		if( targetContainer == null ) {
+			throw new IllegalStateException( "appendContentString() invoked outside of any targeted update container. Content: '%s'".formatted( stringToAppend.length() > 100 ? stringToAppend.substring( 0, 100 ) + "..." : stringToAppend ) );
 		}
-		else {
-			super.appendContentString( stringToAppend );
-		}
+
+		getContentPart( targetContainer ).content().append( stringToAppend );
 	}
 
 	/**
