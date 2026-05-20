@@ -54,10 +54,12 @@ public class NGStandardResponse implements NGResponse {
 		setStatus( status );
 	}
 
+	@Override
 	public int status() {
 		return _status;
 	}
 
+	@Override
 	public void setStatus( final int status ) {
 		_status = status;
 	}
@@ -65,6 +67,7 @@ public class NGStandardResponse implements NGResponse {
 	/**
 	 * @return A list of HTTP cookies that this response will set (i.e. create a set-cookie header for)
 	 */
+	@Override
 	public List<NGCookie> cookies() {
 		return _cookies;
 	}
@@ -72,20 +75,24 @@ public class NGStandardResponse implements NGResponse {
 	/**
 	 * Add the given cookie to the response.
 	 */
+	@Override
 	public void addCookie( final NGCookie cookie ) {
 		Objects.requireNonNull( cookie );
 		_cookies.add( cookie );
 	}
 
+	@Override
 	public void setContentInputStream( final InputStream inputStream, final long contentInputStreamLength ) {
 		_contentInputStream = inputStream;
 		_contentInputStreamLength = contentInputStreamLength;
 	}
 
+	@Override
 	public InputStream contentInputStream() {
 		return _contentInputStream;
 	}
 
+	@Override
 	public long contentInputStreamLength() {
 		return _contentInputStreamLength;
 	}
@@ -140,15 +147,16 @@ public class NGStandardResponse implements NGResponse {
 		return _contentByteStream;
 	}
 
-	@Override
 	public void _setContentByteStream( ByteArrayOutputStream value ) {
 		_contentByteStream = value;
 	}
 
+	@Override
 	public void appendContentString( final String stringToAppend ) {
 		appendContentBytes( stringToAppend.getBytes( StandardCharsets.UTF_8 ) );
 	}
 
+	@Override
 	public void setContentBytes( final byte[] contentBytes ) {
 		_setContentByteStream( new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH ) );
 		appendContentBytes( contentBytes );
@@ -163,6 +171,7 @@ public class NGStandardResponse implements NGResponse {
 		}
 	}
 
+	@Override
 	public void setContentString( final String contentString ) {
 		setContentBytes( contentString.getBytes( StandardCharsets.UTF_8 ) );
 	}
@@ -170,6 +179,7 @@ public class NGStandardResponse implements NGResponse {
 	/**
 	 * @return The length of the message's data content
 	 */
+	@Override
 	public long contentBytesLength() {
 		return contentByteStream().size();
 	}

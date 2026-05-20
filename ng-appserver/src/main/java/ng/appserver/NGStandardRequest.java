@@ -375,9 +375,4 @@ public class NGStandardRequest implements NGRequest {
 	public ByteArrayOutputStream contentByteStream() {
 		return _contentByteStream;
 	}
-
-	@Override
-	public void _setContentByteStream( ByteArrayOutputStream value ) {
-		_contentByteStream = value;
-	}
 }

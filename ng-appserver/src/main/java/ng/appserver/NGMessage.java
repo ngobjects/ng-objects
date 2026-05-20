@@ -26,8 +26,6 @@ public interface NGMessage {
 	 */
 	public ByteArrayOutputStream contentByteStream();
 
-	public void _setContentByteStream( ByteArrayOutputStream value );
-
 	public Map<String, List<String>> headers();
 
 	/**
