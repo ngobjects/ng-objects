@@ -1,8 +1,6 @@
 package ng.appserver;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,36 +102,7 @@ public interface NGMessage {
 		return new String( contentBytes(), StandardCharsets.UTF_8 );
 	}
 
-	public default void setContentString( final String contentString ) {
-		setContentBytes( contentString.getBytes( StandardCharsets.UTF_8 ) );
-	}
-
-	public default void appendContentString( final String stringToAppend ) {
-		appendContentBytes( stringToAppend.getBytes( StandardCharsets.UTF_8 ) );
-	}
-
 	public default byte[] contentBytes() {
 		return contentByteStream().toByteArray();
-	}
-
-	/**
-	 * @return The length of the message's data content
-	 */
-	public default long contentBytesLength() {
-		return contentByteStream().size();
-	}
-
-	public default void setContentBytes( final byte[] contentBytes ) {
-		_setContentByteStream( new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH ) );
-		appendContentBytes( contentBytes );
-	}
-
-	private void appendContentBytes( final byte[] contentBytes ) {
-		try {
-			contentByteStream().write( contentBytes );
-		}
-		catch( IOException e ) {
-			throw new UncheckedIOException( e );
-		}
 	}
 }
