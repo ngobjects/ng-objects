@@ -83,7 +83,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		// FIXME: We need to allow some control over the headers for the returned resource // Hugi 2023-02-17
 		final NGResponse response = NGRespBuilder.of( resource.bytes(), 200 );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resourceName ) );
-		response.setHeader( "Content-Type", mimeType );
+		response.setHeader( "Content-Type", mimeType ); // FIXME: For some text resources the framework must be able to include a charset for the returned content-type (like text/css; charset=utf-8) // Hugi 2026-05-26
 
 		// FIXME: Allowing header control for resource headers becomes especially important WRT caching. We might want to consider encapsulating construction of the cache-control header in an API // Hugi 2025-07-06
 		response.setHeader( "cache-control", "max-age=3600" );
