@@ -113,8 +113,14 @@ public class NGTextField extends NGDynamicElement {
 		final String stringValue;
 
 		if( _formatterAssociation != null ) {
-			final Format formatter = (Format)_formatterAssociation.valueInComponent( context.component() );
-			stringValue = formatter.format( objectValue );
+			// FIXME: Formatting of null values is a perfectly valid case. We need to properly account for nulls // Hugi 2026-05-28
+			if( objectValue != null ) {
+				final Format formatter = (Format)_formatterAssociation.valueInComponent( context.component() );
+				stringValue = formatter.format( objectValue );
+			}
+			else {
+				stringValue = null;
+			}
 		}
 		else {
 			if( objectValue != null ) {
