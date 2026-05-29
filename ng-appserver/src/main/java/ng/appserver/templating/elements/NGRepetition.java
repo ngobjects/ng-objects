@@ -98,7 +98,7 @@ public class NGRepetition extends NGDynamicGroup {
 
 			for( int i = 0; i < iterations; ++i ) {
 				beforeEach( context, i );
-				takeValuesFromRequest( request, context );
+				takeChildrenValuesFromRequest( request, context );
 			}
 		}
 
