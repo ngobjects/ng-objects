@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.privates.NGDevServerRegistration;
 import ng.appserver.properties.DeploymentMode;
 import ng.appserver.properties.NGProperties;
 import ng.appserver.properties.NGProperties.PropertiesSourceArguments;
@@ -149,6 +150,14 @@ public class NGApplication implements NGPlugin {
 
 			// FIXME: Eventually, adaptor startup should be explicitly performed by the user
 			application.createAdaptor().start( application );
+
+			// In development, announce our name/port/pid to the IDE dev server (if one is listening),
+			// so external tools and agents can discover this app instead of being told where it runs.
+			// Done after adaptor startup, so we only ever announce a port we actually bound.
+			if( isDevelopmentMode ) {
+				final Integer port = properties.d().propWOPort();
+				NGDevServerRegistration.registerInBackground( application, port != null ? port : 1200 ); // 1200 mirrors the jetty adaptor's default port
+			}
 
 			logger.info( "===== Application started in {} ms at {}", (System.currentTimeMillis() - startTime), LocalDateTime.now() );
 
