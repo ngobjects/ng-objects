@@ -98,7 +98,15 @@ public class NGDevelopmentPlugin implements NGPlugin {
 			NGEvalSession.shared().reset();
 		}
 
-		final NGEvalSession.EvalResult result = NGEvalSession.shared().eval( snippetFrom( request ) );
+		final String snippet = snippetFrom( request );
+
+		// A form-encoded body (curl's default --data) was shredded on '=' and '&' before we saw it,
+		// so there's no usable snippet. Don't guess it back together — say what to do instead.
+		if( snippet == null && bodyLooksFormEncoded( request ) ) {
+			return json( "{\"status\":\"error\",\"diagnostics\":[\"the request body was form-encoded and could not be read as a snippet. Send the snippet as text/plain (curl --data ... -H 'Content-Type: text/plain'), or pass it as the 'snippet' parameter.\"]}", 400 );
+		}
+
+		final NGEvalSession.EvalResult result = NGEvalSession.shared().eval( snippet );
 
 		final StringBuilder b = new StringBuilder( 256 );
 		b.append( "{\"status\":\"" ).append( result.ok() ? "ok" : "error" ).append( '"' );
@@ -155,15 +163,17 @@ public class NGDevelopmentPlugin implements NGPlugin {
 	}
 
 	/**
-	 * Extracts the snippet to evaluate from a request, tolerant of how it was sent:
-	 * <ol>
-	 *   <li>the {@code snippet} form value / query param;</li>
-	 *   <li>the raw request body (a {@code text/plain} POST);</li>
-	 *   <li>a lone form key with no value — what {@code curl --data 'CODE'} produces, because its
-	 *       default {@code application/x-www-form-urlencoded} type makes the runtime parse the body
-	 *       into form values before we see it, leaving the content stream empty. Without this,
-	 *       the documented {@code --data} form would fail with "no input".</li>
-	 * </ol>
+	 * Extracts the snippet to evaluate: the {@code snippet} form value / query param, or the raw
+	 * request body.
+	 *
+	 * The body MUST be sent as {@code text/plain}. A {@code application/x-www-form-urlencoded} body
+	 * (curl's default with {@code --data}) is form-parsed by the adaptor before we see it — split on
+	 * {@code =} and {@code &}, which mangles any real Java — so we deliberately do NOT try to
+	 * reconstruct a snippet from the shredded form map (reassembly is lossy and a silently-wrong
+	 * snippet that runs is worse than a clear error). {@link #bodyLooksFormEncoded} detects that case
+	 * so the endpoint can tell the caller exactly what to do instead.
+	 *
+	 * @return the snippet, or null if none was supplied as a param or a text/plain body
 	 */
 	private static String snippetFrom( final NGRequest request ) {
 
@@ -177,20 +187,29 @@ public class NGDevelopmentPlugin implements NGPlugin {
 			return body;
 		}
 
-		// The form-encoded-body case: the snippet arrived as a valueless form key. Take the first
-		// form entry that isn't one of our known params and whose value is empty (a bare key).
-		for( final var entry : request.formValues().entrySet() ) {
-			final String key = entry.getKey();
-			if( "snippet".equals( key ) || "reset".equals( key ) ) {
-				continue;
-			}
-			final List<String> values = entry.getValue();
-			if( values == null || values.isEmpty() || values.get( 0 ) == null || values.get( 0 ).isBlank() ) {
-				return key;
+		return null;
+	}
+
+	/**
+	 * @return true when the request carries a form-encoded body (so the raw snippet was consumed and
+	 *         shredded into the form map) — a form entry present beyond our own {@code snippet}/{@code reset}
+	 *         params, with an empty {@code text/plain}-style body. This is the "you POSTed with the wrong
+	 *         content type" signal.
+	 */
+	private static boolean bodyLooksFormEncoded( final NGRequest request ) {
+
+		final String body = request.contentString();
+		if( body != null && !body.isBlank() ) {
+			return false; // we got a real body — it wasn't consumed as form data
+		}
+
+		for( final String key : request.formValues().keySet() ) {
+			if( !"snippet".equals( key ) && !"reset".equals( key ) ) {
+				return true;
 			}
 		}
 
-		return null;
+		return false;
 	}
 
 	private static NGResponse json( final String body, final int status ) {
