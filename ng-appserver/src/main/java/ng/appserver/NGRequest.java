@@ -33,6 +33,19 @@ public interface NGRequest extends NGMessage {
 
 	public void setMethod( final String method );
 
+	/**
+	 * @return The network address of the client that sent this request, as reported by the adaptor, or null when the adaptor didn't provide one.
+	 *
+	 * Default implementations are provided so existing NGRequest implementations keep compiling; adaptors
+	 * that want their requests to carry the address (they should — the dev endpoints use it to restrict
+	 * dangerous operations like /ng/dev/eval to loopback clients) override/set it.
+	 */
+	public default String remoteAddress() {
+		return null;
+	}
+
+	public default void _setRemoteAddress( final String remoteAddress ) {}
+
 	public String _sessionID();
 
 	public NGSession session();

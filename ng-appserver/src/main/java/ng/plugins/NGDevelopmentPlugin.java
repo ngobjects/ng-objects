@@ -3,12 +3,18 @@ package ng.plugins;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequest;
 import ng.appserver.NGRespBuilder;
 import ng.appserver.NGResponse;
 import ng.appserver.privates.NGConsoleCapture;
+import ng.dev.NGDevJson;
+import ng.dev.NGDevLoopback;
+import ng.dev.NGEvalSession;
+import ng.dev.NGRuntimeProblems;
 
 /**
  * Stuff related to development work
@@ -31,7 +37,9 @@ public class NGDevelopmentPlugin implements NGPlugin {
 				.create()
 				.map( "/ng/dev/type", NGDevelopmentPlugin::type )
 				.map( "/ng/dev/terminate", NGDevelopmentPlugin::terminate )
-				.map( "/ng/dev/log", NGDevelopmentPlugin::log );
+				.map( "/ng/dev/log", NGDevelopmentPlugin::log )
+				.map( "/ng/dev/eval", NGDevelopmentPlugin::eval )
+				.map( "/ng/dev/problems", NGDevelopmentPlugin::problems );
 	}
 
 	/**
@@ -65,6 +73,129 @@ public class NGDevelopmentPlugin implements NGPlugin {
 
 		final NGResponse response = NGRespBuilder.of( b.toString(), 200 );
 		response.setHeader( "content-type", "text/plain; charset=utf-8" );
+		return response;
+	}
+
+	/**
+	 * Evaluates a Java snippet inside this running application's JVM and returns the result as JSON.
+	 * The snippet runs against the application's own live classes and statics (see NGEvalSession), so
+	 * a tool can inspect real objects instead of reconstructing them in a separate jshell process.
+	 *
+	 * The snippet comes from the [snippet] form value (or, for convenience, the raw request body).
+	 * [reset=true] discards the persistent session (its variables and definitions) before evaluating.
+	 *
+	 * Restricted to loopback clients: this is arbitrary code execution in the app's JVM. It's already
+	 * dev-mode-only (this whole plugin is), but "dev mode" doesn't imply "only reachable locally", so
+	 * we additionally require the caller to be on the loopback interface.
+	 */
+	private static NGActionResults eval( final NGRequest request ) {
+
+		if( !NGDevLoopback.isLoopback( request.remoteAddress() ) ) {
+			return json( "{\"status\":\"error\",\"diagnostics\":[\"/ng/dev/eval is restricted to loopback clients\"]}", 403 );
+		}
+
+		if( "true".equals( request.formValueForKey( "reset" ) ) ) {
+			NGEvalSession.shared().reset();
+		}
+
+		final NGEvalSession.EvalResult result = NGEvalSession.shared().eval( snippetFrom( request ) );
+
+		final StringBuilder b = new StringBuilder( 256 );
+		b.append( "{\"status\":\"" ).append( result.ok() ? "ok" : "error" ).append( '"' );
+		b.append( ",\"value\":" ).append( NGDevJson.str( result.value() ) );
+		if( result.exception() != null ) {
+			b.append( ",\"exception\":" ).append( NGDevJson.str( result.exception() ) );
+		}
+		b.append( ",\"diagnostics\":[" );
+		for( int i = 0; i < result.diagnostics().size(); i++ ) {
+			if( i > 0 ) {
+				b.append( ',' );
+			}
+			b.append( NGDevJson.str( result.diagnostics().get( i ) ) );
+		}
+		b.append( "]}" );
+
+		return json( b.toString(), 200 );
+	}
+
+	/**
+	 * Serves the runtime problems the application rendered into its pages (binding-error boxes and
+	 * the like) as JSON, so a tool notices them without scraping rendered HTML.
+	 *
+	 * [contains] filters to problems mentioning the given string; [tail] limits to the last n;
+	 * [clear=true] empties the buffer (after snapshotting), useful for marking a clean baseline.
+	 */
+	private static NGActionResults problems( final NGRequest request ) {
+
+		final String contains = request.formValueForKey( "contains" );
+		final int tail = parseInt( request.formValueForKey( "tail" ), 0 );
+
+		final List<NGRuntimeProblems.Problem> problems = NGRuntimeProblems.snapshot( contains, tail );
+
+		if( "true".equals( request.formValueForKey( "clear" ) ) ) {
+			NGRuntimeProblems.clear();
+		}
+
+		final StringBuilder b = new StringBuilder( problems.size() * 96 + 32 );
+		b.append( "{\"problems\":[" );
+		for( int i = 0; i < problems.size(); i++ ) {
+			final NGRuntimeProblems.Problem problem = problems.get( i );
+			if( i > 0 ) {
+				b.append( ',' );
+			}
+			b.append( "{\"time\":" ).append( problem.epochMillis() )
+					.append( ",\"kind\":" ).append( NGDevJson.str( problem.kind() ) )
+					.append( ",\"element\":" ).append( NGDevJson.str( problem.element() ) )
+					.append( ",\"message\":" ).append( NGDevJson.str( problem.message() ) )
+					.append( '}' );
+		}
+		b.append( "],\"count\":" ).append( problems.size() ).append( '}' );
+
+		return json( b.toString(), 200 );
+	}
+
+	/**
+	 * Extracts the snippet to evaluate from a request, tolerant of how it was sent:
+	 * <ol>
+	 *   <li>the {@code snippet} form value / query param;</li>
+	 *   <li>the raw request body (a {@code text/plain} POST);</li>
+	 *   <li>a lone form key with no value — what {@code curl --data 'CODE'} produces, because its
+	 *       default {@code application/x-www-form-urlencoded} type makes the runtime parse the body
+	 *       into form values before we see it, leaving the content stream empty. Without this,
+	 *       the documented {@code --data} form would fail with "no input".</li>
+	 * </ol>
+	 */
+	private static String snippetFrom( final NGRequest request ) {
+
+		final String param = request.formValueForKey( "snippet" );
+		if( param != null && !param.isBlank() ) {
+			return param;
+		}
+
+		final String body = request.contentString();
+		if( body != null && !body.isBlank() ) {
+			return body;
+		}
+
+		// The form-encoded-body case: the snippet arrived as a valueless form key. Take the first
+		// form entry that isn't one of our known params and whose value is empty (a bare key).
+		for( final var entry : request.formValues().entrySet() ) {
+			final String key = entry.getKey();
+			if( "snippet".equals( key ) || "reset".equals( key ) ) {
+				continue;
+			}
+			final List<String> values = entry.getValue();
+			if( values == null || values.isEmpty() || values.get( 0 ) == null || values.get( 0 ).isBlank() ) {
+				return key;
+			}
+		}
+
+		return null;
+	}
+
+	private static NGResponse json( final String body, final int status ) {
+		final NGResponse response = NGRespBuilder.of( body, status );
+		response.setHeader( "content-type", "application/json; charset=utf-8" );
 		return response;
 	}
 

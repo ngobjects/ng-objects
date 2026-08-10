@@ -51,6 +51,12 @@ public class NGStandardRequest implements NGRequest {
 	private NGSession _session;
 
 	/**
+	 * The network address of the client, as reported by the adaptor (see NGRequest.remoteAddress()).
+	 * Set post-construction by the adaptor rather than through the (already wide) constructor.
+	 */
+	private String _remoteAddress;
+
+	/**
 	 * FIXME: The httpVersion parameter is currently not used. I'm keeping it around to keep the constructor's shape, since I _think_ we might eventually want to use it. But today, It's just added weight 	// Hugi 2026-05-12
 	 */
 	public NGStandardRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final InputStream contentStream ) {
@@ -74,6 +80,16 @@ public class NGStandardRequest implements NGRequest {
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
 		}
+	}
+
+	@Override
+	public String remoteAddress() {
+		return _remoteAddress;
+	}
+
+	@Override
+	public void _setRemoteAddress( final String remoteAddress ) {
+		_remoteAddress = remoteAddress;
 	}
 
 	/**
