@@ -36,9 +36,12 @@ public interface NGRequest extends NGMessage {
 	/**
 	 * @return The network address of the client that sent this request, as reported by the adaptor, or null when the adaptor didn't provide one.
 	 *
-	 * Default implementations are provided so existing NGRequest implementations keep compiling; adaptors
-	 * that want their requests to carry the address (they should — the dev endpoints use it to restrict
-	 * dangerous operations like /ng/dev/eval to loopback clients) override/set it.
+	 * FIXME: I'm not happy with these two. They arrived as a default method + an adaptor-populated
+	 * setter only to give the dev endpoints an address to loopback-check (/ng/dev/eval), and both
+	 * of those shapes are smells: a default returning null is a "not really part of the contract
+	 * yet" marker, and having the *adaptor* set this is the same complaint as the cookie/form-value
+	 * setters below — the request should model the client address itself, not receive it. Revisit
+	 * when NGRequest's model settles (it's still in flux). // Hugi 2026-08-10
 	 */
 	public default String remoteAddress() {
 		return null;
