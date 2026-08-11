@@ -141,6 +141,7 @@ public class NGApplication implements NGPlugin {
 
 		logger.info( "========================================" );
 		logger.info( "===== Running in %s mode! =====".formatted( deploymentMode ) );
+		logger.info( "===== pid: %s =====".formatted( ProcessHandle.current().pid() ) );
 		logger.info( "========================================" );
 
 		logger.info( "===== Properties from arguments =====\n" + properties._propertiesMapAsString() );
