@@ -110,17 +110,20 @@ public class NGPopUpButton extends NGDynamicElement {
 			}
 			else {
 				// FIXME:
-				// Index-based option values mean a list that changes between render and submit corrupts the selection.
-				// Two cases: (1) stale index out of range -> raw AIOOBE below. Hard failure is correct (the lists have
-				// diverged, silently ignoring would save a selection the user never made), but it deserves a deliberate
-				// exception naming the diagnosis instead of an accidental one.
-				// (2) The truly nasty one: the list changed but the stale index is still in range -> the WRONG item is
-				// selected, silently, with no symptom at all. Undetectable by construction with index-based values;
-				// catching it needs a fingerprint of the rendered list (or stable per-option identifiers) submitted
-				// alongside the index, so a mismatch can be detected and hard-failed too. Real design work, deserves
-				// a proper session - known and unloved since the WO days // Hugi 2026-08-11
+				// Index-based option values mean a list that changes between render and submit corrupts the selection,
+				// and when the stale index is still in range, the WRONG item gets selected silently, with no symptom at all.
+				// Undetectable by construction with index-based values. WOPopUpButton's [value] binding is the designed
+				// answer: stable per-option value strings from the objects themselves, matched on submit instead of indexes.
+				// Worth implementing both for that safety (opt-in) and for WO compatibility. Deserves a proper session.
+				// (Note that WO silently pushes null when the index is out of range - a tradition of swallowing errors
+				// to protect the UI that we're deliberately NOT carrying on; see the hard failure below.) // Hugi 2026-08-11
 				final int selectionIndex = Integer.parseInt( stringValueFromRequest );
 				final List<?> list = list( context );
+
+				if( selectionIndex < 0 || selectionIndex >= list.size() ) {
+					throw new IllegalStateException( "The request submitted selection index %s for '%s', but the bound list contains %s elements. The list has probably changed between the page being rendered and the form being submitted (a stale or resubmitted form?), so the submitted selection can't be trusted".formatted( selectionIndex, name( context ), list.size() ) );
+				}
+
 				final Object selectedItem = list.get( selectionIndex );
 				_selectionAss.setValue( selectedItem, context.component() );
 			}
