@@ -109,6 +109,16 @@ public class NGPopUpButton extends NGDynamicElement {
 				_selectionAss.setValue( null, context.component() );
 			}
 			else {
+				// FIXME:
+				// Index-based option values mean a list that changes between render and submit corrupts the selection.
+				// Two cases: (1) stale index out of range -> raw AIOOBE below. Hard failure is correct (the lists have
+				// diverged, silently ignoring would save a selection the user never made), but it deserves a deliberate
+				// exception naming the diagnosis instead of an accidental one.
+				// (2) The truly nasty one: the list changed but the stale index is still in range -> the WRONG item is
+				// selected, silently, with no symptom at all. Undetectable by construction with index-based values;
+				// catching it needs a fingerprint of the rendered list (or stable per-option identifiers) submitted
+				// alongside the index, so a mismatch can be detected and hard-failed too. Real design work, deserves
+				// a proper session - known and unloved since the WO days // Hugi 2026-08-11
 				final int selectionIndex = Integer.parseInt( stringValueFromRequest );
 				final List<?> list = list( context );
 				final Object selectedItem = list.get( selectionIndex );
@@ -177,16 +187,21 @@ public class NGPopUpButton extends NGDynamicElement {
 				}
 			}
 			else {
-				final String selectedValue = context.request().formValueForKey( name( context ) );
-
-				if( selectedValue != null && !selectedValue.equals( NO_SELECTION_OPTION_VALUE ) && Integer.parseInt( selectedValue ) == index ) {
-					isSelected = true;
-				}
-
 				if( _selectionAss != null ) {
+					// When a selection binding is present, it's the sole authority on what's selected.
+					// Consulting the request's form value here would resurrect a submitted selection
+					// even after the action has changed or reset the bound value.
 					final Object selectedObject = _selectionAss.valueInComponent( context.component() );
 
 					if( object.equals( selectedObject ) ) {
+						isSelected = true;
+					}
+				}
+				else {
+					// No selection binding, so fall back to the value submitted in the current request
+					final String selectedValue = context.request().formValueForKey( name( context ) );
+
+					if( selectedValue != null && !selectedValue.equals( NO_SELECTION_OPTION_VALUE ) && Integer.parseInt( selectedValue ) == index ) {
 						isSelected = true;
 					}
 				}
