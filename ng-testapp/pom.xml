@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.13.2</version>
+			<version>2.14.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>com.microsoft.playwright</groupId>
 			<artifactId>playwright</artifactId>
-			<version>1.50.0</version>
+			<version>1.62.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
