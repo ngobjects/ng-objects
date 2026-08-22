@@ -57,8 +57,6 @@ public interface NGRequest extends NGMessage {
 
 	public Map<String, List<String>> cookieValues();
 
-	public void _setCookieValues( Map<String, List<String>> cookieValues );
-
 	public List<String> cookieValuesForKey( final String key );
 
 	public String cookieValueForKey( final String key );
