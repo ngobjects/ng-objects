@@ -20,12 +20,12 @@ import ng.appserver.templating.NGComponent;
 
 public class NGComponentRequestHandler extends NGRequestHandler {
 
-	private static Logger logger = LoggerFactory.getLogger( NGComponentRequestHandler.class );
+	private static final Logger logger = LoggerFactory.getLogger( NGComponentRequestHandler.class );
 
 	/**
 	 * The default path prefix for this request handler
 	 */
-	public static String DEFAULT_PATH = "/no/";
+	public static final String DEFAULT_PATH = "/no/";
 
 	@Override
 	public NGResponse handleRequest( NGRequest request ) {
@@ -65,14 +65,11 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			throw new IllegalStateException( "The context's session is null. That should never happen" );
 		}
 
-		// We're executing the following code in a try-block so we can release the lock on the page cache record in the finally clause.
-		try {
-			// Now let's try to restore the page from the cache, using the contextID provided by the URL
-			// If no page is found (page probably pushed out of the session's page cache), NGPageRestorationException is thrown.
-			final NGComponent originalPage = session.pageCache().restorePageFromCache( originatingContextID );
-
-			// Since we're working with the page we can safely assume it's become relevant again, so we give it another shot at life by moving it to the top of the page cache
-			session.pageCache().retainPageWithContextIDInCache( originatingContextID );
+		// Checking out the page gives us exclusive access to it, serializing concurrent requests that work with the same page.
+		// The page's lock is released by the lease's close() at the end of the try-with-resources block.
+		// If no page is found (page probably pushed out of the session's page cache), NGPageRestorationException is thrown.
+		try( final NGPageCache.NGPageLease lease = session.pageCache().checkout( originatingContextID ) ) {
+			final NGComponent originalPage = lease.page();
 
 			logger.debug( "Page restored from cache is: " + originalPage.getClass() );
 
@@ -111,8 +108,14 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 			else if( actionInvocationResults instanceof NGComponent newPage ) {
 				// If an action method returns an NGComponent, that's our new page in this context. We set it, and return it
 				// Note: The context's page is set in NGComponent.generateResponse()
-				newPage.setContextIncludingChildren( context );
-				response = newPage.generateResponse();
+				//
+				// The returned page may be a cached instance another request could be working with concurrently
+				// (e.g. an action returning a page held in a component's field), so we hold the instance's lock while
+				// mutating and rendering it. If it's the page we already checked out, re-acquisition is free (the lock is reentrant).
+				try( final NGPageCache.NGPageLease renderLease = session.pageCache().lockPage( newPage ) ) {
+					newPage.setContextIncludingChildren( context );
+					response = newPage.generateResponse();
+				}
 			}
 			else {
 				// If this is not an NGComponent, we don't need to take any special action and just invoke generateResponse() on the action's results
@@ -124,10 +127,6 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 				throw new IllegalStateException( "Response is null. This should never happen" );
 			}
 			return response;
-
-		}
-		finally {
-			session.pageCache().releaseLock( originatingContextID );
 		}
 	}
 

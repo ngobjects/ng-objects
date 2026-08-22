@@ -38,6 +38,16 @@ public class NGExceptionManager {
 				NGSessionRestorationException.class,
 				NGExceptionManager::doNothing,
 				application::responseForSessionRestorationException );
+
+		register(
+				NGPageContendedException.class,
+				NGExceptionManager::doNothing,
+				exception -> {
+					final NGResponse response = NGRespBuilder.of( exception.getMessage(), 503 );
+					// Hints to the client when a retry is likely to succeed: the previous request has already had the full lock timeout to finish
+					response.setHeader( "retry-after", String.valueOf( Math.max( 1, exception.lockTimeout().toSeconds() ) ) );
+					return response;
+				} );
 	}
 
 	public <E extends Throwable> void register(

@@ -3,6 +3,7 @@ package ng.appserver;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Yes, we have sessions too!
@@ -36,14 +37,15 @@ public class NGSession {
 	private boolean _manuallyTerminated = false;
 
 	/**
-	 * ID of the context last rendered by this session
+	 * Incrementing counter used to assign each context created within this session a unique ID.
+	 * Atomic, since concurrent requests within the session may be generating contextIDs at the same time (and duplicate contextIDs would make the page cache overwrite live entries)
 	 */
-	private int currentContextID = 0;
+	private final AtomicInteger currentContextID = new AtomicInteger();
 
 	/**
 	 * In the case of component actions, stores the currently active page instance by contextID.
 	 */
-	private NGPageCache _pageCache = new NGPageCache();
+	private final NGPageCache _pageCache = new NGPageCache();
 
 	public NGSession() {
 		this( UUID.randomUUID().toString() );
@@ -64,8 +66,7 @@ public class NGSession {
 	 * @return The current contextID, incrementing our context counter for next invocation. Used by NGContext to get a unique context ID.
 	 */
 	public int getContextIDAndIncrement() {
-		int contextID = currentContextID++;
-		return contextID;
+		return currentContextID.getAndIncrement();
 	}
 
 	/**
