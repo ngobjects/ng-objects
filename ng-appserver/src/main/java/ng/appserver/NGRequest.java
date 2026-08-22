@@ -29,8 +29,6 @@ public interface NGRequest extends NGMessage {
 
 	public String method();
 
-	public void setMethod( final String method );
-
 	/**
 	 * @return The network address of the client that sent this request, as reported by the adaptor, or null when the adaptor didn't provide one.
 	 *

@@ -66,7 +66,7 @@ public class NGStandardRequest implements NGRequest {
 		Objects.requireNonNull( headers );
 		Objects.requireNonNull( contentStream );
 
-		setMethod( method );
+		_method = method;
 		setURI( uri );
 		//		setHttpVersion( httpVersion );
 		setHeaders( headers );
@@ -155,14 +155,6 @@ public class NGStandardRequest implements NGRequest {
 	@Override
 	public String method() {
 		return _method;
-	}
-
-	/**
-	 * FIXME: This should really not be settable, NGRequest wants to be immutable // Hugi 2024-08-10
-	 */
-	@Override
-	public void setMethod( final String method ) {
-		_method = method;
 	}
 
 	/**
