@@ -23,8 +23,6 @@ public interface NGRequest extends NGMessage {
 
 	public String formValueForKey( final String key );
 
-	public void _setFormValues( final Map<String, List<String>> formValues );
-
 	public String uri();
 
 	public void setURI( final String uri );

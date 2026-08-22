@@ -70,7 +70,7 @@ public class NGStandardRequest implements NGRequest {
 		setURI( uri );
 		//		setHttpVersion( httpVersion );
 		setHeaders( headers );
-		_setFormValues( formValues );
+		_formValues = formValues; // FIXME: Should be populated by the request object, not the adaptor // Hugi 2021-12-31
 		_setCookieValues( cookieValues );
 
 		// FIXME: We're consuming the entire content stream at construction time for now. Eventually, whether to do this should be the consumer's decision // Hugi 2026-05-12
@@ -128,16 +128,6 @@ public class NGStandardRequest implements NGRequest {
 		}
 
 		return values.get( 0 );
-	}
-
-	/**
-	 * Set the request's form values (query parameters)
-	 *
-	 * FIXME: Same goes for this as the cookieValues. The Map should be populated by the request object, not the adaptor // Hugi 2021-12-31
-	 */
-	@Override
-	public void _setFormValues( final Map<String, List<String>> formValues ) {
-		_formValues = formValues;
 	}
 
 	/**
