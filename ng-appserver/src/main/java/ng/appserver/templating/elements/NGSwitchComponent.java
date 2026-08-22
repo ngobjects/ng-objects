@@ -3,6 +3,7 @@ package ng.appserver.templating.elements;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
@@ -39,7 +40,23 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 	private final NGElement _contentTemplate;
 
 	private final Map<String, NGElement> _componentCache;
+
+	/**
+	 * Maps component names to the elementID branch assigned to them on first use.
+	 *
+	 * FIXME: IDs are minted in first-encounter order, so the name->ID mapping is traffic-dependent: it can differ across
+	 * JVM restarts and across app instances. This is harmless today only because sessions are in-memory — a restart kills
+	 * the session before a stale senderID can resolve against a differently-ordered mapping. It becomes a live correctness
+	 * bug (actions silently dispatched to the wrong component) with persistent sessions (issue #49) or any cross-instance
+	 * session sharing. The real fix is redesigning the switch as dynamic component references, where per-case child
+	 * instances are kept apart by keying on (elementID, component name) instead of faking elementID branches (issue #47).
+	 */
 	private final Map<String, String> _elementIDByName;
+
+	/**
+	 * Source of the elementID branch numbers handed out in _elementIDByName
+	 */
+	private final AtomicInteger _nextElementID = new AtomicInteger();
 
 	public NGSwitchComponent( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		super( null, null, null );
@@ -73,17 +90,11 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 		return name;
 	}
 
-	private String elementNameInContext( String name, final NGContext context ) {
-		String id = _elementIDByName.get( name );
-
-		if( id == null ) {
-			id = _elementIDByName.size() + "";
-			_elementIDByName.put( name, id );
-		}
-
-		name = id;
-
-		return name;
+	private String elementIDForName( final String name ) {
+		// computeIfAbsent makes minting atomic per name — the previous get-then-put allowed two threads first-encountering
+		// two different names to read the same map size and assign the same ID to both, permanently merging their
+		// elementID branches and component caches.
+		return _elementIDByName.computeIfAbsent( name, unused -> String.valueOf( _nextElementID.getAndIncrement() ) );
 	}
 
 	private NGElement realComponentWithName( final String name, final String elementIDString ) {
@@ -108,7 +119,7 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 	@Override
 	public void takeValuesFromRequest( final NGRequest request, final NGContext context ) {
 		final String name = componentName( context.component() );
-		final String id = elementNameInContext( name, context );
+		final String id = elementIDForName( name );
 
 		context.elementID().addBranchAndSet( Integer.parseInt( id ) );
 
@@ -122,7 +133,7 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 	@Override
 	public NGActionResults invokeAction( final NGRequest request, final NGContext context ) {
 		final String name = componentName( context.component() );
-		final String id = elementNameInContext( name, context );
+		final String id = elementIDForName( name );
 
 		context.elementID().addBranchAndSet( Integer.parseInt( id ) );
 
@@ -143,7 +154,7 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 	@Override
 	public void appendStructureToResponse( NGResponse response, NGContext context ) {
 		final String name = componentName( context.component() );
-		final String id = elementNameInContext( name, context );
+		final String id = elementIDForName( name );
 
 		context.elementID().addBranchAndSet( Integer.parseInt( id ) );
 
