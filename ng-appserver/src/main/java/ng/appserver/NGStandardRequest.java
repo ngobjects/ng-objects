@@ -23,7 +23,7 @@ public class NGStandardRequest implements NGRequest {
 	/**
 	 * The requests's method
 	 */
-	private String _method;
+	private final String _method;
 
 	/**
 	 * The URI being accessed
@@ -38,12 +38,12 @@ public class NGStandardRequest implements NGRequest {
 	/**
 	 * The request's form values (a.k.a. query parameters)
 	 */
-	private Map<String, List<String>> _formValues;
+	private final Map<String, List<String>> _formValues;
 
 	/**
 	 * Values of cookies
 	 */
-	private Map<String, List<String>> _cookieValues;
+	private final Map<String, List<String>> _cookieValues;
 
 	/**
 	 * The request's session
