@@ -71,7 +71,7 @@ public class NGStandardRequest implements NGRequest {
 		//		setHttpVersion( httpVersion );
 		setHeaders( headers );
 		_formValues = formValues; // FIXME: Should be populated by the request object, not the adaptor // Hugi 2021-12-31
-		_cookieValues = cookieValues; // FIXME: Cookie header deserialization should happen in NGRequest instead of in the adaptor // Hugi 20201-12-30
+		_cookieValues = cookieValues; // FIXME: Cookie header deserialization should happen in NGRequest instead of in the adaptor // Hugi 2021-12-30
 
 		// FIXME: We're consuming the entire content stream at construction time for now. Eventually, whether to do this should be the consumer's decision // Hugi 2026-05-12
 		try( contentStream) {
