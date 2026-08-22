@@ -274,9 +274,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
 			final ByteArrayInputStream contentStream = new ByteArrayInputStream( new byte[] {} ); // FIXME: This just kind of reflects the badness of our request data model. The request's "content" is really the part list ... // Hugi 2025-04-05
+			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
 
-			final NGRequest request = new NGStandardRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream );
-			request._setRemoteAddress( Request.getRemoteAddr( jettyRequest ) );
+			final NGRequest request = new NGStandardRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream, remoteAddress );
 			uploadedFiles.entrySet().forEach( p -> request._uploadedFiles().put( p.getKey(), p.getValue() ) ); // FIXME: Adding uploaded files this way is really, really temporary // Hugi 2025-04-05
 			return request;
 		}
@@ -295,10 +295,9 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
 			final InputStream contentStream = Request.asInputStream( jettyRequest );
+			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
 
-			final NGRequest request = new NGStandardRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream );
-			request._setRemoteAddress( Request.getRemoteAddr( jettyRequest ) );
-			return request;
+			return new NGStandardRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream, remoteAddress );
 		}
 
 		/**

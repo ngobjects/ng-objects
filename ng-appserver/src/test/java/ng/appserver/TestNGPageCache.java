@@ -38,7 +38,7 @@ public class TestNGPageCache {
 	}
 
 	private static NGComponent newPage() {
-		final NGRequest request = new NGStandardRequest( "GET", "/test", "HTTP/1.1", Map.of(), Map.of(), Map.of(), InputStream.nullInputStream() );
+		final NGRequest request = new NGStandardRequest( "GET", "/test", "HTTP/1.1", Map.of(), Map.of(), Map.of(), InputStream.nullInputStream(), null );
 		return new NGComponent( new NGContext( request ) );
 	}
 
@@ -49,12 +49,12 @@ public class TestNGPageCache {
 
 		cache.savePage( "1", page, null, null );
 
-		try( NGPageLease lease = cache.checkout( "1" ) ) {
+		try( NGPageLease lease = cache.checkout( "1" )) {
 			assertSame( page, lease.page() );
 		}
 
 		// The lock must have been released by close(), so checking the page out again should succeed immediately
-		try( NGPageLease lease = cache.checkout( "1" ) ) {
+		try( NGPageLease lease = cache.checkout( "1" )) {
 			assertSame( page, lease.page() );
 		}
 	}
@@ -498,10 +498,10 @@ public class TestNGPageCache {
 		final NGComponent page = newPage();
 		cache.savePage( "1", page, null, null );
 
-		try( NGPageLease lease = cache.checkout( "1" ) ) {
+		try( NGPageLease lease = cache.checkout( "1" )) {
 
 			// The response page may be the checked out page itself — re-acquisition on the same thread must succeed immediately
-			try( NGPageLease renderLease = cache.lockPage( page ) ) {
+			try( NGPageLease renderLease = cache.lockPage( page )) {
 				assertSame( page, renderLease.page() );
 			}
 

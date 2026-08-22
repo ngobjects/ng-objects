@@ -54,12 +54,12 @@ public class NGStandardRequest implements NGRequest {
 	 * The network address of the client, as reported by the adaptor (see NGRequest.remoteAddress()).
 	 * Set post-construction by the adaptor rather than through the (already wide) constructor.
 	 */
-	private String _remoteAddress;
+	private final String _remoteAddress;
 
 	/**
 	 * FIXME: The httpVersion parameter is currently not used. I'm keeping it around to keep the constructor's shape, since I _think_ we might eventually want to use it. But today, It's just added weight 	// Hugi 2026-05-12
 	 */
-	public NGStandardRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final InputStream contentStream ) {
+	public NGStandardRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final InputStream contentStream, String remoteAddress ) {
 		Objects.requireNonNull( method );
 		Objects.requireNonNull( uri );
 		Objects.requireNonNull( httpVersion );
@@ -72,6 +72,7 @@ public class NGStandardRequest implements NGRequest {
 		setHeaders( headers );
 		_formValues = formValues; // FIXME: Should be populated by the request object, not the adaptor // Hugi 2021-12-31
 		_cookieValues = cookieValues; // FIXME: Cookie header deserialization should happen in NGRequest instead of in the adaptor // Hugi 2021-12-30
+		_remoteAddress = remoteAddress;
 
 		// FIXME: We're consuming the entire content stream at construction time for now. Eventually, whether to do this should be the consumer's decision // Hugi 2026-05-12
 		try( contentStream) {
@@ -85,11 +86,6 @@ public class NGStandardRequest implements NGRequest {
 	@Override
 	public String remoteAddress() {
 		return _remoteAddress;
-	}
-
-	@Override
-	public void _setRemoteAddress( final String remoteAddress ) {
-		_remoteAddress = remoteAddress;
 	}
 
 	/**

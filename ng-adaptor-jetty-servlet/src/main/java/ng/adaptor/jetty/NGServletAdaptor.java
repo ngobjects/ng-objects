@@ -125,9 +125,7 @@ public class NGServletAdaptor extends HttpServlet {
 		final Map<String, List<String>> formValuesFromServletRequest = formValues( sr.getParameterMap() );
 
 		try {
-			final NGRequest request = new NGStandardRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), formValuesFromServletRequest, cookieValues( sr.getCookies() ), sr.getInputStream() );
-			request._setRemoteAddress( sr.getRemoteAddr() );
-			return request;
+			return new NGStandardRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), formValuesFromServletRequest, cookieValues( sr.getCookies() ), sr.getInputStream(), sr.getRemoteAddr() );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );

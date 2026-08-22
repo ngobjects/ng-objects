@@ -74,7 +74,7 @@ public class NGComponentRequestTestHarness {
 		private final NGSession _testSession;
 
 		public TestRequest( final String uri, final NGSession session, final Map<String, List<String>> formValues ) {
-			super( "GET", uri, "HTTP/1.1", Map.of(), formValues, Map.of(), InputStream.nullInputStream() );
+			super( "GET", uri, "HTTP/1.1", Map.of(), formValues, Map.of(), InputStream.nullInputStream(), null );
 			_testSession = session;
 		}
 
