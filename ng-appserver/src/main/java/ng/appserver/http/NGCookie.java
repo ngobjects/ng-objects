@@ -1,5 +1,7 @@
 package ng.appserver.http;
 
+import java.util.Objects;
+
 /**
  * A cookie. Yum!
  */
@@ -16,6 +18,14 @@ public class NGCookie {
 	private String _sameSite; // Strict,Lax,None
 
 	public NGCookie( String name, String value, String domain, String path, Long maxAge, boolean isSecure, boolean isHttpOnly, String sameSite ) {
+		Objects.requireNonNull( name, "A cookie's [name] must not be null" );
+		Objects.requireNonNull( value, "A cookie's [value] must not be null" );
+
+		// Browsers reject SameSite=None cookies that aren't Secure, so failing at construction beats failing silently in the user's cookie jar
+		if( "None".equals( sameSite ) && !isSecure ) {
+			throw new IllegalArgumentException( "A cookie with SameSite=None must also be secure (browsers reject the combination otherwise)" );
+		}
+
 		_name = name;
 		_value = value;
 		_domain = domain;
