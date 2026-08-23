@@ -16,32 +16,20 @@ public class NGCookie {
 	private String _sameSite; // Strict,Lax,None
 
 	public NGCookie( final String name, final String value ) {
-		setName( name );
-		setValue( value );
+		_name = name;
+		_value = value;
 	}
 
 	public String name() {
 		return _name;
 	}
 
-	public void setName( String name ) {
-		_name = name;
-	}
-
 	public String value() {
 		return _value;
 	}
 
-	public void setValue( String value ) {
-		_value = value;
-	}
-
 	public String domain() {
 		return _domain;
-	}
-
-	public void setDomain( String domain ) {
-		_domain = domain;
 	}
 
 	public String path() {
