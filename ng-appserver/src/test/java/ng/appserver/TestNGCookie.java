@@ -11,6 +11,7 @@ import java.time.Duration;
 import org.junit.jupiter.api.Test;
 
 import ng.appserver.http.NGCookie;
+import ng.appserver.http.NGCookie.SameSite;
 
 public class TestNGCookie {
 
@@ -51,7 +52,7 @@ public class TestNGCookie {
 		assertNull( cookie.maxAge() );
 		assertTrue( cookie.httpOnly() );
 		assertFalse( cookie.secure() );
-		assertEquals( "Lax", cookie.sameSite() );
+		assertEquals( SameSite.LAX, cookie.sameSite() );
 	}
 
 	@Test
@@ -65,11 +66,11 @@ public class TestNGCookie {
 	 */
 	@Test
 	public void sameSiteNoneRequiresSecure() {
-		assertThrows( IllegalArgumentException.class, () -> new NGCookie( "someName", "someValue", null, "/", null, false, true, "None" ) );
+		assertThrows( IllegalArgumentException.class, () -> new NGCookie( "someName", "someValue", null, "/", null, false, true, SameSite.NONE ) );
 
 		// The same combination with secure=true is legal
-		final NGCookie cookie = new NGCookie( "someName", "someValue", null, "/", null, true, true, "None" );
-		assertEquals( "None", cookie.sameSite() );
+		final NGCookie cookie = new NGCookie( "someName", "someValue", null, "/", null, true, true, SameSite.NONE );
+		assertEquals( SameSite.NONE, cookie.sameSite() );
 		assertTrue( cookie.secure() );
 	}
 
@@ -80,6 +81,6 @@ public class TestNGCookie {
 	@Test
 	public void negativeMaxAgeIsRejected() {
 		assertThrows( IllegalArgumentException.class, () -> new NGCookie( "someName", "someValue", Duration.ofSeconds( -1 ) ) );
-		assertThrows( IllegalArgumentException.class, () -> new NGCookie( "someName", "someValue", null, "/", -1L, false, true, "Lax" ) );
+		assertThrows( IllegalArgumentException.class, () -> new NGCookie( "someName", "someValue", null, "/", -1L, false, true, SameSite.LAX ) );
 	}
 }

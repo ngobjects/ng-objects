@@ -7,14 +7,39 @@ import java.util.Objects;
  * A cookie. Yum!
  */
 
-public record NGCookie( String name, String value, String domain, String path, Long maxAge, boolean secure, boolean httpOnly, String sameSite ) {
+public record NGCookie( String name, String value, String domain, String path, Long maxAge, boolean secure, boolean httpOnly, SameSite sameSite ) {
+
+	/**
+	 * The cookie's SameSite attribute.
+	 *
+	 * The value set is owned by the HTTP spec/browsers (not by applications), so a closed enum is the right shape —
+	 * it makes the typo/case bug class unrepresentable. If the platform ever mints a new value, adding a constant here is a one-line release.
+	 */
+	public enum SameSite {
+		STRICT( "Strict" ),
+		LAX( "Lax" ),
+		NONE( "None" );
+
+		private final String _headerValue;
+
+		SameSite( final String headerValue ) {
+			_headerValue = headerValue;
+		}
+
+		/**
+		 * @return The attribute value as written into the Set-Cookie header
+		 */
+		public String headerValue() {
+			return _headerValue;
+		}
+	}
 
 	public NGCookie {
 		Objects.requireNonNull( name, "A cookie's [name] must not be null" );
 		Objects.requireNonNull( value, "A cookie's [value] must not be null" );
 
 		// Browsers reject SameSite=None cookies that aren't Secure, so failing at construction beats failing silently in the user's cookie jar
-		if( "None".equals( sameSite ) && !secure ) {
+		if( sameSite == SameSite.NONE && !secure ) {
 			throw new IllegalArgumentException( "A cookie with SameSite=None must also be secure (browsers reject the combination otherwise)" );
 		}
 
@@ -31,7 +56,7 @@ public record NGCookie( String name, String value, String domain, String path, L
 	 * @param maxAge The cookie's lifetime. Zero deletes the cookie, null makes it a session cookie (lives until the browser closes). Sub-second precision is truncated.
 	 */
 	public NGCookie( final String name, final String value, final Duration maxAge ) {
-		this( name, value, null, "/", maxAge == null ? null : maxAge.toSeconds(), false, true, "Lax" );
+		this( name, value, null, "/", maxAge == null ? null : maxAge.toSeconds(), false, true, SameSite.LAX );
 	}
 
 	public NGCookie( final String name, final String value ) {

@@ -214,7 +214,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			}
 
 			if( ngCookie.sameSite() != null ) {
-				jettyCookieBuilder.sameSite( SameSite.from( ngCookie.sameSite() ) );
+				jettyCookieBuilder.sameSite( SameSite.from( ngCookie.sameSite().headerValue() ) );
 			}
 
 			return jettyCookieBuilder.build();

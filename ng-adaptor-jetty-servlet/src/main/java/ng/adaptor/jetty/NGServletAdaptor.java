@@ -111,7 +111,7 @@ public class NGServletAdaptor extends HttpServlet {
 		}
 
 		if( ngCookie.sameSite() != null ) {
-			servletCookie.setAttribute( "SameSite", ngCookie.sameSite() );
+			servletCookie.setAttribute( "SameSite", ngCookie.sameSite().headerValue() );
 		}
 
 		return servletCookie;
