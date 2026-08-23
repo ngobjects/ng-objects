@@ -536,7 +536,6 @@ public class NGApplication implements NGPlugin {
 	private static NGCookie createSessionCookie( final String sessionID, final int maxAge ) {
 		final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
 		sessionCookie.setMaxAge( maxAge );
-		sessionCookie.setPath( "/" );
 		// sessionCookie.setSecure( ... )
 		return sessionCookie;
 	}
