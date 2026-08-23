@@ -206,8 +206,8 @@ public class NGAdaptorJetty extends NGAdaptor {
 				jettyCookieBuilder.path( ngCookie.path() );
 			}
 
-			jettyCookieBuilder.httpOnly( ngCookie.isHttpOnly() );
-			jettyCookieBuilder.secure( ngCookie.isSecure() );
+			jettyCookieBuilder.httpOnly( ngCookie.httpOnly() );
+			jettyCookieBuilder.secure( ngCookie.secure() );
 
 			if( ngCookie.maxAge() != null ) {
 				jettyCookieBuilder.maxAge( ngCookie.maxAge() );

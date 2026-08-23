@@ -13,8 +13,8 @@ public class NGCookie {
 	private String _domain;
 	private String _path;
 	private Long _maxAge;
-	private boolean _isSecure;
-	private boolean _isHttpOnly;
+	private boolean _secure;
+	private boolean _httpOnly;
 	private String _sameSite; // Strict,Lax,None
 
 	public NGCookie( String name, String value, String domain, String path, Long maxAge, boolean isSecure, boolean isHttpOnly, String sameSite ) {
@@ -31,8 +31,8 @@ public class NGCookie {
 		_domain = domain;
 		_path = path;
 		_maxAge = maxAge;
-		_isSecure = isSecure;
-		_isHttpOnly = isHttpOnly;
+		_secure = isSecure;
+		_httpOnly = isHttpOnly;
 		_sameSite = sameSite;
 	}
 
@@ -72,20 +72,20 @@ public class NGCookie {
 		_maxAge = maxAge;
 	}
 
-	public boolean isSecure() {
-		return _isSecure;
+	public boolean secure() {
+		return _secure;
 	}
 
-	public void setSecure( boolean isSecure ) {
-		_isSecure = isSecure;
+	public void setSecure( boolean secure ) {
+		_secure = secure;
 	}
 
-	public boolean isHttpOnly() {
-		return _isHttpOnly;
+	public boolean httpOnly() {
+		return _httpOnly;
 	}
 
-	public void setHttpOnly( boolean isHttpOnly ) {
-		_isHttpOnly = isHttpOnly;
+	public void setHttpOnly( boolean httpOnly ) {
+		_httpOnly = httpOnly;
 	}
 
 	public String sameSite() {

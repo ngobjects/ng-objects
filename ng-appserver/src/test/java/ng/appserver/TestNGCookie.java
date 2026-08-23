@@ -35,8 +35,8 @@ public class TestNGCookie {
 		assertEquals( "/", cookie.path() );
 		assertNull( cookie.domain() );
 		assertNull( cookie.maxAge() );
-		assertTrue( cookie.isHttpOnly() );
-		assertFalse( cookie.isSecure() );
+		assertTrue( cookie.httpOnly() );
+		assertFalse( cookie.secure() );
 		assertEquals( "Lax", cookie.sameSite() );
 	}
 
@@ -56,6 +56,6 @@ public class TestNGCookie {
 		// The same combination with secure=true is legal
 		final NGCookie cookie = new NGCookie( "someName", "someValue", null, "/", null, true, true, "None" );
 		assertEquals( "None", cookie.sameSite() );
-		assertTrue( cookie.isSecure() );
+		assertTrue( cookie.secure() );
 	}
 }
