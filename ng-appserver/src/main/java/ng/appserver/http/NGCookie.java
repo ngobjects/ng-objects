@@ -15,9 +15,19 @@ public class NGCookie {
 	private boolean _isHttpOnly;
 	private String _sameSite; // Strict,Lax,None
 
-	public NGCookie( final String name, final String value ) {
+	public NGCookie( String name, String value, String domain, String path, Integer maxAge, boolean isSecure, boolean isHttpOnly, String sameSite ) {
 		_name = name;
 		_value = value;
+		_domain = domain;
+		_path = path;
+		_maxAge = maxAge;
+		_isSecure = isSecure;
+		_isHttpOnly = isHttpOnly;
+		_sameSite = sameSite;
+	}
+
+	public NGCookie( final String name, final String value ) {
+		this( name, value, null, "/", null, false, true, "Lax" );
 	}
 
 	public String name() {
