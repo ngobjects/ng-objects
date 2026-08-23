@@ -10,7 +10,7 @@ import ng.appserver.NGApplication;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGRespBuilder;
 import ng.appserver.http.NGResponse;
-import ng.appserver.privates.NGConsoleCapture;
+import ng.dev.NGConsoleCapture;
 import ng.dev.NGDevJson;
 import ng.dev.NGDevLoopback;
 import ng.dev.NGEvalSession;

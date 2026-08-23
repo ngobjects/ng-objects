@@ -1,4 +1,4 @@
-package ng.appserver.privates;
+package ng.dev;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

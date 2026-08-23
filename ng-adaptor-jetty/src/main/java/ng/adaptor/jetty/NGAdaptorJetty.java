@@ -47,7 +47,7 @@ import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardRequest;
 import ng.appserver.http.NGStandardRequest.UploadedFile;
-import ng.appserver.privates.NGDevelopmentInstanceStopper;
+import ng.appserver.dev.NGDevelopmentInstanceStopper;
 
 public class NGAdaptorJetty extends NGAdaptor {
 

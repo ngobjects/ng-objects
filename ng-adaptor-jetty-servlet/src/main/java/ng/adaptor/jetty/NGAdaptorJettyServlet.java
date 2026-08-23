@@ -23,7 +23,7 @@ import jakarta.websocket.server.ServerEndpointConfig;
 import ng.adaptor.jetty.experimental.NGWebSocketEndpoint;
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
-import ng.appserver.privates.NGDevelopmentInstanceStopper;
+import ng.appserver.dev.NGDevelopmentInstanceStopper;
 
 public class NGAdaptorJettyServlet extends NGAdaptor {
 

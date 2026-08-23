@@ -1,4 +1,4 @@
-package ng.appserver.privates;
+package ng.appserver.dev;
 
 import java.net.URI;
 import java.net.URLEncoder;

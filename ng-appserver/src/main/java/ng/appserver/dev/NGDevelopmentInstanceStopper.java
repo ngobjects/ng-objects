@@ -1,4 +1,4 @@
-package ng.appserver.privates;
+package ng.appserver.dev;
 
 import java.io.InputStream;
 import java.net.URI;
