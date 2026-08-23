@@ -26,8 +26,12 @@ public class NGCookie {
 		_sameSite = sameSite;
 	}
 
+	public NGCookie( final String name, final String value, final Integer maxAge ) {
+		this( name, value, null, "/", maxAge, false, true, "Lax" );
+	}
+
 	public NGCookie( final String name, final String value ) {
-		this( name, value, null, "/", null, false, true, "Lax" );
+		this( name, value, null );
 	}
 
 	public String name() {
