@@ -81,7 +81,7 @@ public class NGContext {
 	public NGContext( final NGRequest request ) {
 		Objects.requireNonNull( request );
 		_request = request;
-		request.setContext( this );
+		request._setContext( this );
 
 		// CHECKME: We only need an elementID if we're going to be rendering a component, so theoretically, this could be initialized lazily
 		_elementID = new NGElementID();

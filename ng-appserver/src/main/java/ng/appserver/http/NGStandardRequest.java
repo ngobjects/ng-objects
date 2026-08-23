@@ -288,7 +288,7 @@ public class NGStandardRequest implements NGRequest {
 	}
 
 	@Override
-	public void setContext( NGContext context ) {
+	public void _setContext( NGContext context ) {
 		_context = context;
 	}
 
