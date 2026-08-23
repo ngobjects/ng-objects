@@ -60,10 +60,14 @@ public interface NGRequest extends NGMessage {
 	/**
 	 * @return The request's URI, parsed
 	 *
-	 * @deprecated URL parsing is probably better handled by consumers
+	 * FIXME: URL parsing is probably better handled by consumers 	// Hugi 2026-08-23
 	 */
 	@Deprecated
 	public NGParsedURI parsedURI();
 
+	/**
+	 * FIXME: This will be deleted once we have a proper representation of multipart requests // Hugi 2026-08-23
+	 */
+	@Deprecated
 	public Map<String, UploadedFile> _uploadedFiles();
 }
