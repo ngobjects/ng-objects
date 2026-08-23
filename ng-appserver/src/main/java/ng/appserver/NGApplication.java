@@ -529,14 +529,16 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * @return A session cookie for the given session
+	 * @return A session cookie for the given session.
 	 *
-	 * FIXME: We're missing more control over the session cookie, for instance it's path, domain, samesite, secure, etc. // Hugi 2025-08-02
+	 * Session cookies are secure=false, sameSite=Lax, httpOnly=true, path = "/" and don't have a domain set.
+	 * Override this method to modify these defaults.
+	 *
+	 * FIXME: In production we'll want session cookies set to secure by default // Hugi 2026-08-23
 	 */
-	private static NGCookie createSessionCookie( final String sessionID, final int maxAge ) {
+	protected NGCookie createSessionCookie( final String sessionID, final int maxAge ) {
 		final NGCookie sessionCookie = new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID );
 		sessionCookie.setMaxAge( maxAge );
-		// sessionCookie.setSecure( ... )
 		return sessionCookie;
 	}
 
