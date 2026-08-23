@@ -173,7 +173,7 @@ public class NGStandardRequest implements NGRequest {
 	 * @return The sessionID submitted by the client, if any. null if no sessionID was present in the request.
 	 */
 	private String _sessionIDFromCookie() {
-		return cookieValueForKey( SESSION_ID_COOKIE_NAME );
+		return cookieValueForKey( NGApplication.SESSION_ID_COOKIE_NAME );
 	}
 
 	/**

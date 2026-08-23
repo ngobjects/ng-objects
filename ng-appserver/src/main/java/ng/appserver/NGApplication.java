@@ -120,6 +120,11 @@ public class NGApplication implements NGPlugin {
 	private List<NGPlugin> _plugins;
 
 	/**
+	 * Name of the cookie that stores our session ID on the client
+	 */
+	public static final String SESSION_ID_COOKIE_NAME = "ngsid";
+
+	/**
 	 * Run the application
 	 */
 	public static void run( final String[] args, final Class<? extends NGApplication> applicationClass ) {
@@ -537,7 +542,7 @@ public class NGApplication implements NGPlugin {
 	 * FIXME: In production we'll want session cookies set to secure by default // Hugi 2026-08-23
 	 */
 	protected NGCookie createSessionCookie( final String sessionID, final long maxAge ) {
-		return new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID, maxAge );
+		return new NGCookie( NGApplication.SESSION_ID_COOKIE_NAME, sessionID, maxAge );
 	}
 
 	/**

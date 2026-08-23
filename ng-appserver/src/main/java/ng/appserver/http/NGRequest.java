@@ -14,11 +14,6 @@ import ng.appserver.privates.NGParsedURI;
 
 public interface NGRequest extends NGMessage {
 
-	/**
-	 * Name of the cookie that stores our session ID on the client
-	 */
-	public static final String SESSION_ID_COOKIE_NAME = "ngsid";
-
 	public Map<String, List<String>> formValues();
 
 	public List<String> formValuesForKey( final String key );
