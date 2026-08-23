@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +19,11 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.dev.NGDevServerRegistration;
 import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGRespBuilder;
 import ng.appserver.http.NGResponse;
-import ng.appserver.dev.NGDevServerRegistration;
 import ng.appserver.properties.DeploymentMode;
 import ng.appserver.properties.NGProperties;
 import ng.appserver.properties.NGProperties.PropertiesSourceArguments;
@@ -476,7 +477,7 @@ public class NGApplication implements NGPlugin {
 					// CHECKME: This might be a better location to ask session storage to dispose of a terminated session.
 				}
 				else {
-					response.addCookie( createSessionCookie( sessionID, (int)session.timeOut().toSeconds() ) );
+					response.addCookie( createSessionCookie( sessionID, session.timeOut() ) );
 				}
 			}
 		}
@@ -541,7 +542,7 @@ public class NGApplication implements NGPlugin {
 	 *
 	 * FIXME: In production we'll want session cookies set to secure by default // Hugi 2026-08-23
 	 */
-	protected NGCookie createSessionCookie( final String sessionID, final long maxAge ) {
+	protected NGCookie createSessionCookie( final String sessionID, final Duration maxAge ) {
 		return new NGCookie( NGApplication.SESSION_ID_COOKIE_NAME, sessionID, maxAge );
 	}
 
@@ -549,7 +550,7 @@ public class NGApplication implements NGPlugin {
 	 * @return A cookie that will reset the session ID on the client side
 	 */
 	public NGCookie createSessionResetCookie() {
-		return createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", 0 );
+		return createSessionCookie( "SessionCookieKillerCookieValuesDoesNotMatter", Duration.ZERO );
 	}
 
 	/**

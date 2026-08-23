@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Duration;
+
 import org.junit.jupiter.api.Test;
 
 import ng.appserver.http.NGCookie;
@@ -21,8 +23,20 @@ public class TestNGCookie {
 
 	@Test
 	public void constructWithMaxAge() {
-		final NGCookie cookie = new NGCookie( "someName", "someValue", 3600L );
+		final NGCookie cookie = new NGCookie( "someName", "someValue", Duration.ofHours( 1 ) );
 		assertEquals( Long.valueOf( 3600L ), cookie.maxAge() );
+	}
+
+	@Test
+	public void nullDurationMeansSessionCookie() {
+		final NGCookie cookie = new NGCookie( "someName", "someValue", (Duration)null );
+		assertNull( cookie.maxAge() );
+	}
+
+	@Test
+	public void zeroDurationMeansDeletion() {
+		final NGCookie cookie = new NGCookie( "someName", "someValue", Duration.ZERO );
+		assertEquals( Long.valueOf( 0L ), cookie.maxAge() );
 	}
 
 	/**
@@ -57,5 +71,15 @@ public class TestNGCookie {
 		final NGCookie cookie = new NGCookie( "someName", "someValue", null, "/", null, true, true, "None" );
 		assertEquals( "None", cookie.sameSite() );
 		assertTrue( cookie.secure() );
+	}
+
+	/**
+	 * On the wire, negative Max-Age means "expire now" — but the adaptors' cookie APIs use negative as their
+	 * "no Max-Age" sentinel (a session cookie), the opposite meaning. Construction rejects the ambiguity.
+	 */
+	@Test
+	public void negativeMaxAgeIsRejected() {
+		assertThrows( IllegalArgumentException.class, () -> new NGCookie( "someName", "someValue", Duration.ofSeconds( -1 ) ) );
+		assertThrows( IllegalArgumentException.class, () -> new NGCookie( "someName", "someValue", null, "/", -1L, false, true, "Lax" ) );
 	}
 }

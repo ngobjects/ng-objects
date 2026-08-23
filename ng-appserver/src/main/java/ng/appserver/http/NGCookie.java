@@ -1,5 +1,6 @@
 package ng.appserver.http;
 
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -16,10 +17,21 @@ public record NGCookie( String name, String value, String domain, String path, L
 		if( "None".equals( sameSite ) && !secure ) {
 			throw new IllegalArgumentException( "A cookie with SameSite=None must also be secure (browsers reject the combination otherwise)" );
 		}
+
+		// On the wire, a negative Max-Age would mean "expire immediately" (RFC 6265 treats anything <= 0 that way) —
+		// but the cookie APIs our adaptors speak through use negative values as their sentinel for "no Max-Age attribute",
+		// which would silently turn the cookie into a session cookie instead. Since the two meanings are opposites,
+		// we reject the ambiguous value: use zero to delete a cookie, null for a session cookie.
+		if( maxAge != null && maxAge < 0 ) {
+			throw new IllegalArgumentException( "A cookie's [maxAge] must not be negative (use zero to delete a cookie, null for a session cookie)" );
+		}
 	}
 
-	public NGCookie( final String name, final String value, final Long maxAge ) {
-		this( name, value, null, "/", maxAge, false, true, "Lax" );
+	/**
+	 * @param maxAge The cookie's lifetime. Zero deletes the cookie, null makes it a session cookie (lives until the browser closes). Sub-second precision is truncated.
+	 */
+	public NGCookie( final String name, final String value, final Duration maxAge ) {
+		this( name, value, null, "/", maxAge == null ? null : maxAge.toSeconds(), false, true, "Lax" );
 	}
 
 	public NGCookie( final String name, final String value ) {
