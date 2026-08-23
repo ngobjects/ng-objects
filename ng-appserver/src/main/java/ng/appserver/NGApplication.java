@@ -536,7 +536,7 @@ public class NGApplication implements NGPlugin {
 	 *
 	 * FIXME: In production we'll want session cookies set to secure by default // Hugi 2026-08-23
 	 */
-	protected NGCookie createSessionCookie( final String sessionID, final int maxAge ) {
+	protected NGCookie createSessionCookie( final String sessionID, final long maxAge ) {
 		return new NGCookie( NGRequest.SESSION_ID_COOKIE_NAME, sessionID, maxAge );
 	}
 

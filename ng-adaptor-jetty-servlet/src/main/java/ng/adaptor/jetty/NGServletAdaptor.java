@@ -106,7 +106,8 @@ public class NGServletAdaptor extends HttpServlet {
 		servletCookie.setSecure( ngCookie.isSecure() );
 
 		if( ngCookie.maxAge() != null ) {
-			servletCookie.setMaxAge( ngCookie.maxAge() );
+			final int intMaxAge = (int)Math.min( ngCookie.maxAge(), Integer.MAX_VALUE ); // We have to cap the maxAge since the servlet API uses an int for the value
+			servletCookie.setMaxAge( intMaxAge );
 		}
 
 		if( ngCookie.sameSite() != null ) {
