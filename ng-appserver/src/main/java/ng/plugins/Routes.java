@@ -5,8 +5,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
+import ng.appserver.http.NGRequest;
 import ng.appserver.routing.NGRouteTable;
 import ng.appserver.routing.NGRouteTable.Route;
 import ng.appserver.templating.NGComponent;

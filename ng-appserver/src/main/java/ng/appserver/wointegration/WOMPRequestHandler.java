@@ -6,10 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication;
-import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
-import ng.appserver.NGRespBuilder;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponse;
 import ng.appserver.resources.NGResource;
 import ng.appserver.resources.StandardNamespace;
 

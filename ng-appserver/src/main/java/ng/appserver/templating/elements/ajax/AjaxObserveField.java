@@ -4,8 +4,8 @@ import java.util.Map;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
-import ng.appserver.NGRequest;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.associations.NGAssociation;
 import ng.appserver.templating.elements.NGDynamicGroup;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import ng.appserver.http.NGRequest;
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementID;
 

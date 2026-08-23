@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ng.appserver.NGContext;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
@@ -31,7 +31,7 @@ public class NGPasswordField extends NGDynamicElement {
 	}
 
 	@Override
-	public void takeValuesFromRequest( ng.appserver.NGRequest request, NGContext context ) {
+	public void takeValuesFromRequest( ng.appserver.http.NGRequest request, NGContext context ) {
 		if( !disabled( context ) ) {
 			final String name = name( context );
 			final java.util.List<String> valuesFromRequest = request.formValuesForKey( name );

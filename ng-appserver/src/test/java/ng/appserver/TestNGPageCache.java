@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Test;
 
 import ng.appserver.NGPageCache.NGPageCacheEntry;
 import ng.appserver.NGPageCache.NGPageLease;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGStandardRequest;
 import ng.appserver.templating.NGComponent;
 
 public class TestNGPageCache {

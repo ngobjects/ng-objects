@@ -1,7 +1,9 @@
-package ng.appserver;
+package ng.appserver.http;
 
 import java.io.InputStream;
 import java.util.List;
+
+import ng.appserver.NGActionResults;
 
 /**
  * FIXME: Need to decide what to do about responses of different types.

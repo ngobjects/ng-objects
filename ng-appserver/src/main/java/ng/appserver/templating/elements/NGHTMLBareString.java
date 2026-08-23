@@ -1,7 +1,7 @@
 package ng.appserver.templating.elements;
 
 import ng.appserver.NGContext;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGResponse;
 import ng.appserver.templating.NGElement;
 
 /**

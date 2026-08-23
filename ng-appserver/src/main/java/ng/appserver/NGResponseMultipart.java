@@ -3,6 +3,8 @@ package ng.appserver;
 import java.util.HashMap;
 import java.util.Map;
 
+import ng.appserver.http.NGStandardResponse;
+
 /**
  * Holder class constructing responses with a multipart body.
  *

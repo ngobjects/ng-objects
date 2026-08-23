@@ -1,7 +1,7 @@
 package ng.appserver.templating;
 
 import ng.appserver.NGContext;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGResponse;
 
 /**
  * An element that doesn't render content, but adds structure to the element tree.

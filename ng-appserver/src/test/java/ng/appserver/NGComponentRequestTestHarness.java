@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
+import ng.appserver.http.NGStandardRequest;
 import ng.appserver.templating.NGComponent;
 
 /**

@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import ng.appserver.NGContext;
 import ng.appserver.NGResourceRequestHandler;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGResponse;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;

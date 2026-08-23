@@ -9,6 +9,9 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponse;
+
 public class TestNGMessage {
 
 	@Test

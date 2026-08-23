@@ -6,9 +6,9 @@ import java.util.List;
 import com.google.gson.GsonBuilder;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGRequest;
-import ng.appserver.NGRespBuilder;
 import ng.appserver.directactions.NGDirectAction;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRespBuilder;
 
 /**
  * Merely created to test using an additional direct action class

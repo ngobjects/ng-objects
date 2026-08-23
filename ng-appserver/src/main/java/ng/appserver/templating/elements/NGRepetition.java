@@ -8,8 +8,8 @@ import java.util.SequencedCollection;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
-import ng.appserver.NGRequest;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.associations.NGAssociation;

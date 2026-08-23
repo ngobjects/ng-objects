@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 
 import ng.appserver.NGComponentRequestTestHarness.TestPage;
+import ng.appserver.http.NGResponse;
 
 /**
  * Drives NGComponentRequestHandler end to end through NGComponentRequestTestHarness,

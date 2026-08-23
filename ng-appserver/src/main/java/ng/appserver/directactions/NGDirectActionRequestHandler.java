@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ng.appserver.NGActionResults;
-import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
-import ng.appserver.NGRespBuilder;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponse;
 import ng.appserver.privates.NGParsedURI;
 
 /**

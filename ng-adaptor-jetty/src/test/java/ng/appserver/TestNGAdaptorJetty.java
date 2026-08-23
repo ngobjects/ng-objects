@@ -10,6 +10,10 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 
+import ng.appserver.http.NGCookie;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponse;
 import ng.plugins.Routes;
 
 public class TestNGAdaptorJetty {

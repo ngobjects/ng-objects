@@ -2,8 +2,8 @@ package ng.appserver.templating;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
-import ng.appserver.NGRequest;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
 import ng.kvc.NGKeyValueCoding.UnknownKeyException;
 import ng.xperimental.NGErrorMessageElement;
 

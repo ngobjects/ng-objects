@@ -1,7 +1,7 @@
 package ng.xperimental;
 
 import ng.appserver.NGContext;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGResponse;
 import ng.appserver.templating.NGElement;
 import ng.dev.NGRuntimeProblems;
 

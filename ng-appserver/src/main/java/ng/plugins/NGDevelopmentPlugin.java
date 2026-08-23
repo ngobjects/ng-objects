@@ -1,15 +1,15 @@
 package ng.plugins;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
-import ng.appserver.NGRequest;
-import ng.appserver.NGRespBuilder;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponse;
 import ng.appserver.privates.NGConsoleCapture;
 import ng.dev.NGDevJson;
 import ng.dev.NGDevLoopback;

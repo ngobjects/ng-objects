@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGContext;
-import ng.appserver.NGRequest;
-import ng.appserver.NGResponse;
-import ng.appserver.NGStandardRequest.UploadedFile;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
+import ng.appserver.http.NGStandardRequest.UploadedFile;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.associations.NGAssociation;

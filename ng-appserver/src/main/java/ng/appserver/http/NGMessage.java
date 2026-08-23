@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.http;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;

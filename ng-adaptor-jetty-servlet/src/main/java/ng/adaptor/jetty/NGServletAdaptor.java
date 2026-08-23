@@ -20,10 +20,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import ng.appserver.NGApplication;
-import ng.appserver.NGCookie;
-import ng.appserver.NGRequest;
-import ng.appserver.NGResponse;
-import ng.appserver.NGStandardRequest;
+import ng.appserver.http.NGCookie;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
+import ng.appserver.http.NGStandardRequest;
 
 public class NGServletAdaptor extends HttpServlet {
 

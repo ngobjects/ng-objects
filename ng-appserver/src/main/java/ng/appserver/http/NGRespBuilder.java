@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.http;
 
 /**
  * Utility methods for building response

@@ -4,8 +4,8 @@ import java.util.Map;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
-import ng.appserver.NGRequest;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGComponentDefinition;
 import ng.appserver.templating.NGDynamicElement;

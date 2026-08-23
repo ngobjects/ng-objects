@@ -40,13 +40,13 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
-import ng.appserver.NGCookie;
-import ng.appserver.NGRequest;
-import ng.appserver.NGResponse;
 import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGResponseMultipart.ContentPart;
-import ng.appserver.NGStandardRequest;
-import ng.appserver.NGStandardRequest.UploadedFile;
+import ng.appserver.http.NGCookie;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
+import ng.appserver.http.NGStandardRequest;
+import ng.appserver.http.NGStandardRequest.UploadedFile;
 import ng.appserver.privates.NGDevelopmentInstanceStopper;
 
 public class NGAdaptorJetty extends NGAdaptor {

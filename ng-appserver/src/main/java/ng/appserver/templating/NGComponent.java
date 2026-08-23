@@ -8,11 +8,11 @@ import java.util.Objects;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
-import ng.appserver.NGRequest;
-import ng.appserver.NGRespBuilder;
-import ng.appserver.NGResponse;
 import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGSession;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponse;
 import ng.appserver.templating.associations.NGAssociation;
 import ng.kvc.NGKeyValueCoding;
 

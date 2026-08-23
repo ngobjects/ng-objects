@@ -1,5 +1,7 @@
 package ng.appserver;
 
+import ng.appserver.http.NGRequest;
+
 public class NGSessionRestorationException extends RuntimeException {
 
 	private final NGRequest _request;

@@ -7,8 +7,8 @@ import java.util.Objects;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
-import ng.appserver.NGRequest;
-import ng.appserver.NGRespBuilder;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRespBuilder;
 import ng.appserver.templating.NGComponent;
 
 public class NGDirectAction {

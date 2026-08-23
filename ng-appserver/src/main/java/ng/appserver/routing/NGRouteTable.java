@@ -8,9 +8,9 @@ import java.util.function.Supplier;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
-import ng.appserver.NGRequest;
 import ng.appserver.NGRequestHandler;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
 import ng.appserver.templating.NGComponent;
 
 /**

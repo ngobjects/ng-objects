@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ng.appserver.NGContext;
-import ng.appserver.NGResponse;
+import ng.appserver.http.NGResponse;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.associations.NGAssociation;

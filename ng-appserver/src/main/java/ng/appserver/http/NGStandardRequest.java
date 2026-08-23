@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import ng.appserver.NGApplication;
+import ng.appserver.NGContext;
+import ng.appserver.NGSession;
+import ng.appserver.NGSessionRestorationException;
 import ng.appserver.privates.NGParsedURI;
 
 public class NGStandardRequest implements NGRequest {

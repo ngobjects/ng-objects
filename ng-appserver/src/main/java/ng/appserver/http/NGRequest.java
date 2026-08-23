@@ -1,9 +1,11 @@
-package ng.appserver;
+package ng.appserver.http;
 
 import java.util.List;
 import java.util.Map;
 
-import ng.appserver.NGStandardRequest.UploadedFile;
+import ng.appserver.NGContext;
+import ng.appserver.NGSession;
+import ng.appserver.http.NGStandardRequest.UploadedFile;
 import ng.appserver.privates.NGParsedURI;
 
 /**
