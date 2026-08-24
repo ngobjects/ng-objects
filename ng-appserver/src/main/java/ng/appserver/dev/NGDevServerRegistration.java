@@ -48,7 +48,8 @@ public class NGDevServerRegistration {
 		final String url = "http://localhost:" + devServerPort
 				+ "/registerApp?name=" + URLEncoder.encode( appName, StandardCharsets.UTF_8 )
 				+ "&port=" + port
-				+ "&pid=" + pid;
+				+ "&pid=" + pid
+				+ "&runtime=ng"; // lets the dev server / a tool pick the /ng/dev/… endpoint form
 
 		final Thread thread = new Thread( () -> ping( url, appName, port ), "NGDevServerRegistration" );
 		thread.setDaemon( true );
