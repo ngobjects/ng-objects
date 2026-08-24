@@ -10,10 +10,7 @@ import java.util.Objects;
 public record NGCookie( String name, String value, String domain, String path, Long maxAge, boolean secure, boolean httpOnly, SameSite sameSite ) {
 
 	/**
-	 * The cookie's SameSite attribute.
-	 *
-	 * The value set is owned by the HTTP spec/browsers (not by applications), so a closed enum is the right shape —
-	 * it makes the typo/case bug class unrepresentable. If the platform ever mints a new value, adding a constant here is a one-line release.
+	 * The values for a cookie's SameSite attribute.
 	 */
 	public enum SameSite {
 		STRICT( "Strict" ),
