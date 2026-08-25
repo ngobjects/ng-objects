@@ -29,7 +29,9 @@ public class NGHTMLUtilities {
 				b.append( " " );
 				b.append( name );
 				b.append( "=" );
-				b.append( "\"" + value + "\"" );
+				// Attribute values are always data, never markup — escaping here keeps a quote
+				// in a bound value (e.g. a textfield's value) from terminating the attribute
+				b.append( "\"" + escapeHTML( value ) + "\"" );
 			}
 		} );
 
