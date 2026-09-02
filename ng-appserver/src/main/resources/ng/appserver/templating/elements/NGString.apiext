@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGString" content="forbidden" unknownAttributes="forbidden">
+
+		<doc><![CDATA[Renders a value as text. Anything that isn't a string is rendered with `toString()` (or through `formatter` when bound). A `null` value renders nothing at all. HTML is escaped by default.]]></doc>
+
+		<binding name="value" required="true">
+			<pull><type>java.lang.Object</type></pull>
+			<doc><![CDATA[The value to render. **Pulled**; required. `null` renders nothing (unless `valueWhenEmpty` is bound).]]></doc>
+		</binding>
+
+		<binding name="valueWhenEmpty">
+			<pull><type>java.lang.Object</type></pull>
+			<doc><![CDATA[Rendered instead of `value` when `value` is `null` or an empty string. Pulled.]]></doc>
+		</binding>
+
+		<binding name="escapeHTML" defaults="YES/NO">
+			<pull><type>java.lang.Boolean</type></pull>
+			<default>true</default>
+			<doc><![CDATA[Whether reserved HTML characters (`<`, `>`, `&`, quotes) are escaped to entities. **Must be a `Boolean`** (the value is cast, not interpreted by truthiness). Defaults to `true`.]]></doc>
+		</binding>
+
+		<binding name="formatter">
+			<pull><type>java.text.Format</type></pull>
+			<doc><![CDATA[A `java.text.Format` used to turn `value` into its string form (`format(value)`) instead of `toString()`. Pulled.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

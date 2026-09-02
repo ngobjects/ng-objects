@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGStylesheet" content="forbidden" unknownAttributes="forbidden">
+
+		<doc><![CDATA[Renders a `<link rel="stylesheet">` tag for a webserver resource. Tag name: `stylesheet`.]]></doc>
+
+		<binding name="filename" required="true">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The name of the CSS resource in `namespace`. Pulled; required. Renders `ERROR_NOT_FOUND_<filename>` as the URL when the resource doesn't exist.]]></doc>
+		</binding>
+
+		<binding name="namespace">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The resource namespace to look `filename` up in. Pulled; when unbound, the namespace of the component rendering the element is used.]]></doc>
+		</binding>
+
+		<binding name="framework">
+			<pull><type>java.lang.String</type></pull>
+			<deprecated><![CDATA[Use `namespace` instead — `framework` is the legacy name, still honoured (with a logged warning).]]></deprecated>
+			<doc><![CDATA[Legacy name for `namespace`.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

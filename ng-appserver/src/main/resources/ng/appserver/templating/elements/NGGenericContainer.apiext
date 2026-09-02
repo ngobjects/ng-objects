@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGGenericContainer" content="expected" unknownAttributes="passthrough">
+
+		<doc><![CDATA[Renders its content inside an arbitrary HTML element named by `elementName`. Other bindings become attributes (a `null` value omits the attribute). Bind `omitTags` truthy to render only the content. Tag name: `container`.]]></doc>
+
+		<binding name="elementName" required="true">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The HTML element name to render, e.g. `div`. Pulled; required.]]></doc>
+		</binding>
+
+		<binding name="omitTags" defaults="YES/NO">
+			<pull><type interpretation="truthy">java.lang.Object</type></pull>
+			<doc><![CDATA[When truthy, only the content is rendered — no opening or closing tag. Pulled.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGActionURL" content="forbidden" unknownAttributes="forbidden">
+
+		<doc><![CDATA[Renders the URL that invokes `action` on this component — for building your own links, forms or scripts around a component action. Tag name: `actionURL`.]]></doc>
+
+		<binding name="action" required="true" defaults="Actions">
+			<pull><type>ng.appserver.NGActionResults</type></pull>
+			<doc><![CDATA[The component action the rendered URL invokes. **Pulled** at invoke time; required.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

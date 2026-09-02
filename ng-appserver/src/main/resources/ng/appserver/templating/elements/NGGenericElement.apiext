@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGGenericElement" content="forbidden" unknownAttributes="passthrough">
+
+		<doc><![CDATA[Renders an arbitrary self-closing HTML element named by `elementName`. Other bindings become attributes (a `null` value omits the attribute). Tag name: `element`.]]></doc>
+
+		<binding name="elementName" required="true">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The HTML element name to render, e.g. `hr` or `input`. Pulled; required.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

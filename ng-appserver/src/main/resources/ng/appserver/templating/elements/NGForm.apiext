@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGForm" content="expected" unknownAttributes="passthrough">
+
+		<doc><![CDATA[An HTML `<form>` for component actions. The form always posts back to the component; `action` is invoked when the form itself is the submitting element and no submit button claimed the submission. Bindings other than the ones below are rendered as attributes on the `<form>` tag.]]></doc>
+
+		<binding name="action" defaults="Actions">
+			<pull><type>ng.appserver.NGActionResults</type></pull>
+			<doc><![CDATA[The component action invoked when the form is submitted without a specific `NGSubmitButton` being pressed (or with a button that has no action of its own). **Pulled** at invoke time; its `NGActionResults` becomes the response.]]></doc>
+		</binding>
+
+		<binding name="method">
+			<pull><type>java.lang.String</type></pull>
+			<default>POST</default>
+			<doc><![CDATA[The HTTP method rendered on the form. Pulled; defaults to `POST`.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

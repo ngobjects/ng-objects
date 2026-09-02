@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGConditional" content="expected" unknownAttributes="forbidden">
+
+		<doc><![CDATA[Renders its content only when `condition` is truthy — and, in the same way, only lets the content take form values and invoke actions when it is. Bind `negate` to flip the test. Tag name: `if`.]]></doc>
+
+		<binding name="condition" required="true">
+			<pull><type interpretation="truthy">java.lang.Object</type></pull>
+			<doc><![CDATA[The value to test, by **truthiness** (`null`, `false`, `0`, empty string/collection are false). Pulled; required.]]></doc>
+		</binding>
+
+		<binding name="negate" defaults="YES/NO">
+			<pull><type interpretation="truthy">java.lang.Object</type></pull>
+			<doc><![CDATA[When truthy, inverts `condition`: the content renders when the condition is *false*. Pulled.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

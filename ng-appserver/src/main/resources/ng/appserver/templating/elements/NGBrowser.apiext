@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGBrowser" content="forbidden" unknownAttributes="passthrough">
+
+		<doc><![CDATA[The multi-selection variant of `NGPopUpButton` — today an alias for it: the same element, the same bindings. To actually get a multi-select, bind `multiple` truthy and `selections` (the default is still single-select via `selection`). Tag name: `browser`.]]></doc>
+
+		<binding name="list" required="true">
+			<pull><type>java.util.List</type><type>java.util.SequencedCollection</type></pull>
+			<doc><![CDATA[The options: a `java.util.List`, a Java array, or any `SequencedCollection`. Pulled; required. Each option's value is its **index** in this list, so the list must be the same when the form is submitted as when it was rendered — a changed list fails the request.]]></doc>
+		</binding>
+
+		<binding name="item">
+			<push><type>java.lang.Object</type></push>
+			<doc><![CDATA[**Pushed** each option's object while rendering, so `displayString` can refer to it.]]></doc>
+		</binding>
+
+		<binding name="index">
+			<push><type>java.lang.Integer</type></push>
+			<doc><![CDATA[**Pushed** each option's zero-based index while rendering.]]></doc>
+		</binding>
+
+		<binding name="displayString">
+			<pull><type>java.lang.Object</type></pull>
+			<doc><![CDATA[The text shown for the current `item`. Pulled per option; when unbound the item's `toString()` is used.]]></doc>
+		</binding>
+
+		<binding name="selection">
+			<pull><type>java.lang.Object</type></pull>
+			<push><type>java.lang.Object</type></push>
+			<doc><![CDATA[Single-select: the selected object. **Pulled** to mark the selected option (the sole authority when bound); **pushed** on submit with the chosen item, or `null` when the `noSelectionString` option was chosen.]]></doc>
+		</binding>
+
+		<binding name="noSelectionString">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[When bound, an extra first option with this label meaning "nothing selected"; choosing it pushes `null` to `selection`. Pulled.]]></doc>
+		</binding>
+
+		<binding name="multiple" defaults="YES/NO">
+			<pull><type interpretation="truthy">java.lang.Object</type></pull>
+			<doc><![CDATA[When truthy the element renders as a multi-select and works with `selections` instead of `selection`. Pulled.]]></doc>
+		</binding>
+
+		<binding name="selections">
+			<pull><type>java.util.List</type></pull>
+			<push><type>java.util.List</type></push>
+			<doc><![CDATA[Multi-select: the selected objects. **Pulled** to mark selected options; **pushed** on submit as a new `List` of the chosen items. Required when `multiple` is truthy.]]></doc>
+		</binding>
+
+		<binding name="name">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The HTML form-field name. Pulled; auto-assigned from the element ID when unbound — bind it only when other code needs to know the field name.]]></doc>
+		</binding>
+
+		<binding name="disabled" defaults="YES/NO">
+			<pull><type interpretation="truthy">java.lang.Object</type></pull>
+			<doc><![CDATA[When truthy the field renders with the `disabled` attribute and its submitted value is ignored (nothing is pushed).]]></doc>
+		</binding>
+
+		<requires binding="selections" when="multiple"/>
+
+	</wo>
+</wodefinitions>

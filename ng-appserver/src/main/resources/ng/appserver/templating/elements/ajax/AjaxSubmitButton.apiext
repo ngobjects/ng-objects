@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="AjaxSubmitButton" content="allowed" unknownAttributes="passthrough">
+
+		<doc><![CDATA[Submits the enclosing form over Ajax, invoking `action` and refreshing the `AjaxUpdateContainer` named by `updateContainerID`. Renders as an `<input type="button">`, or — when the tag has content — as a `<button>` wrapping it. Other bindings are rendered as attributes. Tag name: `asb`.]]></doc>
+
+		<binding name="action" required="true" defaults="Actions">
+			<pull><type>ng.appserver.NGActionResults</type></pull>
+			<doc><![CDATA[The component action invoked when the button is pressed. **Pulled** at invoke time; required (a button without one fails when pressed).]]></doc>
+		</binding>
+
+		<binding name="updateContainerID">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The `id` of the `AjaxUpdateContainer` to refresh with the action's result. Pulled.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

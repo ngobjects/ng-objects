@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGTextField" content="forbidden" unknownAttributes="passthrough">
+
+		<doc><![CDATA[An `<input type="text">` bound two ways to `value`: rendered from it, and the submitted text **pushed** back into it (as a `String`, or as whatever `formatter` parses it to; an empty field pushes `null`). Other bindings are rendered as attributes. Tag name: `textfield`.]]></doc>
+
+		<binding name="value" required="true">
+			<pull><type>java.lang.Object</type></pull>
+			<push><type>java.lang.Object</type><type>java.lang.String</type></push>
+			<doc><![CDATA[The field's value. **Pulled** to render (formatted via `formatter` when bound) and **pushed** on submit — the raw `String`, `null` for an empty field, or the object `formatter` parses. Required.]]></doc>
+		</binding>
+
+		<binding name="name">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The HTML form-field name. Pulled; auto-assigned from the element ID when unbound — bind it only when other code needs to know the field name.]]></doc>
+		</binding>
+
+		<binding name="disabled" defaults="YES/NO">
+			<pull><type interpretation="truthy">java.lang.Object</type></pull>
+			<doc><![CDATA[When truthy the field renders with the `disabled` attribute and its submitted value is ignored (nothing is pushed).]]></doc>
+		</binding>
+
+		<binding name="formatter">
+			<pull><type>java.text.Format</type></pull>
+			<doc><![CDATA[A `java.text.Format` that formats `value` for display and parses the submitted text back (`parseObject`); a parse failure fails the request. Pulled.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

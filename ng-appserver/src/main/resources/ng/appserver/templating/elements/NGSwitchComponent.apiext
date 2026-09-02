@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGSwitchComponent" content="allowed" unknownAttributes="allowed">
+
+		<doc><![CDATA[Renders the component (or dynamic element) named by `componentName`, which may change between requests. Every other binding is passed on to the chosen component as its own bindings, and the tag's content becomes the component's content. Tag name: `switch`.]]></doc>
+
+		<binding name="componentName" required="true">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The name of the component or element to render. Pulled on every phase; required, and must not resolve to `null`.]]></doc>
+		</binding>
+
+		<binding name="WOComponentName">
+			<pull><type>java.lang.String</type></pull>
+			<deprecated><![CDATA[Use `componentName`. Accepted for now to ease porting; to be removed.]]></deprecated>
+			<doc><![CDATA[Legacy WebObjects name for `componentName`.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

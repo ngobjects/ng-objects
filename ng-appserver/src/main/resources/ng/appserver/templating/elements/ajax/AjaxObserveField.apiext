@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="AjaxObserveField" content="allowed" unknownAttributes="forbidden">
+
+		<doc><![CDATA[Watches form fields for changes and, after `debounce` milliseconds of quiet, submits the changed field (or the whole form, with `fullSubmit`) over Ajax, invoking `action` and refreshing `updateContainerID`. Two modes: bind `observeFieldID` to watch one field (renders an invisible marker; content is ignored), or leave it unbound to wrap the tag's content in a container whose input/textarea/select descendants are all observed. Tag name: `aof`.]]></doc>
+
+		<binding name="observeFieldID">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The HTML `id` of a single field to observe. When unbound the element runs in container mode and observes every field in its content. Pulled.]]></doc>
+		</binding>
+
+		<binding name="updateContainerID">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The `id` of the `AjaxUpdateContainer` to refresh after the action (several may be given, separated by `;`). Pulled.]]></doc>
+		</binding>
+
+		<binding name="action" defaults="Actions">
+			<pull><type>ng.appserver.NGActionResults</type></pull>
+			<doc><![CDATA[The component action invoked when an observed field changes. **Pulled** at invoke time.]]></doc>
+		</binding>
+
+		<binding name="fullSubmit" defaults="YES/NO">
+			<pull><type>java.lang.Boolean</type></pull>
+			<default>false</default>
+			<doc><![CDATA[When `true` (a `Boolean`), all fields of the containing form are submitted, not just the one that changed. Pulled.]]></doc>
+		</binding>
+
+		<binding name="debounce">
+			<pull><type>java.lang.Integer</type></pull>
+			<default>300</default>
+			<doc><![CDATA[Milliseconds to wait after the last change before submitting; `0` fires on every change. Pulled; defaults to `300`.]]></doc>
+		</binding>
+
+		<binding name="elementName">
+			<pull><type>java.lang.String</type></pull>
+			<default>div</default>
+			<doc><![CDATA[Container mode: the HTML element rendered around the content. Pulled; defaults to `div`.]]></doc>
+		</binding>
+
+		<binding name="id">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[Container mode: the HTML `id` of the wrapper. Pulled; auto-generated from the element ID when unbound.]]></doc>
+		</binding>
+
+		<binding name="class">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[Container mode: the CSS class of the wrapper. Pulled.]]></doc>
+		</binding>
+
+		<binding name="style">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[Container mode: the inline style of the wrapper. Pulled.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

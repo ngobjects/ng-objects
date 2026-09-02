@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGFileUpload" content="forbidden" unknownAttributes="forbidden">
+
+		<doc><![CDATA[An `<input type="file">`. On submit, the uploaded file's name and bytes are **pushed** into `filename` and `data`. Tag name: `fileUpload`.]]></doc>
+
+		<binding name="filename">
+			<push><type>java.lang.String</type></push>
+			<doc><![CDATA[Receives the uploaded file's name. Push only.]]></doc>
+		</binding>
+
+		<binding name="data">
+			<push><type>byte[]</type></push>
+			<doc><![CDATA[Receives the uploaded file's bytes. Push only.]]></doc>
+		</binding>
+
+		<binding name="name">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The HTML form-field name. Pulled; auto-assigned from the element ID when unbound — bind it only when other code needs to know the field name.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

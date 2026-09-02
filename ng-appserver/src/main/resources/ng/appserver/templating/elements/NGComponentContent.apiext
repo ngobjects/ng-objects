@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGComponentContent" content="forbidden" unknownAttributes="forbidden">
+
+		<doc><![CDATA[The place in a wrapper component's template where the content the *parent* template wrapped in the component tag is rendered (and takes values / invokes actions), in the parent's context. Has no bindings. Tag name: `content`.]]></doc>
+
+
+
+	</wo>
+</wodefinitions>

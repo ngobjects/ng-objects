@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGSubmitButton" content="forbidden" unknownAttributes="passthrough">
+
+		<doc><![CDATA[An `<input type="submit">` inside an `NGForm`. When this button is the one pressed, its `action` is invoked instead of the form's. Other bindings are rendered as attributes (bind `value` for the button's label). Tag name: `submit`.]]></doc>
+
+		<binding name="action" required="true" defaults="Actions">
+			<pull><type>ng.appserver.NGActionResults</type></pull>
+			<doc><![CDATA[The component action invoked when this button submits the form. **Pulled** at invoke time; required.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGHyperlink" content="expected" unknownAttributes="passthrough">
+
+		<doc><![CDATA[An HTML `<a>` linking to a component action, a named page, or a plain URL — bind **exactly one** of `action`, `pageName` and `href`. When `disabled` is truthy only the content is rendered (no `<a>` at all) and the link cannot be invoked. Other bindings become attributes on the tag. Tag name: `link`.]]></doc>
+
+		<binding name="action" defaults="Actions">
+			<pull><type>ng.appserver.NGActionResults</type></pull>
+			<doc><![CDATA[A component action invoked when the link is clicked. **Pulled** at invoke time; its `NGActionResults` becomes the response.]]></doc>
+		</binding>
+
+		<binding name="pageName" defaults="Page Names">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The name of the page component to navigate to; instantiated via `pageWithName` when clicked. Pulled.]]></doc>
+		</binding>
+
+		<binding name="href">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[A URL rendered verbatim into the `href` attribute. Pulled.]]></doc>
+		</binding>
+
+		<binding name="disabled" defaults="YES/NO">
+			<pull><type interpretation="truthy">java.lang.Object</type></pull>
+			<doc><![CDATA[When truthy the `<a>` tags are dropped (only the content renders) and clicks are not dispatched. Pulled.]]></doc>
+		</binding>
+
+		<choose min="1" max="1">
+			<binding name="action"/>
+			<binding name="pageName"/>
+			<binding name="href"/>
+		</choose>
+
+	</wo>
+</wodefinitions>

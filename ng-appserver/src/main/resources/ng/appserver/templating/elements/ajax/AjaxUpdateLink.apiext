@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="AjaxUpdateLink" content="expected" unknownAttributes="passthrough">
+
+		<doc><![CDATA[An `<a>` that invokes `action` over Ajax and replaces the `AjaxUpdateContainer` named by `updateContainerID` with the result, without a full page load. Other bindings are rendered as attributes. Tag name: `aul`.]]></doc>
+
+		<binding name="action" required="true" defaults="Actions">
+			<pull><type>ng.appserver.NGActionResults</type></pull>
+			<doc><![CDATA[The component action invoked on click. **Pulled** at invoke time; required.]]></doc>
+		</binding>
+
+		<binding name="updateContainerID">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The `id` of the `AjaxUpdateContainer` to refresh with the action's result. Pulled.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

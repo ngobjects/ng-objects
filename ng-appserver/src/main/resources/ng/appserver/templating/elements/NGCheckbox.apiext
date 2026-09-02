@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGCheckbox" content="forbidden" unknownAttributes="passthrough">
+
+		<doc><![CDATA[An `<input type="checkbox">` bound two ways to `checked`: rendered checked when it is truthy, and on submit **pushed** `true` if the box was ticked, `false` otherwise (a checkbox that isn't ticked is simply absent from the form data). Other bindings are rendered as attributes. Tag name: `checkbox`.]]></doc>
+
+		<binding name="checked" required="true">
+			<pull><type interpretation="truthy">java.lang.Object</type></pull>
+			<push><type>java.lang.Boolean</type></push>
+			<doc><![CDATA[The checked state. **Pulled** by truthiness to render; **pushed** as a `Boolean` on submit. Required.]]></doc>
+		</binding>
+
+		<binding name="name">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The HTML form-field name. Pulled; auto-assigned from the element ID when unbound — bind it only when other code needs to know the field name.]]></doc>
+		</binding>
+
+		<binding name="disabled" defaults="YES/NO">
+			<pull><type interpretation="truthy">java.lang.Object</type></pull>
+			<doc><![CDATA[When truthy the field renders with the `disabled` attribute and its submitted value is ignored (nothing is pushed).]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="AjaxUpdateContainer" content="expected" unknownAttributes="passthrough">
+
+		<doc><![CDATA[Wraps its content in an element (a `<div>` by default) with the given `id`, so that `AjaxUpdateLink`, `AjaxSubmitButton` and `AjaxObserveField` can refresh just that part of the page. Other bindings are rendered as attributes. Tag name: `auc`.]]></doc>
+
+		<binding name="id" required="true">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The HTML `id` of the container — what the Ajax elements name in `updateContainerID`. Pulled; required.]]></doc>
+		</binding>
+
+		<binding name="elementName">
+			<pull><type>java.lang.String</type></pull>
+			<default>div</default>
+			<doc><![CDATA[The HTML element to render as the container. Pulled; defaults to `div`.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

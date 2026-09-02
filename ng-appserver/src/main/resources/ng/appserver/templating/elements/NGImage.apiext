@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGImage" content="forbidden" unknownAttributes="passthrough">
+
+		<doc><![CDATA[An `<img>` whose source is a webserver resource (`filename`), a plain URL (`src`), or bytes served through the dynamic-resource cache (`data` / `dataInputStream`, which require `mimeType`). Bind exactly one source. Other bindings are rendered as attributes. Tag name: `img`.]]></doc>
+
+		<binding name="filename">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The name of a webserver resource in `namespace`, resolved to its URL. Renders `ERROR_NOT_FOUND_<filename>` when the resource doesn't exist. Pulled.]]></doc>
+		</binding>
+
+		<binding name="namespace">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The resource namespace to look `filename` up in. Pulled; when unbound, the namespace of the component rendering the element is used.]]></doc>
+		</binding>
+
+		<binding name="framework">
+			<pull><type>java.lang.String</type></pull>
+			<deprecated><![CDATA[Use `namespace` instead — `framework` is the legacy name, still honoured (with a logged warning).]]></deprecated>
+			<doc><![CDATA[Legacy name for `namespace`.]]></doc>
+		</binding>
+
+		<binding name="src">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[A URL rendered verbatim into the `src` attribute. Pulled.]]></doc>
+		</binding>
+
+		<binding name="data">
+			<pull><type>byte[]</type></pull>
+			<doc><![CDATA[Image bytes, cached as a one-off dynamic resource and served by URL. Pulled; requires `mimeType`.]]></doc>
+		</binding>
+
+		<binding name="dataInputStream">
+			<pull><type>java.io.InputStream</type></pull>
+			<doc><![CDATA[A stream of image bytes, cached as a one-off dynamic resource. Pulled; requires `mimeType` and `dataInputStreamLength`.]]></doc>
+		</binding>
+
+		<binding name="dataInputStreamLength">
+			<pull><type>java.lang.Long</type></pull>
+			<doc><![CDATA[The number of bytes `dataInputStream` will deliver (a `Long`). Pulled.]]></doc>
+		</binding>
+
+		<binding name="mimeType">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The MIME type of the bytes given via `data`/`dataInputStream`. Pulled.]]></doc>
+		</binding>
+
+		<choose min="1" max="1">
+			<binding name="filename"/>
+			<binding name="src"/>
+			<binding name="data"/>
+			<binding name="dataInputStream"/>
+		</choose>
+		<requires binding="mimeType" when="data"/>
+		<requires binding="mimeType" when="dataInputStream"/>
+		<requires binding="dataInputStreamLength" when="dataInputStream"/>
+
+	</wo>
+</wodefinitions>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGText" content="forbidden" unknownAttributes="passthrough">
+
+		<doc><![CDATA[A `<textarea>` bound two ways to `value`: rendered (HTML-escaped) from it, and the submitted text **pushed** back as a `String` (`null` when empty). Other bindings are rendered as attributes. Tag name: `text`.]]></doc>
+
+		<binding name="value" required="true">
+			<pull><type>java.lang.Object</type></pull>
+			<push><type>java.lang.String</type></push>
+			<doc><![CDATA[The text. **Pulled** to render and **pushed** on submit as a `String` (`null` for an empty field). Required.]]></doc>
+		</binding>
+
+		<binding name="name">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The HTML form-field name. Pulled; auto-assigned from the element ID when unbound — bind it only when other code needs to know the field name.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>

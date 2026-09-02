@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="NGResourceURL" content="forbidden" unknownAttributes="forbidden">
+
+		<doc><![CDATA[Renders the URL of a webserver resource, for use in your own tags and attributes. Tag name: `resourceURL`.]]></doc>
+
+		<binding name="filename" required="true">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The name of the webserver resource in `namespace`. Pulled; required (a missing resource fails the request).]]></doc>
+		</binding>
+
+		<binding name="namespace">
+			<pull><type>java.lang.String</type></pull>
+			<doc><![CDATA[The resource namespace to look `filename` up in. Pulled; when unbound, the namespace of the component rendering the element is used.]]></doc>
+		</binding>
+
+		<binding name="framework">
+			<pull><type>java.lang.String</type></pull>
+			<deprecated><![CDATA[Use `namespace` instead — `framework` is the legacy name, still honoured (with a logged warning).]]></deprecated>
+			<doc><![CDATA[Legacy name for `namespace`.]]></doc>
+		</binding>
+
+	</wo>
+</wodefinitions>
