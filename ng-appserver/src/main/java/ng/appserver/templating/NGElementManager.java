@@ -1,12 +1,22 @@
 package ng.appserver.templating;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGContext;
 import ng.appserver.templating.associations.NGAssociation;
@@ -17,6 +27,23 @@ import ng.appserver.templating.elements.NGComponentReference;
  */
 
 public class NGElementManager {
+
+	private static final Logger logger = LoggerFactory.getLogger( NGElementManager.class );
+
+	/**
+	 * Classpath resource declaring tag aliases: each entry is {@code tagName = element}, where the
+	 * element is a registered element's simple class name (or another alias — resolution is
+	 * recursive). ng-appserver ships the framework's own registry in this file; frameworks and
+	 * applications contribute more by shipping a same-named file in their resources. The template
+	 * editor reads exactly these files, so tags resolve identically in the app and in the IDE.
+	 */
+	public static final String TAG_ALIASES_RESOURCE = "parsley-tag-aliases.properties";
+
+	public NGElementManager() {
+		// Declared aliases are loaded first, so a plugin's explicit code registration
+		// (Elements.elementClass( cls, "tag" )) can still override a declared one.
+		loadTagAliasResources();
+	}
 
 	/**
 	 * To ease the porting of older templates to this system we allow unnamespaced elements. This is done
@@ -85,7 +112,6 @@ public class NGElementManager {
 	 * FIXME: "Tag lookup" is a separate (cacheable) task from "Tag construction". Separate the two // Hugi 2025-04-19
 	 * FIXME: We're missing a cache for dynamic element name resolution // Hugi 2025-03-05
 	 * FIXME: We are going to have to support namespace aliases // Hugi 2025-03-20
-	 * FIXME: We are going to have to support recursion when looking for "tag aliases". I.e. you should be able to look up "teh alias of an alias" // Hugi 2025-03-20
 	 * FIXME: Tag aliasing needs to be namespace aware in general // Hugi 2025-03-20
 	 */
 	public NGDynamicElement dynamicElementWithName( final String namespace, final String elementIdentifier, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
@@ -176,7 +202,7 @@ public class NGElementManager {
 		_elementClasses.put( elementClass.getSimpleName(), elementClass );
 
 		for( final String tagName : tagNames ) {
-			_elementTagNames.put( tagName, elementClass.getSimpleName() );
+			registerTagAlias( tagName, elementClass.getSimpleName() );
 		}
 	}
 
@@ -221,10 +247,83 @@ public class NGElementManager {
 	}
 
 	/**
-	 * @return The actual name of the given tagName, obtained by resolving any tag aliases
+	 * @return The actual name of the given tagName, obtained by resolving tag aliases recursively to a
+	 * fixed point ({@code str -> NGString}, or {@code myStr -> str -> NGString}). A name with no alias
+	 * resolves to itself. A cycle is broken defensively (warned, last name returned) so a bad
+	 * declaration can't hang rendering.
 	 */
 	public String resolveTagName( final String elementIdentifier ) {
-		return elementTagNames().getOrDefault( elementIdentifier, elementIdentifier );
+		String current = elementIdentifier;
+		final Set<String> seen = new HashSet<>();
+		seen.add( current );
+		String next;
+
+		while( (next = _elementTagNames.get( current )) != null ) {
+			if( !seen.add( next ) ) {
+				logger.warn( "Cycle detected resolving tag alias for '{}' (at '{}'); stopping.", elementIdentifier, next );
+				break;
+			}
+			current = next;
+		}
+
+		return current;
+	}
+
+	/**
+	 * Registers (or overrides) a tag alias: {@code tagName} will resolve to {@code target} (an element's
+	 * simple class name, or another alias).
+	 */
+	public void registerTagAlias( final String tagName, final String target ) {
+		Objects.requireNonNull( tagName );
+		Objects.requireNonNull( target );
+		_elementTagNames.put( tagName, target );
+	}
+
+	/**
+	 * Loads every {@link #TAG_ALIASES_RESOURCE} on the classpath into the tag-name map. When two files
+	 * map the same tag to different targets there's no reliable way to honour classpath order from
+	 * runtime information ({@code ClassLoader.getResources} order is unspecified), so the first
+	 * declaration stands and the conflicting one is ignored with a warning — the same rule the
+	 * Parsley tag registry and the template editor apply, so all three agree.
+	 */
+	private void loadTagAliasResources() {
+		try {
+			final Enumeration<URL> resources = NGElementManager.class.getClassLoader().getResources( TAG_ALIASES_RESOURCE );
+
+			while( resources.hasMoreElements() ) {
+				final URL url = resources.nextElement();
+
+				try( InputStream in = url.openStream() ) {
+					final Properties props = new Properties();
+					props.load( in );
+
+					for( final String alias : props.stringPropertyNames() ) {
+						final String target = props.getProperty( alias );
+
+						if( alias.isBlank() || target == null || target.isBlank() ) {
+							continue;
+						}
+
+						final String existing = _elementTagNames.get( alias.trim() );
+
+						if( existing != null && !existing.equals( target.trim() ) ) {
+							logger.warn( "Ignoring conflicting tag alias '{}' -> '{}' from {}; already registered as '{}' -> '{}'", alias, target, url, alias, existing );
+							continue;
+						}
+
+						_elementTagNames.put( alias.trim(), target.trim() );
+					}
+
+					logger.debug( "Loaded tag aliases from {}", url );
+				}
+				catch( final IOException e ) {
+					logger.warn( "Failed to read tag alias resource {}", url, e );
+				}
+			}
+		}
+		catch( final IOException e ) {
+			logger.warn( "Failed to enumerate {} resources on the classpath", TAG_ALIASES_RESOURCE, e );
+		}
 	}
 
 	/**

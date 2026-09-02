@@ -39,36 +39,41 @@ public class NGCorePlugin implements NGPlugin {
 		return "ng";
 	}
 
+	/**
+	 * The framework's element classes. Their tag names are NOT declared here: they live in
+	 * ng-appserver's {@code parsley-tag-aliases.properties}, which NGElementManager loads
+	 * and the template editor reads, so both resolve tags identically.
+	 */
 	@Override
 	public Elements elements() {
 		return Elements
 				.create()
-				.elementClass( AjaxObserveField.class, "aof" )
-				.elementClass( AjaxSubmitButton.class, "asb" )
-				.elementClass( AjaxUpdateContainer.class, "auc" )
-				.elementClass( AjaxUpdateLink.class, "aul" )
-				.elementClass( NGActionURL.class, "actionURL" )
-				.elementClass( NGCheckbox.class, "checkbox" )
-				.elementClass( NGBrowser.class, "browser" )
-				.elementClass( NGComponentContent.class, "content" )
-				.elementClass( NGConditional.class, "if" )
-				.elementClass( NGFileUpload.class, "fileUpload" )
-				.elementClass( NGForm.class, "form" )
-				.elementClass( NGGenericContainer.class, "container" )
-				.elementClass( NGGenericElement.class, "element" )
-				.elementClass( NGHyperlink.class, "link" )
-				.elementClass( NGImage.class, "img" )
-				.elementClass( NGJavaScript.class, "script" )
-				.elementClass( NGPasswordField.class, "password" )
-				.elementClass( NGPopUpButton.class, "popUpButton" ) // CHECKME: We might want to consider just naming this "popup"
-				.elementClass( NGRepetition.class, "repetition" )
-				.elementClass( NGResourceURL.class, "resourceURL" )
-				.elementClass( NGString.class, "str" )
-				.elementClass( NGStylesheet.class, "stylesheet" )
-				.elementClass( NGSubmitButton.class, "submit" )
-				.elementClass( NGSwitchComponent.class, "switch" )
-				.elementClass( NGText.class, "text" )
-				.elementClass( NGTextField.class, "textfield" );
+				.elementClass( AjaxObserveField.class )
+				.elementClass( AjaxSubmitButton.class )
+				.elementClass( AjaxUpdateContainer.class )
+				.elementClass( AjaxUpdateLink.class )
+				.elementClass( NGActionURL.class )
+				.elementClass( NGCheckbox.class )
+				.elementClass( NGBrowser.class )
+				.elementClass( NGComponentContent.class )
+				.elementClass( NGConditional.class )
+				.elementClass( NGFileUpload.class )
+				.elementClass( NGForm.class )
+				.elementClass( NGGenericContainer.class )
+				.elementClass( NGGenericElement.class )
+				.elementClass( NGHyperlink.class )
+				.elementClass( NGImage.class )
+				.elementClass( NGJavaScript.class )
+				.elementClass( NGPasswordField.class )
+				.elementClass( NGPopUpButton.class )
+				.elementClass( NGRepetition.class )
+				.elementClass( NGResourceURL.class )
+				.elementClass( NGString.class )
+				.elementClass( NGStylesheet.class )
+				.elementClass( NGSubmitButton.class )
+				.elementClass( NGSwitchComponent.class )
+				.elementClass( NGText.class )
+				.elementClass( NGTextField.class );
 	}
 
 	@Override
