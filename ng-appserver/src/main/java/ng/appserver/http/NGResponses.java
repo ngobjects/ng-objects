@@ -43,12 +43,4 @@ public class NGResponses {
 	public static NGResponse ok( final byte[] bytes ) {
 		return of( 200, bytes );
 	}
-
-	/**
-	 * @deprecated Parameter order changed, use of( status, bytes ) or ok( bytes )
-	 */
-	@Deprecated
-	public static NGResponse of( final byte[] bytes, final int status ) {
-		return of( status, bytes );
-	}
 }
