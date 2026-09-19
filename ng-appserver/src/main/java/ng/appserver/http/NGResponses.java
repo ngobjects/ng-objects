@@ -11,7 +11,6 @@ public class NGResponses {
 	/**
 	 * Creates an empty NGResponse with status 200
 	 */
-	@Deprecated
 	public static NGResponse of() {
 		return new NGStandardResponse();
 	}
@@ -19,21 +18,21 @@ public class NGResponses {
 	/**
 	 * @return A response with the given status and string content. Status comes first: it reads like the response's status line, and leaves the trailing parameter for the content (the one that varies in type)
 	 */
-	public static NGStandardResponse of( final int status, final String contentString ) {
-		return new NGStandardResponse( contentString, status );
+	public static NGResponse of( final int status, final String contentString ) {
+		return new NGStandardResponse( status, contentString );
 	}
 
 	/**
 	 * @return A response with the given status and binary content
 	 */
 	public static NGResponse of( final int status, final byte[] bytes ) {
-		return new NGStandardResponse( bytes, status );
+		return new NGStandardResponse( status, bytes );
 	}
 
 	/**
 	 * @return A response with status 200 and the given string content
 	 */
-	public static NGStandardResponse ok( final String contentString ) {
+	public static NGResponse ok( final String contentString ) {
 		return of( 200, contentString );
 	}
 

@@ -39,17 +39,14 @@ public class NGStandardResponse implements NGResponse {
 	/**
 	 * Creates an empty NGResponse with status 200
 	 */
-	@Deprecated
-	public NGStandardResponse() {}
+	protected NGStandardResponse() {}
 
-	@Deprecated
-	public NGStandardResponse( final byte[] bytes, final int status ) {
+	protected NGStandardResponse( final int status, final byte[] bytes ) {
 		setContentBytes( bytes );
 		setStatus( status );
 	}
 
-	@Deprecated
-	public NGStandardResponse( final String contentString, final int status ) {
+	protected NGStandardResponse( final int status, final String contentString ) {
 		setContentString( contentString );
 		setStatus( status );
 	}
