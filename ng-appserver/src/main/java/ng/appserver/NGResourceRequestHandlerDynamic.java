@@ -29,13 +29,13 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 		final String resourceID = NGParsedURI.of( request.uri() ).getString( 1 );
 
 		if( resourceID == null ) {
-			return NGRespBuilder.of( "No resource name specified", 400 );
+			return NGRespBuilder.of( 400, "No resource name specified" );
 		}
 
 		final NGDynamicResource resource = NGApplication.application().resourceManagerDynamic().pop( resourceID );
 
 		if( resource == null ) {
-			return NGRespBuilder.of( "Dynamic resource '" + resourceID + "' does not exist", 404 );
+			return NGRespBuilder.of( 404, "Dynamic resource '" + resourceID + "' does not exist" );
 		}
 
 		final NGResponse response = NGRespBuilder.of();

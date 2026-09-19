@@ -56,7 +56,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 
 		final Optional<NGResource> resource = NGApplication.application().resourceManager().obtainAppResource( StandardNamespace.NG.identifier(), "x-statistics-response.xml" );
 		final byte[] b = resource.get().bytes();
-		return NGRespBuilder.of( b, 200 );
+		return NGRespBuilder.ok( b );
 	}
 
 	/**

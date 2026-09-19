@@ -66,7 +66,7 @@ public class Application extends NGApplication {
 					// based on the type of the response/request content (String, byte[], stream, multipart etc.).
 					// In that case, generic response construction could be performed using factory methods (NGResponse.of() or something like that)
 					// or we'll just allow the user to instantiate the specific implementing classes himself (new NGStringResponse(), new NGMultiPartResponse() etc.)
-					return NGRespBuilder.of( responseContent, 200 );
+					return NGRespBuilder.ok( responseContent );
 				} )
 
 				// Demonstrates mapping a URL to a response-generating method (which accepts the request as a parameter)
@@ -90,7 +90,7 @@ public class Application extends NGApplication {
 	}
 
 	private NGActionResults stringReponse() {
-		return NGRespBuilder.of( "I am a string response", 200 );
+		return NGRespBuilder.ok( "I am a string response" );
 	}
 
 	private NGActionResults imageReponse( NGRequest request ) {

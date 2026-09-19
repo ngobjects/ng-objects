@@ -96,8 +96,11 @@ public class NGContext {
 
 	/**
 	 * @return This context's session, creating a session if none is present.
+	 *
+	 * The context is the owner of session access. Resolution is still delegated to the request for now, but that's
+	 * an implementation detail scheduled to change (the request will keep only the wire fact, i.e. the session ID).
 	 */
-	@Deprecated
+	@SuppressWarnings("deprecation")
 	public NGSession session() {
 		return request().session();
 	}
@@ -105,7 +108,7 @@ public class NGContext {
 	/**
 	 * @return This context's session, or null if no session is present.
 	 */
-	@Deprecated
+	@SuppressWarnings("deprecation")
 	public NGSession existingSession() {
 		return request().existingSession();
 	}
@@ -113,7 +116,7 @@ public class NGContext {
 	/**
 	 * @return True if this context has an existing session
 	 */
-	@Deprecated
+	@SuppressWarnings("deprecation")
 	public boolean hasSession() {
 		return request().hasSession();
 	}

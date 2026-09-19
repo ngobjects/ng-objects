@@ -33,7 +33,7 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 		final String directActionClassName = parsedURI.getString( 1 );
 
 		if( directActionClassName == null ) {
-			return NGRespBuilder.of( "No direct action class name specified", 404 );
+			return NGRespBuilder.of( 404, "No direct action class name specified" );
 		}
 
 		String directActionMethodName = parsedURI.getString( 2 );

@@ -46,10 +46,22 @@ public interface NGRequest extends NGMessage {
 
 	public String _sessionID();
 
+	/**
+	 * @deprecated Session access belongs to the context, use NGContext.session(). The request will keep only the wire fact (the session ID).
+	 */
+	@Deprecated
 	public NGSession session();
 
+	/**
+	 * @deprecated Session access belongs to the context, use NGContext.existingSession()
+	 */
+	@Deprecated
 	public NGSession existingSession();
 
+	/**
+	 * @deprecated Session access belongs to the context, use NGContext.hasSession()
+	 */
+	@Deprecated
 	public boolean hasSession();
 
 	/**

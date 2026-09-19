@@ -48,7 +48,7 @@ public class NGDirectAction {
 			return (NGActionResults)method.invoke( this );
 		}
 		catch( final NoSuchMethodException e ) {
-			return NGRespBuilder.of( "No direct action method called " + directActionName, 404 );
+			return NGRespBuilder.of( 404, "No direct action method called " + directActionName );
 		}
 		catch( SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
 			throw new RuntimeException( e );

@@ -17,7 +17,7 @@ public class DirectAction extends NGDirectAction {
 
 	@Override
 	public NGActionResults defaultAction() {
-		return NGRespBuilder.of( "Great success!", 200 );
+		return NGRespBuilder.ok( "Great success!" );
 	}
 
 	public NGActionResults componentAction() {
@@ -29,7 +29,7 @@ public class DirectAction extends NGDirectAction {
 	}
 
 	public NGActionResults htmlAction() {
-		final NGResponse response = NGRespBuilder.of( "<html><head><meta charset=\"utf-8\"></head><body>Halló <strong>skralló!</strong></body></head>", 200 );
+		final NGResponse response = NGRespBuilder.ok( "<html><head><meta charset=\"utf-8\"></head><body>Halló <strong>skralló!</strong></body></head>" );
 		response.setHeader( "content-type", "text/html" );
 		response.setHeader( "yes", "sir" );
 		response.setHeader( "yes", "doctor" );
@@ -39,7 +39,7 @@ public class DirectAction extends NGDirectAction {
 
 	public NGActionResults imageAction() {
 		final byte[] imageBytes = NGApplication.application().resourceManager().obtainWebserverResource( "app", "test-image-1.jpg" ).get().bytes();
-		final NGResponse response = NGRespBuilder.of( imageBytes, 200 );
+		final NGResponse response = NGRespBuilder.ok( imageBytes );
 		response.setHeader( "content-type", "image/jpeg" );
 		return response;
 	}

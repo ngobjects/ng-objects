@@ -35,7 +35,7 @@ public class NGExceptionManager {
 		register(
 				NGPageRestorationException.class,
 				NGExceptionManager::doNothing,
-				exception -> NGRespBuilder.of( exception.getMessage(), 404 ) );
+				exception -> NGRespBuilder.of( 404, exception.getMessage() ) );
 
 		register(
 				NGSessionRestorationException.class,
@@ -46,7 +46,7 @@ public class NGExceptionManager {
 				NGPageContendedException.class,
 				NGExceptionManager::doNothing,
 				exception -> {
-					final NGResponse response = NGRespBuilder.of( exception.getMessage(), 503 );
+					final NGResponse response = NGRespBuilder.of( 503, exception.getMessage() );
 					// Hints to the client when a retry is likely to succeed: the previous request has already had the full lock timeout to finish
 					response.setHeader( "retry-after", String.valueOf( Math.max( 1, exception.lockTimeout().toSeconds() ) ) );
 					return response;

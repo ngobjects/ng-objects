@@ -25,7 +25,7 @@ public class JSONAction extends NGDirectAction {
 		people.add( new Person( "Hugi Þórðarson", "Hraunteigur 23" ) );
 		people.add( new Person( "Ósk Gunnlaugsdóttir", "Þjórsárgata 6" ) );
 		final var jsonString = new GsonBuilder().setPrettyPrinting().create().toJson( people );
-		final var response = NGRespBuilder.of( jsonString, 200 );
+		final var response = NGRespBuilder.ok( jsonString );
 		response.setHeader( "content-type", "application/json" );
 		return response;
 	}
