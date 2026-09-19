@@ -51,12 +51,4 @@ public class NGResponses {
 	public static NGResponse of( final byte[] bytes, final int status ) {
 		return of( status, bytes );
 	}
-
-	/**
-	 * @deprecated Parameter order changed, use of( status, contentString ) or ok( contentString )
-	 */
-	@Deprecated
-	public static NGStandardResponse of( final String contentString, final int status ) {
-		return of( status, contentString );
-	}
 }
