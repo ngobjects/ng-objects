@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 
 public class TestNGMessage {
@@ -17,24 +17,24 @@ public class TestNGMessage {
 	@Test
 	public void headersDictionaryIsCaseInsensitive() {
 		// setHeader() method
-		NGResponse r1 = NGRespBuilder.of();
+		NGResponse r1 = NGResponses.of();
 		r1.setHeader( "some-header", "some-value" );
 		assertEquals( List.of( "some-value" ), r1.headers().get( "SoMe-HeADeR" ) );
 
 		// appendHeader() method
-		NGResponse r2 = NGRespBuilder.of();
+		NGResponse r2 = NGResponses.of();
 		r2.appendHeader( "some-header", "some-value" );
 		assertEquals( List.of( "some-value" ), r2.headers().get( "SoMe-HeADeR" ) );
 
 		// setHeaders() method
-		NGResponse r3 = NGRespBuilder.of();
+		NGResponse r3 = NGResponses.of();
 		r3.setHeaders( Map.of( "some-header", List.of( "some-value" ) ) );
 		assertEquals( List.of( "some-value" ), r3.headers().get( "SoMe-HeADeR" ) );
 	}
 
 	@Test
 	public void setHeaderReplacesExistingHeaderValues() {
-		NGResponse r = NGRespBuilder.of();
+		NGResponse r = NGResponses.of();
 		r.setHeader( "some-header", "some-value" );
 		r.setHeader( "some-header", "some-other-value" );
 		assertEquals( List.of( "some-other-value" ), r.headers().get( "some-header" ) );
@@ -42,7 +42,7 @@ public class TestNGMessage {
 
 	@Test
 	public void appendHeaderKeepsExistingHeaderValues() {
-		NGResponse r = NGRespBuilder.of();
+		NGResponse r = NGResponses.of();
 		r.appendHeader( "some-header", "some-value" );
 		r.appendHeader( "some-header", "some-other-value" );
 		assertEquals( List.of( "some-value", "some-other-value" ), r.headers().get( "some-header" ) );
@@ -50,7 +50,7 @@ public class TestNGMessage {
 
 	@Test
 	public void appendContentString() {
-		NGResponse r = NGRespBuilder.of();
+		NGResponse r = NGResponses.of();
 		r.appendContentString( "SomeText" );
 		r.appendContentString( "MoreText" );
 		assertEquals( "SomeTextMoreText", r.contentString() );
@@ -58,14 +58,14 @@ public class TestNGMessage {
 
 	@Test
 	public void contentStringSmokeTest() {
-		NGResponse r = NGRespBuilder.of();
+		NGResponse r = NGResponses.of();
 		r.setContentString( "Þjóðarþýðingin (icelandic stuff)" );
 		assertEquals( "Þjóðarþýðingin (icelandic stuff)", r.contentString() );
 	}
 
 	@Test
 	public void contentBytesSmokeTest() {
-		NGResponse r = NGRespBuilder.of();
+		NGResponse r = NGResponses.of();
 		byte[] initialBytes = "Hvað er að frétta".getBytes( StandardCharsets.UTF_8 );
 		r.setContentBytes( initialBytes );
 		assertArrayEquals( initialBytes, r.contentBytes() );

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.dev.NGConsoleCapture;
 import ng.dev.NGDevJson;
@@ -71,7 +71,7 @@ public class NGDevelopmentPlugin implements NGPlugin {
 
 		b.append( " ---\n" );
 
-		final NGResponse response = NGRespBuilder.ok( b.toString() );
+		final NGResponse response = NGResponses.ok( b.toString() );
 		response.setHeader( "content-type", "text/plain; charset=utf-8" );
 		return response;
 	}
@@ -213,7 +213,7 @@ public class NGDevelopmentPlugin implements NGPlugin {
 	}
 
 	private static NGResponse json( final String body, final int status ) {
-		final NGResponse response = NGRespBuilder.of( status, body );
+		final NGResponse response = NGResponses.of( status, body );
 		response.setHeader( "content-type", "application/json; charset=utf-8" );
 		return response;
 	}
@@ -237,7 +237,7 @@ public class NGDevelopmentPlugin implements NGPlugin {
 	private static NGActionResults terminate() {
 		logger.info( "Received a dev application termination request. Goodbye." );
 		NGApplication.application().terminate();
-		final NGResponse response = NGRespBuilder.ok( "terminated" );
+		final NGResponse response = NGResponses.ok( "terminated" );
 		response.setHeader( "content-type", "text/plain" );
 		return response;
 	}
@@ -246,7 +246,7 @@ public class NGDevelopmentPlugin implements NGPlugin {
 	 * @return Just a simple string to indicate that this is an NGObjects application
 	 */
 	private static NGActionResults type() {
-		final NGResponse response = NGRespBuilder.ok( "ng" );
+		final NGResponse response = NGResponses.ok( "ng" );
 		response.setHeader( "content-type", "text/plain" );
 		return response;
 	}

@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 import ng.appserver.NGActionResults;
 import ng.appserver.directactions.NGDirectAction;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 
 /**
  * Merely created to test using an additional direct action class
@@ -25,7 +25,7 @@ public class JSONAction extends NGDirectAction {
 		people.add( new Person( "Hugi Þórðarson", "Hraunteigur 23" ) );
 		people.add( new Person( "Ósk Gunnlaugsdóttir", "Þjórsárgata 6" ) );
 		final var jsonString = new GsonBuilder().setPrettyPrinting().create().toJson( people );
-		final var response = NGRespBuilder.ok( jsonString );
+		final var response = NGResponses.ok( jsonString );
 		response.setHeader( "content-type", "application/json" );
 		return response;
 	}

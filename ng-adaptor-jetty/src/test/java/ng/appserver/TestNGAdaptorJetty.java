@@ -12,7 +12,7 @@ import java.util.Map;
 
 import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.plugins.Routes;
 
@@ -72,7 +72,7 @@ public class TestNGAdaptorJetty {
 					.map( "/first/second", ( request ) -> {
 						lastServedRequest = request;
 
-						final NGResponse response = NGRespBuilder.of( 404, "Oh look, a 404 response!" );
+						final NGResponse response = NGResponses.of( 404, "Oh look, a 404 response!" );
 						response.appendHeader( "someHeader", "firstValue" );
 						response.appendHeader( "someHeader", "secondValue" );
 						response.addCookie( new NGCookie( "someCookieName", "someCookieValue" ) );

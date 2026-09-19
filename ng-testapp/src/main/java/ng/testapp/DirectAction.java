@@ -4,7 +4,7 @@ import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.directactions.NGDirectAction;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.testapp.components.TAMain;
 import ng.testapp.components.TAProgrammaticDynamicComponent;
@@ -17,7 +17,7 @@ public class DirectAction extends NGDirectAction {
 
 	@Override
 	public NGActionResults defaultAction() {
-		return NGRespBuilder.ok( "Great success!" );
+		return NGResponses.ok( "Great success!" );
 	}
 
 	public NGActionResults componentAction() {
@@ -29,7 +29,7 @@ public class DirectAction extends NGDirectAction {
 	}
 
 	public NGActionResults htmlAction() {
-		final NGResponse response = NGRespBuilder.ok( "<html><head><meta charset=\"utf-8\"></head><body>Halló <strong>skralló!</strong></body></head>" );
+		final NGResponse response = NGResponses.ok( "<html><head><meta charset=\"utf-8\"></head><body>Halló <strong>skralló!</strong></body></head>" );
 		response.setHeader( "content-type", "text/html" );
 		response.setHeader( "yes", "sir" );
 		response.setHeader( "yes", "doctor" );
@@ -39,7 +39,7 @@ public class DirectAction extends NGDirectAction {
 
 	public NGActionResults imageAction() {
 		final byte[] imageBytes = NGApplication.application().resourceManager().obtainWebserverResource( "app", "test-image-1.jpg" ).get().bytes();
-		final NGResponse response = NGRespBuilder.ok( imageBytes );
+		final NGResponse response = NGResponses.ok( imageBytes );
 		response.setHeader( "content-type", "image/jpeg" );
 		return response;
 	}

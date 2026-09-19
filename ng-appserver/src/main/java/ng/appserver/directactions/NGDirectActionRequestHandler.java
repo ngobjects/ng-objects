@@ -8,7 +8,7 @@ import java.util.Map;
 import ng.appserver.NGActionResults;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.appserver.privates.NGParsedURI;
 
@@ -33,7 +33,7 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 		final String directActionClassName = parsedURI.getString( 1 );
 
 		if( directActionClassName == null ) {
-			return NGRespBuilder.of( 404, "No direct action class name specified" );
+			return NGResponses.of( 404, "No direct action class name specified" );
 		}
 
 		String directActionMethodName = parsedURI.getString( 2 );

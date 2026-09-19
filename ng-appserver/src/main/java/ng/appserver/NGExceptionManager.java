@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 
 /**
@@ -35,7 +35,7 @@ public class NGExceptionManager {
 		register(
 				NGPageRestorationException.class,
 				NGExceptionManager::doNothing,
-				exception -> NGRespBuilder.of( 404, exception.getMessage() ) );
+				exception -> NGResponses.of( 404, exception.getMessage() ) );
 
 		register(
 				NGSessionRestorationException.class,
@@ -46,7 +46,7 @@ public class NGExceptionManager {
 				NGPageContendedException.class,
 				NGExceptionManager::doNothing,
 				exception -> {
-					final NGResponse response = NGRespBuilder.of( 503, exception.getMessage() );
+					final NGResponse response = NGResponses.of( 503, exception.getMessage() );
 					// Hints to the client when a retry is likely to succeed: the previous request has already had the full lock timeout to finish
 					response.setHeader( "retry-after", String.valueOf( Math.max( 1, exception.lockTimeout().toSeconds() ) ) );
 					return response;

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.appserver.resources.NGResource;
 import ng.appserver.resources.StandardNamespace;
@@ -56,7 +56,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 
 		final Optional<NGResource> resource = NGApplication.application().resourceManager().obtainAppResource( StandardNamespace.NG.identifier(), "x-statistics-response.xml" );
 		final byte[] b = resource.get().bytes();
-		return NGRespBuilder.ok( b );
+		return NGResponses.ok( b );
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class WOMPRequestHandler extends NGRequestHandler {
 
 		logger.info( "sending command response to wotaskd" );
 
-		final NGResponse response = NGRespBuilder.of();
+		final NGResponse response = NGResponses.of();
 		response.setContentString( """
 				<instanceResponse type="NSDictionary">
 					<commandInstanceResponse type="NSDictionary">

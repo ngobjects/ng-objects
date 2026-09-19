@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.appserver.privates.NGParsedURI;
 import ng.appserver.resources.NGDynamicResource;
@@ -29,16 +29,16 @@ public class NGResourceRequestHandlerDynamic extends NGRequestHandler {
 		final String resourceID = NGParsedURI.of( request.uri() ).getString( 1 );
 
 		if( resourceID == null ) {
-			return NGRespBuilder.of( 400, "No resource name specified" );
+			return NGResponses.of( 400, "No resource name specified" );
 		}
 
 		final NGDynamicResource resource = NGApplication.application().resourceManagerDynamic().pop( resourceID );
 
 		if( resource == null ) {
-			return NGRespBuilder.of( 404, "Dynamic resource '" + resourceID + "' does not exist" );
+			return NGResponses.of( 404, "Dynamic resource '" + resourceID + "' does not exist" );
 		}
 
-		final NGResponse response = NGRespBuilder.of();
+		final NGResponse response = NGResponses.of();
 		response.setStatus( 200 );
 		response.setContentInputStream( resource.inputStream(), resource.length() );
 		response.setHeader( "content-disposition", String.format( "inline;filename=\"%s\"", resource.filename() ) );

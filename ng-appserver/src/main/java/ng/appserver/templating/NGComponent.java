@@ -11,7 +11,7 @@ import ng.appserver.NGContext;
 import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGSession;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.appserver.templating.associations.NGAssociation;
 import ng.kvc.NGKeyValueCoding;
@@ -284,7 +284,7 @@ public class NGComponent implements NGElement, NGActionResults {
 			response.setHeader( "content-type", "multipart/form-data; boundary=" + NGResponseMultipart.BOUNDARY );
 		}
 		else {
-			response = NGRespBuilder.of();
+			response = NGResponses.of();
 			response.setHeader( "content-type", "text/html;charset=utf-8" ); // FIXME: This is most definitely not the place to set the encoding // Hugi 2023-03-12
 		}
 

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.dev.NGDevServerRegistration;
 import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRespBuilder;
+import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.appserver.properties.DeploymentMode;
 import ng.appserver.properties.NGProperties;
@@ -564,7 +564,7 @@ public class NGApplication implements NGPlugin {
 	 * CHECKME: This method should probably not exist. Ideally, we probably just want the user to construct his own response and add the session ID killer cookie // Hugi 2025-04-16
 	 */
 	protected NGActionResults resetSessionCookieWithRedirectToURL( final String url ) {
-		final NGResponse response = NGRespBuilder.of();
+		final NGResponse response = NGResponses.of();
 
 		response.setStatus( 302 );
 		response.setHeader( "location", url );

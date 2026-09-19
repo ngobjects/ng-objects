@@ -7,7 +7,7 @@ package ng.appserver.http;
  */
 
 @Deprecated
-public class NGRespBuilder {
+public class NGResponses {
 
 	/**
 	 * Creates an empty NGResponse with status 200
