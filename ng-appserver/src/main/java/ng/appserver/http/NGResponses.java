@@ -6,7 +6,6 @@ package ng.appserver.http;
  *  FIXME: Temporary bridge class until response generation is standardized
  */
 
-@Deprecated
 public class NGResponses {
 
 	/**
