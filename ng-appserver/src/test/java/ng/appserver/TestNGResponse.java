@@ -38,8 +38,8 @@ public class TestNGResponse {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void deprecatedContentFirstOverloadsStillWork() {
-		assertEquals( 400, NGResponses.of( "Error", 400 ).status() );
-		assertEquals( "Error", NGResponses.of( "Error", 400 ).contentString() );
-		assertEquals( 404, NGResponses.of( new byte[] { 1 }, 404 ).status() );
+		assertEquals( 400, NGResponses.of( 400, "Error" ).status() );
+		assertEquals( "Error", NGResponses.of( 400, "Error" ).contentString() );
+		assertEquals( 404, NGResponses.of( 404, new byte[] { 1 } ).status() );
 	}
 }
