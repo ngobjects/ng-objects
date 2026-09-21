@@ -1,5 +1,7 @@
 package ng.appserver.http;
 
+import java.io.InputStream;
+
 /**
  * Utility methods for building response
  *
@@ -47,5 +49,9 @@ public class NGResponses {
 	 */
 	public static NGResponse ok( final byte[] bytes ) {
 		return of( 200, bytes );
+	}
+
+	public static NGResponse streaming( final InputStream inputStream, final long length ) {
+		return new NGStreamingResponse( inputStream, length );
 	}
 }

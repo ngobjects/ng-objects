@@ -2,7 +2,6 @@ package ng.appserver.http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -22,19 +21,6 @@ public class NGStandardResponse implements NGResponse {
 	 * Cookies set by the response.
 	 */
 	private List<NGCookie> _cookies = new ArrayList<>();
-
-	/**
-	 * Data to be streamed to the client
-	 */
-	private InputStream _contentInputStream;
-
-	/**
-	 * Length of the stream to be streamed to the client
-	 *
-	 * The initial value is set to -1, meaning no content length has been set.
-	 * We will check if the value has been set when returning the response, to ensure it's so.
-	 */
-	private long _contentInputStreamLength = -1;
 
 	/**
 	 * Creates an empty NGResponse with status 200
@@ -66,22 +52,6 @@ public class NGStandardResponse implements NGResponse {
 	public void addCookie( final NGCookie cookie ) {
 		Objects.requireNonNull( cookie );
 		_cookies.add( cookie );
-	}
-
-	@Override
-	public void setContentInputStream( final InputStream inputStream, final long contentInputStreamLength ) {
-		_contentInputStream = inputStream;
-		_contentInputStreamLength = contentInputStreamLength;
-	}
-
-	@Override
-	public InputStream contentInputStream() {
-		return _contentInputStream;
-	}
-
-	@Override
-	public long contentInputStreamLength() {
-		return _contentInputStreamLength;
 	}
 
 	@Override

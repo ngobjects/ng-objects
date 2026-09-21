@@ -42,12 +42,14 @@ import ng.appserver.NGAdaptor;
 import ng.appserver.NGApplication;
 import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGResponseMultipart.ContentPart;
+import ng.appserver.dev.NGDevelopmentInstanceStopper;
 import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardRequest;
 import ng.appserver.http.NGStandardRequest.UploadedFile;
-import ng.appserver.dev.NGDevelopmentInstanceStopper;
+import ng.appserver.http.NGStandardResponse;
+import ng.appserver.http.NGStreamingResponse;
 
 public class NGAdaptorJetty extends NGAdaptor {
 
@@ -150,37 +152,43 @@ public class NGAdaptorJetty extends NGAdaptor {
 				jettyResponse.getHeaders().add( entry.getKey(), entry.getValue() );
 			}
 
-			if( ngResponse instanceof NGResponseMultipart mp ) {
-				final ContentSource cs = new MultiPartFormData.ContentSource( NGResponseMultipart.BOUNDARY );
+			switch( ngResponse ) {
+				case NGResponseMultipart r -> {
+					final ContentSource cs = new MultiPartFormData.ContentSource( NGResponseMultipart.BOUNDARY );
 
-				for( ContentPart part : mp._contentParts.values() ) {
-					cs.addPart( createStringPart( part.name(), part.content().toString() ) );
-				}
-
-				cs.close();
-
-				Content.copy( cs, jettyResponse, callback );
-			}
-			else {
-				final Content.Source cs;
-				final long contentLength;
-
-				if( ngResponse.contentInputStream() != null ) {
-					contentLength = ngResponse.contentInputStreamLength();
-
-					if( contentLength == -1 ) {
-						throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
+					for( ContentPart part : r._contentParts.values() ) {
+						cs.addPart( createStringPart( part.name(), part.content().toString() ) );
 					}
 
-					cs = Content.Source.from( ngResponse.contentInputStream() );
-				}
-				else {
-					contentLength = ngResponse.contentBytesLength();
-					cs = Content.Source.from( new ByteArrayInputStream( ngResponse.contentBytes() ) );
-				}
+					cs.close();
 
-				jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
-				Content.copy( cs, jettyResponse, callback );
+					Content.copy( cs, jettyResponse, callback );
+				}
+				case NGStreamingResponse r -> {
+					final long contentLength = r.contentInputStreamLength();
+
+					//					FIXME: This check is now redundant since a streaming response can't be constructed without a length // Hugi 2026-09-21
+					//					if( contentLength == -1 ) {
+					//						throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
+					//					}
+
+					final Content.Source cs = Content.Source.from( r.contentInputStream() );
+
+					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+					Content.copy( cs, jettyResponse, callback );
+				}
+				case NGStandardResponse r -> {
+					final long contentLength = r.contentBytesLength();
+
+					final Content.Source cs = Content.Source.from( new ByteArrayInputStream( r.contentBytes() ) );
+
+					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
+					Content.copy( cs, jettyResponse, callback );
+				}
+				default -> {
+					// FIXME: THrow a proper exception here. But more importantly — handle responses in an exhaustive way // Hugi 2026-09-21
+					throw new RuntimeException( "Unknown response class: " + ngResponse.getClass().getName() );
+				}
 			}
 
 			return true;

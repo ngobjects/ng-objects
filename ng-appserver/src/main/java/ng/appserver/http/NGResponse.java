@@ -1,6 +1,5 @@
 package ng.appserver.http;
 
-import java.io.InputStream;
 import java.util.List;
 
 import ng.appserver.NGActionResults;
@@ -21,12 +20,6 @@ public interface NGResponse extends NGMessage, NGActionResults {
 	public List<NGCookie> cookies();
 
 	public void addCookie( final NGCookie cookie );
-
-	public void setContentInputStream( final InputStream inputStream, final long contentInputStreamLength );
-
-	public InputStream contentInputStream();
-
-	public long contentInputStreamLength();
 
 	public void appendContentString( final String stringToAppend );
 
