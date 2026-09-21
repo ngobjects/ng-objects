@@ -41,11 +41,6 @@ public class NGStandardResponse implements NGResponse {
 	 */
 	protected NGStandardResponse() {}
 
-	protected NGStandardResponse( final int status, final String contentString ) {
-		setContentString( contentString );
-		setStatus( status );
-	}
-
 	@Override
 	public int status() {
 		return _status;

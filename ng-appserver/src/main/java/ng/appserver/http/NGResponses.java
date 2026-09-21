@@ -19,7 +19,10 @@ public class NGResponses {
 	 * @return A response with the given status and string content. Status comes first: it reads like the response's status line, and leaves the trailing parameter for the content (the one that varies in type)
 	 */
 	public static NGResponse of( final int status, final String contentString ) {
-		return new NGStandardResponse( status, contentString );
+		final NGStandardResponse response = new NGStandardResponse();
+		response.setStatus( status );
+		response.setContentString( contentString );
+		return response;
 	}
 
 	/**
