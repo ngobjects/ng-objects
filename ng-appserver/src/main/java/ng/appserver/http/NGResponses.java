@@ -26,7 +26,10 @@ public class NGResponses {
 	 * @return A response with the given status and binary content
 	 */
 	public static NGResponse of( final int status, final byte[] bytes ) {
-		return new NGStandardResponse( status, bytes );
+		final NGStandardResponse response = new NGStandardResponse();
+		response.setStatus( status );
+		response.setContentBytes( bytes );
+		return response;
 	}
 
 	/**

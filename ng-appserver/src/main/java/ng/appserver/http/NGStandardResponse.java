@@ -41,11 +41,6 @@ public class NGStandardResponse implements NGResponse {
 	 */
 	protected NGStandardResponse() {}
 
-	protected NGStandardResponse( final int status, final byte[] bytes ) {
-		setContentBytes( bytes );
-		setStatus( status );
-	}
-
 	protected NGStandardResponse( final int status, final String contentString ) {
 		setContentString( contentString );
 		setStatus( status );
