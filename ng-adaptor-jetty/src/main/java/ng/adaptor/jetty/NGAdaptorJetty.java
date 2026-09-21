@@ -166,12 +166,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 				}
 				case NGStreamingResponse r -> {
 					final long contentLength = r.contentInputStreamLength();
-
-					//					FIXME: This check is now redundant since a streaming response can't be constructed without a length // Hugi 2026-09-21
-					//					if( contentLength == -1 ) {
-					//						throw new IllegalArgumentException( "NGResponse.contentInputStream() is set but contentInputLength has not been set. You must provide the content length when serving an InputStream" );
-					//					}
-
 					final Content.Source cs = Content.Source.from( r.contentInputStream() );
 
 					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
@@ -179,7 +173,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 				}
 				case NGStandardResponse r -> {
 					final long contentLength = r.contentBytesLength();
-
 					final Content.Source cs = Content.Source.from( new ByteArrayInputStream( r.contentBytes() ) );
 
 					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
