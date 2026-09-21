@@ -1,8 +1,6 @@
 package ng.adaptor.jetty;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,37 +56,38 @@ public class NGServletAdaptor extends HttpServlet {
 		// Hugi 2023-01-26
 		final long contentLength;
 
-		if( ngResponse.contentInputStream() != null ) {
-			// If an inputstream is present, use the stream's manually specified length value
-			contentLength = ngResponse.contentInputStreamLength();
-		}
-		else {
-			// Otherwise we go for the length of the response's contained data/bytes.
-			contentLength = ngResponse.contentBytesLength();
-		}
-
-		servletResponse.setHeader( "content-length", String.valueOf( contentLength ) );
-
-		for( final NGCookie ngCookie : ngResponse.cookies() ) {
-			servletResponse.addCookie( ngCookieToServletCookie( ngCookie ) );
-		}
-
-		for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
-			for( final String headerValue : entry.getValue() ) {
-				servletResponse.addHeader( entry.getKey(), headerValue );
-			}
-		}
-
-		try( final OutputStream out = servletResponse.getOutputStream()) {
-			if( ngResponse.contentInputStream() != null ) {
-				try( final InputStream inputStream = ngResponse.contentInputStream()) {
-					inputStream.transferTo( out );
-				}
-			}
-			else {
-				ngResponse.contentByteStream().writeTo( out );
-			}
-		}
+		//		FIXME: The servlet adaptor's content generating implementation is disabled while the response class structure gets it's redesign // Hugi 2026-09-21
+		//		if( ngResponse.contentInputStream() != null ) {
+		//			// If an inputstream is present, use the stream's manually specified length value
+		//			contentLength = ngResponse.contentInputStreamLength();
+		//		}
+		//		else {
+		//			// Otherwise we go for the length of the response's contained data/bytes.
+		//			contentLength = ngResponse.contentBytesLength();
+		//		}
+		//
+		//		servletResponse.setHeader( "content-length", String.valueOf( contentLength ) );
+		//
+		//		for( final NGCookie ngCookie : ngResponse.cookies() ) {
+		//			servletResponse.addCookie( ngCookieToServletCookie( ngCookie ) );
+		//		}
+		//
+		//		for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
+		//			for( final String headerValue : entry.getValue() ) {
+		//				servletResponse.addHeader( entry.getKey(), headerValue );
+		//			}
+		//		}
+		//
+		//		try( final OutputStream out = servletResponse.getOutputStream()) {
+		//			if( ngResponse.contentInputStream() != null ) {
+		//				try( final InputStream inputStream = ngResponse.contentInputStream()) {
+		//					inputStream.transferTo( out );
+		//				}
+		//			}
+		//			else {
+		//				ngResponse.contentByteStream().writeTo( out );
+		//			}
+		//		}
 	}
 
 	private static Cookie ngCookieToServletCookie( final NGCookie ngCookie ) {
