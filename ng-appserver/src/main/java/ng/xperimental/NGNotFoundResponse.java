@@ -9,6 +9,7 @@ import ng.appserver.http.NGStandardResponse;
 public class NGNotFoundResponse extends NGStandardResponse {
 
 	public NGNotFoundResponse( String contentString, int status ) {
-		super( status, contentString );
+		setStatus( status );
+		setContentString( contentString );
 	}
 }
