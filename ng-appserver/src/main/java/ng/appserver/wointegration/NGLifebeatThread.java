@@ -1,5 +1,6 @@
 package ng.appserver.wointegration;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -67,7 +68,8 @@ public class NGLifebeatThread {
 	}
 
 	public void start() {
-		sendHasStarted();
+		// hasStarted goes out on the lifebeat thread like every other message, so a slow or unreachable wotaskd can't hold up application startup
+		_scheduler.execute( this::sendHasStarted );
 
 		_scheduler.scheduleAtFixedRate(
 				() -> sendLifebeat(),
@@ -103,7 +105,11 @@ public class NGLifebeatThread {
 				.build();
 
 		try {
-			final HttpResponse<Void> response = CLIENT.send( request, BodyHandlers.discarding() );
+			// Only the status matters, so the body is closed unread. It must not be read (or discarded, which reads it): the classic
+			// WO adaptor answers without a Content-Length and keeps the connection open, so the body only ends when wotaskd closes
+			// the connection - three minutes later. With ofInputStream, send() returns as soon as the headers are in.
+			final HttpResponse<InputStream> response = CLIENT.send( request, BodyHandlers.ofInputStream() );
+			response.body().close();
 			final int status = response.statusCode();
 
 			if( status == 200 ) {
