@@ -1,6 +1,8 @@
 package ng.adaptor.jetty;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +24,8 @@ import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardRequest;
+import ng.appserver.http.NGStandardResponse;
+import ng.appserver.http.NGStreamingResponse;
 
 public class NGServletAdaptor extends HttpServlet {
 
@@ -50,44 +54,36 @@ public class NGServletAdaptor extends HttpServlet {
 
 		servletResponse.setStatus( ngResponse.status() );
 
-		// FIXME: Thoughts on content-length:
-		// - Should we always be setting the content length to zero?
-		// - Should we complain if a content stream has been set, but contentInputStreamLength not?
-		// Hugi 2023-01-26
-		final long contentLength;
+		for( final NGCookie ngCookie : ngResponse.cookies() ) {
+			servletResponse.addCookie( ngCookieToServletCookie( ngCookie ) );
+		}
 
-		//		FIXME: The servlet adaptor's content generating implementation is disabled while the response class structure gets it's redesign // Hugi 2026-09-21
-		//		if( ngResponse.contentInputStream() != null ) {
-		//			// If an inputstream is present, use the stream's manually specified length value
-		//			contentLength = ngResponse.contentInputStreamLength();
-		//		}
-		//		else {
-		//			// Otherwise we go for the length of the response's contained data/bytes.
-		//			contentLength = ngResponse.contentBytesLength();
-		//		}
-		//
-		//		servletResponse.setHeader( "content-length", String.valueOf( contentLength ) );
-		//
-		//		for( final NGCookie ngCookie : ngResponse.cookies() ) {
-		//			servletResponse.addCookie( ngCookieToServletCookie( ngCookie ) );
-		//		}
-		//
-		//		for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
-		//			for( final String headerValue : entry.getValue() ) {
-		//				servletResponse.addHeader( entry.getKey(), headerValue );
-		//			}
-		//		}
-		//
-		//		try( final OutputStream out = servletResponse.getOutputStream()) {
-		//			if( ngResponse.contentInputStream() != null ) {
-		//				try( final InputStream inputStream = ngResponse.contentInputStream()) {
-		//					inputStream.transferTo( out );
-		//				}
-		//			}
-		//			else {
-		//				ngResponse.contentByteStream().writeTo( out );
-		//			}
-		//		}
+		for( final Entry<String, List<String>> entry : ngResponse.headers().entrySet() ) {
+			for( final String headerValue : entry.getValue() ) {
+				servletResponse.addHeader( entry.getKey(), headerValue );
+			}
+		}
+
+		switch( ngResponse ) {
+			case NGStreamingResponse r -> {
+				servletResponse.setContentLengthLong( r.contentInputStreamLength() );
+
+				try( final OutputStream out = servletResponse.getOutputStream(); final InputStream inputStream = r.contentInputStream()) {
+					inputStream.transferTo( out );
+				}
+			}
+			case NGStandardResponse r -> {
+				servletResponse.setContentLengthLong( r.contentBytesLength() );
+
+				try( final OutputStream out = servletResponse.getOutputStream()) {
+					r.contentByteStream().writeTo( out );
+				}
+			}
+			default -> {
+				// FIXME: Handle responses in an exhaustive way, see NGAdaptorJetty // Hugi 2026-09-21
+				throw new RuntimeException( "Unknown response class: " + ngResponse.getClass().getName() );
+			}
+		}
 	}
 
 	private static Cookie ngCookieToServletCookie( final NGCookie ngCookie ) {
