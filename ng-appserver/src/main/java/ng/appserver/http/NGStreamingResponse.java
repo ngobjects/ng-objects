@@ -12,9 +12,6 @@ public class NGStreamingResponse extends NGStandardResponse {
 
 	/**
 	 * Length of the stream to be streamed to the client
-	 *
-	 * The initial value is set to -1, meaning no content length has been set.
-	 * We will check if the value has been set when returning the response, to ensure it's so.
 	 */
 	private final long _contentInputStreamLength;
 
