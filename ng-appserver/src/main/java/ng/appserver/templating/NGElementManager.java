@@ -37,7 +37,7 @@ public class NGElementManager {
 	 * applications contribute more by shipping a same-named file in their resources. The template
 	 * editor reads exactly these files, so tags resolve identically in the app and in the IDE.
 	 */
-	public static final String TAG_ALIASES_RESOURCE = "parsley-tag-aliases.properties";
+	public static final String TAG_ALIASES_RESOURCE = "ng-tag-aliases.properties";
 
 	public NGElementManager() {
 		// Declared aliases are loaded first, so a plugin's explicit code registration

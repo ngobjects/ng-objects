@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 /**
- * The tag registry is declared in parsley-tag-aliases.properties and loaded by NGElementManager;
+ * The tag registry is declared in ng-tag-aliases.properties and loaded by NGElementManager;
  * these tests pin the loading, the recursive resolution and the cycle guard.
  */
 public class TestNGElementManagerTagAliases {

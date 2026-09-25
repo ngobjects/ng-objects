@@ -44,7 +44,7 @@ public class NGCorePlugin implements NGPlugin {
 
 	/**
 	 * The framework's element classes. Their tag names are NOT declared here: they live in
-	 * ng-appserver's {@code parsley-tag-aliases.properties}, which NGElementManager loads
+	 * ng-appserver's {@code ng-tag-aliases.properties}, which NGElementManager loads
 	 * and the template editor reads, so both resolve tags identically.
 	 */
 	@Override
