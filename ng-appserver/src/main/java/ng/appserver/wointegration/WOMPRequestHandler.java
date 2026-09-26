@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import ng.appserver.NGApplication;
 import ng.appserver.NGRequestHandler;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
+import ng.appserver.http.NGResponses;
 import ng.appserver.resources.NGResource;
 import ng.appserver.resources.StandardNamespace;
 
@@ -24,7 +24,6 @@ public class WOMPRequestHandler extends NGRequestHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger( WOMPRequestHandler.class );
 
-	public static final String KEY = "womp";
 	public static final String DEFAULT_PATH = "/womp/instanceRequest";
 
 	/**
