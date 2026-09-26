@@ -27,9 +27,6 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 		// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
 		// CHECKME: URL rewrites shouldn't really be performed in development. Add by property? // Hugi 2025-05-13
 		application.addURLRewritePattern( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/(.*).woa(/[0-9])?" ) );
-
-		// FIXME: Old pattern included the application name which is probably redundant (and not even desirable, since we might be deploying under a different name) // Hugi 2025-10-09
-		// application.addURLRewritePattern( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/" + application.properties().d().propWOApplicationName() + ".woa(/[0-9])?" ) );
 	}
 
 	@Override
