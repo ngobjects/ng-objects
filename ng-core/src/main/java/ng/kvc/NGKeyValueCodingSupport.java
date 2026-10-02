@@ -50,7 +50,7 @@ public class NGKeyValueCodingSupport {
 		}
 
 		// A method that returns nothing (void) can't be used as a KVC getter
-		if( method.getReturnType().isAssignableFrom( Void.class ) ) {
+		if( method.getReturnType() == void.class ) {
 			return false;
 		}
 
@@ -118,14 +118,25 @@ public class NGKeyValueCodingSupport {
 	}
 
 	/**
-	 * @return A list of suggestions for the given key when trying to apply it to the given object. Really just a list of the object's available keys, ordered by the edit distance from the proposed key
+	 * Keys every object has (class, hashCode, toString). Valid, but never what someone mistyped.
+	 */
+	private static final List<String> OBJECT_KEYS = getterKeysForClass( Object.class );
+
+	/**
+	 * @return A list of suggestions for the given key when trying to apply it to the given object. Really just a list of the object's available keys (excluding those every object has), ordered by the edit distance from the proposed key. Empty for operator keys (starting with '@'), since no getter is a sensible suggestion for one.
 	 */
 	public static List<String> suggestions( final Object object, final String proposedKey ) {
+
+		if( proposedKey.startsWith( "@" ) ) {
+			return List.of();
+		}
 
 		record Suggestion( int distance, String key ) {}
 
 		return getterKeysForObject( object )
 				.stream()
+				.distinct()
+				.filter( key -> !OBJECT_KEYS.contains( key ) )
 				.map( key -> new Suggestion( distanceLevenshtein( key, proposedKey ), key ) )
 				.sorted( Comparator.comparing( Suggestion::distance ) )
 				.map( Suggestion::key )

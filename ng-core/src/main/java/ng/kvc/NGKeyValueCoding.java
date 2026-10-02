@@ -89,12 +89,8 @@ public interface NGKeyValueCoding {
 
 				final List<String> suggestions = NGKeyValueCodingSupport.suggestions( object, key );
 
-				if( suggestions.isEmpty() ) {
-					message.append( "The given object has no exposed keys" );
-				}
-				else {
+				if( !suggestions.isEmpty() ) {
 					message.append( " Did you mean '%s'?".formatted( suggestions.get( 0 ) ) );
-
 				}
 
 				throw new UnknownKeyException( message.toString() );

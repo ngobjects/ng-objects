@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -63,6 +64,33 @@ public class TestNGKeyValueCodingSupport {
 
 		assertTrue( availableKeys.contains( "name" ) );
 		assertTrue( availableKeys.contains( "address" ) );
+	}
+
+	@Test
+	public void voidMethodsAreNotGetterKeys() {
+		final List<String> availableKeys = NGKeyValueCodingSupport.getterKeysForObject( new ArrayList<>() );
+
+		assertTrue( availableKeys.contains( "size" ) );
+		assertFalse( availableKeys.contains( "clear" ) );
+	}
+
+	@Test
+	public void suggestionsForMisspelledKey() {
+		assertEquals( "size", NGKeyValueCodingSupport.suggestions( new ArrayList<>(), "sizee" ).get( 0 ) );
+	}
+
+	@Test
+	public void noSuggestionsForOperatorKeys() {
+		assertTrue( NGKeyValueCodingSupport.suggestions( new ArrayList<>(), "@count" ).isEmpty() );
+	}
+
+	@Test
+	public void suggestionsExcludeKeysEveryObjectHas() {
+		final List<String> suggestions = NGKeyValueCodingSupport.suggestions( new _TestSomeKVCRecord( "whocares", "idont" ), "hashKode" );
+
+		assertFalse( suggestions.contains( "hashCode" ) );
+		assertFalse( suggestions.contains( "class" ) );
+		assertFalse( suggestions.contains( "toString" ) );
 	}
 
 	public record _TestSomeKVCRecord( String name, String address ) {}
