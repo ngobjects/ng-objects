@@ -68,6 +68,15 @@ public class TestNGEvalSession {
 	}
 
 	@Test
+	public void exceptionCausesAndRootFramesAreDescribed() {
+		final NGEvalSession.EvalResult result = _session.eval( "ng.dev.TestNGEvalSession.BrokenInitializer.VALUE" );
+		assertFalse( result.ok() );
+		assertTrue( result.exception().startsWith( "java.lang.ExceptionInInitializerError ← java.lang.NullPointerException" ), result.exception() );
+		assertTrue( result.diagnostics().get( 0 ).contains( "BrokenInitializer.<clinit>" ), result.diagnostics().toString() );
+		assertFalse( result.diagnostics().stream().anyMatch( frame -> frame.contains( "jdk.jshell" ) || frame.contains( "reflect" ) ), result.diagnostics().toString() );
+	}
+
+	@Test
 	public void incompleteInputIsReported() {
 		final NGEvalSession.EvalResult result = _session.eval( "if( true ) {" );
 		assertFalse( result.ok() );
@@ -92,6 +101,11 @@ public class TestNGEvalSession {
 		assertEquals( 1, NGRuntimeProblems.size() );
 		assertEquals( "from-eval", NGRuntimeProblems.snapshot( null, 0 ).get( 0 ).message() );
 		NGRuntimeProblems.clear();
+	}
+
+	public static class BrokenInitializer {
+		static int[] VALUES;
+		public static int VALUE = VALUES[0];
 	}
 
 	@Test

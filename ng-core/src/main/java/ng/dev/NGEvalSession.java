@@ -62,8 +62,8 @@ public class NGEvalSession {
 	 *
 	 * @param ok true when every snippet compiled and ran without throwing
 	 * @param value the value of the last evaluated snippet, or null when there was none (statements, definitions)
-	 * @param exception a description of the thrown exception, or null when nothing threw
-	 * @param diagnostics compiler diagnostics for rejected snippets (empty when ok)
+	 * @param exception a description of the thrown exception and its causes, or null when nothing threw
+	 * @param diagnostics compiler diagnostics for rejected snippets, or the root cause's stack frames when an exception was thrown (empty when ok)
 	 */
 	public record EvalResult( boolean ok, String value, String exception, List<String> diagnostics ) {}
 
@@ -124,7 +124,7 @@ public class NGEvalSession {
 				}
 
 				if( event.exception() != null ) {
-					return new EvalResult( false, value, describeException( event.exception() ), List.of() );
+					return new EvalResult( false, value, describeException( event.exception() ), stackOfRootCause( event.exception() ) );
 				}
 
 				if( event.value() != null ) {
@@ -179,18 +179,93 @@ public class NGEvalSession {
 		return _shell;
 	}
 
-	private static String describeException( final Throwable exception ) {
+	/**
+	 * Maximum number of stack frames reported for an exception's root cause
+	 */
+	private static final int MAX_REPORTED_FRAMES = 8;
 
-		if( exception instanceof EvalException evalException ) {
-			final String message = evalException.getMessage();
-			return evalException.getExceptionClassName() + (message != null ? ": " + message : "");
-		}
+	/**
+	 * @return A description of [exception] and its causes, outermost first, e.g. "java.lang.ExceptionInInitializerError ← java.lang.NullPointerException: Cannot load from object array because "TEAMS" is null"
+	 */
+	private static String describeException( final Throwable exception ) {
 
 		if( exception instanceof UnresolvedReferenceException unresolved ) {
 			return "unresolved reference in: " + unresolved.getSnippet().name();
 		}
 
-		final String message = exception.getMessage();
-		return exception.getClass().getName() + (message != null ? ": " + message : "");
+		final StringBuilder b = new StringBuilder();
+
+		for( final Throwable throwable : causeChain( exception ) ) {
+			if( !b.isEmpty() ) {
+				b.append( " ← " );
+			}
+
+			b.append( describeSingle( throwable ) );
+
+			for( final Throwable suppressed : throwable.getSuppressed() ) {
+				b.append( " (suppressed: " ).append( describeSingle( suppressed ) ).append( ')' );
+			}
+		}
+
+		return b.toString();
+	}
+
+	/**
+	 * @return [throwable]'s class name and message. For a JShell EvalException, that's the class name of the exception the snippet actually threw.
+	 */
+	private static String describeSingle( final Throwable throwable ) {
+		final String className = throwable instanceof EvalException evalException ? evalException.getExceptionClassName() : throwable.getClass().getName();
+		final String message = throwable.getMessage();
+		return className + (message != null ? ": " + message : "");
+	}
+
+	/**
+	 * @return The top frames of [exception]'s root cause, down to where the snippet invoked the code that threw. Frames belonging to JShell, reflection and the snippet itself are left out.
+	 */
+	private static List<String> stackOfRootCause( final Throwable exception ) {
+
+		if( exception instanceof UnresolvedReferenceException ) {
+			return List.of();
+		}
+
+		final List<Throwable> chain = causeChain( exception );
+		final Throwable rootCause = chain.get( chain.size() - 1 );
+
+		final List<String> frames = new ArrayList<>();
+
+		for( final StackTraceElement frame : rootCause.getStackTrace() ) {
+			if( isSnippetBoundary( frame ) || frames.size() == MAX_REPORTED_FRAMES ) {
+				break;
+			}
+
+			frames.add( "at " + frame );
+		}
+
+		return frames;
+	}
+
+	/**
+	 * @return true if [frame] is where control passed from JShell (or the snippet's own wrapper) into the code being evaluated
+	 */
+	private static boolean isSnippetBoundary( final StackTraceElement frame ) {
+		final String className = frame.getClassName();
+
+		return frame.getMethodName().equals( "do_it$" )
+				|| className.startsWith( "jdk.jshell." )
+				|| className.startsWith( "java.lang.reflect." )
+				|| className.startsWith( "jdk.internal.reflect." );
+	}
+
+	/**
+	 * @return [exception] followed by its causes, outermost first
+	 */
+	private static List<Throwable> causeChain( final Throwable exception ) {
+		final List<Throwable> chain = new ArrayList<>();
+
+		for( Throwable t = exception; t != null && !chain.contains( t ); t = t.getCause() ) {
+			chain.add( t );
+		}
+
+		return chain;
 	}
 }
