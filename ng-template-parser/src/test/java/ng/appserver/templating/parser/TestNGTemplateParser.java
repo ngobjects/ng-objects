@@ -385,6 +385,32 @@ public class TestNGTemplateParser {
 		assertValueBinding( true, "$c", node.bindings().get( "?baz" ) );
 	}
 
+	@Test
+	public void colonPrefixedBindingKey() throws Exception {
+		final PRootNode root = parse( "<wo:Hyperlink route=\"$route\" :id=\"$user.id\" />", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( 2, node.bindings().size() );
+		assertValueBinding( true, "$route", node.bindings().get( "route" ) );
+		assertValueBinding( true, "$user.id", node.bindings().get( ":id" ) );
+	}
+
+	@Test
+	public void colonAndQuestionMarkPrefixedBindingsTogether() throws Exception {
+		final PRootNode root = parse( "<wo:Widget :id=\"$a\" ?tab=\"$b\" id=\"$c\" />", "" );
+		final PBasicNode node = assertBasicNode( root.children().getFirst() );
+		assertEquals( 3, node.bindings().size() );
+		assertValueBinding( true, "$a", node.bindings().get( ":id" ) );
+		assertValueBinding( true, "$b", node.bindings().get( "?tab" ) );
+		assertValueBinding( true, "$c", node.bindings().get( "id" ) );
+	}
+
+	@Test
+	public void lonePrefixIsNotABindingKey() {
+		assertThrows( NGHTMLFormatException.class, () -> parse( "<wo:Widget :=\"$a\" />", "" ) );
+		assertThrows( NGHTMLFormatException.class, () -> parse( "<wo:Widget ::id=\"$a\" />", "" ) );
+		assertThrows( NGHTMLFormatException.class, () -> parse( "<wo:Widget ?:id=\"$a\" />", "" ) );
+	}
+
 	// ---- Boolean attributes ----
 
 	@Test
