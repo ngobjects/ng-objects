@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
+import ng.appserver.privates.NGParsedURI;
 import ng.appserver.templating.NGComponent;
 
 /**
@@ -44,7 +45,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		}
 
 		// Component action URLs contain only one path element, which contains both the originating contextID and the senderID.
-		final String componentPart = request.parsedURI().getString( 1 );
+		final String componentPart = NGParsedURI.of( request.uri() ).getString( 1 );
 
 		// The contextID and the elementID are separated by a period, so let's split on that.
 		final int firstPeriodIndex = componentPart.indexOf( '.' );
@@ -70,7 +71,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 		// Checking out the page gives us exclusive access to it, serializing concurrent requests that work with the same page.
 		// The page's lock is released by the lease's close() at the end of the try-with-resources block.
 		// If no page is found (page probably pushed out of the session's page cache), NGPageRestorationException is thrown.
-		try( final NGPageCache.NGPageLease lease = session.pageCache().checkout( originatingContextID ) ) {
+		try( final NGPageCache.NGPageLease lease = session.pageCache().checkout( originatingContextID )) {
 			final NGComponent originalPage = lease.page();
 
 			logger.debug( "Page restored from cache is: " + originalPage.getClass() );
@@ -114,7 +115,7 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 				// The returned page may be a cached instance another request could be working with concurrently
 				// (e.g. an action returning a page held in a component's field), so we hold the instance's lock while
 				// mutating and rendering it. If it's the page we already checked out, re-acquisition is free (the lock is reentrant).
-				try( final NGPageCache.NGPageLease renderLease = session.pageCache().lockPage( newPage ) ) {
+				try( final NGPageCache.NGPageLease renderLease = session.pageCache().lockPage( newPage )) {
 					newPage.setContextIncludingChildren( context );
 					response = newPage.generateResponse();
 				}
@@ -138,11 +139,11 @@ public class NGComponentRequestHandler extends NGRequestHandler {
 	private static void validateRequest( NGRequest request ) {
 		Objects.requireNonNull( request );
 
-		if( request.parsedURI().length() != 2 ) {
+		if( NGParsedURI.of( request.uri() ).length() != 2 ) {
 			throw new IllegalArgumentException( "Component requests always contain only two path elements, the request handler key, and the identifier" );
 		}
 
-		final String identifier = request.parsedURI().getString( 1 );
+		final String identifier = NGParsedURI.of( request.uri() ).getString( 1 );
 
 		// Ensure the URL contains at least one period
 		if( !identifier.contains( "." ) ) {

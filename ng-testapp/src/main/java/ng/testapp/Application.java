@@ -4,8 +4,9 @@ import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.directactions.NGDirectActionRequestHandler;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
+import ng.appserver.http.NGResponses;
+import ng.appserver.privates.NGParsedURI;
 import ng.plugins.Elements;
 import ng.plugins.Routes;
 import ng.testapp.components.TAAjaxPage;
@@ -59,7 +60,7 @@ public class Application extends NGApplication {
 
 				// A little Hello World demo for demonstration of a wildcard patterned URL
 				.map( "/print/*", request -> {
-					final String responseContent = "Hello " + request.parsedURI().getString( 1 );
+					final String responseContent = "Hello " + NGParsedURI.of( request.uri() ).getString( 1 );
 
 					// Sidenote: You'll see NGResponse's constructors being deprecated.
 					// This is because NGResponse and NGRequest will probably be converted to interfaces, with subclasses
