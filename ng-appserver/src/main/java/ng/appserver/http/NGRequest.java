@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGContext;
-import ng.appserver.NGSession;
 import ng.appserver.http.NGStandardRequest.UploadedFile;
 import ng.appserver.privates.NGParsedURI;
 
@@ -48,30 +47,6 @@ public interface NGRequest extends NGMessage {
 	 * @return The sessionID submitted by the client, if any. null if no sessionID was present in the request.
 	 */
 	public String _sessionID();
-
-	/**
-	 * @deprecated Session access belongs to the context, use NGContext.session()
-	 */
-	@Deprecated
-	public default NGSession session() {
-		return context().session();
-	}
-
-	/**
-	 * @deprecated Session access belongs to the context, use NGContext.existingSession()
-	 */
-	@Deprecated
-	public default NGSession existingSession() {
-		return context().existingSession();
-	}
-
-	/**
-	 * @deprecated Session access belongs to the context, use NGContext.hasSession()
-	 */
-	@Deprecated
-	public default boolean hasSession() {
-		return context().hasSession();
-	}
 
 	/**
 	 * @return The network address of the client that sent this request, as reported by the adaptor, or null when the adaptor didn't provide one.
