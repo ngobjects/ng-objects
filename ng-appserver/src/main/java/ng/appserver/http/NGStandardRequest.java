@@ -13,7 +13,6 @@ import java.util.Objects;
 
 import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
-import ng.appserver.privates.NGParsedURI;
 
 public class NGStandardRequest implements NGRequest {
 
@@ -31,11 +30,6 @@ public class NGStandardRequest implements NGRequest {
 	 * The URI being accessed
 	 */
 	private String _uri;
-
-	/**
-	 * The URI being accessed, wrapped in a nice little API
-	 */
-	private NGParsedURI _parsedURI;
 
 	/**
 	 * The request's form values (a.k.a. query parameters)
@@ -139,7 +133,6 @@ public class NGStandardRequest implements NGRequest {
 	@Override
 	public void setURI( final String uri ) {
 		_uri = uri;
-		_parsedURI = null; // parsedURI() is lazily initialized so reset it's storage. Again. This class really wants to be immutable.
 	}
 
 	/**
@@ -218,18 +211,6 @@ public class NGStandardRequest implements NGRequest {
 	@Override
 	public void _setContext( NGContext context ) {
 		_context = context;
-	}
-
-	/**
-	 * FIXME: This method needs to be thread safe // Hugi 2021-11-28
-	 */
-	@Override
-	public NGParsedURI parsedURI() {
-		if( _parsedURI == null ) {
-			_parsedURI = NGParsedURI.of( _uri );
-		}
-
-		return _parsedURI;
 	}
 
 	/**

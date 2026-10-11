@@ -5,7 +5,6 @@ import java.util.Map;
 
 import ng.appserver.NGContext;
 import ng.appserver.http.NGStandardRequest.UploadedFile;
-import ng.appserver.privates.NGParsedURI;
 
 /**
  * Represents a request entering the system
@@ -52,14 +51,6 @@ public interface NGRequest extends NGMessage {
 	 * @return The network address of the client that sent this request, as reported by the adaptor, or null when the adaptor didn't provide one.
 	 */
 	public String remoteAddress();
-
-	/**
-	 * @return The request's URI, parsed
-	 *
-	 * FIXME: URL parsing is probably better handled by consumers 	// Hugi 2026-08-23
-	 */
-	@Deprecated
-	public NGParsedURI parsedURI();
 
 	/**
 	 * FIXME: This will be deleted once we have a proper representation of multipart requests // Hugi 2026-08-23
