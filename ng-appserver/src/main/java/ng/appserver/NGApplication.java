@@ -465,20 +465,16 @@ public class NGApplication implements NGPlugin {
 	 * Add the sessionID cookie (if present in request) to the given response or, if the session is marked for termination, delete the session cookie
 	 */
 	private void addSessionCookieToResponse( final NGRequest request, final NGResponse response ) {
-		final String sessionID = request._sessionID();
+		final NGSession session = request.context().existingSession();
 
-		if( sessionID != null ) {
-			final NGSession session = request.existingSession();
-
-			if( session != null ) {
-				if( session.shouldReap() ) {
-					// If the session is terminating, delete the client side session cookie
-					response.addCookie( createSessionResetCookie() );
-					// CHECKME: This might be a better location to ask session storage to dispose of a terminated session.
-				}
-				else {
-					response.addCookie( createSessionCookie( sessionID, session.timeOut() ) );
-				}
+		if( session != null ) {
+			if( session.shouldReap() ) {
+				// If the session is terminating, delete the client side session cookie
+				response.addCookie( createSessionResetCookie() );
+				// CHECKME: This might be a better location to ask session storage to dispose of a terminated session.
+			}
+			else {
+				response.addCookie( createSessionCookie( session.sessionID(), session.timeOut() ) );
 			}
 		}
 	}
@@ -487,7 +483,7 @@ public class NGApplication implements NGPlugin {
 	 * "touch" the requests's session, i.e. indicate we're still working with it, granting it life for an additional [sessionTimeout] seconds
 	 */
 	private void touchSessionIfPresentAndNotTerminating( final NGRequest request ) {
-		final NGSession session = request.existingSession();
+		final NGSession session = request.context().existingSession();
 
 		if( session != null && !session.shouldReap() ) {
 			session.touch();

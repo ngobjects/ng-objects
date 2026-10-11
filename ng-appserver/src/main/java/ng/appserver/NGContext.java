@@ -37,6 +37,11 @@ public class NGContext {
 	private final NGRequest _request;
 
 	/**
+	 * The context's session. Null until resolved or created
+	 */
+	private NGSession _session;
+
+	/**
 	 * This context's uniqueID within it's session
 	 */
 	private String _contextID;
@@ -95,30 +100,56 @@ public class NGContext {
 	}
 
 	/**
-	 * @return This context's session, creating a session if none is present.
-	 *
-	 * The context is the owner of session access. Resolution is still delegated to the request for now, but that's
-	 * an implementation detail scheduled to change (the request will keep only the wire fact, i.e. the session ID).
+	 * @return This context's session, creating a new session if no session is present. Throws NGSessionRestorationException if a sessionID is present but no corresponding session is found.
 	 */
-	@SuppressWarnings("deprecation")
 	public NGSession session() {
-		return request().session();
+		return _session( true, true );
 	}
 
 	/**
-	 * @return This context's session, or null if no session is present.
+	 * @return This context's session, null if no session present.
+	 *
+	 * FIXME: We might actually want to throw on a missing sessionID here. Decide soon, otherwise this will get really annoying upon a change // Hugi 2024-10-08
 	 */
-	@SuppressWarnings("deprecation")
 	public NGSession existingSession() {
-		return request().existingSession();
+		return _session( false, false );
 	}
 
 	/**
 	 * @return True if this context has an existing session
 	 */
-	@SuppressWarnings("deprecation")
 	public boolean hasSession() {
-		return request().hasSession();
+		return existingSession() != null;
+	}
+
+	/**
+	 * @return A session for this context.
+	 *
+	 * @param createIfMissing If true, we'll create a new session if no session (or sessionID) is present.
+	 * @param throwIfIDPresentButNoCorrespondingSessionFound If true, will throw an NGSessionRestorationException if a sessionID is present but no corresponding session is found.
+	 */
+	private NGSession _session( boolean createIfMissing, boolean throwIfIDPresentButNoCorrespondingSessionFound ) {
+		if( _session == null ) {
+			final String sessionID = request()._sessionID();
+
+			// OK, we have no session. Check the request for a sessionID and see if we have one to restore.
+			if( sessionID != null ) {
+				_session = NGApplication.application().sessionStore().checkoutSessionWithID( sessionID );
+
+				// No session found, loudly notify the user
+				if( _session == null && throwIfIDPresentButNoCorrespondingSessionFound ) {
+					throw new NGSessionRestorationException( request() );
+				}
+			}
+			else {
+				if( createIfMissing ) {
+					_session = NGApplication.application().createSessionForRequest( request() );
+					NGApplication.application().sessionStore().storeSession( _session );
+				}
+			}
+		}
+
+		return _session;
 	}
 
 	/**

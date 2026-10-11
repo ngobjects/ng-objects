@@ -17,7 +17,8 @@ import ng.appserver.templating.NGComponent;
  * The pieces:
  *
  * - TestPage: a template-less page whose three phases are observable and scriptable (set actionHandler/renderCallback, read the invoked-flags)
- * - TestRequest: an NGStandardRequest wired directly to a given NGSession, bypassing cookie/session store resolution
+ * - TestRequest: a plain NGStandardRequest for a given URI and form values
+ * - TestContext: an NGContext wired directly to a given NGSession, bypassing cookie/session store resolution
  * - handle(): constructs the request + context pair and pushes it through a fresh NGComponentRequestHandler
  *
  * Typical use: create an NGSession, save a TestPage in it's page cache under a contextID, then
@@ -70,14 +71,24 @@ public class NGComponentRequestTestHarness {
 	}
 
 	/**
-	 * A request bound directly to the given session, so request handling never touches cookies or the session store.
+	 * A plain component action request with the given URI and form values
 	 */
 	public static class TestRequest extends NGStandardRequest {
 
+		public TestRequest( final String uri, final Map<String, List<String>> formValues ) {
+			super( "GET", uri, "HTTP/1.1", Map.of(), formValues, Map.of(), InputStream.nullInputStream(), null );
+		}
+	}
+
+	/**
+	 * A context bound directly to the given session, so request handling never touches cookies or the session store.
+	 */
+	public static class TestContext extends NGContext {
+
 		private final NGSession _testSession;
 
-		public TestRequest( final String uri, final NGSession session, final Map<String, List<String>> formValues ) {
-			super( "GET", uri, "HTTP/1.1", Map.of(), formValues, Map.of(), InputStream.nullInputStream(), null );
+		public TestContext( final NGRequest request, final NGSession session ) {
+			super( request );
 			_testSession = session;
 		}
 
@@ -101,8 +112,8 @@ public class NGComponentRequestTestHarness {
 	 * @return A new TestPage rendering the given marker string, born with a throwaway context (request handling replaces a page's context anyway)
 	 */
 	public static TestPage newPage( final String marker ) {
-		final TestRequest birthRequest = new TestRequest( "/no/birth", new NGSession(), Map.of() );
-		return new TestPage( new NGContext( birthRequest ), marker );
+		final TestRequest birthRequest = new TestRequest( "/no/birth", Map.of() );
+		return new TestPage( new TestContext( birthRequest, new NGSession() ), marker );
 	}
 
 	/**
@@ -113,10 +124,10 @@ public class NGComponentRequestTestHarness {
 	 * @param formValues The request's form values (an empty map means the takeValuesFromRequest phase is skipped)
 	 */
 	public static NGResponse handle( final NGSession session, final String uri, final Map<String, List<String>> formValues ) {
-		final TestRequest request = new TestRequest( uri, session, formValues );
+		final TestRequest request = new TestRequest( uri, formValues );
 
 		// The context registers itself with the request (request.setContext) in it's constructor
-		new NGContext( request );
+		new TestContext( request, session );
 
 		return new NGComponentRequestHandler().handleRequest( request );
 	}

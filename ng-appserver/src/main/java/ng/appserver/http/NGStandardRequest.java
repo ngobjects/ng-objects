@@ -13,8 +13,6 @@ import java.util.Objects;
 
 import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
-import ng.appserver.NGSession;
-import ng.appserver.NGSessionRestorationException;
 import ng.appserver.privates.NGParsedURI;
 
 public class NGStandardRequest implements NGRequest {
@@ -48,11 +46,6 @@ public class NGStandardRequest implements NGRequest {
 	 * Values of cookies
 	 */
 	private final Map<String, List<String>> _cookieValues;
-
-	/**
-	 * The request's session
-	 */
-	private NGSession _session;
 
 	/**
 	 * The network address of the client, as reported by the adaptor (see NGRequest.remoteAddress()).
@@ -158,76 +151,11 @@ public class NGStandardRequest implements NGRequest {
 	}
 
 	/**
-	 * @return This request's sessionID. Null if no sessionID is present.
+	 * @return The sessionID submitted by the client, if any. null if no sessionID was present in the request.
 	 */
 	@Override
 	public String _sessionID() {
-		if( _session != null ) {
-			return _session.sessionID();
-		}
-
-		return _sessionIDFromCookie();
-	}
-
-	/**
-	 * @return The sessionID submitted by the client, if any. null if no sessionID was present in the request.
-	 */
-	private String _sessionIDFromCookie() {
 		return cookieValueForKey( NGApplication.SESSION_ID_COOKIE_NAME );
-	}
-
-	/**
-	 * @return This request's session, creating a new session if no session is present. Throws NGSessionRestorationException if a sessionID is present but no corresponding session is found.
-	 */
-	@Override
-	public NGSession session() {
-		return _session( true, true );
-	}
-
-	/**
-	 * @return This request's session, null if no session present. Throws NGSessionRestorationException if a sessionID is present but no corresponding session is found.
-	 *
-	 * FIXME: We might actually want to throw on a missing sessionID here. Decide soon, otherwise this will get really annoying upon a change // Hugi 2024-10-08
-	 */
-	@Override
-	public NGSession existingSession() {
-		return _session( false, false );
-	}
-
-	/**
-	 * @return A session for this request.
-	 *
-	 * @param createIfMissing If true, we'll create a new session if no session (or sessionID) is present.
-	 * @param throwIfIDPresentButNoCorrespondingSessionFound If true, will throw an NGSessionRestorationException if a sessionID is present but no corresponding session is found.
-	 */
-	private NGSession _session( boolean createIfMissing, boolean throwIfIDPresentButNoCorrespondingSessionFound ) {
-		if( _session == null ) {
-			// OK, we have no session. Check the request for a sessionID and see if we have one to restore.
-			if( _sessionIDFromCookie() != null ) {
-				_session = NGApplication.application().sessionStore().checkoutSessionWithID( _sessionIDFromCookie() );
-
-				// No session found, loudly notify the user
-				if( _session == null && throwIfIDPresentButNoCorrespondingSessionFound ) {
-					throw new NGSessionRestorationException( this );
-				}
-			}
-			else {
-				if( createIfMissing ) {
-					_session = NGApplication.application().createSessionForRequest( this );
-					NGApplication.application().sessionStore().storeSession( _session );
-				}
-			}
-		}
-
-		return _session;
-	}
-
-	/**
-	 * @return True if this context has an existing session
-	 */
-	@Override
-	public boolean hasSession() {
-		return existingSession() != null;
 	}
 
 	/**
@@ -318,7 +246,7 @@ public class NGStandardRequest implements NGRequest {
 
 	@Override
 	public String toString() {
-		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _headers=" + headers() + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + ", _session=" + _session + "]";
+		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _headers=" + headers() + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + "]";
 	}
 
 	/* ------ FIXME: below is logic from NGMessage, awaiting to be nicely factored into the class // Hugi 2026-05-12 ------  */

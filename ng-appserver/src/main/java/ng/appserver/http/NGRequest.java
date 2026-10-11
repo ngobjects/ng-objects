@@ -44,25 +44,34 @@ public interface NGRequest extends NGMessage {
 	@Deprecated
 	public void _setContext( NGContext context );
 
+	/**
+	 * @return The sessionID submitted by the client, if any. null if no sessionID was present in the request.
+	 */
 	public String _sessionID();
 
 	/**
-	 * @deprecated Session access belongs to the context, use NGContext.session(). The request will keep only the wire fact (the session ID).
+	 * @deprecated Session access belongs to the context, use NGContext.session()
 	 */
 	@Deprecated
-	public NGSession session();
+	public default NGSession session() {
+		return context().session();
+	}
 
 	/**
 	 * @deprecated Session access belongs to the context, use NGContext.existingSession()
 	 */
 	@Deprecated
-	public NGSession existingSession();
+	public default NGSession existingSession() {
+		return context().existingSession();
+	}
 
 	/**
 	 * @deprecated Session access belongs to the context, use NGContext.hasSession()
 	 */
 	@Deprecated
-	public boolean hasSession();
+	public default boolean hasSession() {
+		return context().hasSession();
+	}
 
 	/**
 	 * @return The network address of the client that sent this request, as reported by the adaptor, or null when the adaptor didn't provide one.
