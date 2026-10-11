@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ng.appserver.NGContext;
 import ng.appserver.http.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.associations.NGAssociation;
@@ -42,24 +43,10 @@ public class NGGenericContainer extends NGDynamicGroup {
 		else {
 			final String elementName = (String)elementNameAssociation.valueInComponent( context.component() );
 
-			final StringBuilder b = new StringBuilder();
+			final Map<String, String> attributes = new HashMap<>();
+			NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
-			b.append( "<" + elementName );
-
-			_additionalAssociations.forEach( ( name, ass ) -> {
-				final Object value = ass.valueInComponent( context.component() );
-
-				if( value != null ) {
-					b.append( " " );
-					b.append( name );
-					b.append( "=" );
-					b.append( "\"" + value + "\"" );
-				}
-			} );
-
-			b.append( ">" );
-
-			response.appendContentString( b.toString() );
+			response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( elementName, attributes, false ) );
 			appendChildrenToResponse( response, context );
 			response.appendContentString( "</" + elementName + ">" );
 		}

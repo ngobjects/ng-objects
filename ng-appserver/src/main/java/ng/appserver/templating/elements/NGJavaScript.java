@@ -51,6 +51,6 @@ public class NGJavaScript extends NGDynamicElement {
 			urlString = "ERROR_NOT_FOUND_" + filename;
 		}
 
-		response.appendContentString( String.format( "<script src=\"%s\"></script>", urlString ) );
+		response.appendContentString( String.format( "<script src=\"%s\"></script>", NGHTMLUtilities.escapeHTML( urlString ) ) );
 	}
 }

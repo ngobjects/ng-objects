@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ng.appserver.NGContext;
 import ng.appserver.http.NGResponse;
+import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGBindingConfigurationException;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
@@ -38,24 +39,10 @@ public class NGGenericElement extends NGDynamicElement {
 	public void appendToResponse( NGResponse response, NGContext context ) {
 		final String elementName = (String)elementNameAssociation.valueInComponent( context.component() );
 
-		final StringBuilder b = new StringBuilder();
-
-		b.append( "<" + elementName );
-
-		_additionalAssociations.forEach( ( name, ass ) -> {
-			final Object value = ass.valueInComponent( context.component() );
-
-			if( value != null ) {
-				b.append( " " );
-				b.append( name );
-				b.append( "=" );
-				b.append( "\"" + value + "\"" );
-			}
-		} );
+		final Map<String, String> attributes = new HashMap<>();
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
 
 		// We might want to add a binding to specify if non-container elements are "closed" (i.e. a closing slash is added)
-		b.append( " />" );
-
-		response.appendContentString( b.toString() );
+		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( elementName, attributes, true ) );
 	}
 }

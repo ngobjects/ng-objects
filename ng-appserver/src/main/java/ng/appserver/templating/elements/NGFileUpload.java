@@ -9,6 +9,7 @@ import ng.appserver.NGContext;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardRequest.UploadedFile;
+import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.associations.NGAssociation;
@@ -28,9 +29,7 @@ public class NGFileUpload extends NGDynamicElement {
 
 	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
-		response.appendContentString( """
-					<input type="file" name="%s" />
-				""".formatted( name( context ) ) );
+		response.appendContentString( "<input type=\"file\" name=\"%s\" />".formatted( NGHTMLUtilities.escapeHTML( String.valueOf( name( context ) ) ) ) );
 	}
 
 	/**

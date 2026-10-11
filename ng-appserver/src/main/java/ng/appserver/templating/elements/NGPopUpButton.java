@@ -153,7 +153,7 @@ public class NGPopUpButton extends NGDynamicElement {
 
 		if( _noSelectionStringAss != null ) {
 			final String noSelectionString = (String)_noSelectionStringAss.valueInComponent( context.component() );
-			response.appendContentString( "<option value=\"%s\">%s</option>".formatted( NO_SELECTION_OPTION_VALUE, noSelectionString ) );
+			response.appendContentString( "<option value=\"%s\">%s</option>".formatted( NO_SELECTION_OPTION_VALUE, NGHTMLUtilities.escapeHTML( String.valueOf( noSelectionString ) ) ) );
 		}
 
 		int index = 0;
@@ -212,7 +212,7 @@ public class NGPopUpButton extends NGDynamicElement {
 
 			final String selectedMarker = isSelected ? " selected" : "";
 
-			response.appendContentString( "<option value=\"%s\"%s>%s</option>".formatted( index, selectedMarker, displayString ) );
+			response.appendContentString( "<option value=\"%s\"%s>%s</option>".formatted( index, selectedMarker, NGHTMLUtilities.escapeHTML( String.valueOf( displayString ) ) ) );
 			index++;
 		}
 
