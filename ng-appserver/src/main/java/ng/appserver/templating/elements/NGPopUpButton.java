@@ -87,8 +87,8 @@ public class NGPopUpButton extends NGDynamicElement {
 
 		final List selectedItems = new ArrayList<>();
 
-		for( String index : valuesFromRequest ) {
-			selectedItems.add( list.get( Integer.parseInt( index ) ) );
+		for( String value : valuesFromRequest ) {
+			selectedItems.add( itemForSubmittedValue( value, list, context ) );
 		}
 
 		_selectionsAss.setValue( selectedItems, context.component() );
@@ -117,17 +117,30 @@ public class NGPopUpButton extends NGDynamicElement {
 				// Worth implementing both for that safety (opt-in) and for WO compatibility. Deserves a proper session.
 				// (Note that WO silently pushes null when the index is out of range - a tradition of swallowing errors
 				// to protect the UI that we're deliberately NOT carrying on; see the hard failure below.) // Hugi 2026-08-11
-				final int selectionIndex = Integer.parseInt( stringValueFromRequest );
-				final List<?> list = list( context );
-
-				if( selectionIndex < 0 || selectionIndex >= list.size() ) {
-					throw new IllegalStateException( "The request submitted selection index %s for '%s', but the bound list contains %s elements. The list has probably changed between the page being rendered and the form being submitted (a stale or resubmitted form?), so the submitted selection can't be trusted".formatted( selectionIndex, name( context ), list.size() ) );
-				}
-
-				final Object selectedItem = list.get( selectionIndex );
+				final Object selectedItem = itemForSubmittedValue( stringValueFromRequest, list( context ), context );
 				_selectionAss.setValue( selectedItem, context.component() );
 			}
 		}
+	}
+
+	/**
+	 * @return The item at the list index submitted as an option's value. Throws if the value isn't an index into the list, since the submission then can't be trusted
+	 */
+	private Object itemForSubmittedValue( final String value, final List<?> list, final NGContext context ) {
+		final int index;
+
+		try {
+			index = Integer.parseInt( value );
+		}
+		catch( NumberFormatException e ) {
+			throw new IllegalStateException( "The request submitted '%s' as a selection for '%s', which isn't the value of any option this element renders".formatted( value, name( context ) ) );
+		}
+
+		if( index < 0 || index >= list.size() ) {
+			throw new IllegalStateException( "The request submitted selection index %s for '%s', but the bound list contains %s elements. The list has probably changed between the page being rendered and the form being submitted (a stale or resubmitted form?), so the submitted selection can't be trusted".formatted( index, name( context ), list.size() ) );
+		}
+
+		return list.get( index );
 	}
 
 	@Override
@@ -204,7 +217,7 @@ public class NGPopUpButton extends NGDynamicElement {
 					// No selection binding, so fall back to the value submitted in the current request
 					final String selectedValue = context.request().formValueForKey( name( context ) );
 
-					if( selectedValue != null && !selectedValue.equals( NO_SELECTION_OPTION_VALUE ) && Integer.parseInt( selectedValue ) == index ) {
+					if( String.valueOf( index ).equals( selectedValue ) ) {
 						isSelected = true;
 					}
 				}
