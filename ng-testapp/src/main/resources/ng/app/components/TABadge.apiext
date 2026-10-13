@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo content="expected" unknownAttributes="forbidden">
+		<doc><![CDATA[Shows its content as a small badge. A template-only component: it has no class. Tag name: `badge`.]]></doc>
+	</wo>
+</wodefinitions>

@@ -1,0 +1,5 @@
+<wodefinitions>
+	<wo class="ng.appserver.templating.librarytest.one.LibraryTestDeclared" content="forbidden">
+		<doc>An element with a class.</doc>
+	</wo>
+</wodefinitions>

@@ -41,10 +41,8 @@ import ng.appserver.routing.NGRouteTable;
 import ng.appserver.routing.NGRouteTable.Route;
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementManager;
-import ng.appserver.templating.NGElementManager.ElementProvider;
 import ng.appserver.wointegration.NGWOIntegrationPlugin;
 import ng.kvc.NGKeyValueCoding;
-import ng.plugins.Elements;
 import ng.plugins.NGCorePlugin;
 import ng.plugins.NGDevelopmentPlugin;
 import ng.plugins.NGPlugin;
@@ -245,7 +243,7 @@ public class NGApplication implements NGPlugin {
 	 * Construct an application with no properties (and no property loading)
 	 */
 	public NGApplication() {
-		// Unregistered elements are searched for on the classpath (as in WO), and each one found that way is logged once.
+		// Undeclared elements are searched for on the classpath (as in WO), and each one found that way is logged once.
 		// FIXME: Both should come from properties (NGSearchClassPathForElements; logging in development only), which
 		// aren't available at construction yet. Hardcoded until properties are reworked // Hugi 2026-10-13
 		_elementManager = new NGElementManager( true, true );
@@ -261,17 +259,6 @@ public class NGApplication implements NGPlugin {
 	@Override
 	public String namespace() {
 		return StandardNamespace.App.identifier();
-	}
-
-	/**
-	 * CHECKME: If a subclass overrides this method, it must invoke super.elements() to get an Elements instance, otherwise it loses the registration of the default packages. Could be nicer // Hugi 2025-06-26
-	 */
-	@Override
-	public Elements elements() {
-		return Elements
-				.create()
-				.elementPackage( getClass().getPackageName() )
-				.elementPackage( getClass().getPackageName() + ".components" );
 	}
 
 	/**
@@ -341,10 +328,8 @@ public class NGApplication implements NGPlugin {
 		addDefaultResourceSourcesForNamespace( resourceManager(), plugin.namespace() );
 		properties().addAndReadSource( new PropertiesSourceResource( plugin.namespace(), "Properties" ) );
 
-		// FIXME: We're greedily loading everything now. We need to modify element loading and caching to make it dynamic during development // Hugi 2025-04-19
-		for( final ElementProvider elementProvider : plugin.elements().elementProviders() ) {
-			elementManager().registerElementProvider( elementProvider );
-		}
+		// The elements the namespace declares
+		elementManager().loadNamespace( plugin.namespace() );
 
 		// Check if the plugin is providing routes
 		final List<Route> routeList = plugin.routes().routes();

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wodefinitions>
+	<wo class="ng.testapp.components.TALook" content="expected" unknownAttributes="forbidden">
+		<doc><![CDATA[The test application's page frame: the document head, the navigation and a container for the page's content. Tag name: `look`.]]></doc>
+	</wo>
+</wodefinitions>

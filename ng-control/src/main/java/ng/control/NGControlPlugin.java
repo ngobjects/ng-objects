@@ -1,6 +1,5 @@
 package ng.control;
 
-import ng.plugins.Elements;
 import ng.plugins.NGPlugin;
 import ng.plugins.Routes;
 
@@ -16,13 +15,6 @@ public class NGControlPlugin implements NGPlugin {
 		return Routes
 				.create()
 				.map( "/control", NGControlLogin.class );
-	}
-
-	@Override
-	public Elements elements() {
-		return Elements
-				.create()
-				.elementPackage( "ng.control" );
 	}
 
 	//	// Should not take an application argument. Is invoked after the plugin routes and elements have been loaded
@@ -44,17 +36,5 @@ public class NGControlPlugin implements NGPlugin {
 	//					page.someValue = someValue;
 	//					return page;
 	//				}
-	//	}
-	//
-	//	/**
-	//	 * @return A class describing how
-	//	 */
-	//	@Override
-	//	public Elements elements() {
-	//		return Elements
-	//				.register()
-	//				.fromClass( NGElement.class, "someTag", "someOtherTag" ) // signature( Class<? extends NGElement> elementClass, String ... tagNames )
-	//				.fromPackage( "my.element.package" ) // signature( String packageName )
-	//				.elementAlias( "NGPopUpButton", "popUpButton", "popup" ); // signature ( String tagName, String... tagAliases )
 	//	}
 }

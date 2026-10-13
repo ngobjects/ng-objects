@@ -4,23 +4,34 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.JarURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGContext;
 import ng.appserver.templating.associations.NGAssociation;
+import ng.appserver.templating.definitions.NGElementAPI;
+import ng.appserver.templating.definitions.NGTaglib;
 import ng.appserver.templating.elements.NGComponentReference;
 
 /**
@@ -32,16 +43,41 @@ public class NGElementManager {
 	private static final Logger logger = LoggerFactory.getLogger( NGElementManager.class );
 
 	/**
-	 * Classpath resource declaring tag aliases: each entry is {@code tagName = element}, where the
-	 * element is a registered element's simple class name (or another alias — resolution is
-	 * recursive). ng-appserver ships the framework's own registry in this file; frameworks and
-	 * applications contribute more by shipping a same-named file in their resources. The template
-	 * editor reads exactly these files, so tags resolve identically in the app and in the IDE.
+	 * To ease the porting of older templates to this system we allow unnamespaced elements. This is done
+	 * by designating the namespace "wo" a "magic namespace" which when used for locating elements means "search every namespace".
+	 *
+	 * This is probably/hopefully temporary.
 	 */
-	public static final String TAG_ALIASES_RESOURCE = "ng-tag-aliases.properties";
+	public static final String GLOBAL_UNNAMESPACED_NAMESPACE = "wo";
 
 	/**
-	 * Whether an element that isn't registered is searched for on the classpath, by simple name (the
+	 * A namespace's tag aliases, in its resource folder ({@code ng/<namespace>/tag-aliases.properties}): one line per
+	 * tag, {@code tagName = element}, where the element is an element's name (or another tag).
+	 */
+	public static final String TAG_ALIASES_FILENAME = "tag-aliases.properties";
+
+	/**
+	 * The elements the namespaces declare, by element name, in the order they were loaded: each {@code .apiext} in a
+	 * namespace's components folder, and each name its taglib publishes. An element nobody declares can still render
+	 * (see {@code NGSearchClassPathForElements}).
+	 */
+	private final Map<String, DeclaredElement> _declaredElements = new LinkedHashMap<>();
+
+	/**
+	 * The classes of declared elements, by element name
+	 */
+	private final Map<String, Class<?>> _elementClasses = new ConcurrentHashMap<>();
+
+	/**
+	 * Tag names mapped to element names (or to other tags; resolution is recursive), e.g. {@code str -> NGString},
+	 * from the namespaces' tag alias files, with the namespace that declared each. Namespaces are loaded in plugin
+	 * order, and a later one's tag overrides an earlier one's: a plugin can rename the tags of one it builds on, and the
+	 * application, loaded last, has the last word.
+	 */
+	private final Map<String, TagAlias> _tagAliases = new ConcurrentHashMap<>();
+
+	/**
+	 * Whether an element that isn't declared is searched for on the classpath, by simple name (the
 	 * {@code NGSearchClassPathForElements} property). On by default, like WO, and the same in every deployment
 	 * mode, so an app that renders in development renders in production.
 	 */
@@ -64,26 +100,30 @@ public class NGElementManager {
 	private final Set<String> _reportedUndeclaredElements = ConcurrentHashMap.newKeySet();
 
 	/**
-	 * @param searchClassPathForElements Whether an element that isn't registered is searched for on the classpath
-	 * ({@code NGSearchClassPathForElements})
+	 * @param searchClassPathForElements Whether an element that isn't declared is
+	 * searched for on the classpath ({@code NGSearchClassPathForElements})
 	 * @param warnAboutUndeclaredElements Whether elements found only on the classpath are logged, once each (development)
 	 */
 	public NGElementManager( final boolean searchClassPathForElements, final boolean warnAboutUndeclaredElements ) {
 		_searchClassPathForElements = searchClassPathForElements;
 		_warnAboutUndeclaredElements = warnAboutUndeclaredElements;
-
-		// Declared aliases are loaded first, so a plugin's explicit code registration
-		// (Elements.elementClass( cls, "tag" )) can still override a declared one.
-		loadTagAliasResources();
 	}
 
 	/**
-	 * To ease the porting of older templates to this system we allow unnamespaced elements. This is done
-	 * by designating the namespace "wo" a "magic namespace" which when used for locating elements means "search every namespace".
-	 *
-	 * This is probably/hopefully temporary.
+	 * @return Every declared element, published or internal, in the order loaded
 	 */
-	public static final String GLOBAL_UNNAMESPACED_NAMESPACE = "wo";
+	public List<DeclaredElement> declaredElements() {
+		synchronized( _declaredElements ) {
+			return List.copyOf( _declaredElements.values() );
+		}
+	}
+
+	/**
+	 * @return The elements the namespaces publish, in the order loaded: what documentation and tooling offer
+	 */
+	public List<DeclaredElement> publishedElements() {
+		return declaredElements().stream().filter( DeclaredElement::published ).toList();
+	}
 
 	/**
 	 * @return The named component, where [componentName] can be either the component's simple class name or full class name.
@@ -202,51 +242,11 @@ public class NGElementManager {
 	}
 
 	/**
-	 * Packages that we look for element classes in
-	 */
-	private final List<String> _elementPackages = new ArrayList<>();
-
-	/**
-	 * Explicitly registered element classes
-	 */
-	private final Map<String, Class<?>> _elementClasses = new HashMap<>();
-
-	/**
-	 * A mapping of shortcuts to element classes. For example, mapping of <wo:str /> to <wo:NGString />
-	 */
-	private final Map<String, String> _elementTagNames = new HashMap<>();
-
-	/**
-	 * Register a provider of element(s)
-	 */
-	public void registerElementProvider( final ElementProvider elementProvider ) {
-		switch( elementProvider ) {
-			case ElementByClass o -> registerElementClass( o.namespace(), o.elementClass(), o.tagNames() );
-			case ElementsByPackage o -> registerElementPackage( o.namespace(), o.packageName() );
-			case ElementAliases o -> throw new IllegalArgumentException( "Not implemented" );
-		}
-	}
-
-	/**
-	 * Registers an element class for use in the application
-	 */
-	private void registerElementClass( final String namespace, final Class<?> elementClass, String... tagNames ) {
-		_elementClasses.put( elementClass.getSimpleName(), elementClass );
-
-		for( final String tagName : tagNames ) {
-			registerTagAlias( tagName, elementClass.getSimpleName() );
-		}
-	}
-
-	/**
-	 * Registers an element class for use in the application
-	 */
-	private void registerElementPackage( final String namespace, final String packageName ) {
-		_elementPackages.add( packageName );
-	}
-
-	/**
-	 * @return A class with the given simpleClassName
+	 * @return The class of the element with the given name: a declared element's, or (if enabled) one found on the
+	 * classpath by simple name. Null if there's none, which for a template-only component is the expected answer.
+	 * An .apiext is authoritative: an element whose .apiext names no class (a template-only component) has none,
+	 * whatever the classpath holds. A name a taglib publishes without an .apiext says nothing about its class, so it's
+	 * resolved by name like any other.
 	 */
 	public Class classWithSimpleNameNullIfNotFound( String simpleClassName ) {
 
@@ -258,12 +258,12 @@ public class NGElementManager {
 			return elementClass;
 		}
 
-		for( final String packageName : _elementPackages ) {
-			try {
-				final String className = packageName + "." + simpleClassName;
-				return Class.forName( className );
+		synchronized( _declaredElements ) {
+			final DeclaredElement declared = _declaredElements.get( simpleClassName );
+
+			if( declared != null && declared.api() != null ) {
+				return null;
 			}
-			catch( ClassNotFoundException e ) {}
 		}
 
 		if( _searchClassPathForElements ) {
@@ -297,13 +297,13 @@ public class NGElementManager {
 		}
 
 		if( candidates.size() > 1 ) {
-			throw new NGElementNotFoundException( "Several element classes are named '%s' (%s); register the one you mean".formatted( simpleClassName, candidates.stream().map( Class::getName ).toList() ), simpleClassName );
+			throw new NGElementNotFoundException( "Several element classes are named '%s' (%s); declare the one you mean (an .apiext in its namespace's components folder)".formatted( simpleClassName, candidates.stream().map( Class::getName ).toList() ), simpleClassName );
 		}
 
 		final Class<?> found = candidates.get( 0 );
 
 		if( _warnAboutUndeclaredElements && _reportedUndeclaredElements.add( simpleClassName ) ) {
-			logger.warn( "'{}' isn't registered; found on the classpath as {}", simpleClassName, found.getName() );
+			logger.warn( "'{}' isn't declared; found on the classpath as {}. Add ng/<namespace>/components/{}.apiext to declare and document it.", simpleClassName, found.getName(), simpleClassName );
 		}
 
 		return found;
@@ -347,12 +347,33 @@ public class NGElementManager {
 	}
 
 	/**
-	 * Maps tag names to their dynamic element names
+	 * @return Every tag mapped to its target
 	 *
 	 * FIXME: Definitely not the final home of this functionality // Hugi 2022-04-23
 	 */
 	public Map<String, String> elementTagNames() {
-		return _elementTagNames;
+		final Map<String, String> tags = new HashMap<>();
+		_tagAliases.forEach( ( tag, alias ) -> tags.put( tag, alias.target() ) );
+		return tags;
+	}
+
+	/**
+	 * @return The tags that resolve to the named element, sorted
+	 */
+	public List<String> tagsFor( final String elementName ) {
+		return _tagAliases.keySet()
+				.stream()
+				.filter( tag -> !tag.equals( elementName ) && resolveTagName( tag ).equals( elementName ) )
+				.sorted()
+				.toList();
+	}
+
+	/**
+	 * @return What the tag maps to directly, or null if it maps to nothing
+	 */
+	private String tagTarget( final String tagName ) {
+		final TagAlias alias = _tagAliases.get( tagName );
+		return alias != null ? alias.target() : null;
 	}
 
 	/**
@@ -367,7 +388,7 @@ public class NGElementManager {
 		seen.add( current );
 		String next;
 
-		while( (next = _elementTagNames.get( current )) != null ) {
+		while( (next = tagTarget( current )) != null ) {
 			if( !seen.add( next ) ) {
 				logger.warn( "Cycle detected resolving tag alias for '{}' (at '{}'); stopping.", elementIdentifier, next );
 				break;
@@ -379,70 +400,236 @@ public class NGElementManager {
 	}
 
 	/**
-	 * Registers (or overrides) a tag alias: {@code tagName} will resolve to {@code target} (an element's
-	 * simple class name, or another alias).
+	 * Loads a namespace's elements and tags, as each plugin is initialized, in plugin order. The elements are in its
+	 * components folder ({@code ng/<namespace>/components}; several jars can contribute to one namespace): each
+	 * {@code .apiext} is an element, named after the file. Which of them the namespace publishes is its contract:
+	 *
+	 * - With a {@value NGTaglib#FILENAME} in the components folder, the elements it lists; the rest are internal. A listed
+	 *   element needn't have an {@code .apiext} (it's then undocumented, resolved by name).
+	 * - Without one, every element.
+	 *
+	 * Then the namespace's tags, from {@code ng/<namespace>/tag-aliases.properties}.
 	 */
-	public void registerTagAlias( final String tagName, final String target ) {
-		Objects.requireNonNull( tagName );
-		Objects.requireNonNull( target );
-		_elementTagNames.put( tagName, target );
-	}
+	public void loadNamespace( final String namespace ) {
+		Objects.requireNonNull( namespace );
 
-	/**
-	 * Loads every {@link #TAG_ALIASES_RESOURCE} on the classpath into the tag-name map. When two files
-	 * map the same tag to different targets there's no reliable way to honour classpath order from
-	 * runtime information ({@code ClassLoader.getResources} order is unspecified), so the first
-	 * declaration stands and the conflicting one is ignored with a warning — the same rule the
-	 * Parsley tag registry and the template editor apply, so all three agree.
-	 */
-	private void loadTagAliasResources() {
-		try {
-			final Enumeration<URL> resources = NGElementManager.class.getClassLoader().getResources( TAG_ALIASES_RESOURCE );
+		final String componentsFolder = "ng/%s/components".formatted( namespace );
+		final Set<String> published = publishedNames( componentsFolder );
 
-			while( resources.hasMoreElements() ) {
-				final URL url = resources.nextElement();
+		// The folder is listed through its directory entry, which a jar written without directory entries lacks: its
+		// taglib is still found (by its own path), so say why its elements are missing instead of declaring nothing
+		if( published != null && resources( componentsFolder ).isEmpty() ) {
+			logger.warn( "Namespace '{}' has a {} but its components folder can't be listed (a jar without directory entries?): only the elements it publishes are declared, without their .apiext", namespace, NGTaglib.FILENAME );
+		}
+		final Set<String> declared = new HashSet<>();
 
-				try( InputStream in = url.openStream() ) {
-					final Properties props = new Properties();
-					props.load( in );
+		for( final URL url : filesIn( componentsFolder, ".apiext" ) ) {
+			final String filename = url.getPath().substring( url.getPath().lastIndexOf( '/' ) + 1 );
+			final String name = filename.substring( 0, filename.length() - ".apiext".length() );
 
-					for( final String alias : props.stringPropertyNames() ) {
-						final String target = props.getProperty( alias );
+			try( InputStream in = url.openStream()) {
+				declare( name, NGElementAPI.parse( in, url.toString() ), namespace, published == null || published.contains( name ), url.toString() );
+				declared.add( name );
+			}
+			catch( final IOException e ) {
+				logger.warn( "Failed to read {}", url, e );
+			}
+		}
 
-						if( alias.isBlank() || target == null || target.isBlank() ) {
-							continue;
-						}
-
-						final String existing = _elementTagNames.get( alias.trim() );
-
-						if( existing != null && !existing.equals( target.trim() ) ) {
-							logger.warn( "Ignoring conflicting tag alias '{}' -> '{}' from {}; already registered as '{}' -> '{}'", alias, target, url, alias, existing );
-							continue;
-						}
-
-						_elementTagNames.put( alias.trim(), target.trim() );
-					}
-
-					logger.debug( "Loaded tag aliases from {}", url );
-				}
-				catch( final IOException e ) {
-					logger.warn( "Failed to read tag alias resource {}", url, e );
+		if( published != null ) {
+			for( final String name : published ) {
+				if( !declared.contains( name ) ) {
+					declare( name, null, namespace, true, componentsFolder + "/" + NGTaglib.FILENAME );
 				}
 			}
 		}
-		catch( final IOException e ) {
-			logger.warn( "Failed to enumerate {} resources on the classpath", TAG_ALIASES_RESOURCE, e );
+
+		for( final URL url : resources( "ng/%s/%s".formatted( namespace, TAG_ALIASES_FILENAME ) ) ) {
+			try( InputStream in = url.openStream()) {
+				final Properties properties = new Properties();
+				properties.load( in );
+
+				for( final String tag : properties.stringPropertyNames() ) {
+					registerTagAlias( tag.strip(), properties.getProperty( tag ).strip(), namespace, url.toString() );
+				}
+			}
+			catch( final IOException e ) {
+				logger.warn( "Failed to read the tag aliases {}", url, e );
+			}
 		}
 	}
 
 	/**
-	 * An interface that declares methods used by the framework
+	 * @return The names the taglib in the components folder publishes, or null when there's none (the namespace then
+	 * publishes every element). Several jars' taglibs for one namespace add up.
 	 */
-	public sealed interface ElementProvider permits ElementByClass, ElementsByPackage, ElementAliases {}
+	private static Set<String> publishedNames( final String componentsFolder ) {
+		Set<String> names = null;
 
-	public record ElementByClass( String namespace, Class<? extends NGElement> elementClass, String[] tagNames ) implements ElementProvider {}
+		for( final URL url : resources( componentsFolder + "/" + NGTaglib.FILENAME ) ) {
+			try( InputStream in = url.openStream()) {
+				if( names == null ) {
+					names = new LinkedHashSet<>();
+				}
 
-	public record ElementsByPackage( String namespace, String packageName ) implements ElementProvider {}
+				names.addAll( NGTaglib.parse( in, url.toString() ).elementNames() );
+			}
+			catch( final IOException e ) {
+				logger.warn( "Failed to read the taglib {}", url, e );
+			}
+		}
 
-	public record ElementAliases( String tagName, String[] tagAliases ) implements ElementProvider {}
+		return names;
+	}
+
+	/**
+	 * Declares an element, with its API (null for a published element without an {@code .apiext}). One with a class
+	 * gets that class (fully qualified, loaded here, so a wrong name fails at startup, not at render); one without is
+	 * resolved by name, as a template-only component is.
+	 *
+	 * When two elements have the same name, the first stands and the other is ignored with a warning.
+	 */
+	void declare( final String name, final NGElementAPI api, final String namespace, final boolean published, final String source ) {
+		synchronized( _declaredElements ) {
+			final DeclaredElement existing = _declaredElements.get( name );
+
+			// Checked before the class is loaded: an ignored declaration's class doesn't matter
+			if( existing != null ) {
+				logger.warn( "Ignoring the element '{}' in {}; namespace '{}' already has one", name, source, existing.namespace() );
+				return;
+			}
+		}
+
+		final Class<? extends NGElement> elementClass = api != null && api.className() != null ? declaredClass( name, api.className(), source ) : null;
+
+		synchronized( _declaredElements ) {
+			final DeclaredElement existing = _declaredElements.putIfAbsent( name, new DeclaredElement( name, namespace, elementClass, api, published ) );
+
+			if( existing != null ) {
+				logger.warn( "Ignoring the element '{}' in {}; namespace '{}' already has one", name, source, existing.namespace() );
+				return;
+			}
+		}
+
+		if( elementClass != null ) {
+			_elementClasses.put( name, elementClass );
+		}
+	}
+
+	/**
+	 * @return The declared class, which must exist, be an element, and have the element's name as its simple name: an
+	 * element has one name (the file's), and tag aliases are what give it others
+	 */
+	@SuppressWarnings("unchecked")
+	private static Class<? extends NGElement> declaredClass( final String name, final String className, final String source ) {
+		if( !className.substring( className.lastIndexOf( '.' ) + 1 ).equals( name ) ) {
+			throw new IllegalArgumentException( "%s: the element '%s' names the class '%s'; an element's file is named after its class (use a tag alias for another name)".formatted( source, name, className ) );
+		}
+
+		final Class<?> elementClass;
+
+		try {
+			elementClass = Class.forName( className, false, NGElementManager.class.getClassLoader() );
+		}
+		catch( ClassNotFoundException e ) {
+			throw new IllegalArgumentException( "%s: the class '%s' of element '%s' doesn't exist".formatted( source, className, name ), e );
+		}
+
+		if( !NGElement.class.isAssignableFrom( elementClass ) ) {
+			throw new IllegalArgumentException( "%s: the class '%s' of element '%s' isn't an NGElement".formatted( source, className, name ) );
+		}
+
+		return (Class<? extends NGElement>)elementClass;
+	}
+
+	/**
+	 * Maps a tag to its target for the namespace. A later namespace's tag overrides an earlier one's (plugin order); two
+	 * files of one namespace that disagree keep the first, with a warning (classpath order is unspecified).
+	 */
+	void registerTagAlias( final String tag, final String target, final String namespace, final String source ) {
+		if( tag.isEmpty() || target.isEmpty() ) {
+			return;
+		}
+
+		final TagAlias existing = _tagAliases.get( tag );
+
+		if( existing != null && !existing.target().equals( target ) ) {
+			if( existing.namespace().equals( namespace ) ) {
+				logger.warn( "Ignoring the tag '{}' -> '{}' in {}; namespace '{}' already maps it to '{}'", tag, target, source, namespace, existing.target() );
+				return;
+			}
+
+			logger.info( "The tag '{}' -> '{}' of namespace '{}' overrides namespace '{}''s '{}'", tag, target, namespace, existing.namespace(), existing.target() );
+		}
+
+		_tagAliases.put( tag, new TagAlias( target, namespace ) );
+	}
+
+	/**
+	 * @return The files with the extension directly in the folder, in every directory and jar on the classpath that has
+	 * it, sorted by name within each
+	 */
+	private static List<URL> filesIn( final String folder, final String extension ) {
+		final List<URL> files = new ArrayList<>();
+
+		for( final URL folderURL : resources( folder ) ) {
+			try {
+				if( "file".equals( folderURL.getProtocol() ) ) {
+					try( var paths = Files.list( Path.of( folderURL.toURI() ) )) {
+						for( final Path path : paths.filter( p -> p.toString().endsWith( extension ) ).sorted().toList() ) {
+							files.add( path.toUri().toURL() );
+						}
+					}
+				}
+				else if( folderURL.openConnection() instanceof JarURLConnection connection ) {
+					connection.setUseCaches( false );
+
+					try( JarFile jar = connection.getJarFile()) {
+						final String prefix = folder + "/";
+						final List<String> names = jar.stream()
+								.map( JarEntry::getName )
+								.filter( name -> name.startsWith( prefix ) && name.indexOf( '/', prefix.length() ) < 0 && name.endsWith( extension ) )
+								.sorted()
+								.toList();
+
+						for( final String name : names ) {
+							files.add( URI.create( "jar:" + connection.getJarFileURL() + "!/" + name ).toURL() );
+						}
+					}
+				}
+				else {
+					logger.warn( "Can't list {}: the {} protocol isn't supported, so the elements there aren't declared", folderURL, folderURL.getProtocol() );
+				}
+			}
+			catch( final IOException | URISyntaxException e ) {
+				logger.warn( "Failed to list {}", folderURL, e );
+			}
+		}
+
+		return files;
+	}
+
+	/**
+	 * @return Every resource at the path on the classpath (several jars can have one)
+	 */
+	private static List<URL> resources( final String path ) {
+		try {
+			return Collections.list( NGElementManager.class.getClassLoader().getResources( path ) );
+		}
+		catch( final IOException e ) {
+			logger.warn( "Failed to look for {} on the classpath", path, e );
+			return List.of();
+		}
+	}
+
+	/**
+	 * A tag's target, and the namespace that declared it
+	 */
+	private record TagAlias( String target, String namespace ) {}
+
+	/**
+	 * A declared element: its namespace, its class (null for a template-only component), its API from its {@code .apiext}
+	 * (null for a published element without one), and whether its namespace publishes it
+	 */
+	public record DeclaredElement( String name, String namespace, Class<? extends NGElement> elementClass, NGElementAPI api, boolean published ) {}
 }

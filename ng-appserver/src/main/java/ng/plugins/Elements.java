@@ -1,23 +1,16 @@
 package ng.plugins;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ng.appserver.templating.NGElement;
-import ng.appserver.templating.NGElementManager.ElementAliases;
-import ng.appserver.templating.NGElementManager.ElementByClass;
-import ng.appserver.templating.NGElementManager.ElementProvider;
-import ng.appserver.templating.NGElementManager.ElementsByPackage;
 
 /**
- * API for constructing a list of ways to locate element classes
+ * Registered a plugin's elements in code. Ignored: a namespace's elements are declared by the .apiext files in its
+ * components folder, their tags by its tag-aliases.properties, and an element nobody declares is found on the
+ * classpath by name. Kept so plugins that still return one compile while they're cleaned out.
+ *
+ * FIXME: Delete before 0.1.6 is released, with NGPlugin.elements() // Hugi 2026-10-14
  */
+@Deprecated
 public class Elements {
-
-	/**
-	 * List of methods we've listed to locate elements
-	 */
-	private List<ElementProvider> _elementProviders = new ArrayList<>();
 
 	private Elements() {}
 
@@ -25,22 +18,24 @@ public class Elements {
 		return new Elements();
 	}
 
+	/**
+	 * Ignored. The element is found on the classpath by name; its tags belong in the namespace's tag-aliases.properties.
+	 */
 	public Elements elementClass( Class<? extends NGElement> elementClass, String... tagNames ) {
-		_elementProviders.add( new ElementByClass( null, elementClass, tagNames ) );
 		return this;
 	}
 
+	/**
+	 * Ignored. The package's elements are found on the classpath by name.
+	 */
 	public Elements elementPackage( String packageName ) {
-		_elementProviders.add( new ElementsByPackage( null, packageName ) );
 		return this;
 	}
 
+	/**
+	 * Ignored. Tags belong in the namespace's tag-aliases.properties.
+	 */
 	public Elements elementAlias( String tagName, String... tagAliases ) {
-		_elementProviders.add( new ElementAliases( tagName, tagAliases ) );
 		return this;
-	}
-
-	public List<ElementProvider> elementProviders() {
-		return _elementProviders;
 	}
 }

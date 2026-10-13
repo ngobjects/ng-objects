@@ -26,8 +26,11 @@ public interface NGPlugin {
 	}
 
 	/**
-	 * @return Instructions on how to locate elements provided by this plugin
+	 * @return Ignored: a namespace's elements are declared in its components folder, and found on the classpath by name
+	 *
+	 * FIXME: Delete before 0.1.6 is released, with Elements. Kept so plugins that still override it compile while they're cleaned out // Hugi 2026-10-14
 	 */
+	@Deprecated
 	public default Elements elements() {
 		return Elements.create();
 	}

@@ -7,7 +7,6 @@ import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGResponses;
 import ng.appserver.privates.NGParsedURI;
-import ng.plugins.Elements;
 import ng.plugins.Routes;
 import ng.testapp.components.TAAjaxPage;
 import ng.testapp.components.TAMain;
@@ -101,14 +100,6 @@ public class Application extends NGApplication {
 		response.setContentBytes( bytes );
 		response.setHeader( "content-type", "image/jpeg" );
 		return response;
-	}
-
-	/**
-	 * FIXME: Implement an example implementation
-	 */
-	@Override
-	public Elements elements() {
-		return super.elements();
 	}
 
 	//	@Override

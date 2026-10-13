@@ -1,0 +1,4 @@
+<taglib>
+	<element name="ContractPublished"/>
+	<element name="ContractUndocumented"/>
+</taglib>

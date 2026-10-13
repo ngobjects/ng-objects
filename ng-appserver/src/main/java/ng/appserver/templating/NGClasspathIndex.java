@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The top-level classes on the classpath by simple name, for finding an element that isn't registered (see
+ * The top-level classes on the classpath by simple name, for finding an element that isn't declared (see
  * {@code NGSearchClassPathForElements}) — the way WO finds elements: by name, wherever they are.
  *
  * Only names are indexed; nothing is loaded here. The caller loads the few candidates matching a requested name.
