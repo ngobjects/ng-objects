@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -38,8 +39,15 @@ public class NGClasspathIndex {
 	 */
 	private final Map<String, List<String>> _classNamesBySimpleName;
 
-	private NGClasspathIndex( final Map<String, List<String>> classNamesBySimpleName ) {
+	/**
+	 * The packages of the classes in the classpath's directories: an application's own output folders, where classes
+	 * appear during development after the index was built
+	 */
+	private final Set<String> _directoryPackages;
+
+	private NGClasspathIndex( final Map<String, List<String>> classNamesBySimpleName, final Set<String> directoryPackages ) {
 		_classNamesBySimpleName = classNamesBySimpleName;
+		_directoryPackages = directoryPackages;
 	}
 
 	/**
@@ -65,6 +73,7 @@ public class NGClasspathIndex {
 	 */
 	public static NGClasspathIndex of( final List<Path> entries ) {
 		final Map<String, List<String>> index = new HashMap<>();
+		final Set<String> directoryPackages = new TreeSet<>();
 		final Set<Path> seen = new HashSet<>();
 		final Deque<Path> queue = new ArrayDeque<>( entries );
 
@@ -77,7 +86,7 @@ public class NGClasspathIndex {
 
 			try {
 				if( Files.isDirectory( entry ) ) {
-					indexDirectory( entry, index );
+					indexDirectory( entry, index, directoryPackages );
 				}
 				else if( Files.isRegularFile( entry ) && entry.toString().endsWith( ".jar" ) ) {
 					queue.addAll( indexJar( entry, index ) );
@@ -88,7 +97,7 @@ public class NGClasspathIndex {
 			}
 		}
 
-		return new NGClasspathIndex( index );
+		return new NGClasspathIndex( index, directoryPackages );
 	}
 
 	/**
@@ -98,9 +107,23 @@ public class NGClasspathIndex {
 		return _classNamesBySimpleName.getOrDefault( simpleName, List.of() );
 	}
 
-	private static void indexDirectory( final Path directory, final Map<String, List<String>> index ) throws IOException {
+	/**
+	 * @return The packages of the classes in the classpath's directories, the default package as an empty string
+	 */
+	public Set<String> directoryPackages() {
+		return _directoryPackages;
+	}
+
+	private static void indexDirectory( final Path directory, final Map<String, List<String>> index, final Set<String> directoryPackages ) throws IOException {
 		try( Stream<Path> files = Files.walk( directory )) {
-			files.filter( f -> f.toString().endsWith( ".class" ) ).forEach( f -> add( directory.relativize( f ).toString().replace( File.separatorChar, '/' ), index ) );
+			files.filter( f -> f.toString().endsWith( ".class" ) ).forEach( f -> {
+				final String path = directory.relativize( f ).toString().replace( File.separatorChar, '/' );
+				add( path, index );
+
+				if( !path.startsWith( "META-INF/" ) ) {
+					directoryPackages.add( path.contains( "/" ) ? path.substring( 0, path.lastIndexOf( '/' ) ).replace( '/', '.' ) : "" );
+				}
+			} );
 		}
 	}
 

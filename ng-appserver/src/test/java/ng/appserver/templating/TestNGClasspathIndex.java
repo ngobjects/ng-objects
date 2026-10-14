@@ -74,4 +74,12 @@ public class TestNGClasspathIndex {
 			}
 		}
 	}
+
+	@Test
+	public void directoryPackagesAreRecorded( @TempDir Path temp ) throws IOException {
+		Files.createDirectories( temp.resolve( "app/components" ) );
+		Files.writeString( temp.resolve( "app/components/Main.class" ), "" );
+		Files.writeString( temp.resolve( "Root.class" ), "" );
+		assertEquals( java.util.Set.of( "app.components", "" ), NGClasspathIndex.of( List.of( temp ) ).directoryPackages() );
+	}
 }

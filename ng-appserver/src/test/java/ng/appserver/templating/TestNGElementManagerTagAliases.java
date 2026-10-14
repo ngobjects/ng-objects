@@ -74,4 +74,16 @@ public class TestNGElementManagerTagAliases {
 		final NGElementNotFoundException e = assertThrows( NGElementNotFoundException.class, () -> new NGElementManager( true, false ).classWithSimpleNameNullIfNotFound( "LibraryTestDuplicate" ) );
 		assertTrue( e.getMessage().contains( "librarytest.one.LibraryTestDuplicate" ) && e.getMessage().contains( "librarytest.two.LibraryTestDuplicate" ) );
 	}
+
+	@Test
+	public void aClassCreatedAfterTheIndexIsFoundInADirectoryPackage( @org.junit.jupiter.api.io.TempDir java.nio.file.Path temp ) throws java.io.IOException {
+		// An index that has seen the package (in a directory) but not the class, as when the class was created after it was built
+		final java.nio.file.Path folder = temp.resolve( "ng/appserver/templating/librarytest/one" );
+		java.nio.file.Files.createDirectories( folder );
+		java.nio.file.Files.writeString( folder.resolve( "SomethingElse.class" ), "" );
+
+		final NGElementManager manager = new NGElementManager( true, false );
+		manager.useClasspathIndex( NGClasspathIndex.of( java.util.List.of( temp ) ) );
+		assertEquals( ng.appserver.templating.librarytest.one.LibraryTestUndeclared.class, manager.classWithSimpleNameNullIfNotFound( "LibraryTestUndeclared" ) );
+	}
 }

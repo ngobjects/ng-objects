@@ -281,16 +281,14 @@ public class NGElementManager {
 		final List<Class<?>> candidates = new ArrayList<>();
 
 		for( final String className : classpathIndex().classNamesWithSimpleName( simpleClassName ) ) {
-			try {
-				// Not initialized: a candidate that isn't an element must not run its static initializers
-				final Class<?> candidate = Class.forName( className, false, NGElementManager.class.getClassLoader() );
+			addElementClass( className, candidates );
+		}
 
-				if( NGElement.class.isAssignableFrom( candidate ) ) {
-					candidates.add( candidate );
-				}
-			}
-			catch( ClassNotFoundException | LinkageError e ) {
-				logger.debug( "Couldn't load classpath candidate {} for element {}", className, simpleClassName, e );
+		// Not in the index: a class created after it was built (during development) is in one of the packages already
+		// seen in the classpath's directories, the application's own output folders
+		if( candidates.isEmpty() ) {
+			for( final String packageName : classpathIndex().directoryPackages() ) {
+				addElementClass( packageName.isEmpty() ? simpleClassName : packageName + "." + simpleClassName, candidates );
 			}
 		}
 
@@ -309,6 +307,30 @@ public class NGElementManager {
 		}
 
 		return found;
+	}
+
+	/**
+	 * Adds the named class to the candidates if it exists and is an element
+	 */
+	private static void addElementClass( final String className, final List<Class<?>> candidates ) {
+		try {
+			// Not initialized: a candidate that isn't an element must not run its static initializers
+			final Class<?> candidate = Class.forName( className, false, NGElementManager.class.getClassLoader() );
+
+			if( NGElement.class.isAssignableFrom( candidate ) ) {
+				candidates.add( candidate );
+			}
+		}
+		catch( ClassNotFoundException | LinkageError e ) {
+			// Not a class there, or one that can't be loaded: not a candidate
+		}
+	}
+
+	/**
+	 * Uses the given index instead of building one from the classpath (for tests)
+	 */
+	synchronized void useClasspathIndex( final NGClasspathIndex index ) {
+		_classpathIndex = index;
 	}
 
 	private synchronized NGClasspathIndex classpathIndex() {
