@@ -223,6 +223,9 @@ public class NGApplication implements NGPlugin {
 		// CHECKME: We shouldn't really be adding this plugin by default... // Hugi 2025-05-13
 		application._plugins.add( new NGWOIntegrationPlugin() );
 
+		// Each plugin after the ones it requires (plugins are found in classpath order, which is unspecified)
+		application._plugins = inRequiredOrder( application._plugins );
+
 		// We start by initializing all the located plugins...
 		for( final NGPlugin plugin : application._plugins ) {
 			application.initPlugin( plugin );
@@ -287,6 +290,37 @@ public class NGApplication implements NGPlugin {
 	 *
 	 * FIXME: Ensure proper load order // Hugi 2025-05-24
 	 */
+	/**
+	 * @return The plugins, each after the plugins it {@link NGPlugin#requires() requires}; plugins with no requirement
+	 * between them keep their order
+	 * @throws IllegalStateException if a plugin requires one that isn't among them, or requirements form a cycle
+	 */
+	static List<NGPlugin> inRequiredOrder( final List<NGPlugin> plugins ) {
+		for( final NGPlugin plugin : plugins ) {
+			for( final Class<? extends NGPlugin> required : plugin.requires() ) {
+				if( plugins.stream().noneMatch( required::isInstance ) ) {
+					throw new IllegalStateException( "The plugin %s requires %s, which isn't loaded".formatted( plugin.getClass().getName(), required.getName() ) );
+				}
+			}
+		}
+
+		final List<NGPlugin> remaining = new ArrayList<>( plugins );
+		final List<NGPlugin> ordered = new ArrayList<>( plugins.size() );
+
+		while( !remaining.isEmpty() ) {
+			// The first remaining plugin whose requirements are all placed, so unrelated plugins keep their order
+			final NGPlugin next = remaining.stream()
+					.filter( plugin -> plugin.requires().stream().allMatch( required -> ordered.stream().anyMatch( required::isInstance ) ) )
+					.findFirst()
+					.orElseThrow( () -> new IllegalStateException( "The plugins' requirements form a cycle: %s".formatted( remaining.stream().map( p -> p.getClass().getName() ).toList() ) ) );
+
+			remaining.remove( next );
+			ordered.add( next );
+		}
+
+		return ordered;
+	}
+
 	private void locatePlugins() {
 		ServiceLoader.load( NGPlugin.class )
 				.stream()
