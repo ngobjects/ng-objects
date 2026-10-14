@@ -321,8 +321,13 @@ public class NGElementManager {
 				candidates.add( candidate );
 			}
 		}
-		catch( ClassNotFoundException | LinkageError e ) {
-			// Not a class there, or one that can't be loaded: not a candidate
+		catch( ClassNotFoundException e ) {
+			// Not a class there: the usual answer when probing a package
+		}
+		catch( LinkageError e ) {
+			// A class that exists but can't be loaded (a missing dependency, a broken hot swap) is the real cause of whatever
+			// fails next, so it mustn't vanish
+			logger.warn( "The class {} exists but can't be loaded, so it isn't an element candidate", className, e );
 		}
 	}
 

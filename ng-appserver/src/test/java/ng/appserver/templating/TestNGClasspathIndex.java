@@ -12,6 +12,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -80,6 +81,6 @@ public class TestNGClasspathIndex {
 		Files.createDirectories( temp.resolve( "app/components" ) );
 		Files.writeString( temp.resolve( "app/components/Main.class" ), "" );
 		Files.writeString( temp.resolve( "Root.class" ), "" );
-		assertEquals( java.util.Set.of( "app.components", "" ), NGClasspathIndex.of( List.of( temp ) ).directoryPackages() );
+		assertEquals( Set.of( "app.components", "" ), NGClasspathIndex.of( List.of( temp ) ).directoryPackages() );
 	}
 }

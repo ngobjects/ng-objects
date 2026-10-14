@@ -1,11 +1,19 @@
 package ng.appserver.templating;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import ng.appserver.templating.librarytest.one.LibraryTestUndeclared;
 
 /**
  * The tag registry is declared in ng-tag-aliases.properties and loaded by NGElementManager;
@@ -56,7 +64,7 @@ public class TestNGElementManagerTagAliases {
 
 	@Test
 	public void unregisteredElementsAreFoundOnTheClasspath() {
-		assertEquals( ng.appserver.templating.librarytest.one.LibraryTestUndeclared.class, new NGElementManager( true, false ).classWithSimpleNameNullIfNotFound( "LibraryTestUndeclared" ) );
+		assertEquals( LibraryTestUndeclared.class, new NGElementManager( true, false ).classWithSimpleNameNullIfNotFound( "LibraryTestUndeclared" ) );
 	}
 
 	@Test
@@ -76,14 +84,14 @@ public class TestNGElementManagerTagAliases {
 	}
 
 	@Test
-	public void aClassCreatedAfterTheIndexIsFoundInADirectoryPackage( @org.junit.jupiter.api.io.TempDir java.nio.file.Path temp ) throws java.io.IOException {
+	public void aClassCreatedAfterTheIndexIsFoundInADirectoryPackage( @TempDir Path temp ) throws IOException {
 		// An index that has seen the package (in a directory) but not the class, as when the class was created after it was built
-		final java.nio.file.Path folder = temp.resolve( "ng/appserver/templating/librarytest/one" );
-		java.nio.file.Files.createDirectories( folder );
-		java.nio.file.Files.writeString( folder.resolve( "SomethingElse.class" ), "" );
+		final Path folder = temp.resolve( "ng/appserver/templating/librarytest/one" );
+		Files.createDirectories( folder );
+		Files.writeString( folder.resolve( "SomethingElse.class" ), "" );
 
 		final NGElementManager manager = new NGElementManager( true, false );
-		manager.useClasspathIndex( NGClasspathIndex.of( java.util.List.of( temp ) ) );
-		assertEquals( ng.appserver.templating.librarytest.one.LibraryTestUndeclared.class, manager.classWithSimpleNameNullIfNotFound( "LibraryTestUndeclared" ) );
+		manager.useClasspathIndex( NGClasspathIndex.of( List.of( temp ) ) );
+		assertEquals( LibraryTestUndeclared.class, manager.classWithSimpleNameNullIfNotFound( "LibraryTestUndeclared" ) );
 	}
 }
