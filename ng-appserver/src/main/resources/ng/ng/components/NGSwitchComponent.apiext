@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGSwitchComponent" content="allowed" unknownAttributes="allowed">
+	<wo class="ng.appserver.templating.elements.NGSwitchComponent" content="allowed" unknownAttributes="allowed">
 
 		<doc><![CDATA[Renders the component (or dynamic element) named by `componentName`, which may change between requests. Every other binding is passed on to the chosen component as its own bindings, and the tag's content becomes the component's content. Tag name: `switch`.]]></doc>
 

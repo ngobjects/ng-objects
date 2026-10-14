@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGCheckbox" content="forbidden" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.NGCheckbox" content="forbidden" unknownAttributes="passthrough">
 
 		<doc><![CDATA[An `<input type="checkbox">` bound two ways to `checked`: rendered checked when it is truthy, and on submit **pushed** `true` if the box was ticked, `false` otherwise (a checkbox that isn't ticked is simply absent from the form data). Other bindings are rendered as attributes. Tag name: `checkbox`.]]></doc>
 

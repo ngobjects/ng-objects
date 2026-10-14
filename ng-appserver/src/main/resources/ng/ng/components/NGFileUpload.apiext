@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGFileUpload" content="forbidden" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.NGFileUpload" content="forbidden" unknownAttributes="forbidden">
 
 		<doc><![CDATA[An `<input type="file">`. On submit, the uploaded file's name and bytes are **pushed** into `filename` and `data`. Tag name: `fileUpload`.]]></doc>
 

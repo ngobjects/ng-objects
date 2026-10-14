@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGPopUpButton" content="forbidden" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.NGPopUpButton" content="forbidden" unknownAttributes="passthrough">
 
 		<doc><![CDATA[A `<select>` over the objects in `list`. Single-select by default, bound to `selection`; bind `multiple` truthy and `selections` for a multi-select. Options are identified by their index in `list`. Other bindings are rendered as attributes on the `<select>`. Tag name: `popUpButton`.]]></doc>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="AjaxUpdateContainer" content="expected" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.ajax.AjaxUpdateContainer" content="expected" unknownAttributes="passthrough">
 
 		<doc><![CDATA[Wraps its content in an element (a `<div>` by default) with the given `id`, so that `AjaxUpdateLink`, `AjaxSubmitButton` and `AjaxObserveField` can refresh just that part of the page. Other bindings are rendered as attributes. Tag name: `auc`.]]></doc>
 

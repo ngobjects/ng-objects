@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGForm" content="expected" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.NGForm" content="expected" unknownAttributes="passthrough">
 
 		<doc><![CDATA[An HTML `<form>` for component actions. The form always posts back to the component; `action` is invoked when the form itself is the submitting element and no submit button claimed the submission. Bindings other than the ones below are rendered as attributes on the `<form>` tag.]]></doc>
 

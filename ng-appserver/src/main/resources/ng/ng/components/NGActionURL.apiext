@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGActionURL" content="forbidden" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.NGActionURL" content="forbidden" unknownAttributes="forbidden">
 
 		<doc><![CDATA[Renders the URL that invokes `action` on this component — for building your own links, forms or scripts around a component action. Tag name: `actionURL`.]]></doc>
 

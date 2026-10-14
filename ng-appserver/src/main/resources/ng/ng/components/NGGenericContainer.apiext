@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGGenericContainer" content="expected" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.NGGenericContainer" content="expected" unknownAttributes="passthrough">
 
 		<doc><![CDATA[Renders its content inside an arbitrary HTML element named by `elementName`. Other bindings become attributes (a `null` value omits the attribute). Bind `omitTags` truthy to render only the content. Tag name: `container`.]]></doc>
 

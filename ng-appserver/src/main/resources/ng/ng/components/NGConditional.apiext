@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGConditional" content="expected" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.NGConditional" content="expected" unknownAttributes="forbidden">
 
 		<doc><![CDATA[Renders its content only when `condition` is truthy — and, in the same way, only lets the content take form values and invoke actions when it is. Bind `negate` to flip the test. Tag name: `if`.]]></doc>
 

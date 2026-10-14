@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGString" content="forbidden" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.NGString" content="forbidden" unknownAttributes="forbidden">
 
 		<doc><![CDATA[Renders a value as text. Anything that isn't a string is rendered with `toString()` (or through `formatter` when bound). A `null` value renders nothing at all. HTML is escaped by default.]]></doc>
 

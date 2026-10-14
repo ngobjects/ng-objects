@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="AjaxObserveField" content="allowed" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.ajax.AjaxObserveField" content="allowed" unknownAttributes="forbidden">
 
 		<doc><![CDATA[Watches form fields for changes and, after `debounce` milliseconds of quiet, submits the changed field (or the whole form, with `fullSubmit`) over Ajax, invoking `action` and refreshing `updateContainerID`. Two modes: bind `observeFieldID` to watch one field (renders an invisible marker; content is ignored), or leave it unbound to wrap the tag's content in a container whose input/textarea/select descendants are all observed. Tag name: `aof`.]]></doc>
 

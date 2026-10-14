@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGRepetition" content="expected" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.NGRepetition" content="expected" unknownAttributes="forbidden">
 
 		<doc><![CDATA[Renders its content once per item of `list` (with `item` set to the current object) or, alternatively, `count` times. Exactly one of `list` and `count` must be bound. `index` receives the zero-based iteration number either way.]]></doc>
 

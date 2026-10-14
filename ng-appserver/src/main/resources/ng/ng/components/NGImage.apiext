@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGImage" content="forbidden" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.NGImage" content="forbidden" unknownAttributes="passthrough">
 
 		<doc><![CDATA[An `<img>` whose source is a webserver resource (`filename`), a plain URL (`src`), or bytes served through the dynamic-resource cache (`data` / `dataInputStream`, which require `mimeType`). Bind exactly one source. Other bindings are rendered as attributes. Tag name: `img`.]]></doc>
 

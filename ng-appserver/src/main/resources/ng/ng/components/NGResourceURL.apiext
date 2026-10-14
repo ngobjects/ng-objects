@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGResourceURL" content="forbidden" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.NGResourceURL" content="forbidden" unknownAttributes="forbidden">
 
 		<doc><![CDATA[Renders the URL of a webserver resource, for use in your own tags and attributes. Tag name: `resourceURL`.]]></doc>
 

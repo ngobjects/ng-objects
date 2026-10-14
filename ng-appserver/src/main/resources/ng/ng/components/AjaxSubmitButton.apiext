@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="AjaxSubmitButton" content="allowed" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.ajax.AjaxSubmitButton" content="allowed" unknownAttributes="passthrough">
 
 		<doc><![CDATA[Submits the enclosing form over Ajax, invoking `action` and refreshing the `AjaxUpdateContainer` named by `updateContainerID`. Renders as an `<input type="button">`, or — when the tag has content — as a `<button>` wrapping it. Other bindings are rendered as attributes. Tag name: `asb`.]]></doc>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGSubmitButton" content="forbidden" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.NGSubmitButton" content="forbidden" unknownAttributes="passthrough">
 
 		<doc><![CDATA[An `<input type="submit">` inside an `NGForm`. When this button is the one pressed, its `action` is invoked instead of the form's. Other bindings are rendered as attributes (bind `value` for the button's label). Tag name: `submit`.]]></doc>
 

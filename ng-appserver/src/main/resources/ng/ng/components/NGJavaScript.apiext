@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGJavaScript" content="forbidden" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.NGJavaScript" content="forbidden" unknownAttributes="forbidden">
 
 		<doc><![CDATA[Renders a `<script src="…">` tag for a webserver resource. Tag name: `script`.]]></doc>
 

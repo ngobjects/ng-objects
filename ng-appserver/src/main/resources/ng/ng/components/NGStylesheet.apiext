@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGStylesheet" content="forbidden" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.NGStylesheet" content="forbidden" unknownAttributes="forbidden">
 
 		<doc><![CDATA[Renders a `<link rel="stylesheet">` tag for a webserver resource. Tag name: `stylesheet`.]]></doc>
 

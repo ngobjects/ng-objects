@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="AjaxUpdateLink" content="expected" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.ajax.AjaxUpdateLink" content="expected" unknownAttributes="passthrough">
 
 		<doc><![CDATA[An `<a>` that invokes `action` over Ajax and replaces the `AjaxUpdateContainer` named by `updateContainerID` with the result, without a full page load. Other bindings are rendered as attributes. Tag name: `aul`.]]></doc>
 

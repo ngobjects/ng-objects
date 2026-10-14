@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGHyperlink" content="expected" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.NGHyperlink" content="expected" unknownAttributes="passthrough">
 
 		<doc><![CDATA[An HTML `<a>` linking to a component action, a named page, or a plain URL — bind **exactly one** of `action`, `pageName` and `href`. When `disabled` is truthy only the content is rendered (no `<a>` at all) and the link cannot be invoked. Other bindings become attributes on the tag. Tag name: `link`.]]></doc>
 

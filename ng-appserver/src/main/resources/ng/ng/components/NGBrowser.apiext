@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="NGBrowser" content="forbidden" unknownAttributes="passthrough">
+	<wo class="ng.appserver.templating.elements.NGBrowser" content="forbidden" unknownAttributes="passthrough">
 
 		<doc><![CDATA[The multi-selection variant of `NGPopUpButton` — today an alias for it: the same element, the same bindings. To actually get a multi-select, bind `multiple` truthy and `selections` (the default is still single-select via `selection`). Tag name: `browser`.]]></doc>
 
