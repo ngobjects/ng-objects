@@ -1,6 +1,8 @@
 package ng.appserver.templating;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -13,7 +15,7 @@ public class TestNGElementManagerTagAliases {
 
 	@Test
 	public void shippedRegistryIsLoadedFromTheClasspath() {
-		final NGElementManager manager = new NGElementManager();
+		final NGElementManager manager = new NGElementManager( false, false );
 
 		// The one WO/NG spelling divergence that used to trip the editor — and a few plain ones.
 		assertEquals( "NGCheckbox", manager.resolveTagName( "checkbox" ) );
@@ -25,30 +27,51 @@ public class TestNGElementManagerTagAliases {
 
 	@Test
 	public void unaliasedNameResolvesToItself() {
-		assertEquals( "NGString", new NGElementManager().resolveTagName( "NGString" ) );
-		assertEquals( "MyComponent", new NGElementManager().resolveTagName( "MyComponent" ) );
+		assertEquals( "NGString", new NGElementManager( false, false ).resolveTagName( "NGString" ) );
+		assertEquals( "MyComponent", new NGElementManager( false, false ).resolveTagName( "MyComponent" ) );
 	}
 
 	@Test
 	public void resolutionIsRecursive() {
-		final NGElementManager manager = new NGElementManager();
+		final NGElementManager manager = new NGElementManager( false, false );
 		manager.registerTagAlias( "myStr", "str" );
 		assertEquals( "NGString", manager.resolveTagName( "myStr" ) );
 	}
 
 	@Test
 	public void codeRegistrationOverridesADeclaredAlias() {
-		final NGElementManager manager = new NGElementManager();
+		final NGElementManager manager = new NGElementManager( false, false );
 		manager.registerTagAlias( "str", "MyOwnString" );
 		assertEquals( "MyOwnString", manager.resolveTagName( "str" ) );
 	}
 
 	@Test
 	public void cyclesDoNotHang() {
-		final NGElementManager manager = new NGElementManager();
+		final NGElementManager manager = new NGElementManager( false, false );
 		manager.registerTagAlias( "a", "b" );
 		manager.registerTagAlias( "b", "a" );
 		final String resolved = manager.resolveTagName( "a" );
 		assertTrue( resolved.equals( "a" ) || resolved.equals( "b" ) );
+	}
+
+	@Test
+	public void unregisteredElementsAreFoundOnTheClasspath() {
+		assertEquals( ng.appserver.templating.librarytest.one.LibraryTestUndeclared.class, new NGElementManager( true, false ).classWithSimpleNameNullIfNotFound( "LibraryTestUndeclared" ) );
+	}
+
+	@Test
+	public void theClasspathSearchCanBeSwitchedOff() {
+		assertNull( new NGElementManager( false, false ).classWithSimpleNameNullIfNotFound( "LibraryTestUndeclared" ) );
+	}
+
+	@Test
+	public void classesThatArentElementsArentFound() {
+		assertNull( new NGElementManager( true, false ).classWithSimpleNameNullIfNotFound( "TestNGElementManagerTagAliases" ) );
+	}
+
+	@Test
+	public void anAmbiguousNameIsRefusedNotGuessed() {
+		final NGElementNotFoundException e = assertThrows( NGElementNotFoundException.class, () -> new NGElementManager( true, false ).classWithSimpleNameNullIfNotFound( "LibraryTestDuplicate" ) );
+		assertTrue( e.getMessage().contains( "librarytest.one.LibraryTestDuplicate" ) && e.getMessage().contains( "librarytest.two.LibraryTestDuplicate" ) );
 	}
 }

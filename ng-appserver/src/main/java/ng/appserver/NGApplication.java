@@ -245,7 +245,10 @@ public class NGApplication implements NGPlugin {
 	 * Construct an application with no properties (and no property loading)
 	 */
 	public NGApplication() {
-		_elementManager = new NGElementManager();
+		// Unregistered elements are searched for on the classpath (as in WO), and each one found that way is logged once.
+		// FIXME: Both should come from properties (NGSearchClassPathForElements; logging in development only), which
+		// aren't available at construction yet. Hardcoded until properties are reworked // Hugi 2026-10-13
+		_elementManager = new NGElementManager( true, true );
 		_resourceManager = new NGResourceManager();
 		_resourceManagerDynamic = new NGResourceManagerDynamic();
 		_sessionStore = new NGServerSessionStore();

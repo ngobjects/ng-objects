@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
@@ -39,7 +40,38 @@ public class NGElementManager {
 	 */
 	public static final String TAG_ALIASES_RESOURCE = "ng-tag-aliases.properties";
 
-	public NGElementManager() {
+	/**
+	 * Whether an element that isn't registered is searched for on the classpath, by simple name (the
+	 * {@code NGSearchClassPathForElements} property). On by default, like WO, and the same in every deployment
+	 * mode, so an app that renders in development renders in production.
+	 */
+	private final boolean _searchClassPathForElements;
+
+	/**
+	 * Whether an element found only on the classpath is logged (once per element). Set in development, so
+	 * undeclared elements are visible.
+	 */
+	private final boolean _warnAboutUndeclaredElements;
+
+	/**
+	 * The classpath's classes by simple name, built the first time an element is searched for there
+	 */
+	private NGClasspathIndex _classpathIndex;
+
+	/**
+	 * Elements already reported as found only on the classpath
+	 */
+	private final Set<String> _reportedUndeclaredElements = ConcurrentHashMap.newKeySet();
+
+	/**
+	 * @param searchClassPathForElements Whether an element that isn't registered is searched for on the classpath
+	 * ({@code NGSearchClassPathForElements})
+	 * @param warnAboutUndeclaredElements Whether elements found only on the classpath are logged, once each (development)
+	 */
+	public NGElementManager( final boolean searchClassPathForElements, final boolean warnAboutUndeclaredElements ) {
+		_searchClassPathForElements = searchClassPathForElements;
+		_warnAboutUndeclaredElements = warnAboutUndeclaredElements;
+
 		// Declared aliases are loaded first, so a plugin's explicit code registration
 		// (Elements.elementClass( cls, "tag" )) can still override a declared one.
 		loadTagAliasResources();
@@ -234,7 +266,57 @@ public class NGElementManager {
 			catch( ClassNotFoundException e ) {}
 		}
 
+		if( _searchClassPathForElements ) {
+			return elementClassOnClasspath( simpleClassName );
+		}
+
 		return null;
+	}
+
+	/**
+	 * @return The element class with the given simple name found anywhere on the classpath, or null if there's none.
+	 * @throws NGElementNotFoundException if several element classes have the name: which one a template means can't be guessed
+	 */
+	private Class<?> elementClassOnClasspath( final String simpleClassName ) {
+		final List<Class<?>> candidates = new ArrayList<>();
+
+		for( final String className : classpathIndex().classNamesWithSimpleName( simpleClassName ) ) {
+			try {
+				// Not initialized: a candidate that isn't an element must not run its static initializers
+				final Class<?> candidate = Class.forName( className, false, NGElementManager.class.getClassLoader() );
+
+				if( NGElement.class.isAssignableFrom( candidate ) ) {
+					candidates.add( candidate );
+				}
+			}
+			catch( ClassNotFoundException | LinkageError e ) {
+				logger.debug( "Couldn't load classpath candidate {} for element {}", className, simpleClassName, e );
+			}
+		}
+
+		if( candidates.isEmpty() ) {
+			return null;
+		}
+
+		if( candidates.size() > 1 ) {
+			throw new NGElementNotFoundException( "Several element classes are named '%s' (%s); register the one you mean".formatted( simpleClassName, candidates.stream().map( Class::getName ).toList() ), simpleClassName );
+		}
+
+		final Class<?> found = candidates.get( 0 );
+
+		if( _warnAboutUndeclaredElements && _reportedUndeclaredElements.add( simpleClassName ) ) {
+			logger.warn( "'{}' isn't registered; found on the classpath as {}", simpleClassName, found.getName() );
+		}
+
+		return found;
+	}
+
+	private synchronized NGClasspathIndex classpathIndex() {
+		if( _classpathIndex == null ) {
+			_classpathIndex = NGClasspathIndex.ofClasspath();
+		}
+
+		return _classpathIndex;
 	}
 
 	/**

@@ -1,0 +1,8 @@
+package ng.appserver.templating.librarytest.one;
+
+import ng.appserver.templating.NGElement;
+
+/**
+ * An element whose simple name another test element shares (see librarytest.two), for the classpath fallback's ambiguity test
+ */
+public class LibraryTestDuplicate implements NGElement {}
