@@ -89,17 +89,16 @@ public class NGHTMLUtilities {
 	public static NGAssociation namespaceAssociation( final Map<String, NGAssociation> associations, boolean removeAssociation ) {
 		Objects.requireNonNull( associations );
 
-		NGAssociation a = removeAssociation ? associations.remove( "namespace" ) : associations.get( "namespace" );
+		final NGAssociation namespace = removeAssociation ? associations.remove( "namespace" ) : associations.get( "namespace" );
+		final NGAssociation framework = removeAssociation ? associations.remove( "framework" ) : associations.get( "framework" );
 
-		if( a != null ) {
-			return a;
+		if( namespace != null ) {
+			return namespace;
 		}
 
-		a = removeAssociation ? associations.remove( "framework" ) : associations.get( "framework" );
-
-		if( a != null ) {
+		if( framework != null ) {
 			logger.warn( "Found [framework] binding. You should be using [namespace]" );
-			return a;
+			return framework;
 		}
 
 		return null;

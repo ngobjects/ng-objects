@@ -71,7 +71,7 @@ public class NGImage extends NGDynamicElement {
 		super( null, null, null );
 		_additionalAssociations = new HashMap<>( associations );
 		_filenameAssociation = _additionalAssociations.remove( "filename" );
-		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( associations, true );
+		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( _additionalAssociations, true );
 		_srcAssociation = _additionalAssociations.remove( "src" );
 		_dataAssociation = _additionalAssociations.remove( "data" );
 		_dataInputStreamAssociation = _additionalAssociations.remove( "dataInputStream" );

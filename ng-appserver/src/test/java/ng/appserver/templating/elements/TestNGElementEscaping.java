@@ -60,7 +60,7 @@ public class TestNGElementEscaping {
 	@Test
 	public void fileUploadName() {
 		final String html = render( new NGFileUpload( null, associations( "name", HOSTILE ), null ) );
-		assertEquals( "<input type=\"file\" name=\"" + HOSTILE_ESCAPED + "\" />", html );
+		assertEquals( "<input type=\"file\" name=\"" + HOSTILE_ESCAPED + "\"/>", html );
 	}
 
 	/**

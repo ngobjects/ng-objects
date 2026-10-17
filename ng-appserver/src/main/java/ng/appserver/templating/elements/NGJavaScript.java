@@ -1,5 +1,6 @@
 package ng.appserver.templating.elements;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,7 +15,7 @@ import ng.appserver.templating.NGElement;
 import ng.appserver.templating.associations.NGAssociation;
 
 /**
- * For embedding stylesheets in components
+ * For embedding JavaScript files in components
  */
 
 public class NGJavaScript extends NGDynamicElement {
@@ -23,10 +24,16 @@ public class NGJavaScript extends NGDynamicElement {
 
 	private final NGAssociation _namespaceAssociation;
 
+	/**
+	 * For storing associations that aren't part of the element's basic associations, rendered as attributes
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
+
 	public NGJavaScript( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
-		_filenameAssociation = associations.get( "filename" );
-		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( associations, true );
+		_additionalAssociations = new LinkedHashMap<>( associations );
+		_filenameAssociation = _additionalAssociations.remove( "filename" );
+		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( _additionalAssociations, true );
 
 		if( _filenameAssociation == null ) {
 			throw new IllegalArgumentException( "'filename' is a required binding" );
@@ -51,6 +58,11 @@ public class NGJavaScript extends NGDynamicElement {
 			urlString = "ERROR_NOT_FOUND_" + filename;
 		}
 
-		response.appendContentString( String.format( "<script src=\"%s\"></script>", NGHTMLUtilities.escapeHTML( urlString ) ) );
+		final Map<String, String> attributes = new LinkedHashMap<>();
+		attributes.put( "src", urlString );
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, component );
+
+		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "script", attributes, false ) );
+		response.appendContentString( "</script>" );
 	}
 }

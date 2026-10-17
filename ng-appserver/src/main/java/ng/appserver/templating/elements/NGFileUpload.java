@@ -2,6 +2,7 @@ package ng.appserver.templating.elements;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,16 +21,27 @@ public class NGFileUpload extends NGDynamicElement {
 	private final NGAssociation _dataAssociation;
 	private final NGAssociation _nameAssociation;
 
+	/**
+	 * For storing associations that aren't part of the element's basic associations, rendered as attributes
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
+
 	public NGFileUpload( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
 		super( null, null, null );
-		_filenameAssociation = associations.get( "filename" );
-		_dataAssociation = associations.get( "data" );
-		_nameAssociation = associations.get( "name" );
+		_additionalAssociations = new LinkedHashMap<>( associations );
+		_filenameAssociation = _additionalAssociations.remove( "filename" );
+		_dataAssociation = _additionalAssociations.remove( "data" );
+		_nameAssociation = _additionalAssociations.remove( "name" );
 	}
 
 	@Override
 	public void appendToResponse( final NGResponse response, final NGContext context ) {
-		response.appendContentString( "<input type=\"file\" name=\"%s\" />".formatted( NGHTMLUtilities.escapeHTML( String.valueOf( name( context ) ) ) ) );
+		final Map<String, String> attributes = new LinkedHashMap<>();
+		attributes.put( "type", "file" );
+		attributes.put( "name", String.valueOf( name( context ) ) );
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, context.component() );
+
+		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "input", attributes, true ) );
 	}
 
 	/**

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wodefinitions>
-	<wo class="ng.appserver.templating.elements.NGStylesheet" content="forbidden" unknownAttributes="forbidden">
+	<wo class="ng.appserver.templating.elements.NGStylesheet" content="forbidden" unknownAttributes="passthrough">
 
-		<doc><![CDATA[Renders a `<link rel="stylesheet">` tag for a webserver resource. Tag name: `stylesheet`.]]></doc>
+		<doc><![CDATA[Renders a `<link rel="stylesheet">` tag for a webserver resource. Other bindings are rendered as attributes on the tag (`media`, `integrity`, …). Tag name: `stylesheet`.]]></doc>
 
 		<binding name="filename" required="true">
 			<pull><type>java.lang.String</type></pull>

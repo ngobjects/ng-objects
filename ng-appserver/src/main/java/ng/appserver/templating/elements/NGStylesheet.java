@@ -1,5 +1,6 @@
 package ng.appserver.templating.elements;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,10 +24,16 @@ public class NGStylesheet extends NGDynamicElement {
 
 	private final NGAssociation _namespaceAssociation;
 
+	/**
+	 * For storing associations that aren't part of the element's basic associations, rendered as attributes
+	 */
+	private final Map<String, NGAssociation> _additionalAssociations;
+
 	public NGStylesheet( String name, Map<String, NGAssociation> associations, NGElement template ) {
 		super( null, null, null );
-		_filenameAssociation = associations.get( "filename" );
-		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( associations, true );
+		_additionalAssociations = new LinkedHashMap<>( associations );
+		_filenameAssociation = _additionalAssociations.remove( "filename" );
+		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( _additionalAssociations, true );
 
 		if( _filenameAssociation == null ) {
 			throw new IllegalArgumentException( "'filename' is a required binding" );
@@ -52,6 +59,12 @@ public class NGStylesheet extends NGDynamicElement {
 			urlString = "ERROR_NOT_FOUND_" + filename;
 		}
 
-		response.appendContentString( String.format( "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />", NGHTMLUtilities.escapeHTML( urlString ) ) );
+		final Map<String, String> attributes = new LinkedHashMap<>();
+		attributes.put( "rel", "stylesheet" );
+		attributes.put( "type", "text/css" );
+		attributes.put( "href", urlString );
+		NGHTMLUtilities.addAssociationValuesToAttributes( attributes, _additionalAssociations, component );
+
+		response.appendContentString( NGHTMLUtilities.createElementStringWithAttributes( "link", attributes, true ) );
 	}
 }
