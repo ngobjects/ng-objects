@@ -6,7 +6,7 @@
 
 		<binding name="condition" required="true">
 			<pull><type interpretation="truthy">java.lang.Object</type></pull>
-			<doc><![CDATA[The value to test, by **truthiness** (`null`, `false`, `0`, empty string/collection are false). Pulled; required.]]></doc>
+			<doc><![CDATA[The value to test, by **truthiness** (only `null`, `false` and numbers equal to zero are false; everything else, including empty strings and collections, is true). Pulled; required.]]></doc>
 		</binding>
 
 		<binding name="negate" defaults="YES/NO">
