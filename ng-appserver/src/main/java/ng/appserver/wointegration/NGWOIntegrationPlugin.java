@@ -69,6 +69,10 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 	 */
 	private NGResponse instanceRequest( NGRequest request ) {
 
+		if( !NGWOAccessGuard.permits( request ) ) {
+			return NGResponses.of( 403, "Access denied" );
+		}
+
 		if( request.contentString().contains( "TERMINATE" ) ) {
 			return terminate();
 		}
