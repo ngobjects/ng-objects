@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * Sends regular "lifebeats" to wotaskd to report application liveness.
  */
 
-public class NGLifebeatThread {
+class NGLifebeatThread {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGLifebeatThread.class );
 
@@ -35,7 +35,7 @@ public class NGLifebeatThread {
 	private final int _wotaskdPort;
 	private final Duration _lifebeatInterval;
 
-	public NGLifebeatThread( final String appName, final int appPort, final String hostName, final int wotaskdPort, final Duration lifebeatInterval ) {
+	NGLifebeatThread( final String appName, final int appPort, final String hostName, final int wotaskdPort, final Duration lifebeatInterval ) {
 		logger.info( "Creating LifebeatThread: appName={}, appPort={}, hostName={}, wotaskdPort={}, interval={}", appName, appPort, hostName, wotaskdPort, lifebeatInterval );
 
 		Objects.requireNonNull( appName, "appName" );
@@ -67,7 +67,7 @@ public class NGLifebeatThread {
 		} );
 	}
 
-	public void start() {
+	void start() {
 		// hasStarted goes out on the lifebeat thread like every other message, so a slow or unreachable wotaskd can't hold up application startup
 		_scheduler.execute( this::sendHasStarted );
 
@@ -86,7 +86,7 @@ public class NGLifebeatThread {
 		sendMessage( "lifebeat" );
 	}
 
-	public void sendWillStop() {
+	void sendWillStop() {
 		sendMessage( "willStop" );
 	}
 

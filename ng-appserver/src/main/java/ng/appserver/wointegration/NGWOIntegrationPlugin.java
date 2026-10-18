@@ -1,5 +1,6 @@
 package ng.appserver.wointegration;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -10,6 +11,7 @@ import ng.appserver.NGApplication;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGResponses;
+import ng.appserver.properties.NGProperties;
 import ng.appserver.resources.NGResource;
 import ng.appserver.resources.StandardNamespace;
 import ng.plugins.NGPlugin;
@@ -27,11 +29,24 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGWOIntegrationPlugin.class );
 
+	/**
+	 * The thread sending lifebeats to wotaskd. Null if lifebeats are disabled.
+	 */
+	private NGLifebeatThread _lifebeatThread;
+
 	@Override
 	public void load( NGApplication application ) {
 
 		if( application.properties().d().propWOLifebeatEnabled() ) {
-			NGLifebeatThreadRunner.start( application.properties() );
+			final NGProperties properties = application.properties();
+			final String hostName = properties.d().propWOHost();
+			final String appName = properties.d().propWOApplicationName();
+			final Integer appPort = properties.d().propWOPort();
+			final Integer lifeBeatDestinationPort = properties.d().propWOLifebeatDestinationPort();
+			final Duration lifebeatInterval = Duration.ofSeconds( properties.d().propWOLifebeatIntervalInSeconds() );
+
+			_lifebeatThread = new NGLifebeatThread( appName, appPort, hostName, lifeBeatDestinationPort, lifebeatInterval );
+			_lifebeatThread.start();
 		}
 
 		// What we're doing here is allowing for the WO URL structure, which is required for us to work with the WO Apache Adaptor.
@@ -44,7 +59,7 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 	public Routes routes() {
 		return Routes
 				.create()
-				.map( "/womp/instanceRequest", NGWOIntegrationPlugin::instanceRequest );
+				.map( "/womp/instanceRequest", this::instanceRequest );
 	}
 
 	/**
@@ -52,7 +67,7 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 	 *
 	 * FIXME: Currently just checking for substrings in the requests's XML content. We should be properly deserializing.
 	 */
-	private static NGResponse instanceRequest( NGRequest request ) {
+	private NGResponse instanceRequest( NGRequest request ) {
 
 		if( request.contentString().contains( "TERMINATE" ) ) {
 			return terminate();
@@ -83,12 +98,14 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 	/**
 	 * Terminates the application by request from wotaskd and returns a success response
 	 */
-	private static NGResponse terminate() {
+	private NGResponse terminate() {
 		logger.info( "Terminating application by request from wotaskd..." );
 
-		logger.info( "Sending willStop..." );
-		NGLifebeatThreadRunner.lifebeatThread().sendWillStop();
-		logger.info( "Sent willstop." );
+		if( _lifebeatThread != null ) {
+			logger.info( "Sending willStop..." );
+			_lifebeatThread.sendWillStop();
+			logger.info( "Sent willstop." );
+		}
 
 		// We perform the shutdown in a thread that executes after we've returned the response to the client.
 		// This ensures the application has the opportunity to submit a response to wotaskd before shutting down.
