@@ -1,5 +1,8 @@
 package ng.appserver.resources;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -9,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGApplication;
+import ng.resources.NGResourceStamps;
 
 /**
  * Manages static resources and resource caching
@@ -27,6 +31,12 @@ public class NGResourceManager {
 	 * Cache storing resources in-memory by namespace -> resource type -> resource path
 	 */
 	private final Map<String, Map<ResourceType, Map<String, Optional<NGResource>>>> resourceCache = new ConcurrentHashMap<>();
+
+	/**
+	 * The content stamp of each webserver resource by namespace and path ({@code app/css/site.css}), empty for one that
+	 * doesn't exist. Only used when caching is enabled: resources don't change while a deployed application runs.
+	 */
+	private final Map<String, String> _stamps = new ConcurrentHashMap<>();
 
 	/**
 	 * Specifies if we want to use the resources cache.
@@ -54,6 +64,48 @@ public class NGResourceManager {
 	 */
 	public Optional<NGResource> obtainWebserverResource( final String namespace, final String resourcePath ) {
 		return obtainResource( namespace, StandardResourceType.WebServer, resourcePath );
+	}
+
+	/**
+	 * @return The content stamp of the specified webserver resource (see {@link NGResourceStamps}), null if it doesn't exist.
+	 *         Remembered when caching is enabled, computed each time otherwise, as files change while a development
+	 *         application runs.
+	 */
+	public String webserverResourceStamp( final String namespace, final String resourcePath ) {
+		Objects.requireNonNull( namespace );
+		Objects.requireNonNull( resourcePath );
+
+		// The same resource, with or without a preceding slash, as when its URL is generated
+		final String path = resourcePath.startsWith( "/" ) ? resourcePath.substring( 1 ) : resourcePath;
+
+		if( !_cachingEnabled() ) {
+			return computeWebserverResourceStamp( namespace, path );
+		}
+
+		final String stamp = _stamps.computeIfAbsent( namespace + "/" + path, _unused -> {
+			final String computed = computeWebserverResourceStamp( namespace, path );
+			return computed == null ? "" : computed;
+		} );
+
+		return stamp.isEmpty() ? null : stamp;
+	}
+
+	/**
+	 * @return The content stamp of the specified webserver resource, read through it; null if it doesn't exist
+	 */
+	private String computeWebserverResourceStamp( final String namespace, final String resourcePath ) {
+		final Optional<NGResource> resource = obtainWebserverResource( namespace, resourcePath );
+
+		if( resource.isEmpty() ) {
+			return null;
+		}
+
+		try( final InputStream content = resource.get().inputStream() ) {
+			return NGResourceStamps.stamp( content );
+		}
+		catch( final IOException e ) {
+			throw new UncheckedIOException( e );
+		}
 	}
 
 	/**

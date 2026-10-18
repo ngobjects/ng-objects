@@ -10,6 +10,8 @@ import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.appserver.resources.NGMimeTypes;
 import ng.appserver.resources.NGResource;
+import ng.appserver.resources.NGResourceManager;
+import ng.resources.NGResourceStamps;
 
 /**
  * Request handler for serving webserver-resources
@@ -50,14 +52,94 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		namespace = URLDecoder.decode( namespace, StandardCharsets.UTF_8 );
 		resourcePath = URLDecoder.decode( resourcePath, StandardCharsets.UTF_8 );
 
-		final Optional<NGResource> resource = NGApplication.application().resourceManager().obtainWebserverResource( namespace, resourcePath );
+		final NGResourceManager resourceManager = NGApplication.application().resourceManager();
+
+		// A stamped name (css/site@3f9c1e07ab.css, as generated URLs carry it) names the resource without the stamp.
+		// If there's nothing by that name, the name may be a file's own, and is looked up as it is.
+		final NGResourceStamps.Stamped stamped = NGResourceStamps.parse( resourcePath );
+		String servedPath = stamped != null ? stamped.unstampedPath() : resourcePath;
+		String requestedStamp = stamped != null ? stamped.stamp() : null;
+		Optional<NGResource> resource = resourceManager.obtainWebserverResource( namespace, servedPath );
+
+		if( resource.isEmpty() && stamped != null ) {
+			servedPath = resourcePath;
+			requestedStamp = null;
+			resource = resourceManager.obtainWebserverResource( namespace, servedPath );
+		}
 
 		if( resource.isEmpty() ) {
 			return responseForNonExistentResource( namespace, resourcePath );
 		}
 
-		return responseForResource( resource.get(), resourcePath );
+		final String currentStamp = resourceManager.webserverResourceStamp( namespace, servedPath );
+		return responseForWebserverResource( resource.get(), servedPath, requestedStamp, currentStamp, request.headerForKey( "if-none-match" ), NGApplication.application().cachingEnabled() );
 	}
+
+	/**
+	 * @param requestedStamp The stamp the requested URL carried, null if none
+	 * @param currentStamp The stamp of the resource's current content, null if it has none
+	 * @param ifNoneMatch The request's If-None-Match header, null if none
+	 * @param cachingEnabled true if resources don't change while the application runs (in production)
+	 *
+	 * @return A response for the given webserver resource. The resource's stamp is its ETag, and a request naming it gets a
+	 *         304. Requested by its current stamp, a resource is cached for good, as the URL changes whenever the content
+	 *         does. Otherwise the browser may keep it, but must ask again before using it: an unstamped URL, or a stamp that
+	 *         isn't the resource's own, as when an instance that hasn't been updated yet gets a request for a newer version
+	 *         during a deploy.
+	 */
+	static NGResponse responseForWebserverResource( final NGResource resource, final String resourcePath, final String requestedStamp, final String currentStamp, final String ifNoneMatch, final boolean cachingEnabled ) {
+		final String etag = currentStamp == null ? null : "\"" + currentStamp + "\"";
+		final boolean current = cachingEnabled && requestedStamp != null && requestedStamp.equals( currentStamp );
+		final String cacheControl = current ? STAMPED_CACHE_CONTROL : "no-cache";
+
+		if( etag != null && matchesAny( ifNoneMatch, etag ) ) {
+			final NGResponse notModified = NGResponses.of();
+			notModified.setStatus( 304 );
+			notModified.setHeader( "etag", etag );
+			notModified.setHeader( "cache-control", cacheControl );
+			return notModified;
+		}
+
+		final NGResponse response = responseForResource( resource, resourcePath );
+		response.setHeader( "cache-control", cacheControl );
+
+		if( etag != null ) {
+			response.setHeader( "etag", etag );
+		}
+
+		return response;
+	}
+
+	/**
+	 * @return true if an If-None-Match header names the given entity tag, or is {@code *}. Compared weakly, as the header's
+	 *         semantics require: a {@code W/} prefix doesn't matter.
+	 */
+	static boolean matchesAny( final String ifNoneMatch, final String etag ) {
+
+		if( ifNoneMatch == null ) {
+			return false;
+		}
+
+		for( String candidate : ifNoneMatch.split( "," ) ) {
+			candidate = candidate.trim();
+
+			if( candidate.startsWith( "W/" ) ) {
+				candidate = candidate.substring( 2 );
+			}
+
+			if( candidate.equals( "*" ) || candidate.equals( etag ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * The cache lifetime of a resource requested by a URL with its current stamp: a year, and never revalidated, as the URL
+	 * changes whenever the content does
+	 */
+	private static final String STAMPED_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 	/**
 	 * @return The response served when an identified resource doesn't exist
@@ -108,6 +190,18 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		// FIXME: While allowing paths with and without preceding slashes may be nice, it may be *nicer* to standardize a practice of either-or // Hugi 2024-05-25
 		if( resourcePath.startsWith( "/" ) ) {
 			resourcePath = resourcePath.substring( 1 );
+		}
+
+		// In production, the resource name carries a stamp of the resource's content (css/site@3f9c1e07ab.css), so the URL
+		// changes whenever the content does and browsers can cache it for good. Not in development, where files change while the application runs.
+		final NGApplication application = NGApplication.application();
+
+		if( application != null && application.cachingEnabled() ) {
+			final String stamp = application.resourceManager().webserverResourceStamp( namespace, resourcePath );
+
+			if( stamp != null ) {
+				resourcePath = NGResourceStamps.stampedPath( resourcePath, stamp );
+			}
 		}
 
 		final StringBuilder b = new StringBuilder();
