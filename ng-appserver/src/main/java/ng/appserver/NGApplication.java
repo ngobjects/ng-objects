@@ -1,10 +1,12 @@
 package ng.appserver;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -726,30 +728,44 @@ public class NGApplication implements NGPlugin {
 	 * Redirects logging to the designated [outputPath] if set.
 	 *
 	 * If a file exists at the given path, it is renamed by adding the current date to it's name.
-	 * Pretty much the same way WOOutputPath is handled in WO.
+	 * Pretty much the same way WOOutputPath is handled in WO, including that a problem with the file is logged and the application
+	 * carries on with the standard streams, rather than failing to start.
 	 */
-	private static void redirectOutputToFilesIfOutputPathSet( final String outputPath ) {
-		if( outputPath != null ) {
-			// Archive the older logFile if it exists
-			final File outputFile = new File( outputPath );
+	static void redirectOutputToFilesIfOutputPathSet( final String outputPath ) {
 
-			if( outputFile.exists() ) {
-				final File oldOutputFile = new File( outputPath + "." + LocalDateTime.now() );
-				outputFile.renameTo( oldOutputFile );
-			}
+		if( outputPath == null ) {
+			logger.info( "OutputPath not set. Using standard System.out and System.err" );
+			return;
+		}
+
+		final Path outputFile = Path.of( outputPath );
+
+		if( Files.isDirectory( outputFile ) ) {
+			logger.error( "WOOutputPath {} is a directory. Output stays on the standard streams.", outputPath );
+			return;
+		}
+
+		// Archive the previous log if it exists. If that fails we don't redirect, since opening the file would truncate that log.
+		if( Files.exists( outputFile ) ) {
+			final Path archivedOutputFile = Path.of( outputPath + "." + LocalDateTime.now() );
 
 			try {
-				final PrintStream out = new PrintStream( new FileOutputStream( outputPath ) );
-				System.setOut( out );
-				System.setErr( out );
-				logger.info( "Redirected System.out and System.err to {}", outputPath );
+				Files.move( outputFile, archivedOutputFile );
 			}
-			catch( final FileNotFoundException e ) {
-				throw new RuntimeException( e );
+			catch( final IOException e ) {
+				logger.error( "WOOutputPath: couldn't archive the previous log, {}. Output stays on the standard streams.", e.toString() );
+				return;
 			}
 		}
-		else {
-			logger.info( "OutputPath not set. Using standard System.out and System.err" );
+
+		try {
+			final PrintStream out = new PrintStream( new FileOutputStream( outputPath ) );
+			System.setOut( out );
+			System.setErr( out );
+			logger.info( "Redirected System.out and System.err to {}", outputPath );
+		}
+		catch( final FileNotFoundException e ) {
+			logger.error( "WOOutputPath: couldn't open the log for writing, {}. Output stays on the standard streams.", e.getMessage() );
 		}
 	}
 
