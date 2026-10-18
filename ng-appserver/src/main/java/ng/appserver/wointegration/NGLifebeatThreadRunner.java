@@ -26,10 +26,7 @@ public class NGLifebeatThreadRunner {
 		_lifebeatThread.start();
 	}
 
-	/**
-	 * Public for the benefit of WOMPRequestHandler which will use it to generate messages to send to wotaskd
-	 */
-	public static NGLifebeatThread lifebeatThread() {
+	static NGLifebeatThread lifebeatThread() {
 		return _lifebeatThread;
 	}
 }
