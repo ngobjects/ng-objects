@@ -1,6 +1,7 @@
 package ng.plugins;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +36,24 @@ public class NGDevelopmentPlugin implements NGPlugin {
 	public Routes routes() {
 		return Routes
 				.create()
-				.map( "/ng/dev/type", NGDevelopmentPlugin::type )
-				.map( "/ng/dev/terminate", NGDevelopmentPlugin::terminate )
-				.map( "/ng/dev/log", NGDevelopmentPlugin::log )
-				.map( "/ng/dev/eval", NGDevelopmentPlugin::eval )
-				.map( "/ng/dev/problems", NGDevelopmentPlugin::problems );
+				.map( "/ng/dev/type", loopbackOnly( request -> type() ) )
+				.map( "/ng/dev/terminate", loopbackOnly( request -> terminate() ) )
+				.map( "/ng/dev/log", loopbackOnly( NGDevelopmentPlugin::log ) )
+				.map( "/ng/dev/eval", loopbackOnly( NGDevelopmentPlugin::eval ) )
+				.map( "/ng/dev/problems", loopbackOnly( NGDevelopmentPlugin::problems ) );
+	}
+
+	/**
+	 * @return The handler, refusing clients that aren't on the loopback interface. "Dev mode" doesn't imply "only reachable locally" (the adaptor listens on every interface), so every dev endpoint is wrapped in this.
+	 */
+	private static Function<NGRequest, NGActionResults> loopbackOnly( final Function<NGRequest, NGActionResults> handler ) {
+		return request -> {
+			if( !NGDevLoopback.isLoopback( request.remoteAddress() ) ) {
+				return NGResponses.of( 403, "The development endpoints only answer clients on the loopback interface" );
+			}
+
+			return handler.apply( request );
+		};
 	}
 
 	/**
@@ -84,15 +98,9 @@ public class NGDevelopmentPlugin implements NGPlugin {
 	 * The snippet comes from the [snippet] form value (or, for convenience, the raw request body).
 	 * [reset=true] discards the persistent session (its variables and definitions) before evaluating.
 	 *
-	 * Restricted to loopback clients: this is arbitrary code execution in the app's JVM. It's already
-	 * dev-mode-only (this whole plugin is), but "dev mode" doesn't imply "only reachable locally", so
-	 * we additionally require the caller to be on the loopback interface.
+	 * This is arbitrary code execution in the app's JVM, which is one reason every dev endpoint is restricted to loopback clients (see routes()).
 	 */
 	private static NGActionResults eval( final NGRequest request ) {
-
-		if( !NGDevLoopback.isLoopback( request.remoteAddress() ) ) {
-			return json( "{\"status\":\"error\",\"diagnostics\":[\"/ng/dev/eval is restricted to loopback clients\"]}", 403 );
-		}
 
 		if( "true".equals( request.formValueForKey( "reset" ) ) ) {
 			NGEvalSession.shared().reset();
