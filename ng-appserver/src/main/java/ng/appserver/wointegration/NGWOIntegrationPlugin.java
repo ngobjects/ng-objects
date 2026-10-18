@@ -1,5 +1,7 @@
 package ng.appserver.wointegration;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -39,7 +41,7 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 
 		if( application.properties().d().propWOLifebeatEnabled() ) {
 			final NGProperties properties = application.properties();
-			final String hostName = properties.d().propWOHost();
+			final String hostName = hostName( properties );
 			final String appName = properties.d().propWOApplicationName();
 			final Integer appPort = properties.d().propWOPort();
 			final Integer lifeBeatDestinationPort = properties.d().propWOLifebeatDestinationPort();
@@ -53,6 +55,24 @@ public class NGWOIntegrationPlugin implements NGPlugin {
 		// Ideally, we don't want to prefix URLs at all, instead just handling requests at root level.
 		// CHECKME: URL rewrites shouldn't really be performed in development. Add by property? // Hugi 2025-05-13
 		application.addURLRewritePattern( Pattern.compile( "^/(cgi-bin|Apps)/WebObjects/(.*).woa(/[0-9])?" ) );
+	}
+
+	/**
+	 * @return The host name to report to wotaskd: WOHost if set, otherwise this machine's name (as in WO, where WOHost is optional)
+	 */
+	static String hostName( final NGProperties properties ) {
+		final String hostName = properties.d().propWOHost();
+
+		if( hostName != null ) {
+			return hostName;
+		}
+
+		try {
+			return InetAddress.getLocalHost().getHostName();
+		}
+		catch( final UnknownHostException e ) {
+			throw new IllegalStateException( "WOHost isn't set, and this machine's host name couldn't be determined. Set WOHost.", e );
+		}
 	}
 
 	@Override
