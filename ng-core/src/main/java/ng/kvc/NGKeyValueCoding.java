@@ -31,10 +31,12 @@ import ng.NGRuntimeException;
  * 4. Method "_getSmu"
  * 5. Method "_smu"
  * 6. Method "_isSmu"
- * 7. Field "_smu"
- * 8. Field "_isSmu"
- * 9. Field "smu"
- * 10. Field "isSmu"
+ * 7. Field "smu"
+ * 8. Field "isSmu"
+ * 9. Field "_smu"
+ * 10. Field "_isSmu"
+ *
+ * Fields follow the same pattern as methods: unprefixed before underscored, and the plain name before "is". (WO tries the underscored fields first.)
  *
  * Lookup order when searching for a writable binding:
  *
@@ -213,22 +215,22 @@ public interface NGKeyValueCoding {
 				return new FieldBinding( field );
 			}
 
-			// Then check for the field with an underscore in front ("_key")
+			// Then the field prefixed with "is" ("isKey")
+			field = field( object, "is" + keyCapitalized );
+
+			if( field != null ) {
+				return new FieldBinding( field );
+			}
+
+			// Then the field with an underscore in front ("_key")
 			field = field( object, "_" + key );
 
 			if( field != null ) {
 				return new FieldBinding( field );
 			}
 
-			// Then check for the field prefixed with "is" and an underscore ("_isKey") // FIXME: Why check for this first, rather than just "isKey" without the underscore? // Hugi 2022-10-22
+			// Finally the field prefixed with "is" and an underscore ("_isKey")
 			field = field( object, "_is" + keyCapitalized );
-
-			if( field != null ) {
-				return new FieldBinding( field );
-			}
-
-			// Finally check for the field prefixed with "is" ("isKey")
-			field = field( object, "is" + keyCapitalized );
 
 			if( field != null ) {
 				return new FieldBinding( field );

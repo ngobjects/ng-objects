@@ -52,6 +52,36 @@ public class TestNGKeyValueCoding {
 	}
 
 	@Test
+	public void fieldLookupOrder() {
+		assertEquals( "name", NGKeyValueCoding.Utility.valueForKey( new AllFourFields(), "name" ) );
+		assertEquals( "isName", NGKeyValueCoding.Utility.valueForKey( new IsAndUnderscoredFields(), "name" ) );
+		assertEquals( "_name", NGKeyValueCoding.Utility.valueForKey( new UnderscoredFields(), "name" ) );
+		assertEquals( "_isName", NGKeyValueCoding.Utility.valueForKey( new UnderscoredIsField(), "name" ) );
+	}
+
+	public static class AllFourFields {
+		public String name = "name";
+		public String isName = "isName";
+		public String _name = "_name";
+		public String _isName = "_isName";
+	}
+
+	public static class IsAndUnderscoredFields {
+		public String isName = "isName";
+		public String _name = "_name";
+		public String _isName = "_isName";
+	}
+
+	public static class UnderscoredFields {
+		public String _name = "_name";
+		public String _isName = "_isName";
+	}
+
+	public static class UnderscoredIsField {
+		public String _isName = "_isName";
+	}
+
+	@Test
 	public void testThrowsOnUnknownKey() {
 		assertThrows( NGKeyValueCoding.UnknownKeyException.class, () -> {
 			NGKeyValueCoding.Utility.valueForKey( new PlainOldRecord( "Hehe" ), "hehe" );
