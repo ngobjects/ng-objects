@@ -8,6 +8,7 @@ import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
 import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGResponses;
 import ng.appserver.templating.NGComponent;
 
@@ -48,7 +49,9 @@ public class NGDirectAction {
 			return (NGActionResults)method.invoke( this );
 		}
 		catch( final NoSuchMethodException e ) {
-			return NGResponses.of( 404, "No direct action method called " + directActionName );
+			final NGResponse response = NGResponses.of( 404, "No direct action method called " + directActionName );
+			response.setHeader( "content-type", "text/plain; charset=utf-8" );
+			return response;
 		}
 		catch( SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
 			throw new RuntimeException( e );

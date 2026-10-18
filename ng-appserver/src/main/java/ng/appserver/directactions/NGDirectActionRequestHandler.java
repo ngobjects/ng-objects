@@ -42,8 +42,15 @@ public class NGDirectActionRequestHandler extends NGRequestHandler {
 			directActionMethodName = "default";
 		}
 
+		final Class<? extends NGDirectAction> directActionClass = _directActionClasses.get( directActionClassName );
+
+		if( directActionClass == null ) {
+			final NGResponse response = NGResponses.of( 404, "No direct action class called " + directActionClassName );
+			response.setHeader( "content-type", "text/plain; charset=utf-8" );
+			return response;
+		}
+
 		try {
-			final Class<? extends NGDirectAction> directActionClass = _directActionClasses.get( directActionClassName );
 			final Constructor<? extends NGDirectAction> constructor = directActionClass.getConstructor( NGRequest.class );
 			final NGDirectAction instance = constructor.newInstance( request );
 			final NGActionResults actionResults = instance.performActionNamed( directActionMethodName );
