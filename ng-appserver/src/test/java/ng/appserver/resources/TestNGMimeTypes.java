@@ -10,5 +10,6 @@ public class TestNGMimeTypes {
 	public void testMimeTypeForResourceName() {
 		assertEquals( "image/jpeg", NGMimeTypes.mimeTypeForResourceName( "image.jpg" ) );
 		assertEquals( "text/css", NGMimeTypes.mimeTypeForResourceName( "somefile.css" ) );
+		assertEquals( "image/x-icon", NGMimeTypes.mimeTypeForResourceName( "favicon.ico" ) );
 	}
 }
