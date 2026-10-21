@@ -555,7 +555,8 @@ public class NGApplication implements NGPlugin {
 			return noPublicResourceResponse( request );
 		}
 
-		return NGResourceRequestHandler.responseForResource( resource.get(), resourcePath );
+		final String currentStamp = resourceManager().publicResourceStamp( namespace, resourcePath );
+		return NGResourceRequestHandler.conditionalResponseForResource( resource.get(), resourcePath, null, currentStamp, request.headerForKey( "if-none-match" ), cachingEnabled() );
 	}
 
 	/**

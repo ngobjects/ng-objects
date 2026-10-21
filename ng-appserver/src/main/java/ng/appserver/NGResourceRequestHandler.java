@@ -72,7 +72,7 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 		}
 
 		final String currentStamp = resourceManager.webserverResourceStamp( namespace, servedPath );
-		return responseForWebserverResource( resource.get(), servedPath, requestedStamp, currentStamp, request.headerForKey( "if-none-match" ), NGApplication.application().cachingEnabled() );
+		return conditionalResponseForResource( resource.get(), servedPath, requestedStamp, currentStamp, request.headerForKey( "if-none-match" ), NGApplication.application().cachingEnabled() );
 	}
 
 	/**
@@ -81,13 +81,13 @@ public class NGResourceRequestHandler extends NGRequestHandler {
 	 * @param ifNoneMatch The request's If-None-Match header, null if none
 	 * @param cachingEnabled true if resources don't change while the application runs (in production)
 	 *
-	 * @return A response for the given webserver resource. The resource's stamp is its ETag, and a request naming it gets a
-	 *         304. Requested by its current stamp, a resource is cached for good, as the URL changes whenever the content
-	 *         does. Otherwise the browser may keep it, but must ask again before using it: an unstamped URL, or a stamp that
-	 *         isn't the resource's own, as when an instance that hasn't been updated yet gets a request for a newer version
-	 *         during a deploy.
+	 * @return A response for the given resource. The resource's stamp is its ETag, and a request naming it gets a 304.
+	 *         Requested by its current stamp, a resource is cached for good, as the URL changes whenever the content does.
+	 *         Otherwise the browser may keep it, but must ask again before using it: an unstamped URL (a public resource's
+	 *         always is), or a stamp that isn't the resource's own, as when an instance that hasn't been updated yet gets a
+	 *         request for a newer version during a deploy.
 	 */
-	static NGResponse responseForWebserverResource( final NGResource resource, final String resourcePath, final String requestedStamp, final String currentStamp, final String ifNoneMatch, final boolean cachingEnabled ) {
+	static NGResponse conditionalResponseForResource( final NGResource resource, final String resourcePath, final String requestedStamp, final String currentStamp, final String ifNoneMatch, final boolean cachingEnabled ) {
 		final String etag = currentStamp == null ? null : "\"" + currentStamp + "\"";
 		final boolean current = cachingEnabled && requestedStamp != null && requestedStamp.equals( currentStamp );
 		final String cacheControl = current ? STAMPED_CACHE_CONTROL : "no-cache";

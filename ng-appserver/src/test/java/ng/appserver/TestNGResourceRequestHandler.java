@@ -21,7 +21,7 @@ public class TestNGResourceRequestHandler {
 
 	@Test
 	public void theCurrentStampIsCachedForGood() {
-		final NGResponse response = NGResourceRequestHandler.responseForWebserverResource( RESOURCE, "css/site.css", STAMP, STAMP, null, true );
+		final NGResponse response = NGResourceRequestHandler.conditionalResponseForResource( RESOURCE, "css/site.css", STAMP, STAMP, null, true );
 		assertEquals( 200, response.status() );
 		assertEquals( "public, max-age=31536000, immutable", response.headerForKey( "cache-control" ) );
 		assertEquals( "\"" + STAMP + "\"", response.headerForKey( "etag" ) );
@@ -30,26 +30,26 @@ public class TestNGResourceRequestHandler {
 
 	@Test
 	public void anUnstampedURLMustRevalidate() {
-		final NGResponse response = NGResourceRequestHandler.responseForWebserverResource( RESOURCE, "css/site.css", null, STAMP, null, true );
+		final NGResponse response = NGResourceRequestHandler.conditionalResponseForResource( RESOURCE, "css/site.css", null, STAMP, null, true );
 		assertEquals( "no-cache", response.headerForKey( "cache-control" ) );
 		assertEquals( "\"" + STAMP + "\"", response.headerForKey( "etag" ) );
 	}
 
 	@Test
 	public void aStampThatIsntTheResourcesOwnMustRevalidate() {
-		final NGResponse response = NGResourceRequestHandler.responseForWebserverResource( RESOURCE, "css/site.css", "0123456789", STAMP, null, true );
+		final NGResponse response = NGResourceRequestHandler.conditionalResponseForResource( RESOURCE, "css/site.css", "0123456789", STAMP, null, true );
 		assertEquals( "no-cache", response.headerForKey( "cache-control" ) );
 	}
 
 	@Test
 	public void theCurrentStampMustRevalidateInDevelopment() {
-		final NGResponse response = NGResourceRequestHandler.responseForWebserverResource( RESOURCE, "css/site.css", STAMP, STAMP, null, false );
+		final NGResponse response = NGResourceRequestHandler.conditionalResponseForResource( RESOURCE, "css/site.css", STAMP, STAMP, null, false );
 		assertEquals( "no-cache", response.headerForKey( "cache-control" ) );
 	}
 
 	@Test
 	public void theCurrentETagIsNotModified() {
-		final NGResponse response = NGResourceRequestHandler.responseForWebserverResource( RESOURCE, "css/site.css", null, STAMP, "\"" + STAMP + "\"", true );
+		final NGResponse response = NGResourceRequestHandler.conditionalResponseForResource( RESOURCE, "css/site.css", null, STAMP, "\"" + STAMP + "\"", true );
 		assertEquals( 304, response.status() );
 		assertEquals( "\"" + STAMP + "\"", response.headerForKey( "etag" ) );
 		assertEquals( "no-cache", response.headerForKey( "cache-control" ) );
@@ -57,7 +57,7 @@ public class TestNGResourceRequestHandler {
 
 	@Test
 	public void aResourceWithoutAStampHasNoETag() {
-		final NGResponse response = NGResourceRequestHandler.responseForWebserverResource( RESOURCE, "css/site.css", null, null, "*", true );
+		final NGResponse response = NGResourceRequestHandler.conditionalResponseForResource( RESOURCE, "css/site.css", null, null, "*", true );
 		assertEquals( 200, response.status() );
 		assertNull( response.headerForKey( "etag" ) );
 	}
