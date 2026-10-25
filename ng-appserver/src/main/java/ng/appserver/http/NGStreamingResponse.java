@@ -15,7 +15,7 @@ public class NGStreamingResponse extends NGStandardResponse {
 	 */
 	private final long _contentInputStreamLength;
 
-	public NGStreamingResponse( final InputStream inputStream, final long length ) {
+	NGStreamingResponse( final InputStream inputStream, final long length ) {
 		Objects.requireNonNull( inputStream, "A streaming response can't be constructed with a null inputStream" );
 
 		if( length < 0 ) {

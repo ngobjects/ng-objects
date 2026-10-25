@@ -86,7 +86,7 @@ public class TestNGFileUpload {
 
 	private static Part file( final String name, final String filename, final String content ) {
 		final byte[] bytes = content.getBytes( StandardCharsets.UTF_8 );
-		return new Part( name, filename, Map.of( "Content-Type", List.of( "text/plain" ) ), new ByteArrayInputStream( bytes ), (long)bytes.length );
+		return new Part( name, filename, Map.of( "Content-Type", List.of( "text/plain" ) ), () -> new ByteArrayInputStream( bytes ), (long)bytes.length );
 	}
 
 	/**

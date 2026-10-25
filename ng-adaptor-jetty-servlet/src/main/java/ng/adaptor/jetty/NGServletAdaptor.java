@@ -85,7 +85,7 @@ public class NGServletAdaptor extends HttpServlet {
 				servletResponse.setContentLengthLong( r.contentBytesLength() );
 
 				try( final OutputStream out = servletResponse.getOutputStream()) {
-					r.contentByteStream().writeTo( out );
+					out.write( r.contentBytes() );
 				}
 			}
 			default -> {

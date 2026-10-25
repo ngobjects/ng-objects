@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,10 +78,10 @@ final class NGRequestHead {
 	}
 
 	/**
-	 * @return The request's headers. Names are case-insensitive.
+	 * @return The request's headers. Names are case-insensitive, and neither the map nor its value lists can be modified.
 	 */
 	Map<String, List<String>> headers() {
-		return _headers;
+		return Collections.unmodifiableMap( _headers );
 	}
 
 	/**
@@ -88,7 +89,10 @@ final class NGRequestHead {
 	 */
 	void setHeaders( final Map<String, List<String>> headers ) {
 		_headers.clear();
-		_headers.putAll( headers );
+
+		for( final Map.Entry<String, List<String>> header : headers.entrySet() ) {
+			_headers.put( header.getKey(), List.copyOf( header.getValue() ) );
+		}
 	}
 
 	String remoteAddress() {

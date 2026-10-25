@@ -225,7 +225,7 @@ public class NGMultipartIterator implements Iterator<Part> {
 			return readPart();
 		}
 
-		return new Part( name, filename( disposition ), headers, content, null );
+		return new Part( name, filename( disposition ), headers, () -> content, null );
 	}
 
 	/**

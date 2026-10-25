@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,30 +38,77 @@ public class NGMultipartRequest implements NGRequest {
 	private static final Logger logger = LoggerFactory.getLogger( NGMultipartRequest.class );
 
 	/**
-	 * One part of a multipart request
-	 *
-	 * @param name The name of the form field the part belongs to
-	 * @param filename The uploaded file's name, if the part is a file. Empty when a form's file field was submitted without a file. null if the part is a plain field.
-	 * @param headers The part's headers. Keys are case-insensitive.
-	 * @param stream The part's content
-	 * @param length The part's length in bytes. null if unknown, as it is for a part that's still arriving.
+	 * One part of a multipart request: a form field, or an uploaded file
 	 */
-	public record Part( String name, String filename, Map<String, List<String>> headers, InputStream stream, Long length ) {
+	public static final class Part {
 
-		public Part {
+		private final String _name;
+		private final String _filename;
+		private final Map<String, List<String>> _headers;
+		private final Supplier<InputStream> _content;
+		private final Long _length;
+
+		/**
+		 * @param name The name of the form field the part belongs to
+		 * @param filename The uploaded file's name, if the part is a file. Empty when a form's file field was submitted without a file. null if the part is a plain field.
+		 * @param headers The part's headers
+		 * @param content Supplies the part's content: a new stream on each invocation if the content is kept, the same one-shot stream if it's arriving
+		 * @param length The part's length in bytes. null if unknown, as it is for a part that's still arriving.
+		 */
+		public Part( final String name, final String filename, final Map<String, List<String>> headers, final Supplier<InputStream> content, final Long length ) {
 			Objects.requireNonNull( headers );
-			Objects.requireNonNull( stream );
+			Objects.requireNonNull( content );
 
 			final Map<String, List<String>> caseInsensitiveHeaders = NGHeaderMaps.create();
 			caseInsensitiveHeaders.putAll( headers );
-			headers = Collections.unmodifiableMap( caseInsensitiveHeaders );
+
+			_name = name;
+			_filename = filename;
+			_headers = Collections.unmodifiableMap( caseInsensitiveHeaders );
+			_content = content;
+			_length = length;
+		}
+
+		/**
+		 * @return The name of the form field the part belongs to
+		 */
+		public String name() {
+			return _name;
+		}
+
+		/**
+		 * @return The uploaded file's name, if the part is a file. Empty when a form's file field was submitted without a file. null if the part is a plain field.
+		 */
+		public String filename() {
+			return _filename;
+		}
+
+		/**
+		 * @return The part's headers. Names are case-insensitive.
+		 */
+		public Map<String, List<String>> headers() {
+			return _headers;
+		}
+
+		/**
+		 * @return The part's content. For a kept part (collected, or uploaded files) a new stream on each invocation; for a part read as it arrives (incomingParts()) the same stream, readable once, until the next part is asked for.
+		 */
+		public InputStream stream() {
+			return _content.get();
+		}
+
+		/**
+		 * @return The part's length in bytes. null if unknown, as it is for a part that's still arriving.
+		 */
+		public Long length() {
+			return _length;
 		}
 
 		/**
 		 * @return The part's content type. null if it has none.
 		 */
 		public String contentType() {
-			final List<String> values = headers.get( "content-type" );
+			final List<String> values = _headers.get( "content-type" );
 			return values == null || values.isEmpty() ? null : values.get( 0 );
 		}
 
@@ -68,7 +116,12 @@ public class NGMultipartRequest implements NGRequest {
 		 * @return true if the part is an uploaded file (even an empty one), false if it's a plain field
 		 */
 		public boolean isFile() {
-			return filename != null;
+			return _filename != null;
+		}
+
+		@Override
+		public String toString() {
+			return "Part [name=" + _name + ", filename=" + _filename + ", length=" + _length + "]";
 		}
 	}
 
@@ -227,6 +280,8 @@ public class NGMultipartRequest implements NGRequest {
 	private Map<String, List<String>> parseFormValues() {
 		final Map<String, List<String>> formValues = _head.parseQueryValues( _limits.maxFormFields() );
 
+		_body.requireNotFailed( "collected as parts" );
+
 		if( _keptParts == null && _body.isStreamed() ) {
 			return formValues;
 		}
@@ -246,7 +301,7 @@ public class NGMultipartRequest implements NGRequest {
 	}
 
 	/**
-	 * @return The uploaded files, by the name of the form field they were uploaded with. Their content stays readable until the request has been handled.
+	 * @return The uploaded files, by the name of the form field they were uploaded with. Their content can be read any number of times until the request has been handled.
 	 * @throws IllegalStateException If the body was already read in a way that didn't keep it
 	 * @throws IllegalArgumentException If the body has more parts or bytes than the request's limits allow
 	 */
@@ -328,9 +383,16 @@ public class NGMultipartRequest implements NGRequest {
 	 */
 	private synchronized List<KeptPart> keptParts() {
 		if( _keptParts == null ) {
-			_body.requireNotStreamed( "collected as parts" );
+			_body.requireReadable( "collected as parts" );
 			final InputStream source = _body.stream( "formValues() or uploadedFiles(), collecting its parts" );
-			_keptParts = collect( _parser.parse( source, _boundary ) );
+
+			try {
+				_keptParts = collect( _parser.parse( source, _boundary ) );
+			}
+			catch( RuntimeException e ) {
+				_body.fail( "collecting its parts failed (%s)".formatted( e.getMessage() ) );
+				throw e;
+			}
 		}
 
 		return _keptParts;
@@ -406,10 +468,10 @@ public class NGMultipartRequest implements NGRequest {
 	}
 
 	/**
-	 * @return The given kept part, with a stream of its own over its content
+	 * @return The given kept part, opening a new stream over its content on each read
 	 */
 	private Part part( final KeptPart part ) {
-		return new Part( part.name(), part.filename(), part.headers(), open( part ), part.length() );
+		return new Part( part.name(), part.filename(), part.headers(), () -> open( part ), part.length() );
 	}
 
 	/**

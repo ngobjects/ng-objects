@@ -17,9 +17,12 @@ import ng.appserver.NGContext;
  * A multipart/form-data request is an NGMultipartRequest, which also has the files uploaded with it. NGRequests.of() creates the request a content type calls for.
  *
  * The body arrives once, and can be read in several ways: in full (contentBytes(), contentString()), as a stream (contentStream()), as form values (formValues()), or, for a multipart request, as uploaded files or incoming parts.
- * Reading it in full keeps it, so later reads of any kind are served from what was kept: the bytes, or for multipart, the collected parts.
- * Reading it as a stream (contentStream(), incomingParts()) keeps nothing, so it can't be read again, and form values then hold only the query string's.
- * A read that can't be served says what read the body before. contentType() and contentLength() describe the body without reading it.
+ * - Reading it in full (contentBytes(), contentString(), and formValues() on a form-encoded body) keeps the bytes, so later reads of any kind are served from them.
+ * - Collecting a multipart request's parts (formValues(), uploadedFiles()) keeps the parts but not the body as it arrived, so later reads of parts are served from them, while reading the body in full or as a stream is refused.
+ * - Reading it as a stream (contentStream(), incomingParts()) keeps nothing, so it can't be read again, and form values then hold only the query string's.
+ * A read that can't be served says what read the body before, or why reading it failed. contentType() and contentLength() describe the body without reading it.
+ *
+ * The request's headers are changed through setHeader(), appendHeader() and setHeaders(); the map headers() returns can't be modified.
  */
 
 public interface NGRequest {
@@ -37,7 +40,7 @@ public interface NGRequest {
 	public String uri();
 
 	/**
-	 * @return The request's headers, by name. Names are case-insensitive.
+	 * @return The request's headers, by name. Names are case-insensitive. The map can't be modified; change headers through setHeader(), appendHeader() and setHeaders().
 	 */
 	public Map<String, List<String>> headers();
 
@@ -52,7 +55,11 @@ public interface NGRequest {
 	public default void setHeader( final String headerName, final String value ) {
 		Objects.requireNonNull( headerName );
 		Objects.requireNonNull( value );
-		headers().put( headerName, List.of( value ) );
+
+		final Map<String, List<String>> headers = NGHeaderMaps.create();
+		headers.putAll( headers() );
+		headers.put( headerName, List.of( value ) );
+		setHeaders( headers );
 	}
 
 	/**
@@ -64,7 +71,11 @@ public interface NGRequest {
 
 		final List<String> values = new ArrayList<>( headersForKey( headerName ) );
 		values.add( value );
-		headers().put( headerName, values );
+
+		final Map<String, List<String>> headers = NGHeaderMaps.create();
+		headers.putAll( headers() );
+		headers.put( headerName, values );
+		setHeaders( headers );
 	}
 
 	/**
@@ -131,10 +142,11 @@ public interface NGRequest {
 	public InputStream contentStream();
 
 	/**
-	 * @return The request's body, as a UTF-8 string
+	 * @return The request's body, as a string in the charset its content type names (UTF-8 if it names none)
 	 */
 	public default String contentString() {
-		return new String( contentBytes(), StandardCharsets.UTF_8 );
+		final String contentType = contentType();
+		return new String( contentBytes(), contentType == null ? StandardCharsets.UTF_8 : NGRequestHead.charset( contentType ) );
 	}
 
 	/**

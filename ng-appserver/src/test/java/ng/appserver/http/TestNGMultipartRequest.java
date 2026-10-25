@@ -35,12 +35,12 @@ public class TestNGMultipartRequest {
 	private static Part field( final String name, final String value, final String contentType, final Charset charset ) {
 		final byte[] bytes = value.getBytes( charset );
 		final Map<String, List<String>> headers = contentType == null ? Map.of() : Map.of( "Content-Type", List.of( contentType ) );
-		return new Part( name, null, headers, new ByteArrayInputStream( bytes ), (long)bytes.length );
+		return new Part( name, null, headers, () -> new ByteArrayInputStream( bytes ), (long)bytes.length );
 	}
 
 	private static Part file( final String name, final String filename, final String content ) {
 		final byte[] bytes = content.getBytes( StandardCharsets.UTF_8 );
-		return new Part( name, filename, Map.of( "Content-Type", List.of( "application/octet-stream" ) ), new ByteArrayInputStream( bytes ), (long)bytes.length );
+		return new Part( name, filename, Map.of( "Content-Type", List.of( "application/octet-stream" ) ), () -> new ByteArrayInputStream( bytes ), (long)bytes.length );
 	}
 
 	private static NGRequestLimits limits( final int maxParts, final Long maxMultipartContentLength, final int maxMemoryPartLength, final Path temporaryDirectory ) {
@@ -165,7 +165,7 @@ public class TestNGMultipartRequest {
 
 	@Test
 	public void partHeadersAreCaseInsensitive() {
-		final Part part = new Part( "a", null, Map.of( "X-Checksum", List.of( "abc" ), "content-type", List.of( "text/plain" ) ), new ByteArrayInputStream( new byte[0] ), 0L );
+		final Part part = new Part( "a", null, Map.of( "X-Checksum", List.of( "abc" ), "content-type", List.of( "text/plain" ) ), () -> new ByteArrayInputStream( new byte[0] ), 0L );
 		assertEquals( List.of( "abc" ), part.headers().get( "x-checksum" ) );
 		assertEquals( "text/plain", part.contentType() );
 	}
@@ -295,7 +295,7 @@ public class TestNGMultipartRequest {
 	}
 
 	private static Part bytes( final String name, final String filename, final int length ) {
-		return new Part( name, filename, Map.of(), new ByteArrayInputStream( new byte[length] ), null );
+		return new Part( name, filename, Map.of(), () -> new ByteArrayInputStream( new byte[length] ), null );
 	}
 
 	@Test
@@ -308,7 +308,7 @@ public class TestNGMultipartRequest {
 	public void largePartsAreKeptInTemporaryFilesUntilTheRequestIsClosed( @TempDir final Path directory ) throws IOException {
 		final NGRequestLimits limits = limits( 1000, null, 100, directory );
 		final byte[] content = "x".repeat( 1000 ).getBytes( StandardCharsets.UTF_8 );
-		final Part large = new Part( "f", "large.txt", Map.of(), new ByteArrayInputStream( content ), null );
+		final Part large = new Part( "f", "large.txt", Map.of(), () -> new ByteArrayInputStream( content ), null );
 		final NGMultipartRequest request = request( null, new AtomicInteger(), limits, large, bytes( "small", "small.bin", 50 ) );
 
 		final Part kept = request.uploadedFileForKey( "f" );
@@ -394,5 +394,36 @@ public class TestNGMultipartRequest {
 		final NGRequest request = NGRequests.of( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "Multipart/Form-Data; charset=utf-8; boundary=\"abc=def\"" ) ), InputStream.nullInputStream(), null, parser );
 		request.formValues();
 		assertEquals( 1, boundaries.get() );
+	}
+
+	@Test
+	public void anUploadedFileCanBeReadMoreThanOnce() throws IOException {
+		final NGMultipartRequest request = request( file( "f", "f.txt", "contents" ) );
+		final Part file = request.uploadedFileForKey( "f" );
+		assertEquals( "contents", new String( file.stream().readAllBytes(), StandardCharsets.UTF_8 ) );
+		assertEquals( "contents", new String( file.stream().readAllBytes(), StandardCharsets.UTF_8 ) );
+		assertEquals( "contents", new String( request.uploadedFileForKey( "f" ).stream().readAllBytes(), StandardCharsets.UTF_8 ) );
+	}
+
+	@Test
+	public void aLargeUploadedFileCanBeReadMoreThanOnce( @TempDir final Path directory ) throws IOException {
+		final byte[] content = "x".repeat( 1000 ).getBytes( StandardCharsets.UTF_8 );
+		final NGMultipartRequest request = request( null, new AtomicInteger(), limits( 1000, null, 100, directory ), new Part( "f", "big.txt", Map.of(), () -> new ByteArrayInputStream( content ), null ) );
+		final Part file = request.uploadedFileForKey( "f" );
+		assertArrayEquals( content, file.stream().readAllBytes() );
+		assertArrayEquals( content, file.stream().readAllBytes() );
+		request._close();
+	}
+
+	@Test
+	public void partsOverTheLimitAreRefusedFromThenOn( @TempDir final Path directory ) {
+		final NGMultipartRequest request = request( null, new AtomicInteger(), limits( 1000, 10L, 100, directory ), bytes( "f", "big.bin", 100 ) );
+		assertThrows( IllegalArgumentException.class, request::uploadedFiles );
+
+		// Collecting failed partway, so the parts are gone. Later reads say why, instead of returning the query string's form values as if the parts had been read as a stream
+		final IllegalStateException e = assertThrows( IllegalStateException.class, request::formValues );
+		assertTrue( e.getMessage().contains( "collecting its parts failed" ) );
+		assertThrows( IllegalStateException.class, request::uploadedFiles );
+		request._close();
 	}
 }

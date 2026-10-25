@@ -312,4 +312,45 @@ public class TestNGStandardRequest {
 		assertEquals( Path.of( "/var/uploads" ), limits.temporaryDirectory() );
 		assertEquals( NGRequestLimits.DEFAULT.maxParts(), limits.maxParts() );
 	}
+
+	@Test
+	public void aBodyOverTheFormLimitIsRefusedFromThenOn() {
+		final String body = "a=" + "x".repeat( NGRequestLimits.DEFAULT.maxFormContentLength() );
+		final NGStandardRequest request = request( null, FORM, new ByteArrayInputStream( body.getBytes( StandardCharsets.UTF_8 ) ) );
+
+		assertThrows( IllegalArgumentException.class, request::formValues );
+
+		// The body was partly read, so it's gone. Later reads say why, instead of finding it seemingly untouched (or silently dropping its form values)
+		final IllegalStateException e = assertThrows( IllegalStateException.class, request::contentString );
+		assertTrue( e.getMessage().contains( "longer than" ) );
+		assertThrows( IllegalStateException.class, request::formValues );
+		assertThrows( IllegalStateException.class, request::contentStream );
+	}
+
+	@Test
+	public void contentStringHonoursTheCharset() {
+		final InputStream body = new ByteArrayInputStream( "Þórður".getBytes( StandardCharsets.ISO_8859_1 ) );
+		assertEquals( "Þórður", request( null, "text/plain; charset=ISO-8859-1", body ).contentString() );
+	}
+
+	@Test
+	public void contentStringIsUTF8WithoutACharset() {
+		final InputStream body = new ByteArrayInputStream( "Þórður".getBytes( StandardCharsets.UTF_8 ) );
+		assertEquals( "Þórður", request( null, "text/plain", body ).contentString() );
+	}
+
+	@Test
+	public void theHeaderMapIsReadOnly() {
+		final NGStandardRequest request = requestWithHeaders( Map.of( "X-Thing", List.of( "1" ) ) );
+		assertThrows( UnsupportedOperationException.class, () -> request.headers().put( "X-Other", List.of( "2" ) ) );
+		assertThrows( UnsupportedOperationException.class, () -> request.headers().get( "x-thing" ).add( "2" ) );
+	}
+
+	@Test
+	public void setHeaderReplacesWhateverCaseTheNameWasIn() {
+		final NGStandardRequest request = requestWithHeaders( Map.of( "X-Thing", List.of( "1" ) ) );
+		request.setHeader( "x-thing", "2" );
+		assertEquals( List.of( "2" ), request.headersForKey( "X-THING" ) );
+		assertEquals( 1, request.headers().size() );
+	}
 }

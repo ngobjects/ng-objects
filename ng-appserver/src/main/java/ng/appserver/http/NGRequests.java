@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGApplication;
+import ng.appserver.properties.NGProperties;
 
 /**
  * Creates requests from what the adaptor received
@@ -12,7 +13,35 @@ import ng.appserver.NGApplication;
 
 public class NGRequests {
 
+	/**
+	 * The limits read from the properties of the application they were read for, kept since properties don't change while an application runs
+	 */
+	private record CachedLimits( NGProperties properties, NGRequestLimits limits ) {}
+
+	private static volatile CachedLimits _cachedLimits;
+
 	private NGRequests() {}
+
+	/**
+	 * @return The request limits set by the running application's properties, DEFAULT if no application is running
+	 */
+	private static NGRequestLimits limits() {
+		final NGApplication application = NGApplication.application();
+
+		if( application == null ) {
+			return NGRequestLimits.DEFAULT;
+		}
+
+		final CachedLimits cached = _cachedLimits;
+
+		if( cached != null && cached.properties() == application.properties() ) {
+			return cached.limits();
+		}
+
+		final NGRequestLimits limits = NGRequestLimits.from( application.properties() );
+		_cachedLimits = new CachedLimits( application.properties(), limits );
+		return limits;
+	}
 
 	/**
 	 * @param queryString The URI's query string, still percent-encoded. null if the URI has none.
@@ -27,7 +56,7 @@ public class NGRequests {
 		final List<String> contentTypes = caseInsensitiveHeaders.get( "content-type" );
 		final String contentType = contentTypes == null || contentTypes.isEmpty() ? null : contentTypes.get( 0 );
 
-		final NGRequestLimits limits = NGApplication.application() == null ? NGRequestLimits.DEFAULT : NGRequestLimits.from( NGApplication.application().properties() );
+		final NGRequestLimits limits = limits();
 
 		if( multipartParser != null && contentType != null && "multipart/form-data".equalsIgnoreCase( NGRequestHead.mediaType( contentType ) ) ) {
 			final String boundary = NGRequestHead.parameter( contentType, "boundary" );

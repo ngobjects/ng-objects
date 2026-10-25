@@ -102,11 +102,11 @@ public class NGStandardResponse implements NGResponse {
 	/**
 	 * @return The response's content stream
 	 */
-	public ByteArrayOutputStream contentByteStream() {
+	private ByteArrayOutputStream contentByteStream() {
 		return _contentByteStream;
 	}
 
-	public void _setContentByteStream( ByteArrayOutputStream value ) {
+	private void _setContentByteStream( ByteArrayOutputStream value ) {
 		_contentByteStream = value;
 	}
 

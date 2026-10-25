@@ -28,6 +28,11 @@ final class NGRequestBody {
 	 */
 	private String _streamedBy;
 
+	/**
+	 * Why reading the body failed, for explaining why it can't be read again. null if it hasn't.
+	 */
+	private String _failure;
+
 	NGRequestBody( final InputStream stream ) {
 		Objects.requireNonNull( stream );
 		_stream = stream;
@@ -41,7 +46,7 @@ final class NGRequestBody {
 	}
 
 	/**
-	 * @return true if the body has been handed over as a stream, so it's gone
+	 * @return true if the body has been handed over as a stream, so it's gone. false if reading it failed (see requireReadable()).
 	 */
 	synchronized boolean isStreamed() {
 		return _streamedBy != null;
@@ -50,11 +55,11 @@ final class NGRequestBody {
 	/**
 	 * @return The body, read in full and kept on first invocation
 	 * @throws IllegalArgumentException If the body has to be read and turns out longer than maxLength bytes (null for no limit)
-	 * @throws IllegalStateException If the body has been handed over as a stream
+	 * @throws IllegalStateException If the body has been handed over as a stream, or reading it failed before
 	 */
 	synchronized byte[] bytes( final Long maxLength ) {
 		if( _bytes == null ) {
-			requireNotStreamed( "read in full" );
+			requireReadable( "read in full" );
 			final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
 			try( _stream ) {
@@ -66,6 +71,7 @@ final class NGRequestBody {
 					length += read;
 
 					if( maxLength != null && length > maxLength ) {
+						fail( "it turned out longer than %s bytes".formatted( maxLength ) );
 						throw new IllegalArgumentException( "Content is longer than %s bytes".formatted( maxLength ) );
 					}
 
@@ -73,6 +79,7 @@ final class NGRequestBody {
 				}
 			}
 			catch( IOException e ) {
+				fail( "it couldn't be read (%s)".formatted( e.getMessage() ) );
 				throw new UncheckedIOException( e );
 			}
 
@@ -85,22 +92,42 @@ final class NGRequestBody {
 	/**
 	 * @param reader What's reading the body, for explaining later reads that can't be served
 	 * @return The body as a stream: over the kept bytes if it's been read in full, otherwise the body itself, which is then gone
-	 * @throws IllegalStateException If the body has already been handed over as a stream
+	 * @throws IllegalStateException If the body has already been handed over as a stream, or reading it failed before
 	 */
 	synchronized InputStream stream( final String reader ) {
 		if( _bytes != null ) {
 			return new ByteArrayInputStream( _bytes );
 		}
 
-		requireNotStreamed( "read as a stream" );
+		requireReadable( "read as a stream" );
 		_streamedBy = reader;
 		return _stream;
 	}
 
 	/**
-	 * @throws IllegalStateException If the body has been handed over as a stream, explaining that the read attempted can't be served
+	 * Records that reading the body failed partway, so later reads refuse rather than find it seemingly untouched
 	 */
-	synchronized void requireNotStreamed( final String attempted ) {
+	synchronized void fail( final String reason ) {
+		if( _failure == null ) {
+			_failure = reason;
+		}
+	}
+
+	/**
+	 * @throws IllegalStateException If reading the body failed before, explaining that the read attempted can't be served
+	 */
+	synchronized void requireNotFailed( final String attempted ) {
+		if( _failure != null ) {
+			throw new IllegalStateException( "This request's body can't be %s, since reading it failed before: %s".formatted( attempted, _failure ) );
+		}
+	}
+
+	/**
+	 * @throws IllegalStateException If the body has been handed over as a stream, or reading it failed before, explaining that the read attempted can't be served
+	 */
+	synchronized void requireReadable( final String attempted ) {
+		requireNotFailed( attempted );
+
 		if( _streamedBy != null ) {
 			throw new IllegalStateException( "This request's body can't be %s, since it was already read by %s, which doesn't keep it. To read a body more than once, read it first with contentBytes() or contentString(), which keep it".formatted( attempted, _streamedBy ) );
 		}
