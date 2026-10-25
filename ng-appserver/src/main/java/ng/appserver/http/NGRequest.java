@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
@@ -56,7 +57,7 @@ public interface NGRequest {
 		Objects.requireNonNull( headerName );
 		Objects.requireNonNull( value );
 
-		final Map<String, List<String>> headers = NGHeaderMaps.create();
+		final Map<String, List<String>> headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 		headers.putAll( headers() );
 		headers.put( headerName, List.of( value ) );
 		setHeaders( headers );
@@ -72,7 +73,7 @@ public interface NGRequest {
 		final List<String> values = new ArrayList<>( headersForKey( headerName ) );
 		values.add( value );
 
-		final Map<String, List<String>> headers = NGHeaderMaps.create();
+		final Map<String, List<String>> headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 		headers.putAll( headers() );
 		headers.put( headerName, values );
 		setHeaders( headers );

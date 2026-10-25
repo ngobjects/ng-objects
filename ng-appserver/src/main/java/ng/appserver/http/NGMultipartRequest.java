@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -59,7 +60,7 @@ public class NGMultipartRequest implements NGRequest {
 			Objects.requireNonNull( headers );
 			Objects.requireNonNull( content );
 
-			final Map<String, List<String>> caseInsensitiveHeaders = NGHeaderMaps.create();
+			final Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 			caseInsensitiveHeaders.putAll( headers );
 
 			_name = name;

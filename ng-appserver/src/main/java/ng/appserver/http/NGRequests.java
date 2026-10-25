@@ -3,6 +3,7 @@ package ng.appserver.http;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import ng.appserver.NGApplication;
 import ng.appserver.properties.NGProperties;
@@ -50,7 +51,7 @@ public class NGRequests {
 	 * @return A request for what the adaptor received: an NGMultipartRequest if its content type is multipart/form-data. Invoke _close() on it once its response has been sent.
 	 */
 	public static NGRequest of( final String method, final String uri, final String queryString, final Map<String, List<String>> headers, final InputStream body, final String remoteAddress, final NGMultipartParser multipartParser ) {
-		final Map<String, List<String>> caseInsensitiveHeaders = NGHeaderMaps.create();
+		final Map<String, List<String>> caseInsensitiveHeaders = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 		caseInsensitiveHeaders.putAll( headers );
 
 		final List<String> contentTypes = caseInsensitiveHeaders.get( "content-type" );

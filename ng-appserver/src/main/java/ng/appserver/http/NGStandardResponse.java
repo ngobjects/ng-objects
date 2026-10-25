@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.TreeMap;
 
 public class NGStandardResponse implements NGResponse {
 
@@ -67,7 +68,7 @@ public class NGStandardResponse implements NGResponse {
 	/**
 	 * The headers  of this message
 	 */
-	private Map<String, List<String>> _headers = NGHeaderMaps.create();
+	private Map<String, List<String>> _headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 
 	/**
 	 * The content of this message
@@ -92,7 +93,7 @@ public class NGStandardResponse implements NGResponse {
 	 */
 	@Override
 	public void setHeaders( final Map<String, List<String>> newHeaders ) {
-		_headers = NGHeaderMaps.create();
+		_headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 
 		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
 			_headers.put( header.getKey(), header.getValue() );

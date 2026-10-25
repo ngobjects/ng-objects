@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
@@ -35,7 +36,7 @@ final class NGRequestHead {
 	/**
 	 * The request's headers. Names are case-insensitive.
 	 */
-	private final Map<String, List<String>> _headers = NGHeaderMaps.create();
+	private final Map<String, List<String>> _headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 
 	/**
 	 * The network address of the client, as reported by the adaptor. null if the adaptor didn't provide one.
