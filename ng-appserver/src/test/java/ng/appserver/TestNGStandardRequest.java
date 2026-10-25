@@ -2,6 +2,7 @@ package ng.appserver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -62,7 +63,7 @@ public class TestNGStandardRequest {
 
 	private static NGStandardRequest request( final String queryString, final String contentType, final InputStream contentStream ) {
 		final Map<String, List<String>> headers = contentType == null ? Map.of() : Map.of( "Content-Type", List.of( contentType ) );
-		return new NGStandardRequest( "POST", "/", queryString, "HTTP/1.1", headers, Map.of(), contentStream, null );
+		return new NGStandardRequest( "POST", "/", queryString, "HTTP/1.1", headers, contentStream, null );
 	}
 
 	private static final String FORM = "application/x-www-form-urlencoded";
@@ -177,5 +178,29 @@ public class TestNGStandardRequest {
 	public void formFieldLimit() {
 		final String body = "a=1&".repeat( NGStandardRequest.MAX_FORM_FIELDS + 1 );
 		assertThrows( IllegalArgumentException.class, () -> request( null, FORM, new RecordingStream( body ) ).formValues() );
+	}
+
+	private static NGStandardRequest requestWithHeaders( final Map<String, List<String>> headers ) {
+		return new NGStandardRequest( "GET", "/", null, "HTTP/1.1", headers, InputStream.nullInputStream(), null );
+	}
+
+	@Test
+	public void cookieValuesFromTheCookieHeaders() {
+		final NGStandardRequest request = requestWithHeaders( Map.of( "Cookie", List.of( "a=1; b=2", "c=3" ) ) );
+		assertEquals( Map.of( "a", List.of( "1" ), "b", List.of( "2" ), "c", List.of( "3" ) ), request.cookieValues() );
+		assertEquals( "2", request.cookieValueForKey( "b" ) );
+	}
+
+	@Test
+	public void noCookieHeaderMeansNoCookies() {
+		final NGStandardRequest request = requestWithHeaders( Map.of() );
+		assertEquals( Map.of(), request.cookieValues() );
+		assertNull( request.cookieValueForKey( "a" ) );
+	}
+
+	@Test
+	public void theSessionIDComesFromItsCookie() {
+		final NGStandardRequest request = requestWithHeaders( Map.of( "cookie", List.of( "other=x; " + NGApplication.SESSION_ID_COOKIE_NAME + "=abc123" ) ) );
+		assertEquals( "abc123", request._sessionID() );
 	}
 }

@@ -135,8 +135,8 @@ public class NGMultipartRequest extends NGStandardRequest {
 	 * @param boundary The boundary between the parts, from the request's content type
 	 * @param parser Splits the body into its parts, the first time they're asked for
 	 */
-	public NGMultipartRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> cookieValues, final InputStream body, final String boundary, final NGMultipartParser parser, final Limits limits, final String remoteAddress ) {
-		super( method, uri, queryString, httpVersion, headers, cookieValues, InputStream.nullInputStream(), remoteAddress );
+	public NGMultipartRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final InputStream body, final String boundary, final NGMultipartParser parser, final Limits limits, final String remoteAddress ) {
+		super( method, uri, queryString, httpVersion, headers, InputStream.nullInputStream(), remoteAddress );
 		Objects.requireNonNull( body );
 		Objects.requireNonNull( boundary );
 		Objects.requireNonNull( parser );

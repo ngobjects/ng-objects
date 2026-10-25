@@ -127,33 +127,11 @@ public class NGServletAdaptor extends HttpServlet {
 	 */
 	private static NGStandardRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 		try {
-			return NGRequests.of( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), cookieValues( sr.getCookies() ), sr.getInputStream(), sr.getRemoteAddr(), NGIncomingParts::new );
+			return NGRequests.of( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), sr.getInputStream(), sr.getRemoteAddr(), NGIncomingParts::new );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
 		}
-	}
-
-	/**
-	 * @return The listed cookies as a map
-	 */
-	private static Map<String, List<String>> cookieValues( final Cookie[] cookies ) {
-		final Map<String, List<String>> cookieValues = new HashMap<>();
-
-		if( cookies != null ) {
-			for( Cookie cookie : cookies ) {
-				List<String> list = cookieValues.get( cookie.getName() );
-
-				if( list == null ) {
-					list = new ArrayList<>();
-					cookieValues.put( cookie.getName(), list );
-				}
-
-				list.add( cookie.getValue() );
-			}
-		}
-
-		return cookieValues;
 	}
 
 	/**

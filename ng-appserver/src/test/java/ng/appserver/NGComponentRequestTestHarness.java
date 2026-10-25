@@ -78,7 +78,7 @@ public class NGComponentRequestTestHarness {
 		private final Map<String, List<String>> _testFormValues;
 
 		public TestRequest( final String uri, final Map<String, List<String>> formValues ) {
-			super( "GET", uri, null, "HTTP/1.1", Map.of(), Map.of(), InputStream.nullInputStream(), null );
+			super( "GET", uri, null, "HTTP/1.1", Map.of(), InputStream.nullInputStream(), null );
 			_testFormValues = formValues;
 		}
 

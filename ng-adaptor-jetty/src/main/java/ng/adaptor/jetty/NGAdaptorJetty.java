@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.BindException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -217,33 +216,10 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final String queryString = jettyRequest.getHttpURI().getQuery();
 			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
-			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
 			final InputStream body = Request.asInputStream( jettyRequest );
 			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
 
-			return NGRequests.of( method, uri, queryString, httpVersion, headers, cookieValues, body, remoteAddress, NGIncomingParts::new );
-		}
-
-		/**
-		 * @return The listed cookies as a map
-		 */
-		private static Map<String, List<String>> cookieValues( final List<HttpCookie> cookies ) {
-			final Map<String, List<String>> cookieValues = new HashMap<>();
-
-			if( cookies != null ) {
-				for( HttpCookie cookie : cookies ) {
-					List<String> list = cookieValues.get( cookie.getName() );
-
-					if( list == null ) {
-						list = new ArrayList<>();
-						cookieValues.put( cookie.getName(), list );
-					}
-
-					list.add( cookie.getValue() );
-				}
-			}
-
-			return cookieValues;
+			return NGRequests.of( method, uri, queryString, httpVersion, headers, body, remoteAddress, NGIncomingParts::new );
 		}
 
 		/**

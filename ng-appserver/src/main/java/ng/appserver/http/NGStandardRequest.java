@@ -57,9 +57,9 @@ public class NGStandardRequest implements NGRequest {
 	private Map<String, List<String>> _formValues;
 
 	/**
-	 * Values of cookies
+	 * The values of the request's cookies, parsed from its Cookie headers. null until something asks for them.
 	 */
-	private final Map<String, List<String>> _cookieValues;
+	private Map<String, List<String>> _cookieValues;
 
 	/**
 	 * The network address of the client, as reported by the adaptor (see NGRequest.remoteAddress()).
@@ -72,7 +72,7 @@ public class NGStandardRequest implements NGRequest {
 	 *
 	 * FIXME: The httpVersion parameter is currently not used. I'm keeping it around to keep the constructor's shape, since I _think_ we might eventually want to use it. But today, It's just added weight 	// Hugi 2026-05-12
 	 */
-	public NGStandardRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> cookieValues, final InputStream contentStream, String remoteAddress ) {
+	public NGStandardRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final InputStream contentStream, String remoteAddress ) {
 		Objects.requireNonNull( method );
 		Objects.requireNonNull( uri );
 		Objects.requireNonNull( httpVersion );
@@ -84,7 +84,6 @@ public class NGStandardRequest implements NGRequest {
 		//		setHttpVersion( httpVersion );
 		setHeaders( headers );
 		_queryString = queryString;
-		_cookieValues = cookieValues; // FIXME: Cookie header deserialization should happen in NGRequest instead of in the adaptor // Hugi 2021-12-30
 		_remoteAddress = remoteAddress;
 		_contentStream = contentStream;
 	}
@@ -241,7 +240,11 @@ public class NGStandardRequest implements NGRequest {
 	 * @return A map of cookie values from the request.
 	 */
 	@Override
-	public Map<String, List<String>> cookieValues() {
+	public synchronized Map<String, List<String>> cookieValues() {
+		if( _cookieValues == null ) {
+			_cookieValues = NGCookieValues.parse( headersForKey( "cookie" ) );
+		}
+
 		return _cookieValues;
 	}
 
@@ -306,7 +309,7 @@ public class NGStandardRequest implements NGRequest {
 
 	@Override
 	public String toString() {
-		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _queryString=" + _queryString + ", _headers=" + headers() + ", _cookieValues=" + _cookieValues + "]";
+		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _queryString=" + _queryString + ", _headers=" + headers() + "]";
 	}
 
 	/* ------ FIXME: below is logic from NGMessage, awaiting to be nicely factored into the class // Hugi 2026-05-12 ------  */
