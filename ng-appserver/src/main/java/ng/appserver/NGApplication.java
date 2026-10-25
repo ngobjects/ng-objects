@@ -392,9 +392,15 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * @return The fully qualified class name of the http adaptor
+	 * @return The fully qualified class name of the http adaptor: the WOAdaptor property if it's set, otherwise the Jetty adaptor
 	 */
 	public String adaptorClassName() {
+		final String adaptorClassName = properties().d().propWOAdaptor();
+
+		if( adaptorClassName != null ) {
+			return adaptorClassName;
+		}
+
 		return "ng.adaptor.jetty.NGAdaptorJetty";
 	}
 

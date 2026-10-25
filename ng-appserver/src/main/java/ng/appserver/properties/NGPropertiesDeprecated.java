@@ -25,10 +25,10 @@ public class NGPropertiesDeprecated {
 		WOLifebeatDestinationPort,
 		WOHost,
 		WOPort,
+		WOAdaptor,
 
 		// Properties currently NOT in use
 		NSProjectSearchPath,
-		WOAdaptor,
 		WOAutoOpenClientApplication,
 		WOAutoOpenInBrowser,
 		WOCachingEnabled,
@@ -43,6 +43,10 @@ public class NGPropertiesDeprecated {
 
 	public Integer propWOPort() {
 		return _p.getInteger( WOProperties.WOPort.name() );
+	}
+
+	public String propWOAdaptor() {
+		return _p.get( WOProperties.WOAdaptor.name() );
 	}
 
 	public String propWOHost() {

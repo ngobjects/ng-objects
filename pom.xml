@@ -45,6 +45,7 @@
 		<module>ng-appserver</module>
 		<module>ng-adaptor-jetty</module>
 		<module>ng-adaptor-jetty-servlet</module>
+		<module>ng-adaptor-java</module>
 		<module>ng-control</module>
 	</modules>
 
