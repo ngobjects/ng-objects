@@ -81,7 +81,7 @@ public class TestNGFileUpload {
 
 	private static NGMultipartRequest multipartRequest( final Part... parts ) {
 		final NGMultipartParser parser = ( body, boundary ) -> List.of( parts ).iterator();
-		return (NGMultipartRequest)NGRequests.of( "POST", "/no/1.0", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) ), InputStream.nullInputStream(), null, parser );
+		return (NGMultipartRequest)NGRequests.of( "POST", "/no/1.0", null, Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) ), InputStream.nullInputStream(), null, parser );
 	}
 
 	private static Part file( final String name, final String filename, final String content ) {

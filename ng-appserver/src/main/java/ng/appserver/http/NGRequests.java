@@ -49,7 +49,7 @@ public class NGRequests {
 	 * @param multipartParser Splits a multipart body into its parts. null if the adaptor doesn't provide one, in which case a multipart request's body is left as it is.
 	 * @return A request for what the adaptor received: an NGMultipartRequest if its content type is multipart/form-data. Invoke _close() on it once its response has been sent.
 	 */
-	public static NGRequest of( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final InputStream body, final String remoteAddress, final NGMultipartParser multipartParser ) {
+	public static NGRequest of( final String method, final String uri, final String queryString, final Map<String, List<String>> headers, final InputStream body, final String remoteAddress, final NGMultipartParser multipartParser ) {
 		final Map<String, List<String>> caseInsensitiveHeaders = NGHeaderMaps.create();
 		caseInsensitiveHeaders.putAll( headers );
 
@@ -62,10 +62,10 @@ public class NGRequests {
 			final String boundary = NGRequestHead.parameter( contentType, "boundary" );
 
 			if( boundary != null && !boundary.isEmpty() ) {
-				return new NGMultipartRequest( method, uri, queryString, httpVersion, headers, body, boundary, multipartParser, limits, remoteAddress );
+				return new NGMultipartRequest( method, uri, queryString, headers, body, boundary, multipartParser, limits, remoteAddress );
 			}
 		}
 
-		return new NGStandardRequest( method, uri, queryString, httpVersion, headers, body, remoteAddress, limits );
+		return new NGStandardRequest( method, uri, queryString, headers, body, remoteAddress, limits );
 	}
 }

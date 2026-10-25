@@ -213,12 +213,11 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
 			final String queryString = jettyRequest.getHttpURI().getQuery();
-			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
 			final InputStream body = Request.asInputStream( jettyRequest );
 			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
 
-			return NGRequests.of( method, uri, queryString, httpVersion, headers, body, remoteAddress, NGIncomingParts::new );
+			return NGRequests.of( method, uri, queryString, headers, body, remoteAddress, NGIncomingParts::new );
 		}
 
 		/**

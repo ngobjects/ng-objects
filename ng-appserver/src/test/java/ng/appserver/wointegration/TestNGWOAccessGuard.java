@@ -67,7 +67,7 @@ public class TestNGWOAccessGuard {
 	}
 
 	private static NGRequest request( final String remoteAddress, final Map<String, List<String>> headers ) {
-		return NGRequests.of( "POST", "/womp/instanceRequest", null, "HTTP/1.1", headers, InputStream.nullInputStream(), remoteAddress, null );
+		return NGRequests.of( "POST", "/womp/instanceRequest", null, headers, InputStream.nullInputStream(), remoteAddress, null );
 	}
 
 	private static boolean isLoopback( final NetworkInterface networkInterface ) {

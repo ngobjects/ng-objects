@@ -107,7 +107,6 @@ public class NGAdaptorJava extends NGAdaptor {
 				exchange.getRequestMethod(),
 				path == null || path.isEmpty() ? "/" : path,
 				requestURI.getRawQuery(),
-				exchange.getProtocol(),
 				exchange.getRequestHeaders(),
 				exchange.getRequestBody(),
 				exchange.getRemoteAddress().getAddress().getHostAddress(),

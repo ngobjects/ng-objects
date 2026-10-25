@@ -190,11 +190,11 @@ public class NGMultipartRequest implements NGRequest {
 	 * @param boundary The boundary between the parts, from the request's content type
 	 * @param parser Splits the body into its parts
 	 */
-	NGMultipartRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final InputStream body, final String boundary, final NGMultipartParser parser, final NGRequestLimits limits, final String remoteAddress ) {
+	NGMultipartRequest( final String method, final String uri, final String queryString, final Map<String, List<String>> headers, final InputStream body, final String boundary, final NGMultipartParser parser, final NGRequestLimits limits, final String remoteAddress ) {
 		Objects.requireNonNull( boundary );
 		Objects.requireNonNull( parser );
 		Objects.requireNonNull( limits );
-		_head = new NGRequestHead( method, uri, queryString, httpVersion, headers, remoteAddress );
+		_head = new NGRequestHead( method, uri, queryString, headers, remoteAddress );
 		_body = new NGRequestBody( body );
 		_boundary = boundary;
 		_parser = parser;

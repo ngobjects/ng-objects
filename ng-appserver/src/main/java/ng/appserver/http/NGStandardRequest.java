@@ -36,9 +36,9 @@ class NGStandardRequest implements NGRequest {
 	 * @param queryString The URI's query string, still percent-encoded. null if the URI has none.
 	 * @param body The request's body. Readable only while the adaptor is handling the request.
 	 */
-	NGStandardRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final InputStream body, final String remoteAddress, final NGRequestLimits limits ) {
+	NGStandardRequest( final String method, final String uri, final String queryString, final Map<String, List<String>> headers, final InputStream body, final String remoteAddress, final NGRequestLimits limits ) {
 		Objects.requireNonNull( limits );
-		_head = new NGRequestHead( method, uri, queryString, httpVersion, headers, remoteAddress );
+		_head = new NGRequestHead( method, uri, queryString, headers, remoteAddress );
 		_body = new NGRequestBody( body );
 		_limits = limits;
 	}

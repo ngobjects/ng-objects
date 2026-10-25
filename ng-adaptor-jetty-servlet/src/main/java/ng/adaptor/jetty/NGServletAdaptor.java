@@ -126,7 +126,7 @@ public class NGServletAdaptor extends HttpServlet {
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 		try {
-			return NGRequests.of( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), sr.getInputStream(), sr.getRemoteAddr(), NGIncomingParts::new );
+			return NGRequests.of( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), headerMap( sr ), sr.getInputStream(), sr.getRemoteAddr(), NGIncomingParts::new );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );

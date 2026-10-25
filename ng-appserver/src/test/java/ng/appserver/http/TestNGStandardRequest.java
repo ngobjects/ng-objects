@@ -66,7 +66,7 @@ public class TestNGStandardRequest {
 
 	private static NGStandardRequest request( final String queryString, final String contentType, final InputStream contentStream ) {
 		final Map<String, List<String>> headers = contentType == null ? Map.of() : Map.of( "Content-Type", List.of( contentType ) );
-		return new NGStandardRequest( "POST", "/", queryString, "HTTP/1.1", headers, contentStream, null, NGRequestLimits.DEFAULT );
+		return new NGStandardRequest( "POST", "/", queryString, headers, contentStream, null, NGRequestLimits.DEFAULT );
 	}
 
 	private static final String FORM = "application/x-www-form-urlencoded";
@@ -184,7 +184,7 @@ public class TestNGStandardRequest {
 	}
 
 	private static NGStandardRequest requestWithHeaders( final Map<String, List<String>> headers ) {
-		return new NGStandardRequest( "GET", "/", null, "HTTP/1.1", headers, InputStream.nullInputStream(), null, NGRequestLimits.DEFAULT );
+		return new NGStandardRequest( "GET", "/", null, headers, InputStream.nullInputStream(), null, NGRequestLimits.DEFAULT );
 	}
 
 	@Test
@@ -279,7 +279,7 @@ public class TestNGStandardRequest {
 	@Test
 	public void contentTypeAndLengthDontReadTheBody() {
 		final RecordingStream stream = new RecordingStream( "body" );
-		final NGStandardRequest request = new NGStandardRequest( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "text/plain" ), "Content-Length", List.of( " 4 " ) ), stream, null, NGRequestLimits.DEFAULT );
+		final NGStandardRequest request = new NGStandardRequest( "POST", "/", null, Map.of( "Content-Type", List.of( "text/plain" ), "Content-Length", List.of( " 4 " ) ), stream, null, NGRequestLimits.DEFAULT );
 		assertEquals( "text/plain", request.contentType() );
 		assertEquals( 4L, request.contentLength() );
 		assertFalse( stream.read );

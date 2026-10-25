@@ -61,7 +61,7 @@ public class TestNGMultipartRequest {
 			return List.of( parts ).iterator();
 		};
 
-		return new NGMultipartRequest( "POST", "/", queryString, "HTTP/1.1", headers, InputStream.nullInputStream(), "x", parser, limits, null );
+		return new NGMultipartRequest( "POST", "/", queryString, headers, InputStream.nullInputStream(), "x", parser, limits, null );
 	}
 
 	private static NGMultipartRequest request( final Part... parts ) {
@@ -251,7 +251,7 @@ public class TestNGMultipartRequest {
 			}
 		};
 
-		return new NGMultipartRequest( "POST", "/", "q=1", "HTTP/1.1", headers, new ByteArrayInputStream( body.getBytes( StandardCharsets.UTF_8 ) ), "x", parser, NGRequestLimits.DEFAULT, null );
+		return new NGMultipartRequest( "POST", "/", "q=1", headers, new ByteArrayInputStream( body.getBytes( StandardCharsets.UTF_8 ) ), "x", parser, NGRequestLimits.DEFAULT, null );
 	}
 
 	@Test
@@ -373,13 +373,13 @@ public class TestNGMultipartRequest {
 	public void requestsOfMultipartContentAreMultipartRequests() {
 		final NGMultipartParser parser = ( body, boundary ) -> List.<Part> of().iterator();
 		final Map<String, List<String>> multipart = Map.of( "content-type", List.of( "multipart/form-data; boundary=\"abc=def\"" ) );
-		assertTrue( NGRequests.of( "POST", "/", null, "HTTP/1.1", multipart, InputStream.nullInputStream(), null, parser ) instanceof NGMultipartRequest );
+		assertTrue( NGRequests.of( "POST", "/", null, multipart, InputStream.nullInputStream(), null, parser ) instanceof NGMultipartRequest );
 
 		// No parser, no boundary, or another content type: the body is left as it is
-		assertFalse( NGRequests.of( "POST", "/", null, "HTTP/1.1", multipart, InputStream.nullInputStream(), null, null ) instanceof NGMultipartRequest );
-		assertFalse( NGRequests.of( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "multipart/form-data" ) ), InputStream.nullInputStream(), null, parser ) instanceof NGMultipartRequest );
-		assertFalse( NGRequests.of( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "text/plain" ) ), InputStream.nullInputStream(), null, parser ) instanceof NGMultipartRequest );
-		assertTrue( NGRequests.of( "GET", "/", null, "HTTP/1.1", Map.of(), InputStream.nullInputStream(), null, parser ) instanceof NGStandardRequest );
+		assertFalse( NGRequests.of( "POST", "/", null, multipart, InputStream.nullInputStream(), null, null ) instanceof NGMultipartRequest );
+		assertFalse( NGRequests.of( "POST", "/", null, Map.of( "Content-Type", List.of( "multipart/form-data" ) ), InputStream.nullInputStream(), null, parser ) instanceof NGMultipartRequest );
+		assertFalse( NGRequests.of( "POST", "/", null, Map.of( "Content-Type", List.of( "text/plain" ) ), InputStream.nullInputStream(), null, parser ) instanceof NGMultipartRequest );
+		assertTrue( NGRequests.of( "GET", "/", null, Map.of(), InputStream.nullInputStream(), null, parser ) instanceof NGStandardRequest );
 	}
 
 	@Test
@@ -391,7 +391,7 @@ public class TestNGMultipartRequest {
 			return List.<Part> of().iterator();
 		};
 
-		final NGRequest request = NGRequests.of( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "Multipart/Form-Data; charset=utf-8; boundary=\"abc=def\"" ) ), InputStream.nullInputStream(), null, parser );
+		final NGRequest request = NGRequests.of( "POST", "/", null, Map.of( "Content-Type", List.of( "Multipart/Form-Data; charset=utf-8; boundary=\"abc=def\"" ) ), InputStream.nullInputStream(), null, parser );
 		request.formValues();
 		assertEquals( 1, boundaries.get() );
 	}

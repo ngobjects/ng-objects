@@ -44,13 +44,9 @@ final class NGRequestHead {
 
 	private NGContext _context;
 
-	/**
-	 * FIXME: The httpVersion parameter is currently not used. I'm keeping it around to keep the constructor's shape, since I _think_ we might eventually want to use it. But today, It's just added weight 	// Hugi 2026-05-12
-	 */
-	NGRequestHead( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final String remoteAddress ) {
+	NGRequestHead( final String method, final String uri, final String queryString, final Map<String, List<String>> headers, final String remoteAddress ) {
 		Objects.requireNonNull( method );
 		Objects.requireNonNull( uri );
-		Objects.requireNonNull( httpVersion );
 		Objects.requireNonNull( headers );
 
 		_method = method;
