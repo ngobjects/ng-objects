@@ -81,7 +81,7 @@ public class NGMultipartRequest implements NGRequest {
 			Objects.requireNonNull( headers );
 			Objects.requireNonNull( stream );
 
-			final Map<String, List<String>> caseInsensitiveHeaders = NGMessage.createEmptyHeadersMap();
+			final Map<String, List<String>> caseInsensitiveHeaders = NGHeaderMaps.create();
 			caseInsensitiveHeaders.putAll( headers );
 			headers = Collections.unmodifiableMap( caseInsensitiveHeaders );
 		}
@@ -176,11 +176,6 @@ public class NGMultipartRequest implements NGRequest {
 	@Override
 	public Map<String, List<String>> headers() {
 		return _head.headers();
-	}
-
-	@Override
-	public void setHeaders( final Map<String, List<String>> headers ) {
-		_head.setHeaders( headers );
 	}
 
 	@Override
@@ -460,15 +455,13 @@ public class NGMultipartRequest implements NGRequest {
 	}
 
 	/**
-	 * A multipart request's content is its parts, read through formValues() and uploadedFiles(), or incomingParts()
-	 *
-	 * FIXME: Goes away once content accessors leave the NGRequest contract, where only requests whose body is bytes have them // Hugi/Claude 2026-10-25
+	 * A multipart request's body is its parts, read through formValues() and uploadedFiles(), or incomingParts()
 	 *
 	 * @throws UnsupportedOperationException Always
 	 */
 	@Override
-	public ByteArrayOutputStream contentByteStream() {
-		throw new UnsupportedOperationException( "A multipart request's content is its parts. Use formValues() and uploadedFiles(), or incomingParts()" );
+	public byte[] contentBytes() {
+		throw new UnsupportedOperationException( "A multipart request's body is its parts. Use formValues() and uploadedFiles(), or incomingParts()" );
 	}
 
 	@Override

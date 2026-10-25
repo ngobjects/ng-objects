@@ -84,11 +84,6 @@ public class NGStandardRequest implements NGRequest {
 	}
 
 	@Override
-	public void setHeaders( final Map<String, List<String>> headers ) {
-		_head.setHeaders( headers );
-	}
-
-	@Override
 	public String remoteAddress() {
 		return _head.remoteAddress();
 	}
@@ -140,11 +135,11 @@ public class NGStandardRequest implements NGRequest {
 	}
 
 	/**
-	 * @return The request's content, read from the adaptor's stream on first invocation
+	 * @return The request's body, read from the adaptor's stream on first invocation
 	 */
 	@Override
-	public synchronized ByteArrayOutputStream contentByteStream() {
-		return readContent( Long.MAX_VALUE );
+	public synchronized byte[] contentBytes() {
+		return readContent( Long.MAX_VALUE ).toByteArray();
 	}
 
 	/**

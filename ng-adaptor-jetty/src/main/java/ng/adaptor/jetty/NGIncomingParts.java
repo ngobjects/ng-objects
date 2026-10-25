@@ -11,12 +11,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.MultiPart;
 import org.eclipse.jetty.io.Content;
 
-import ng.appserver.http.NGMessage;
 import ng.appserver.http.NGMultipartRequest.Part;
 
 /**
@@ -141,7 +141,7 @@ public class NGIncomingParts implements Iterator<Part> {
 
 		@Override
 		public void onPartBegin() {
-			_headers = NGMessage.createEmptyHeadersMap();
+			_headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 			_parsing = new PartContent();
 		}
 

@@ -21,7 +21,7 @@ public class NGRequests {
 	 * @return A request of the class its content type calls for: an NGMultipartRequest for multipart/form-data, an NGStandardRequest otherwise. Invoke _close() on it once its response has been sent.
 	 */
 	public static NGRequest of( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final InputStream body, final String remoteAddress, final NGMultipartParser multipartParser ) {
-		final Map<String, List<String>> caseInsensitiveHeaders = NGMessage.createEmptyHeadersMap();
+		final Map<String, List<String>> caseInsensitiveHeaders = NGHeaderMaps.create();
 		caseInsensitiveHeaders.putAll( headers );
 
 		final List<String> contentTypes = caseInsensitiveHeaders.get( "content-type" );

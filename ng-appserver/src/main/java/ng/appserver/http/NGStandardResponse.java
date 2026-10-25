@@ -13,6 +13,11 @@ import java.util.Objects;
 public class NGStandardResponse implements NGResponse {
 
 	/**
+	 * Arbitrarily picked default length we initialize the size of the content data byte[] with.
+	 */
+	private static final int DEFAULT_CONTENT_DATA_LENGTH = 8192;
+
+	/**
 	 * The Response's status code. Defaults to 200.
 	 */
 	private int _status = 200;
@@ -59,12 +64,10 @@ public class NGStandardResponse implements NGResponse {
 		return this;
 	}
 
-	/* ------ FIXME: below is logic from NGMessage, awaiting to be nicely factored into the class // Hugi 2026-05-12 ------  */
-
 	/**
 	 * The headers  of this message
 	 */
-	private Map<String, List<String>> _headers = NGMessage.createEmptyHeadersMap();
+	private Map<String, List<String>> _headers = NGHeaderMaps.create();
 
 	/**
 	 * The content of this message
@@ -74,7 +77,7 @@ public class NGStandardResponse implements NGResponse {
 	 * For example, it's clear that using a StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream
 	 * // Hugi 2023-02-08
 	 */
-	private ByteArrayOutputStream _contentByteStream = new ByteArrayOutputStream( NGMessage.DEFAULT_CONTENT_DATA_LENGTH );
+	private ByteArrayOutputStream _contentByteStream = new ByteArrayOutputStream( DEFAULT_CONTENT_DATA_LENGTH );
 
 	/**
 	 * @return The HTTP headers of this message
@@ -89,7 +92,7 @@ public class NGStandardResponse implements NGResponse {
 	 */
 	@Override
 	public void setHeaders( final Map<String, List<String>> newHeaders ) {
-		_headers = NGMessage.createEmptyHeadersMap();
+		_headers = NGHeaderMaps.create();
 
 		for( Entry<String, List<String>> header : newHeaders.entrySet() ) {
 			_headers.put( header.getKey(), header.getValue() );
@@ -99,7 +102,6 @@ public class NGStandardResponse implements NGResponse {
 	/**
 	 * @return The response's content stream
 	 */
-	@Override
 	public ByteArrayOutputStream contentByteStream() {
 		return _contentByteStream;
 	}
@@ -133,10 +135,14 @@ public class NGStandardResponse implements NGResponse {
 		setContentBytes( contentString.getBytes( StandardCharsets.UTF_8 ) );
 	}
 
-	/**
-	 * @return The length of the message's data content
-	 */
 	@Override
+	public byte[] contentBytes() {
+		return contentByteStream().toByteArray();
+	}
+
+	/**
+	 * @return The length of the response's content
+	 */
 	public long contentBytesLength() {
 		return contentByteStream().size();
 	}

@@ -224,4 +224,11 @@ public class TestNGStandardRequest {
 		assertEquals( "is", request.headerForKey( "accept-language" ) );
 		assertEquals( List.of( "is", "en" ), request.headersForKey( "accept-language" ) );
 	}
+
+	@Test
+	public void headersCantBeModified() {
+		final NGStandardRequest request = requestWithHeaders( Map.of( "X-Thing", List.of( "1" ) ) );
+		assertEquals( "1", request.headerForKey( "x-thing" ) );
+		assertThrows( UnsupportedOperationException.class, () -> request.headers().put( "X-Other", List.of( "2" ) ) );
+	}
 }

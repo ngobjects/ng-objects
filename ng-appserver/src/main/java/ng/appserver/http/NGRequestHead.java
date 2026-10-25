@@ -4,10 +4,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 import ng.appserver.NGApplication;
@@ -32,7 +32,7 @@ final class NGRequestHead {
 	 */
 	private final String _queryString;
 
-	private Map<String, List<String>> _headers;
+	private final Map<String, List<String>> _headers;
 
 	/**
 	 * The network address of the client, as reported by the adaptor. null if the adaptor didn't provide one.
@@ -58,7 +58,11 @@ final class NGRequestHead {
 		_method = method;
 		_uri = uri;
 		_queryString = queryString;
-		setHeaders( headers );
+
+		final Map<String, List<String>> caseInsensitiveHeaders = NGHeaderMaps.create();
+		caseInsensitiveHeaders.putAll( headers );
+		_headers = Collections.unmodifiableMap( caseInsensitiveHeaders );
+
 		_remoteAddress = remoteAddress;
 	}
 
@@ -78,16 +82,11 @@ final class NGRequestHead {
 		return _queryString;
 	}
 
+	/**
+	 * @return The request's headers. Names are case-insensitive, and the map can't be modified.
+	 */
 	Map<String, List<String>> headers() {
 		return _headers;
-	}
-
-	void setHeaders( final Map<String, List<String>> headers ) {
-		_headers = NGMessage.createEmptyHeadersMap();
-
-		for( final Entry<String, List<String>> header : headers.entrySet() ) {
-			_headers.put( header.getKey(), header.getValue() );
-		}
 	}
 
 	String remoteAddress() {

@@ -1,5 +1,6 @@
 package ng.appserver.http;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import ng.appserver.NGContext;
  * Implementations differ in how they hold the request's body: NGStandardRequest holds it as bytes, NGMultipartRequest as parts. NGRequests.of() creates the one a request's content type calls for.
  */
 
-public interface NGRequest extends NGMessage {
+public interface NGRequest {
 
 	/**
 	 * @return the request's method
@@ -27,6 +28,51 @@ public interface NGRequest extends NGMessage {
 	 * CHECKME: We might want to consider renaming this "url". Conventions are different between frameworks though, for example, java.net.HttpRequest uses "uri" // Hugi 2024-06-29
 	 */
 	public String uri();
+
+	/**
+	 * @return The request's headers, by name. Names are case-insensitive. The map can't be modified.
+	 */
+	public Map<String, List<String>> headers();
+
+	/**
+	 * @return The values of the header with the given name. An empty list if there are none.
+	 */
+	public default List<String> headersForKey( final String key ) {
+		final List<String> values = headers().get( key );
+
+		if( values == null ) {
+			return Collections.emptyList();
+		}
+
+		return values;
+	}
+
+	/**
+	 * @return The first value of the header with the given name. null if there's none.
+	 */
+	public default String headerForKey( final String key ) {
+		final List<String> values = headersForKey( key );
+
+		if( values.isEmpty() ) {
+			return null;
+		}
+
+		return values.get( 0 );
+	}
+
+	/**
+	 * @return The request's body
+	 *
+	 * FIXME: Only a request whose body is bytes can answer this; a multipart request's body is its parts, and it throws. Leaves this interface once handlers can declare the kind of body they take // Hugi/Claude 2026-10-25
+	 */
+	public byte[] contentBytes();
+
+	/**
+	 * @return The request's body, as a UTF-8 string
+	 */
+	public default String contentString() {
+		return new String( contentBytes(), StandardCharsets.UTF_8 );
+	}
 
 	/**
 	 * @return the request's form values
