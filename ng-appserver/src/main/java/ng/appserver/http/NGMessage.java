@@ -50,19 +50,13 @@ public interface NGMessage {
 	}
 
 	/**
-	 * @return The header matching the given key
+	 * @return The first value of the header with the given name. null if there's none.
 	 */
 	public default String headerForKey( final String key ) {
 		final List<String> values = headersForKey( key );
 
 		if( values.isEmpty() ) {
 			return null;
-		}
-
-		// Fail if multiple header values are present
-		if( values.size() > 1 ) {
-			// FIXME: We should be failing here // Hugi 2026-03-03
-			//			throw new IllegalStateException( "The request contains %s headers '%s' with values (%s). If you expected multiple header values, use headersForKey() instead of headerForKey()".formatted( values.size(), key, values ) );
 		}
 
 		return values.get( 0 );

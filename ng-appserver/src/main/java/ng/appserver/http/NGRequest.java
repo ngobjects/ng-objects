@@ -19,12 +19,18 @@ public interface NGRequest extends NGMessage {
 
 	public List<String> formValuesForKey( final String key );
 
+	/**
+	 * @return The first form value with the given name. null if there's none. A name sent more than once isn't an error: formValuesForKey() has every value.
+	 */
 	public String formValueForKey( final String key );
 
 	public Map<String, List<String>> cookieValues();
 
 	public List<String> cookieValuesForKey( final String key );
 
+	/**
+	 * @return The value of the first cookie with the given name. null if there's none. A cookie sent more than once isn't an error (browsers send one per path and domain it was set for): cookieValuesForKey() has every value.
+	 */
 	public String cookieValueForKey( final String key );
 
 	public NGContext context();

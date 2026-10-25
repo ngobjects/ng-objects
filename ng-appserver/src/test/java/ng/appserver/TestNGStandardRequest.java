@@ -203,4 +203,25 @@ public class TestNGStandardRequest {
 		final NGStandardRequest request = requestWithHeaders( Map.of( "cookie", List.of( "other=x; " + NGApplication.SESSION_ID_COOKIE_NAME + "=abc123" ) ) );
 		assertEquals( "abc123", request._sessionID() );
 	}
+
+	@Test
+	public void aRepeatedFormValueGivesTheFirst() {
+		final NGStandardRequest request = request( "a=1&a=2", null, InputStream.nullInputStream() );
+		assertEquals( "1", request.formValueForKey( "a" ) );
+		assertEquals( List.of( "1", "2" ), request.formValuesForKey( "a" ) );
+	}
+
+	@Test
+	public void aRepeatedCookieGivesTheFirst() {
+		final NGStandardRequest request = requestWithHeaders( Map.of( "Cookie", List.of( "a=1; a=2" ) ) );
+		assertEquals( "1", request.cookieValueForKey( "a" ) );
+		assertEquals( List.of( "1", "2" ), request.cookieValuesForKey( "a" ) );
+	}
+
+	@Test
+	public void aRepeatedHeaderGivesTheFirst() {
+		final NGStandardRequest request = requestWithHeaders( Map.of( "Accept-Language", List.of( "is", "en" ) ) );
+		assertEquals( "is", request.headerForKey( "accept-language" ) );
+		assertEquals( List.of( "is", "en" ), request.headersForKey( "accept-language" ) );
+	}
 }

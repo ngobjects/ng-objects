@@ -186,17 +186,15 @@ public class NGStandardRequest implements NGRequest {
 		return list;
 	}
 
+	/**
+	 * @return The first form value with the given name. null if there's none.
+	 */
 	@Override
 	public String formValueForKey( final String key ) {
 		final List<String> values = formValuesForKey( key );
 
 		if( values.isEmpty() ) {
 			return null;
-		}
-
-		// Fail if multiple form values are present for the same query parameter.
-		if( values.size() > 1 ) {
-			throw new IllegalStateException( "The request contains %s form values named '%s' with values (%s). If you expected multiple values, use formValuesForKey() instead of formValueForKey()".formatted( values.size(), key, values ) );
 		}
 
 		return values.get( 0 );
@@ -265,8 +263,7 @@ public class NGStandardRequest implements NGRequest {
 	}
 
 	/**
-	 * @return The value of the named cookie if there's only one cookie with that name.
-	 * @throws IllegalArgumentException If there are many cookies with the given key
+	 * @return The value of the first cookie with the given name. null if there's none.
 	 */
 	@Override
 	public String cookieValueForKey( final String key ) {
@@ -274,12 +271,8 @@ public class NGStandardRequest implements NGRequest {
 
 		final List<String> values = cookieValuesForKey( key );
 
-		if( values.size() == 0 ) {
+		if( values.isEmpty() ) {
 			return null;
-		}
-
-		if( values.size() > 1 ) {
-			throw new IllegalArgumentException( "There's more than one cookie with the name '%s'".formatted( key ) );
 		}
 
 		return values.get( 0 );
