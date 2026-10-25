@@ -64,14 +64,7 @@ public class NGStandardRequest implements NGRequest {
 		_formValues = formValues; // FIXME: Should be populated by the request object, not the adaptor // Hugi 2021-12-31
 		_cookieValues = cookieValues; // FIXME: Cookie header deserialization should happen in NGRequest instead of in the adaptor // Hugi 2021-12-30
 		_remoteAddress = remoteAddress;
-
-		// FIXME: We're consuming the entire content stream at construction time for now. Eventually, whether to do this should be the consumer's decision // Hugi 2026-05-12
-		try( contentStream) {
-			contentStream.transferTo( _contentByteStream );
-		}
-		catch( IOException e ) {
-			throw new UncheckedIOException( e );
-		}
+		_contentStream = contentStream;
 	}
 
 	@Override
@@ -238,14 +231,14 @@ public class NGStandardRequest implements NGRequest {
 	private Map<String, List<String>> _headers = NGMessage.createEmptyHeadersMap();
 
 	/**
-	 * The content of this message
-	 *
-	 * FIXME:
-	 * Currently this stores all types of content. We're going to want to use more efficient types for different response types (string/data/streaming)
-	 * For example, it's clear that using a StringBuilder for string responses is significantly more efficient than using the ByteArrayOutputStream
-	 * // Hugi 2023-02-08
+	 * The request's body as received from the adaptor, read on first access to the content. Readable only while the adaptor is handling the request.
 	 */
-	private ByteArrayOutputStream _contentByteStream = new ByteArrayOutputStream( NGMessage.DEFAULT_CONTENT_DATA_LENGTH );
+	private final InputStream _contentStream;
+
+	/**
+	 * The request's body, once read. null until something asks for the content.
+	 */
+	private ByteArrayOutputStream _contentByteStream;
 
 	/**
 	 * @return The HTTP headers of this message
@@ -268,10 +261,23 @@ public class NGStandardRequest implements NGRequest {
 	}
 
 	/**
-	 * @return The response's content stream
+	 * @return The request's content, read from the adaptor's stream on first invocation
 	 */
 	@Override
-	public ByteArrayOutputStream contentByteStream() {
+	public synchronized ByteArrayOutputStream contentByteStream() {
+		if( _contentByteStream == null ) {
+			final ByteArrayOutputStream contentByteStream = new ByteArrayOutputStream();
+
+			try( _contentStream ) {
+				_contentStream.transferTo( contentByteStream );
+			}
+			catch( IOException e ) {
+				throw new UncheckedIOException( e );
+			}
+
+			_contentByteStream = contentByteStream;
+		}
+
 		return _contentByteStream;
 	}
 }
