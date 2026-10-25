@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGContext;
-import ng.appserver.http.NGStandardRequest.UploadedFile;
 
 /**
  * Represents a request entering the system
@@ -51,10 +50,4 @@ public interface NGRequest extends NGMessage {
 	 */
 	@Deprecated
 	public void _setContext( NGContext context );
-
-	/**
-	 * FIXME: This will be deleted once we have a proper representation of multipart requests // Hugi 2026-08-23
-	 */
-	@Deprecated
-	public Map<String, UploadedFile> _uploadedFiles();
 }

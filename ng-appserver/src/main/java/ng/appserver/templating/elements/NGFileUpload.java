@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGContext;
+import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
-import ng.appserver.http.NGStandardRequest.UploadedFile;
+import ng.appserver.http.NGUploadedFile;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
@@ -59,26 +60,30 @@ public class NGFileUpload extends NGDynamicElement {
 	@Override
 	public void takeValuesFromRequest( NGRequest request, NGContext context ) {
 		final String name = name( context );
-		final List<String> valuesFromRequest = request.formValuesForKey( name );
 
-		if( !valuesFromRequest.isEmpty() ) {
+		if( !(request instanceof NGMultipartRequest multipartRequest) ) {
 
-			// If multiple form values are present for the same field name, the potential for an error condition is probably high enough to just go ahead and fail.
-			if( valuesFromRequest.size() > 1 ) {
-				throw new IllegalStateException( "The request contains %s form values named '%s'. I can only handle one at a time. The values you sent me are (%s).".formatted( valuesFromRequest.size(), name, valuesFromRequest ) );
+			// A form that isn't multipart submits a file field's filename as a plain value, and the file itself not at all
+			if( !request.formValuesForKey( name ).isEmpty() ) {
+				throw new IllegalStateException( "The form submitted the file upload field '%s' without its file. A form containing a file upload needs the attribute enctype=\"multipart/form-data\"".formatted( name ) );
 			}
 
-			// If we have a value, that's the filename
-			final String fileID = valuesFromRequest.get( 0 );
+			return;
+		}
 
-			final UploadedFile file = request._uploadedFiles().get( fileID );
+		final List<NGUploadedFile> files = multipartRequest.uploadedFilesForKey( name );
 
-			if( file == null ) {
-				throw new IllegalStateException( "No file with ID %s found in request".formatted( fileID ) );
+		if( !files.isEmpty() ) {
+
+			// If multiple files are present for the same field name, the potential for an error condition is probably high enough to just go ahead and fail.
+			if( files.size() > 1 ) {
+				throw new IllegalStateException( "The request contains %s files uploaded with the field '%s'. I can only handle one at a time.".formatted( files.size(), name ) );
 			}
+
+			final NGUploadedFile file = files.get( 0 );
 
 			if( _filenameAssociation != null ) {
-				_filenameAssociation.setValue( file.name(), context.component() );
+				_filenameAssociation.setValue( file.filename(), context.component() );
 			}
 
 			if( _dataAssociation != null ) {

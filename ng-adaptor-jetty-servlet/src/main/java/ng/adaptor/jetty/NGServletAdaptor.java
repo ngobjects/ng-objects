@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import ng.appserver.NGApplication;
 import ng.appserver.http.NGCookie;
+import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardRequest;
@@ -115,6 +117,25 @@ public class NGServletAdaptor extends HttpServlet {
 	 * @return the given HttpServletRequest converted to an NGRequest
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
+
+		if( sr.getContentType() != null && sr.getContentType().toLowerCase().startsWith( "multipart/form-data" ) ) {
+			final Supplier<List<NGMultipartRequest.Part>> partsReader = () -> {
+				try {
+					final List<NGMultipartRequest.Part> parts = new ArrayList<>();
+
+					for( final Part part : sr.getParts() ) {
+						parts.add( new NGMultipartRequest.Part( part.getName(), part.getSubmittedFileName(), part.getContentType(), part.getInputStream(), part.getSize() ) );
+					}
+
+					return parts;
+				}
+				catch( IOException | ServletException e ) {
+					throw new RuntimeException( e );
+				}
+			};
+
+			return new NGMultipartRequest( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), cookieValues( sr.getCookies() ), partsReader, sr.getRemoteAddr() );
+		}
 
 		try {
 			return new NGStandardRequest( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), cookieValues( sr.getCookies() ), sr.getInputStream(), sr.getRemoteAddr() );

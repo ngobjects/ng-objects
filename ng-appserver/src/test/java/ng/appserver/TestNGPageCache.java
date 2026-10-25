@@ -40,7 +40,7 @@ public class TestNGPageCache {
 	}
 
 	private static NGComponent newPage() {
-		final NGRequest request = new NGStandardRequest( "GET", "/test", "HTTP/1.1", Map.of(), Map.of(), Map.of(), InputStream.nullInputStream(), null );
+		final NGRequest request = new NGStandardRequest( "GET", "/test", null, "HTTP/1.1", Map.of(), Map.of(), InputStream.nullInputStream(), null );
 		return new NGComponent( new NGContext( request ) );
 	}
 

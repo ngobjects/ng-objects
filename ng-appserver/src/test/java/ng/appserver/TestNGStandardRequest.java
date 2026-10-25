@@ -178,12 +178,4 @@ public class TestNGStandardRequest {
 		final String body = "a=1&".repeat( NGStandardRequest.MAX_FORM_FIELDS + 1 );
 		assertThrows( IllegalArgumentException.class, () -> request( null, FORM, new RecordingStream( body ) ).formValues() );
 	}
-
-	@Test
-	public void givenFormValuesAreAllTheFormValues() {
-		final RecordingStream stream = new RecordingStream( "a=1" );
-		final NGStandardRequest request = new NGStandardRequest( "POST", "/", "HTTP/1.1", Map.of( "Content-Type", List.of( FORM ) ), Map.of( "given", List.of( "1" ) ), Map.of(), stream, null );
-		assertEquals( Map.of( "given", List.of( "1" ) ), request.formValues() );
-		assertFalse( stream.read );
-	}
 }

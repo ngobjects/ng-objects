@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,19 +73,6 @@ public class NGStandardRequest implements NGRequest {
 	 * FIXME: The httpVersion parameter is currently not used. I'm keeping it around to keep the constructor's shape, since I _think_ we might eventually want to use it. But today, It's just added weight 	// Hugi 2026-05-12
 	 */
 	public NGStandardRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> cookieValues, final InputStream contentStream, String remoteAddress ) {
-		this( method, uri, queryString, httpVersion, headers, null, cookieValues, contentStream, remoteAddress );
-	}
-
-	/**
-	 * Creates a request with the given form values, which are then all the form values it has.
-	 *
-	 * FIXME: Only remains for multipart requests, whose form values the adaptor still assembles from the parts, until they get a request class of their own (see #66) // Hugi/Claude 2026-10-25
-	 */
-	public NGStandardRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final InputStream contentStream, String remoteAddress ) {
-		this( method, uri, null, httpVersion, headers, Objects.requireNonNull( formValues ), cookieValues, contentStream, remoteAddress );
-	}
-
-	private NGStandardRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final InputStream contentStream, String remoteAddress ) {
 		Objects.requireNonNull( method );
 		Objects.requireNonNull( uri );
 		Objects.requireNonNull( httpVersion );
@@ -98,7 +84,6 @@ public class NGStandardRequest implements NGRequest {
 		//		setHttpVersion( httpVersion );
 		setHeaders( headers );
 		_queryString = queryString;
-		_formValues = formValues;
 		_cookieValues = cookieValues; // FIXME: Cookie header deserialization should happen in NGRequest instead of in the adaptor // Hugi 2021-12-30
 		_remoteAddress = remoteAddress;
 		_contentStream = contentStream;
@@ -122,7 +107,10 @@ public class NGStandardRequest implements NGRequest {
 		return _formValues;
 	}
 
-	private Map<String, List<String>> parseFormValues() {
+	/**
+	 * @return The request's form values, parsed. Invoked once, by formValues().
+	 */
+	protected Map<String, List<String>> parseFormValues() {
 		final Map<String, List<String>> formValues = new LinkedHashMap<>();
 
 		if( _queryString != null ) {
@@ -145,7 +133,7 @@ public class NGStandardRequest implements NGRequest {
 	/**
 	 * @return The given content type without its parameters
 	 */
-	private static String mediaType( final String contentType ) {
+	static String mediaType( final String contentType ) {
 		final int semicolon = contentType.indexOf( ';' );
 		return (semicolon == -1 ? contentType : contentType.substring( 0, semicolon )).trim();
 	}
@@ -153,7 +141,7 @@ public class NGStandardRequest implements NGRequest {
 	/**
 	 * @return The charset named by the given content type's charset parameter, UTF-8 if it names none (or one we don't know)
 	 */
-	private static Charset charset( final String contentType ) {
+	static Charset charset( final String contentType ) {
 		for( final String parameter : contentType.split( ";" ) ) {
 			final int equals = parameter.indexOf( '=' );
 
@@ -296,18 +284,6 @@ public class NGStandardRequest implements NGRequest {
 	@Override
 	public void _setContext( NGContext context ) {
 		_context = context;
-	}
-
-	/**
-	 * FIXME: This is temporary handling of multipart file uploads. Still thinking on the final design of this // Hugi 2025-04-05
-	 */
-	private final Map<String, UploadedFile> _uploadedFiles = new HashMap<>();
-
-	public record UploadedFile( String name, String contentType, InputStream stream, long length ) {}
-
-	@Override
-	public Map<String, UploadedFile> _uploadedFiles() {
-		return _uploadedFiles;
 	}
 
 	@Override

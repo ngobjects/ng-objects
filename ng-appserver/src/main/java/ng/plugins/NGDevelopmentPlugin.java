@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
+import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
@@ -166,7 +167,7 @@ public class NGDevelopmentPlugin implements NGPlugin {
 
 	/**
 	 * Extracts the snippet to evaluate: the {@code snippet} form value / query param, or the raw
-	 * request body (whatever its content type, so curl's default {@code --data} works too).
+	 * request body (whatever its content type, so curl's default {@code --data} works too, multipart excepted).
 	 *
 	 * @return the snippet, or null if none was supplied as a param or a body
 	 */
@@ -175,6 +176,11 @@ public class NGDevelopmentPlugin implements NGPlugin {
 		final String param = request.formValueForKey( "snippet" );
 		if( param != null && !param.isBlank() ) {
 			return param;
+		}
+
+		// A multipart request's content is its parts, read above as form values
+		if( request instanceof NGMultipartRequest ) {
+			return null;
 		}
 
 		final String body = request.contentString();

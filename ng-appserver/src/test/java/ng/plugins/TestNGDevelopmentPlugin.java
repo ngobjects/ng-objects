@@ -20,7 +20,7 @@ public class TestNGDevelopmentPlugin {
 		assertFalse( routes.isEmpty() );
 
 		for( final Route route : routes ) {
-			final NGStandardRequest request = new NGStandardRequest( "GET", route.pattern(), "HTTP/1.1", Map.of(), Map.of(), Map.of(), InputStream.nullInputStream(), "203.0.113.7" );
+			final NGStandardRequest request = new NGStandardRequest( "GET", route.pattern(), null, "HTTP/1.1", Map.of(), Map.of(), InputStream.nullInputStream(), "203.0.113.7" );
 			assertEquals( 403, route.handler().handleRequest( request ).status(), route.pattern() );
 		}
 	}
@@ -28,7 +28,7 @@ public class TestNGDevelopmentPlugin {
 	@Test
 	public void aLoopbackClientIsAnswered() {
 		final Route type = new NGDevelopmentPlugin().routes().routes().stream().filter( route -> route.pattern().equals( "/ng/dev/type" ) ).findFirst().orElseThrow();
-		final NGStandardRequest request = new NGStandardRequest( "GET", "/ng/dev/type", "HTTP/1.1", Map.of(), Map.of(), Map.of(), InputStream.nullInputStream(), "127.0.0.1" );
+		final NGStandardRequest request = new NGStandardRequest( "GET", "/ng/dev/type", null, "HTTP/1.1", Map.of(), Map.of(), InputStream.nullInputStream(), "127.0.0.1" );
 		assertEquals( 200, type.handler().handleRequest( request ).status() );
 	}
 }

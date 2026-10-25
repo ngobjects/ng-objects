@@ -37,7 +37,7 @@ public class TestNGDirectActionRequestHandler {
 	}
 
 	private static NGResponse handle( final String uri ) {
-		final NGRequest request = new NGStandardRequest( "GET", uri, "HTTP/1.1", Map.of(), Map.of(), Map.of(), InputStream.nullInputStream(), "127.0.0.1" );
+		final NGRequest request = new NGStandardRequest( "GET", uri, null, "HTTP/1.1", Map.of(), Map.of(), InputStream.nullInputStream(), "127.0.0.1" );
 		return new NGDirectActionRequestHandler().handleRequest( request );
 	}
 

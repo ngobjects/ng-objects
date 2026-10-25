@@ -4,14 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.BindException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.http.HttpCookie.SameSite;
@@ -32,8 +31,6 @@ import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.Callback;
-import org.eclipse.jetty.util.Fields;
-import org.eclipse.jetty.util.Fields.Field;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +41,10 @@ import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGResponseMultipart.ContentPart;
 import ng.appserver.dev.NGDevelopmentInstanceStopper;
 import ng.appserver.http.NGCookie;
+import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardRequest;
-import ng.appserver.http.NGStandardRequest.UploadedFile;
 import ng.appserver.http.NGStandardResponse;
 import ng.appserver.http.NGStreamingResponse;
 
@@ -233,53 +230,29 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		/**
-		 * @return the given Request converted to an NGRequest
+		 * @return the given multipart Request converted to an NGRequest. Its parts are read when the request first asks for them.
 		 */
 		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType ) {
-
-			// Start by obtaining the regular formValues from the request (for example, query parameters)
-			final Map<String, List<String>> formValues = parametersFromRequest( jettyRequest );
-
-			// Uploaded files to set on the request
-			final Map<String, UploadedFile> uploadedFiles = new HashMap<>();
-
-			MultiPartFormData
-					.getParts( jettyRequest, jettyRequest, contentType, multiPartConfig() )
-					.forEach( part -> {
-						final String partContentType = part.getHeaders().get( HttpHeader.CONTENT_TYPE );
-
-						final String parameterValue;
-
-						if( partContentType == null ) {
-							// If this part does not have a content type, we treat it like a regular ol' form value, added to the request's formValues map as usual
-							parameterValue = part.getContentAsString( StandardCharsets.UTF_8 ); // FIXME: Hardcoding the character set is a little presumptuous // Hugi 2025-04-05
-						}
-						else {
-							// We generate a unique ID to store the attachment under. The ID will be stored as a value under the part's name in the request's formValues, where it can be used to obtaing the uploaded file from the request's uploadedFiles map
-							parameterValue = UUID.randomUUID().toString();
-
-							// Now we add the uploaded file to the request
-							final UploadedFile file = new UploadedFile( part.getFileName(), partContentType, Content.Source.asInputStream( part.getContentSource() ), part.getLength() );
-							uploadedFiles.put( parameterValue, file );
-						}
-
-						// Finally, we add our "value" to the request's form values
-						formValues
-								.computeIfAbsent( part.getName(), _unused -> new ArrayList<>() )
-								.add( parameterValue );
-					} );
-
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
+			final String queryString = jettyRequest.getHttpURI().getQuery();
 			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
-			final ByteArrayInputStream contentStream = new ByteArrayInputStream( new byte[] {} ); // FIXME: This just kind of reflects the badness of our request data model. The request's "content" is really the part list ... // Hugi 2025-04-05
 			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
 
-			final NGRequest request = new NGStandardRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream, remoteAddress );
-			uploadedFiles.entrySet().forEach( p -> request._uploadedFiles().put( p.getKey(), p.getValue() ) ); // FIXME: Adding uploaded files this way is really, really temporary // Hugi 2025-04-05
-			return request;
+			final Supplier<List<NGMultipartRequest.Part>> partsReader = () -> {
+				final List<NGMultipartRequest.Part> parts = new ArrayList<>();
+
+				for( final MultiPart.Part part : MultiPartFormData.getParts( jettyRequest, jettyRequest, contentType, multiPartConfig() ) ) {
+					final String partContentType = part.getHeaders().get( HttpHeader.CONTENT_TYPE );
+					parts.add( new NGMultipartRequest.Part( part.getName(), part.getFileName(), partContentType, Content.Source.asInputStream( part.getContentSource() ), part.getLength() ) );
+				}
+
+				return parts;
+			};
+
+			return new NGMultipartRequest( method, uri, queryString, httpVersion, headers, cookieValues, partsReader, remoteAddress );
 		}
 
 		/**
@@ -296,29 +269,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
 
 			return new NGStandardRequest( method, uri, queryString, httpVersion, headers, cookieValues, contentStream, remoteAddress );
-		}
-
-		/**
-		 * @return The queryParameters as a formValue Map (our format)
-		 */
-		private static Map<String, List<String>> parametersFromRequest( final Request jettyRequest ) {
-
-			Fields parameters;
-
-			try {
-				parameters = Request.getParameters( jettyRequest );
-			}
-			catch( Exception e ) {
-				throw new RuntimeException( e );
-			}
-
-			final Map<String, List<String>> map = new HashMap<>();
-
-			for( Field entry : parameters ) {
-				map.put( entry.getName(), entry.getValues() );
-			}
-
-			return map;
 		}
 
 		/**

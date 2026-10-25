@@ -75,8 +75,16 @@ public class NGComponentRequestTestHarness {
 	 */
 	public static class TestRequest extends NGStandardRequest {
 
+		private final Map<String, List<String>> _testFormValues;
+
 		public TestRequest( final String uri, final Map<String, List<String>> formValues ) {
-			super( "GET", uri, "HTTP/1.1", Map.of(), formValues, Map.of(), InputStream.nullInputStream(), null );
+			super( "GET", uri, null, "HTTP/1.1", Map.of(), Map.of(), InputStream.nullInputStream(), null );
+			_testFormValues = formValues;
+		}
+
+		@Override
+		protected Map<String, List<String>> parseFormValues() {
+			return _testFormValues;
 		}
 	}
 
