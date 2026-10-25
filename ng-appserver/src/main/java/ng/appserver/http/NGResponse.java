@@ -80,14 +80,9 @@ public interface NGResponse extends NGActionResults {
 		Objects.requireNonNull( headerName );
 		Objects.requireNonNull( value );
 
-		List<String> list = headers().get( headerName );
-
-		if( list == null ) {
-			list = new ArrayList<>();
-			headers().put( headerName, list );
-		}
-
-		list.add( value );
+		final List<String> values = new ArrayList<>( headersForKey( headerName ) );
+		values.add( value );
+		headers().put( headerName, values );
 	}
 
 	public void appendContentString( final String stringToAppend );

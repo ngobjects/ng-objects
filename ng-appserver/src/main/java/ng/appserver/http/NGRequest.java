@@ -1,6 +1,7 @@
 package ng.appserver.http;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +31,35 @@ public interface NGRequest {
 	public String uri();
 
 	/**
-	 * @return The request's headers, by name. Names are case-insensitive. The map can't be modified.
+	 * @return The request's headers, by name. Names are case-insensitive.
 	 */
 	public Map<String, List<String>> headers();
+
+	/**
+	 * Replaces the request's headers with the given ones
+	 */
+	public void setHeaders( final Map<String, List<String>> headers );
+
+	/**
+	 * Sets the header with the given name to the given value, replacing any values it had.
+	 */
+	public default void setHeader( final String headerName, final String value ) {
+		Objects.requireNonNull( headerName );
+		Objects.requireNonNull( value );
+		headers().put( headerName, List.of( value ) );
+	}
+
+	/**
+	 * Adds the given value to the header with the given name, after any values it has.
+	 */
+	public default void appendHeader( final String headerName, final String value ) {
+		Objects.requireNonNull( headerName );
+		Objects.requireNonNull( value );
+
+		final List<String> values = new ArrayList<>( headersForKey( headerName ) );
+		values.add( value );
+		headers().put( headerName, values );
+	}
 
 	/**
 	 * @return The values of the header with the given name. An empty list if there are none.

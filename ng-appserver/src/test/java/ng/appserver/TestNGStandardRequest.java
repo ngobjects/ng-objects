@@ -226,9 +226,18 @@ public class TestNGStandardRequest {
 	}
 
 	@Test
-	public void headersCantBeModified() {
+	public void headersCanBeChanged() {
 		final NGStandardRequest request = requestWithHeaders( Map.of( "X-Thing", List.of( "1" ) ) );
-		assertEquals( "1", request.headerForKey( "x-thing" ) );
-		assertThrows( UnsupportedOperationException.class, () -> request.headers().put( "X-Other", List.of( "2" ) ) );
+		request.setHeader( "x-thing", "2" );
+		request.appendHeader( "X-THING", "3" );
+		assertEquals( List.of( "2", "3" ), request.headersForKey( "X-Thing" ) );
+	}
+
+	@Test
+	public void cookiesFollowTheCookieHeader() {
+		final NGStandardRequest request = requestWithHeaders( Map.of( "Cookie", List.of( "a=1" ) ) );
+		assertEquals( "1", request.cookieValueForKey( "a" ) );
+		request.setHeader( "Cookie", "a=2" );
+		assertEquals( "2", request.cookieValueForKey( "a" ) );
 	}
 }

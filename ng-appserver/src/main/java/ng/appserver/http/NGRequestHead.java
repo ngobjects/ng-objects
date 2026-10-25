@@ -4,7 +4,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,10 @@ final class NGRequestHead {
 	 */
 	private final String _queryString;
 
-	private final Map<String, List<String>> _headers;
+	/**
+	 * The request's headers. Names are case-insensitive.
+	 */
+	private final Map<String, List<String>> _headers = NGHeaderMaps.create();
 
 	/**
 	 * The network address of the client, as reported by the adaptor. null if the adaptor didn't provide one.
@@ -40,11 +42,6 @@ final class NGRequestHead {
 	private final String _remoteAddress;
 
 	private NGContext _context;
-
-	/**
-	 * The values of the request's cookies, parsed from its Cookie headers. null until something asks for them.
-	 */
-	private Map<String, List<String>> _cookieValues;
 
 	/**
 	 * FIXME: The httpVersion parameter is currently not used. I'm keeping it around to keep the constructor's shape, since I _think_ we might eventually want to use it. But today, It's just added weight 	// Hugi 2026-05-12
@@ -59,10 +56,7 @@ final class NGRequestHead {
 		_uri = uri;
 		_queryString = queryString;
 
-		final Map<String, List<String>> caseInsensitiveHeaders = NGHeaderMaps.create();
-		caseInsensitiveHeaders.putAll( headers );
-		_headers = Collections.unmodifiableMap( caseInsensitiveHeaders );
-
+		setHeaders( headers );
 		_remoteAddress = remoteAddress;
 	}
 
@@ -83,10 +77,18 @@ final class NGRequestHead {
 	}
 
 	/**
-	 * @return The request's headers. Names are case-insensitive, and the map can't be modified.
+	 * @return The request's headers. Names are case-insensitive.
 	 */
 	Map<String, List<String>> headers() {
 		return _headers;
+	}
+
+	/**
+	 * Replaces the request's headers with the given ones
+	 */
+	void setHeaders( final Map<String, List<String>> headers ) {
+		_headers.clear();
+		_headers.putAll( headers );
 	}
 
 	String remoteAddress() {
@@ -113,13 +115,12 @@ final class NGRequestHead {
 		return NGFormValues.parse( _queryString.getBytes( StandardCharsets.UTF_8 ), StandardCharsets.UTF_8, NGStandardRequest.MAX_FORM_FIELDS );
 	}
 
-	synchronized Map<String, List<String>> cookieValues() {
-		if( _cookieValues == null ) {
-			final List<String> cookieHeaders = _headers.get( "cookie" );
-			_cookieValues = NGCookieValues.parse( cookieHeaders == null ? List.of() : cookieHeaders );
-		}
-
-		return _cookieValues;
+	/**
+	 * @return The values of the request's cookies, parsed from its Cookie headers. Parsed on each invocation, since the headers can change.
+	 */
+	Map<String, List<String>> cookieValues() {
+		final List<String> cookieHeaders = _headers.get( "cookie" );
+		return NGCookieValues.parse( cookieHeaders == null ? List.of() : cookieHeaders );
 	}
 
 	/**

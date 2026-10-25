@@ -84,6 +84,11 @@ public class NGStandardRequest implements NGRequest {
 	}
 
 	@Override
+	public void setHeaders( final Map<String, List<String>> headers ) {
+		_head.setHeaders( headers );
+	}
+
+	@Override
 	public String remoteAddress() {
 		return _head.remoteAddress();
 	}

@@ -106,4 +106,12 @@ public class TestNGResponse {
 		r.setContentBytes( initialBytes );
 		assertArrayEquals( initialBytes, r.contentBytes() );
 	}
+
+	@Test
+	public void appendHeaderAfterSetHeader() {
+		NGResponse r = NGResponses.of();
+		r.setHeader( "some-header", "some-value" );
+		r.appendHeader( "some-header", "some-other-value" );
+		assertEquals( List.of( "some-value", "some-other-value" ), r.headers().get( "some-header" ) );
+	}
 }
