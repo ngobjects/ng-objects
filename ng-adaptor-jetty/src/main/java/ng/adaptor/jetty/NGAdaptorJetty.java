@@ -39,7 +39,6 @@ import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGResponse;
-import ng.appserver.http.NGStandardRequest;
 import ng.appserver.http.NGStandardResponse;
 import ng.appserver.http.NGStreamingResponse;
 
@@ -115,7 +114,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		private boolean doRequest( final Request jettyRequest, final Response jettyResponse, Callback callback ) throws IOException {
 
-			final NGStandardRequest ngRequest = requestToNGRequest( jettyRequest );
+			final NGRequest ngRequest = requestToNGRequest( jettyRequest );
 
 			// Completes the exchange once the response has been written, then lets the request release what it holds (such as the temporary files of an upload)
 			final Callback completion = Callback.from( ngRequest::_close, callback );
@@ -210,7 +209,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		/**
 		 * @return the given Request converted to an NGRequest. Its body is read, and a multipart body split into parts, when the request asks for it.
 		 */
-		private static NGStandardRequest requestToNGRequest( final Request jettyRequest ) {
+		private static NGRequest requestToNGRequest( final Request jettyRequest ) {
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
 			final String queryString = jettyRequest.getHttpURI().getQuery();

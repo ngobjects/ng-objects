@@ -22,7 +22,6 @@ import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGResponse;
-import ng.appserver.http.NGStandardRequest;
 import ng.appserver.http.NGStandardResponse;
 import ng.appserver.http.NGStreamingResponse;
 
@@ -47,7 +46,7 @@ public class NGServletAdaptor extends HttpServlet {
 
 	private void doRequest( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse ) throws ServletException, IOException {
 
-		final NGStandardRequest ngRequest = servletRequestToNGRequest( servletRequest );
+		final NGRequest ngRequest = servletRequestToNGRequest( servletRequest );
 
 		try {
 			// This is where the application logic will perform it's actual work
@@ -125,7 +124,7 @@ public class NGServletAdaptor extends HttpServlet {
 	/**
 	 * @return the given HttpServletRequest converted to an NGRequest
 	 */
-	private static NGStandardRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
+	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 		try {
 			return NGRequests.of( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), sr.getInputStream(), sr.getRemoteAddr(), NGIncomingParts::new );
 		}

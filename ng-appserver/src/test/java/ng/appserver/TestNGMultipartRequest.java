@@ -26,6 +26,7 @@ import ng.appserver.http.NGMultipartParser;
 import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGMultipartRequest.Limits;
 import ng.appserver.http.NGMultipartRequest.Part;
+import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGStandardRequest;
 
@@ -314,7 +315,7 @@ public class TestNGMultipartRequest {
 			return List.<Part> of().iterator();
 		};
 
-		final NGStandardRequest request = NGRequests.of( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "Multipart/Form-Data; charset=utf-8; boundary=\"abc=def\"" ) ), InputStream.nullInputStream(), null, parser );
+		final NGRequest request = NGRequests.of( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "Multipart/Form-Data; charset=utf-8; boundary=\"abc=def\"" ) ), InputStream.nullInputStream(), null, parser );
 		request.formValues();
 		assertEquals( 1, boundaries.get() );
 	}

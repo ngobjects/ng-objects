@@ -20,6 +20,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ng.appserver.NGContext;
 import ng.appserver.properties.NGProperties;
 
 /**
@@ -32,7 +33,7 @@ import ng.appserver.properties.NGProperties;
  *   The form's fields then arrive as parts too, and formValues() holds only the query string's.
  */
 
-public class NGMultipartRequest extends NGStandardRequest {
+public class NGMultipartRequest implements NGRequest {
 
 	private static final Logger logger = LoggerFactory.getLogger( NGMultipartRequest.class );
 
@@ -102,6 +103,16 @@ public class NGMultipartRequest extends NGStandardRequest {
 	}
 
 	/**
+	 * The request's line, headers and origin, and what's parsed from them: everything about the request apart from its body
+	 */
+	private final NGRequestHead _head;
+
+	/**
+	 * The request's form values, from the query string and the form's fields. null until something asks for them.
+	 */
+	private Map<String, List<String>> _formValues;
+
+	/**
 	 * The request's body, split into parts by the parser
 	 */
 	private final InputStream _body;
@@ -136,7 +147,7 @@ public class NGMultipartRequest extends NGStandardRequest {
 	 * @param parser Splits the body into its parts, the first time they're asked for
 	 */
 	public NGMultipartRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final InputStream body, final String boundary, final NGMultipartParser parser, final Limits limits, final String remoteAddress ) {
-		super( method, uri, queryString, httpVersion, headers, InputStream.nullInputStream(), remoteAddress );
+		_head = new NGRequestHead( method, uri, queryString, httpVersion, headers, remoteAddress );
 		Objects.requireNonNull( body );
 		Objects.requireNonNull( boundary );
 		Objects.requireNonNull( parser );
@@ -145,6 +156,51 @@ public class NGMultipartRequest extends NGStandardRequest {
 		_boundary = boundary;
 		_parser = parser;
 		_limits = limits;
+	}
+
+	@Override
+	public String method() {
+		return _head.method();
+	}
+
+	@Override
+	public String uri() {
+		return _head.uri();
+	}
+
+	@Override
+	public void setURI( final String uri ) {
+		_head.setURI( uri );
+	}
+
+	@Override
+	public Map<String, List<String>> headers() {
+		return _head.headers();
+	}
+
+	@Override
+	public void setHeaders( final Map<String, List<String>> headers ) {
+		_head.setHeaders( headers );
+	}
+
+	@Override
+	public String remoteAddress() {
+		return _head.remoteAddress();
+	}
+
+	@Override
+	public Map<String, List<String>> cookieValues() {
+		return _head.cookieValues();
+	}
+
+	@Override
+	public NGContext context() {
+		return _head.context( this );
+	}
+
+	@Override
+	public void _setContext( final NGContext context ) {
+		_head.setContext( context );
 	}
 
 	/**
@@ -313,16 +369,22 @@ public class NGMultipartRequest extends NGStandardRequest {
 	}
 
 	/**
-	 * @return The query string's form values, followed by the values of the form's fields (the parts that aren't files). Only the query string's if the parts have been handed over by incomingParts().
+	 * @return The query string's form values, followed by the values of the form's fields (the parts that aren't files). Only the query string's if the parts have been handed over by incomingParts(). Parsed on first invocation.
 	 */
 	@Override
-	protected Map<String, List<String>> parseFormValues() {
-		final Map<String, List<String>> formValues = super.parseFormValues();
+	public synchronized Map<String, List<String>> formValues() {
+		if( _formValues == null ) {
+			_formValues = parseFormValues();
+		}
 
-		synchronized( this ) {
-			if( _incoming ) {
-				return formValues;
-			}
+		return _formValues;
+	}
+
+	private Map<String, List<String>> parseFormValues() {
+		final Map<String, List<String>> formValues = _head.parseQueryValues();
+
+		if( _incoming ) {
+			return formValues;
 		}
 
 		for( final Part part : parts() ) {
@@ -339,7 +401,7 @@ public class NGMultipartRequest extends NGStandardRequest {
 	 */
 	private static String contentString( final Part part ) {
 		try( final InputStream stream = part.stream()) {
-			return new String( stream.readAllBytes(), part.contentType() == null ? StandardCharsets.UTF_8 : charset( part.contentType() ) );
+			return new String( stream.readAllBytes(), part.contentType() == null ? StandardCharsets.UTF_8 : NGRequestHead.charset( part.contentType() ) );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
@@ -400,10 +462,17 @@ public class NGMultipartRequest extends NGStandardRequest {
 	/**
 	 * A multipart request's content is its parts, read through formValues() and uploadedFiles(), or incomingParts()
 	 *
+	 * FIXME: Goes away once content accessors leave the NGRequest contract, where only requests whose body is bytes have them // Hugi/Claude 2026-10-25
+	 *
 	 * @throws UnsupportedOperationException Always
 	 */
 	@Override
 	public ByteArrayOutputStream contentByteStream() {
 		throw new UnsupportedOperationException( "A multipart request's content is its parts. Use formValues() and uploadedFiles(), or incomingParts()" );
+	}
+
+	@Override
+	public String toString() {
+		return "NGMultipartRequest [" + _head.describe() + "]";
 	}
 }
