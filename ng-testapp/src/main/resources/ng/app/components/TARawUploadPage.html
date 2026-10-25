@@ -1,0 +1,32 @@
+<wo:TALook>
+	<h5>File upload: the body is the file</h5>
+	<p>
+		Apps and scripts often upload a file as the request's body itself, not inside a form: <code>curl --data-binary @photo.jpg</code>, or <code>fetch( url, { method: "POST", body: file } )</code>.
+		A handler can read such a body in full with <code>request().contentBytes()</code>, or, for files too large to hold in memory, as a stream:
+	</p>
+	<pre><code>try( InputStream in = request().contentStream() ) {
+	in.transferTo( storage );
+}</code></pre>
+	<p>
+		The body arrives once. Reading it as a stream keeps nothing, so it can't be read again afterwards. Reading it in full keeps it, and anything can read it after that.
+		Code that sees every request, like logging, can describe the body without reading it, with <code>request().contentType()</code> and <code>request().contentLength()</code>.
+	</p>
+	<p>Choose a file. This page's script sends it as the body of a request to <code>DirectAction.rawUploadAction()</code>, which streams it through a SHA-256 digest.</p>
+
+	<hr style="margin: 50px"/>
+
+	<input type="file" id="raw-file">
+	<button type="button" class="btn btn-primary" id="raw-send">Send</button>
+	<pre id="raw-result" class="mt-3"></pre>
+
+	<script>
+		document.getElementById( "raw-send" ).addEventListener( "click", async () => {
+			const file = document.getElementById( "raw-file" ).files[0];
+
+			if( file ) {
+				const response = await fetch( "/na/DirectAction/rawUpload", { method: "POST", headers: { "Content-Type": file.type || "application/octet-stream" }, body: file } );
+				document.getElementById( "raw-result" ).textContent = await response.text();
+			}
+		} );
+	</script>
+</wo:TALook>

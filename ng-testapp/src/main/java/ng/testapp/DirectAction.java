@@ -3,7 +3,11 @@ package ng.testapp;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 
 import ng.appserver.NGActionResults;
@@ -82,5 +86,21 @@ public class DirectAction extends NGDirectAction {
 		}
 
 		return page;
+	}
+
+	/**
+	 * Receives an upload whose body is the file itself (see TARawUploadPage), reading it as a stream, a buffer at a time. Here we only measure and fingerprint it, but this is where you'd store it.
+	 */
+	public NGActionResults rawUploadAction() {
+		try( final DigestInputStream in = new DigestInputStream( request().contentStream(), MessageDigest.getInstance( "SHA-256" ) )) {
+			final long length = in.transferTo( OutputStream.nullOutputStream() );
+			return NGResponses.ok( "Received %s bytes of %s (the request said %s)\nSHA-256 %s".formatted( length, request().contentType(), request().contentLength(), HexFormat.of().formatHex( in.getMessageDigest().digest() ) ) );
+		}
+		catch( IOException e ) {
+			throw new UncheckedIOException( e );
+		}
+		catch( NoSuchAlgorithmException e ) {
+			throw new IllegalStateException( e );
+		}
 	}
 }

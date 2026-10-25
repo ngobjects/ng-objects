@@ -11,7 +11,7 @@
 }</code></pre>
 	<p>
 		A part's stream is readable until the next part is asked for, and the parts can be read once.
-		Collecting (<code>formValues()</code>, <code>uploadedFiles()</code>) and reading as they arrive exclude each other, so a handler reading incoming parts gets the form's fields as parts too.
+		Reading parts as they arrive keeps nothing, so a handler reading incoming parts gets the form's fields as parts too, and can't collect them afterwards. (Had something collected the parts first, with <code>formValues()</code> or <code>uploadedFiles()</code>, the incoming parts would be the collected ones.)
 		The query string's values are still in <code>formValues()</code>, like the <code>folder</code> this form posts with.
 		Component actions always collect, since a form's elements need all its values, which is why this form posts to a direct action, <code>DirectAction.incomingPartsAction()</code>.
 	</p>
