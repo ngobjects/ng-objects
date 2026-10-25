@@ -7,10 +7,10 @@ import java.net.BindException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Supplier;
 
 import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.http.HttpCookie.SameSite;
@@ -41,6 +41,8 @@ import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGResponseMultipart.ContentPart;
 import ng.appserver.dev.NGDevelopmentInstanceStopper;
 import ng.appserver.http.NGCookie;
+import ng.appserver.http.NGMessage;
+import ng.appserver.http.NGMultipartReader;
 import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
@@ -124,11 +126,17 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 			final NGRequest ngRequest;
 
+			// Completes the exchange once the response has been written
+			final Callback completion;
+
 			if( contentType != null && contentType.contains( "multipart/form-data" ) ) {
-				ngRequest = multipartRequestToNGRequest( jettyRequest, contentType );
+				final MultipartPartsReader partsReader = new MultipartPartsReader( jettyRequest, contentType );
+				ngRequest = multipartRequestToNGRequest( jettyRequest, partsReader );
+				completion = Callback.from( partsReader::close, callback ); // Deletes the parts' temporary files once we're done with the request
 			}
 			else {
 				ngRequest = requestToNGRequest( jettyRequest );
+				completion = callback;
 			}
 
 			// This is where the application logic will perform it's actual work
@@ -159,21 +167,21 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 					cs.close();
 
-					Content.copy( cs, jettyResponse, callback );
+					Content.copy( cs, jettyResponse, completion );
 				}
 				case NGStreamingResponse r -> {
 					final long contentLength = r.contentInputStreamLength();
 					final Content.Source cs = Content.Source.from( r.contentInputStream() );
 
 					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
-					Content.copy( cs, jettyResponse, callback );
+					Content.copy( cs, jettyResponse, completion );
 				}
 				case NGStandardResponse r -> {
 					final long contentLength = r.contentBytesLength();
 					final Content.Source cs = Content.Source.from( new ByteArrayInputStream( r.contentBytes() ) );
 
 					jettyResponse.getHeaders().put( "content-length", String.valueOf( contentLength ) );
-					Content.copy( cs, jettyResponse, callback );
+					Content.copy( cs, jettyResponse, completion );
 				}
 				default -> {
 					// FIXME: THrow a proper exception here. But more importantly — handle responses in an exhaustive way // Hugi 2026-09-21
@@ -230,9 +238,54 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		/**
-		 * @return the given multipart Request converted to an NGRequest. Its parts are read when the request first asks for them.
+		 * Reads a multipart request's parts when the request first asks for them, and closes collected parts (deleting any temporary files Jetty kept them in) once the request is done
 		 */
-		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final String contentType ) {
+		private static class MultipartPartsReader implements NGMultipartReader {
+
+			private final Request _jettyRequest;
+			private final String _contentType;
+			private MultiPartFormData.Parts _parts;
+
+			MultipartPartsReader( final Request jettyRequest, final String contentType ) {
+				_jettyRequest = jettyRequest;
+				_contentType = contentType;
+			}
+
+			@Override
+			public synchronized List<NGMultipartRequest.Part> readAll() {
+				_parts = MultiPartFormData.getParts( _jettyRequest, _jettyRequest, _contentType, multiPartConfig() );
+
+				final List<NGMultipartRequest.Part> parts = new ArrayList<>();
+
+				for( final MultiPart.Part part : _parts ) {
+					final Map<String, List<String>> headers = NGMessage.createEmptyHeadersMap();
+
+					for( final HttpField header : part.getHeaders() ) {
+						headers.computeIfAbsent( header.getName(), _unused -> new ArrayList<>() ).add( header.getValue() );
+					}
+
+					parts.add( new NGMultipartRequest.Part( part.getName(), part.getFileName(), headers, Content.Source.asInputStream( part.getContentSource() ), part.getLength() ) );
+				}
+
+				return parts;
+			}
+
+			@Override
+			public Iterator<NGMultipartRequest.Part> iterate() {
+				return new NGIncomingParts( Request.asInputStream( _jettyRequest ), MultiPart.extractBoundary( _contentType ) );
+			}
+
+			synchronized void close() {
+				if( _parts != null ) {
+					_parts.close();
+				}
+			}
+		}
+
+		/**
+		 * @return the given multipart Request converted to an NGRequest, reading its parts with the given reader
+		 */
+		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final MultipartPartsReader partsReader ) {
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
 			final String queryString = jettyRequest.getHttpURI().getQuery();
@@ -240,17 +293,6 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
 			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
-
-			final Supplier<List<NGMultipartRequest.Part>> partsReader = () -> {
-				final List<NGMultipartRequest.Part> parts = new ArrayList<>();
-
-				for( final MultiPart.Part part : MultiPartFormData.getParts( jettyRequest, jettyRequest, contentType, multiPartConfig() ) ) {
-					final String partContentType = part.getHeaders().get( HttpHeader.CONTENT_TYPE );
-					parts.add( new NGMultipartRequest.Part( part.getName(), part.getFileName(), partContentType, Content.Source.asInputStream( part.getContentSource() ), part.getLength() ) );
-				}
-
-				return parts;
-			};
 
 			return new NGMultipartRequest( method, uri, queryString, httpVersion, headers, cookieValues, partsReader, remoteAddress );
 		}

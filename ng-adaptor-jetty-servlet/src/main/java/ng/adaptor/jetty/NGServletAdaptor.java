@@ -7,11 +7,11 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import ng.appserver.NGApplication;
 import ng.appserver.http.NGCookie;
+import ng.appserver.http.NGMultipartReader;
 import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
@@ -119,18 +120,34 @@ public class NGServletAdaptor extends HttpServlet {
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 
 		if( sr.getContentType() != null && sr.getContentType().toLowerCase().startsWith( "multipart/form-data" ) ) {
-			final Supplier<List<NGMultipartRequest.Part>> partsReader = () -> {
-				try {
-					final List<NGMultipartRequest.Part> parts = new ArrayList<>();
+			// The servlet API only reads multipart requests in full, so incoming parts are the collected ones, one at a time
+			final NGMultipartReader partsReader = new NGMultipartReader() {
 
-					for( final Part part : sr.getParts() ) {
-						parts.add( new NGMultipartRequest.Part( part.getName(), part.getSubmittedFileName(), part.getContentType(), part.getInputStream(), part.getSize() ) );
+				@Override
+				public List<NGMultipartRequest.Part> readAll() {
+					try {
+						final List<NGMultipartRequest.Part> parts = new ArrayList<>();
+
+						for( final Part part : sr.getParts() ) {
+							final Map<String, List<String>> headers = new HashMap<>();
+
+							for( final String headerName : part.getHeaderNames() ) {
+								headers.put( headerName, new ArrayList<>( part.getHeaders( headerName ) ) );
+							}
+
+							parts.add( new NGMultipartRequest.Part( part.getName(), part.getSubmittedFileName(), headers, part.getInputStream(), part.getSize() ) );
+						}
+
+						return parts;
 					}
-
-					return parts;
+					catch( IOException | ServletException e ) {
+						throw new RuntimeException( e );
+					}
 				}
-				catch( IOException | ServletException e ) {
-					throw new RuntimeException( e );
+
+				@Override
+				public Iterator<NGMultipartRequest.Part> iterate() {
+					return readAll().iterator();
 				}
 			};
 

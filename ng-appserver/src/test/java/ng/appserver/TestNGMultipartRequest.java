@@ -9,15 +9,17 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
 
+import ng.appserver.http.NGMultipartReader;
 import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGMultipartRequest.Part;
-import ng.appserver.http.NGUploadedFile;
 
 public class TestNGMultipartRequest {
 
@@ -27,23 +29,36 @@ public class TestNGMultipartRequest {
 
 	private static Part field( final String name, final String value, final String contentType, final Charset charset ) {
 		final byte[] bytes = value.getBytes( charset );
-		return new Part( name, null, contentType, new ByteArrayInputStream( bytes ), bytes.length );
+		final Map<String, List<String>> headers = contentType == null ? Map.of() : Map.of( "Content-Type", List.of( contentType ) );
+		return new Part( name, null, headers, new ByteArrayInputStream( bytes ), bytes.length );
 	}
 
 	private static Part file( final String name, final String filename, final String content ) {
 		final byte[] bytes = content.getBytes( StandardCharsets.UTF_8 );
-		return new Part( name, filename, "application/octet-stream", new ByteArrayInputStream( bytes ), bytes.length );
+		return new Part( name, filename, Map.of( "Content-Type", List.of( "application/octet-stream" ) ), new ByteArrayInputStream( bytes ), bytes.length );
 	}
 
 	/**
-	 * A request with the given query string and parts, counting how often the parts are read
+	 * A request with the given query string and parts, counting how often the parts are read (collected or incoming)
 	 */
 	private static NGMultipartRequest request( final String queryString, final AtomicInteger reads, final Part... parts ) {
 		final Map<String, List<String>> headers = Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) );
-		return new NGMultipartRequest( "POST", "/", queryString, "HTTP/1.1", headers, Map.of(), () -> {
-			reads.incrementAndGet();
-			return List.of( parts );
-		}, null );
+		final NGMultipartReader reader = new NGMultipartReader() {
+
+			@Override
+			public List<Part> readAll() {
+				reads.incrementAndGet();
+				return List.of( parts );
+			}
+
+			@Override
+			public Iterator<Part> iterate() {
+				reads.incrementAndGet();
+				return List.of( parts ).iterator();
+			}
+		};
+
+		return new NGMultipartRequest( "POST", "/", queryString, "HTTP/1.1", headers, Map.of(), reader, null );
 	}
 
 	private static NGMultipartRequest request( final Part... parts ) {
@@ -107,7 +122,7 @@ public class TestNGMultipartRequest {
 
 	@Test
 	public void uploadedFile() throws IOException {
-		final NGUploadedFile file = request( file( "f", "notes.txt", "contents" ) ).uploadedFileForKey( "f" );
+		final Part file = request( file( "f", "notes.txt", "contents" ) ).uploadedFileForKey( "f" );
 		assertEquals( "notes.txt", file.filename() );
 		assertEquals( "application/octet-stream", file.contentType() );
 		assertEquals( 8, file.length() );
@@ -116,7 +131,7 @@ public class TestNGMultipartRequest {
 
 	@Test
 	public void aFileFieldSubmittedWithoutAFileIsAnEmptyFile() {
-		final NGUploadedFile file = request( file( "f", "", "" ) ).uploadedFileForKey( "f" );
+		final Part file = request( file( "f", "", "" ) ).uploadedFileForKey( "f" );
 		assertEquals( "", file.filename() );
 		assertEquals( 0, file.length() );
 	}
@@ -124,7 +139,7 @@ public class TestNGMultipartRequest {
 	@Test
 	public void manyFilesWithOneField() {
 		final NGMultipartRequest request = request( file( "f", "a.txt", "a" ), file( "f", "b.txt", "b" ) );
-		assertEquals( List.of( "a.txt", "b.txt" ), request.uploadedFilesForKey( "f" ).stream().map( NGUploadedFile::filename ).toList() );
+		assertEquals( List.of( "a.txt", "b.txt" ), request.uploadedFilesForKey( "f" ).stream().map( Part::filename ).toList() );
 		assertThrows( IllegalStateException.class, () -> request.uploadedFileForKey( "f" ) );
 	}
 
@@ -143,4 +158,60 @@ public class TestNGMultipartRequest {
 		assertEquals( 0, reads.get() );
 	}
 
+
+	@Test
+	public void partHeadersAreCaseInsensitive() {
+		final Part part = new Part( "a", null, Map.of( "X-Checksum", List.of( "abc" ), "content-type", List.of( "text/plain" ) ), new ByteArrayInputStream( new byte[0] ), 0 );
+		assertEquals( List.of( "abc" ), part.headers().get( "x-checksum" ) );
+		assertEquals( "text/plain", part.contentType() );
+	}
+
+	@Test
+	public void incomingParts() {
+		final AtomicInteger reads = new AtomicInteger();
+		final NGMultipartRequest request = request( null, reads, field( "a", "1" ), file( "f", "f.txt", "x" ) );
+		final List<String> names = new ArrayList<>();
+
+		for( final Part part : request.incomingParts() ) {
+			names.add( part.name() + ":" + part.isFile() );
+		}
+
+		assertEquals( List.of( "a:false", "f:true" ), names );
+		assertEquals( 1, reads.get() );
+	}
+
+	@Test
+	public void incomingPartsCanBeIteratedOnce() {
+		final Iterable<Part> parts = request( field( "a", "1" ) ).incomingParts();
+		parts.iterator();
+		assertThrows( IllegalStateException.class, parts::iterator );
+	}
+
+	@Test
+	public void incomingPartsCanBeAskedForOnce() {
+		final NGMultipartRequest request = request( field( "a", "1" ) );
+		request.incomingParts();
+		assertThrows( IllegalStateException.class, request::incomingParts );
+	}
+
+	@Test
+	public void afterIncomingPartsFormValuesAreTheQueryStrings() {
+		final NGMultipartRequest request = request( "folder=x", new AtomicInteger(), field( "a", "1" ) );
+		request.incomingParts();
+		assertEquals( Map.of( "folder", List.of( "x" ) ), request.formValues() );
+	}
+
+	@Test
+	public void afterIncomingPartsUploadedFilesAreUnavailable() {
+		final NGMultipartRequest request = request( file( "f", "f.txt", "x" ) );
+		request.incomingParts();
+		assertThrows( IllegalStateException.class, request::uploadedFiles );
+	}
+
+	@Test
+	public void afterCollectingIncomingPartsAreUnavailable() {
+		final NGMultipartRequest request = request( field( "a", "1" ) );
+		request.formValues();
+		assertThrows( IllegalStateException.class, request::incomingParts );
+	}
 }

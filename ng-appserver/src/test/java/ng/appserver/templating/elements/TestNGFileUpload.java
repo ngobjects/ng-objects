@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,7 @@ import ng.appserver.NGComponentRequestTestHarness.TestPage;
 import ng.appserver.NGComponentRequestTestHarness.TestRequest;
 import ng.appserver.NGContext;
 import ng.appserver.NGSession;
+import ng.appserver.http.NGMultipartReader;
 import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGMultipartRequest.Part;
 import ng.appserver.http.NGRequest;
@@ -76,22 +80,42 @@ public class TestNGFileUpload {
 	}
 
 	private static NGMultipartRequest multipartRequest( final Part... parts ) {
-		return new NGMultipartRequest( "POST", "/no/1.0", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) ), Map.of(), () -> List.of( parts ), null );
+		final NGMultipartReader reader = new NGMultipartReader() {
+
+			@Override
+			public List<Part> readAll() {
+				return List.of( parts );
+			}
+
+			@Override
+			public Iterator<Part> iterate() {
+				return List.of( parts ).iterator();
+			}
+		};
+
+		return new NGMultipartRequest( "POST", "/no/1.0", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) ), Map.of(), reader, null );
 	}
 
 	private static Part file( final String name, final String filename, final String content ) {
 		final byte[] bytes = content.getBytes( StandardCharsets.UTF_8 );
-		return new Part( name, filename, "text/plain", new ByteArrayInputStream( bytes ), bytes.length );
+		return new Part( name, filename, Map.of( "Content-Type", List.of( "text/plain" ) ), new ByteArrayInputStream( bytes ), bytes.length );
 	}
 
 	/**
 	 * Takes values from the given request into an upload field named 'upload', whose filename and data are bound to the given receivers
 	 */
 	private static void takeValues( final NGRequest request, final Receiver filename, final Receiver data ) {
+		takeValues( request, filename, "data", data );
+	}
+
+	/**
+	 * Takes values from the given request into an upload field named 'upload', whose filename is bound to the given receiver, and the given content binding to the other
+	 */
+	private static void takeValues( final NGRequest request, final Receiver filename, final String contentBinding, final Receiver content ) {
 		final Map<String, NGAssociation> associations = new LinkedHashMap<>();
 		associations.put( "name", new NGConstantValueAssociation( "upload" ) );
 		associations.put( "filename", filename );
-		associations.put( "data", data );
+		associations.put( contentBinding, content );
 
 		final NGFileUpload element = new NGFileUpload( null, associations, null );
 
@@ -128,5 +152,22 @@ public class TestNGFileUpload {
 		final TestRequest request = new TestRequest( "/no/1.0", Map.of( "upload", List.of( "notes.txt" ) ) );
 		final IllegalStateException e = assertThrows( IllegalStateException.class, () -> takeValues( request, new Receiver(), new Receiver() ) );
 		assertTrue( e.getMessage().contains( "multipart/form-data" ) );
+	}
+
+	@Test
+	public void handsOverAStream() throws IOException {
+		final Receiver filename = new Receiver();
+		final Receiver stream = new Receiver();
+		takeValues( multipartRequest( file( "upload", "notes.txt", "contents" ) ), filename, "inputStream", stream );
+		assertEquals( "notes.txt", filename.value );
+		assertEquals( "contents", new String( ((InputStream)stream.value).readAllBytes(), StandardCharsets.UTF_8 ) );
+	}
+
+	@Test
+	public void dataAndInputStreamCantBothBeBound() {
+		final Map<String, NGAssociation> associations = new LinkedHashMap<>();
+		associations.put( "data", new Receiver() );
+		associations.put( "inputStream", new Receiver() );
+		assertThrows( IllegalArgumentException.class, () -> new NGFileUpload( null, associations, null ) );
 	}
 }

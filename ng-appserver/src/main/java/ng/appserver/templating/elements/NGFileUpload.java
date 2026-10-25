@@ -10,16 +10,26 @@ import ng.appserver.NGContext;
 import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
-import ng.appserver.http.NGUploadedFile;
 import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
 import ng.appserver.templating.associations.NGAssociation;
 
+/**
+ * A file upload field. Its form needs the attribute enctype="multipart/form-data".
+ *
+ * Bindings:
+ * - filename: Set to the uploaded file's name
+ * - data: Set to the uploaded file's content, as a byte[]
+ * - inputStream: Set to a stream of the uploaded file's content, which stays readable until the request has been handled. For files too large to hold in memory. Bind either data or inputStream.
+ * - name: The field's name. Defaults to the element ID.
+ */
+
 public class NGFileUpload extends NGDynamicElement {
 
 	private final NGAssociation _filenameAssociation;
 	private final NGAssociation _dataAssociation;
+	private final NGAssociation _inputStreamAssociation;
 	private final NGAssociation _nameAssociation;
 
 	/**
@@ -32,7 +42,12 @@ public class NGFileUpload extends NGDynamicElement {
 		_additionalAssociations = new LinkedHashMap<>( associations );
 		_filenameAssociation = _additionalAssociations.remove( "filename" );
 		_dataAssociation = _additionalAssociations.remove( "data" );
+		_inputStreamAssociation = _additionalAssociations.remove( "inputStream" );
 		_nameAssociation = _additionalAssociations.remove( "name" );
+
+		if( _dataAssociation != null && _inputStreamAssociation != null ) {
+			throw new IllegalArgumentException( "Bind either [data] or [inputStream], not both" );
+		}
 	}
 
 	@Override
@@ -71,7 +86,7 @@ public class NGFileUpload extends NGDynamicElement {
 			return;
 		}
 
-		final List<NGUploadedFile> files = multipartRequest.uploadedFilesForKey( name );
+		final List<NGMultipartRequest.Part> files = multipartRequest.uploadedFilesForKey( name );
 
 		if( !files.isEmpty() ) {
 
@@ -80,7 +95,7 @@ public class NGFileUpload extends NGDynamicElement {
 				throw new IllegalStateException( "The request contains %s files uploaded with the field '%s'. I can only handle one at a time.".formatted( files.size(), name ) );
 			}
 
-			final NGUploadedFile file = files.get( 0 );
+			final NGMultipartRequest.Part file = files.get( 0 );
 
 			if( _filenameAssociation != null ) {
 				_filenameAssociation.setValue( file.filename(), context.component() );
@@ -93,6 +108,10 @@ public class NGFileUpload extends NGDynamicElement {
 				catch( IOException e ) {
 					throw new RuntimeException( e );
 				}
+			}
+
+			if( _inputStreamAssociation != null ) {
+				_inputStreamAssociation.setValue( file.stream(), context.component() );
 			}
 		}
 	}
