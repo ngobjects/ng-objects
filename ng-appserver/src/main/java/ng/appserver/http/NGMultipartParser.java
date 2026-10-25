@@ -15,7 +15,7 @@ public interface NGMultipartParser {
 	/**
 	 * @param body The request's body
 	 * @param boundary The boundary between the parts, from the request's content type
-	 * @return The body's parts, read from the body as they're asked for. A part's content is readable until the next part is asked for, and its length is unknown (-1).
+	 * @return The body's parts, read from the body as they're asked for. A part's content is readable until the next part is asked for, and its length is unknown (null).
 	 */
 	public Iterator<Part> parse( InputStream body, String boundary );
 }

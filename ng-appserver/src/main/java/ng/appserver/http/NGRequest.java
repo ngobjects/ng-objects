@@ -1,5 +1,6 @@
 package ng.appserver.http;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +14,12 @@ import ng.appserver.NGContext;
 /**
  * Represents a request entering the system
  *
- * Implementations differ in how they hold the request's body: NGStandardRequest holds it as bytes, NGMultipartRequest as parts. NGRequests.of() creates the one a request's content type calls for.
+ * A multipart/form-data request is an NGMultipartRequest, which also has the files uploaded with it. NGRequests.of() creates the request a content type calls for.
+ *
+ * The body arrives once, and can be read in several ways: in full (contentBytes(), contentString()), as a stream (contentStream()), as form values (formValues()), or, for a multipart request, as uploaded files or incoming parts.
+ * Reading it in full keeps it, so later reads of any kind are served from what was kept: the bytes, or for multipart, the collected parts.
+ * Reading it as a stream (contentStream(), incomingParts()) keeps nothing, so it can't be read again, and form values then hold only the query string's.
+ * A read that can't be served says what read the body before. contentType() and contentLength() describe the body without reading it.
  */
 
 public interface NGRequest {
@@ -88,11 +94,41 @@ public interface NGRequest {
 	}
 
 	/**
-	 * @return The request's body
-	 *
-	 * FIXME: Only a request whose body is bytes can answer this; a multipart request's body is its parts, and it throws. Leaves this interface once handlers can declare the kind of body they take // Hugi/Claude 2026-10-25
+	 * @return The request's content type, from its Content-Type header. null if it has none. Doesn't read the body.
+	 */
+	public default String contentType() {
+		return headerForKey( "content-type" );
+	}
+
+	/**
+	 * @return The length of the request's body in bytes, from its Content-Length header. null if it doesn't say (or says something that isn't a length). Doesn't read the body.
+	 */
+	public default Long contentLength() {
+		final String value = headerForKey( "content-length" );
+
+		if( value == null ) {
+			return null;
+		}
+
+		try {
+			return Long.valueOf( value.strip() );
+		}
+		catch( NumberFormatException e ) {
+			return null;
+		}
+	}
+
+	/**
+	 * @return The request's body, read in full and kept. A multipart request's body as it arrived, boundaries and all.
+	 * @throws IllegalStateException If the body was already read in a way that didn't keep it
 	 */
 	public byte[] contentBytes();
+
+	/**
+	 * @return The request's body as a stream, for bodies too large to hold in memory. The body is then gone, unless it was already read in full, in which case the stream is over what was kept.
+	 * @throws IllegalStateException If the body was already read in a way that didn't keep it
+	 */
+	public InputStream contentStream();
 
 	/**
 	 * @return The request's body, as a UTF-8 string

@@ -3,11 +3,11 @@ package ng.appserver;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
-import ng.appserver.http.NGStandardRequest;
 import ng.appserver.templating.NGComponent;
 
 /**
@@ -71,20 +71,79 @@ public class NGComponentRequestTestHarness {
 	}
 
 	/**
-	 * A plain component action request with the given URI and form values
+	 * A plain component action request with the given URI and form values, and no headers, cookies or body
 	 */
-	public static class TestRequest extends NGStandardRequest {
+	public static class TestRequest implements NGRequest {
 
-		private final Map<String, List<String>> _testFormValues;
+		private String _uri;
+		private final Map<String, List<String>> _formValues;
+		private final Map<String, List<String>> _headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
+		private NGContext _context;
 
 		public TestRequest( final String uri, final Map<String, List<String>> formValues ) {
-			super( "GET", uri, null, "HTTP/1.1", Map.of(), InputStream.nullInputStream(), null );
-			_testFormValues = formValues;
+			_uri = uri;
+			_formValues = formValues;
 		}
 
 		@Override
-		protected Map<String, List<String>> parseFormValues() {
-			return _testFormValues;
+		public String method() {
+			return "GET";
+		}
+
+		@Override
+		public String uri() {
+			return _uri;
+		}
+
+		@Override
+		public void setURI( final String uri ) {
+			_uri = uri;
+		}
+
+		@Override
+		public Map<String, List<String>> headers() {
+			return _headers;
+		}
+
+		@Override
+		public void setHeaders( final Map<String, List<String>> headers ) {
+			_headers.clear();
+			_headers.putAll( headers );
+		}
+
+		@Override
+		public Map<String, List<String>> formValues() {
+			return _formValues;
+		}
+
+		@Override
+		public Map<String, List<String>> cookieValues() {
+			return Map.of();
+		}
+
+		@Override
+		public byte[] contentBytes() {
+			return new byte[0];
+		}
+
+		@Override
+		public InputStream contentStream() {
+			return InputStream.nullInputStream();
+		}
+
+		@Override
+		public String remoteAddress() {
+			return null;
+		}
+
+		@Override
+		public NGContext context() {
+			return _context;
+		}
+
+		@Override
+		public void _setContext( final NGContext context ) {
+			_context = context;
 		}
 	}
 

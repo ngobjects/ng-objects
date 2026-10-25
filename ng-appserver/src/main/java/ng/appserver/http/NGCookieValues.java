@@ -17,7 +17,7 @@ import java.util.Objects;
  * HTTP/2 clients may send several Cookie headers, which together hold the request's cookies.
  */
 
-public class NGCookieValues {
+final class NGCookieValues {
 
 	private NGCookieValues() {}
 
@@ -25,7 +25,7 @@ public class NGCookieValues {
 	 * @param headerValues The values of the request's Cookie headers
 	 * @return The cookie values in the given headers, by name
 	 */
-	public static Map<String, List<String>> parse( final List<String> headerValues ) {
+	static Map<String, List<String>> parse( final List<String> headerValues ) {
 		Objects.requireNonNull( headerValues );
 
 		final Map<String, List<String>> cookieValues = new LinkedHashMap<>();

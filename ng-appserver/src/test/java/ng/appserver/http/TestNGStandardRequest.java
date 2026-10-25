@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,12 +11,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.http.NGStandardRequest;
+import ng.appserver.NGApplication;
+import ng.appserver.properties.NGProperties;
+
 
 public class TestNGStandardRequest {
 
@@ -63,7 +66,7 @@ public class TestNGStandardRequest {
 
 	private static NGStandardRequest request( final String queryString, final String contentType, final InputStream contentStream ) {
 		final Map<String, List<String>> headers = contentType == null ? Map.of() : Map.of( "Content-Type", List.of( contentType ) );
-		return new NGStandardRequest( "POST", "/", queryString, "HTTP/1.1", headers, contentStream, null );
+		return new NGStandardRequest( "POST", "/", queryString, "HTTP/1.1", headers, contentStream, null, NGRequestLimits.DEFAULT );
 	}
 
 	private static final String FORM = "application/x-www-form-urlencoded";
@@ -164,24 +167,24 @@ public class TestNGStandardRequest {
 
 	@Test
 	public void formBodyLengthLimit() {
-		final String body = "a=" + "x".repeat( NGStandardRequest.MAX_FORM_CONTENT_LENGTH );
+		final String body = "a=" + "x".repeat( NGRequestLimits.DEFAULT.maxFormContentLength() );
 		assertThrows( IllegalArgumentException.class, () -> request( null, FORM, new RecordingStream( body ) ).formValues() );
 	}
 
 	@Test
 	public void theRawBodyHasNoFormLengthLimit() {
-		final String body = "x".repeat( NGStandardRequest.MAX_FORM_CONTENT_LENGTH + 1 );
+		final String body = "x".repeat( NGRequestLimits.DEFAULT.maxFormContentLength() + 1 );
 		assertEquals( body.length(), request( null, "text/plain", new RecordingStream( body ) ).contentBytes().length );
 	}
 
 	@Test
 	public void formFieldLimit() {
-		final String body = "a=1&".repeat( NGStandardRequest.MAX_FORM_FIELDS + 1 );
+		final String body = "a=1&".repeat( NGRequestLimits.DEFAULT.maxFormFields() + 1 );
 		assertThrows( IllegalArgumentException.class, () -> request( null, FORM, new RecordingStream( body ) ).formValues() );
 	}
 
 	private static NGStandardRequest requestWithHeaders( final Map<String, List<String>> headers ) {
-		return new NGStandardRequest( "GET", "/", null, "HTTP/1.1", headers, InputStream.nullInputStream(), null );
+		return new NGStandardRequest( "GET", "/", null, "HTTP/1.1", headers, InputStream.nullInputStream(), null, NGRequestLimits.DEFAULT );
 	}
 
 	@Test
@@ -239,5 +242,74 @@ public class TestNGStandardRequest {
 		assertEquals( "1", request.cookieValueForKey( "a" ) );
 		request.setHeader( "Cookie", "a=2" );
 		assertEquals( "2", request.cookieValueForKey( "a" ) );
+	}
+
+	@Test
+	public void contentStream() throws IOException {
+		final NGStandardRequest request = request( null, "application/octet-stream", new RecordingStream( "photo" ) );
+		assertEquals( "photo", new String( request.contentStream().readAllBytes(), StandardCharsets.UTF_8 ) );
+	}
+
+	@Test
+	public void afterStreamingTheBodyItsGone() {
+		final NGStandardRequest request = request( "q=1", FORM, new RecordingStream( "a=1" ) );
+		request.contentStream();
+		final IllegalStateException e = assertThrows( IllegalStateException.class, request::contentBytes );
+		assertTrue( e.getMessage().contains( "contentStream()" ) );
+		assertThrows( IllegalStateException.class, request::contentStream );
+		assertEquals( Map.of( "q", List.of( "1" ) ), request.formValues() );
+	}
+
+	@Test
+	public void afterReadingTheBodyInFullItCanBeStreamed() throws IOException {
+		final NGStandardRequest request = request( null, FORM, new RecordingStream( "a=1" ) );
+		assertEquals( "a=1", request.contentString() );
+		assertEquals( "a=1", new String( request.contentStream().readAllBytes(), StandardCharsets.UTF_8 ) );
+		assertEquals( "a=1", new String( request.contentStream().readAllBytes(), StandardCharsets.UTF_8 ) );
+		assertEquals( "1", request.formValueForKey( "a" ) );
+	}
+
+	@Test
+	public void afterFormValuesTheBodyCanBeStreamed() throws IOException {
+		final NGStandardRequest request = request( null, FORM, new RecordingStream( "a=1" ) );
+		assertEquals( "1", request.formValueForKey( "a" ) );
+		assertEquals( "a=1", new String( request.contentStream().readAllBytes(), StandardCharsets.UTF_8 ) );
+	}
+
+	@Test
+	public void contentTypeAndLengthDontReadTheBody() {
+		final RecordingStream stream = new RecordingStream( "body" );
+		final NGStandardRequest request = new NGStandardRequest( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "text/plain" ), "Content-Length", List.of( " 4 " ) ), stream, null, NGRequestLimits.DEFAULT );
+		assertEquals( "text/plain", request.contentType() );
+		assertEquals( 4L, request.contentLength() );
+		assertFalse( stream.read );
+	}
+
+	@Test
+	public void contentLengthUnknown() {
+		assertNull( requestWithHeaders( Map.of() ).contentLength() );
+		assertNull( requestWithHeaders( Map.of( "Content-Length", List.of( "lots" ) ) ).contentLength() );
+	}
+
+	@Test
+	public void limitsFromProperties() {
+		final NGProperties properties = new NGProperties();
+		properties.addAndReadSource( new NGProperties.PropertiesSource() {
+			@Override
+			public Map<String, String> readAll() {
+				return Map.of( "ng.request.maxFormFields", "10", "ng.request.maxMultipartContentLength", "none", "ng.request.temporaryDirectory", "/var/uploads" );
+			}
+
+			@Override
+			public String description() {
+				return "test";
+			}
+		} );
+
+		final NGRequestLimits limits = NGRequestLimits.from( properties );
+		assertEquals( 10, limits.maxFormFields() );
+		assertNull( limits.maxMultipartContentLength() );
+		assertEquals( Path.of( "/var/uploads" ), limits.temporaryDirectory() );
+		assertEquals( NGRequestLimits.DEFAULT.maxParts(), limits.maxParts() );
 	}
 }

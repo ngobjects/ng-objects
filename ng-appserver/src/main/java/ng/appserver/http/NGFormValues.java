@@ -19,7 +19,7 @@ import java.util.Objects;
  * Values are kept in the order they appear, as are the names.
  */
 
-public class NGFormValues {
+final class NGFormValues {
 
 	private NGFormValues() {}
 
@@ -27,7 +27,7 @@ public class NGFormValues {
 	 * @return The form values in the given input
 	 * @throws IllegalArgumentException If the input has more than maxFields fields
 	 */
-	public static Map<String, List<String>> parse( final byte[] input, final Charset charset, final int maxFields ) {
+	static Map<String, List<String>> parse( final byte[] input, final Charset charset, final int maxFields ) {
 		Objects.requireNonNull( input );
 		Objects.requireNonNull( charset );
 

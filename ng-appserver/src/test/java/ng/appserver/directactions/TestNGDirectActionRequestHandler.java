@@ -11,7 +11,7 @@ import ng.appserver.NGActionResults;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGResponses;
-import ng.appserver.http.NGStandardRequest;
+import ng.appserver.http.NGRequests;
 
 public class TestNGDirectActionRequestHandler {
 
@@ -37,7 +37,7 @@ public class TestNGDirectActionRequestHandler {
 	}
 
 	private static NGResponse handle( final String uri ) {
-		final NGRequest request = new NGStandardRequest( "GET", uri, null, "HTTP/1.1", Map.of(), InputStream.nullInputStream(), "127.0.0.1" );
+		final NGRequest request = NGRequests.of( "GET", uri, null, "HTTP/1.1", Map.of(), InputStream.nullInputStream(), "127.0.0.1", null );
 		return new NGDirectActionRequestHandler().handleRequest( request );
 	}
 

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import ng.appserver.NGPageCache.NGPageCacheEntry;
 import ng.appserver.NGPageCache.NGPageLease;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGStandardRequest;
+import ng.appserver.http.NGRequests;
 import ng.appserver.templating.NGComponent;
 
 public class TestNGPageCache {
@@ -40,7 +40,7 @@ public class TestNGPageCache {
 	}
 
 	private static NGComponent newPage() {
-		final NGRequest request = new NGStandardRequest( "GET", "/test", null, "HTTP/1.1", Map.of(), InputStream.nullInputStream(), null );
+		final NGRequest request = NGRequests.of( "GET", "/test", null, "HTTP/1.1", Map.of(), InputStream.nullInputStream(), null, null );
 		return new NGComponent( new NGContext( request ) );
 	}
 

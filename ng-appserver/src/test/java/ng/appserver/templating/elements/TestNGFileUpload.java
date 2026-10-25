@@ -23,9 +23,9 @@ import ng.appserver.NGContext;
 import ng.appserver.NGSession;
 import ng.appserver.http.NGMultipartParser;
 import ng.appserver.http.NGMultipartRequest;
-import ng.appserver.http.NGMultipartRequest.Limits;
 import ng.appserver.http.NGMultipartRequest.Part;
 import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGStandardResponse;
 import ng.appserver.templating.NGComponent;
@@ -81,12 +81,12 @@ public class TestNGFileUpload {
 
 	private static NGMultipartRequest multipartRequest( final Part... parts ) {
 		final NGMultipartParser parser = ( body, boundary ) -> List.of( parts ).iterator();
-		return new NGMultipartRequest( "POST", "/no/1.0", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) ), InputStream.nullInputStream(), "x", parser, Limits.DEFAULT, null );
+		return (NGMultipartRequest)NGRequests.of( "POST", "/no/1.0", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) ), InputStream.nullInputStream(), null, parser );
 	}
 
 	private static Part file( final String name, final String filename, final String content ) {
 		final byte[] bytes = content.getBytes( StandardCharsets.UTF_8 );
-		return new Part( name, filename, Map.of( "Content-Type", List.of( "text/plain" ) ), new ByteArrayInputStream( bytes ), bytes.length );
+		return new Part( name, filename, Map.of( "Content-Type", List.of( "text/plain" ) ), new ByteArrayInputStream( bytes ), (long)bytes.length );
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.http.NGFormValues;
 
 public class TestNGFormValues {
 

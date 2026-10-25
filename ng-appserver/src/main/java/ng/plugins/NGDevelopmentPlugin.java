@@ -178,7 +178,7 @@ public class NGDevelopmentPlugin implements NGPlugin {
 			return param;
 		}
 
-		// A multipart request's content is its parts, read above as form values
+		// A multipart request's snippet is a form field, read above as a form value. Its raw body, boundaries and all, isn't a snippet
 		if( request instanceof NGMultipartRequest ) {
 			return null;
 		}

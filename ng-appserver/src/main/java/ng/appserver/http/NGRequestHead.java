@@ -105,14 +105,14 @@ final class NGRequestHead {
 
 	/**
 	 * @return The query string's form values, freshly parsed. Empty if the URI has no query string.
-	 * @throws IllegalArgumentException If the query string has more than NGStandardRequest.MAX_FORM_FIELDS fields
+	 * @throws IllegalArgumentException If the query string has more than maxFields fields
 	 */
-	Map<String, List<String>> parseQueryValues() {
+	Map<String, List<String>> parseQueryValues( final int maxFields ) {
 		if( _queryString == null ) {
 			return new LinkedHashMap<>();
 		}
 
-		return NGFormValues.parse( _queryString.getBytes( StandardCharsets.UTF_8 ), StandardCharsets.UTF_8, NGStandardRequest.MAX_FORM_FIELDS );
+		return NGFormValues.parse( _queryString.getBytes( StandardCharsets.UTF_8 ), StandardCharsets.UTF_8, maxFields );
 	}
 
 	/**

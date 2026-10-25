@@ -153,7 +153,7 @@ public class NGIncomingParts implements Iterator<Part> {
 
 		@Override
 		public void onPartHeaders() {
-			_pending.add( new Part( getName(), getFileName(), _headers, _parsing, -1 ) );
+			_pending.add( new Part( getName(), getFileName(), _headers, _parsing, null ) );
 		}
 
 		@Override

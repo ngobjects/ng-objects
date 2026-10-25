@@ -110,7 +110,7 @@ public class TestNGIncomingParts {
 		assertEquals( "a", a.name() );
 		assertNull( a.filename() );
 		assertFalse( a.isFile() );
-		assertEquals( -1, a.length() );
+		assertNull( a.length() );
 		assertEquals( "1", content( a ) );
 
 		final Part f = parts.next();

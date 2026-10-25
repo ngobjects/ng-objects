@@ -1,4 +1,4 @@
-package ng.appserver;
+package ng.appserver.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import ng.appserver.http.NGCookieValues;
 
 public class TestNGCookieValues {
 
