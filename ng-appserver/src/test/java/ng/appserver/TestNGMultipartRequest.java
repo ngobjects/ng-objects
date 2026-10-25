@@ -1,25 +1,33 @@
 package ng.appserver;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import ng.appserver.http.NGMultipartReader;
+import ng.appserver.http.NGMultipartParser;
 import ng.appserver.http.NGMultipartRequest;
+import ng.appserver.http.NGMultipartRequest.Limits;
 import ng.appserver.http.NGMultipartRequest.Part;
+import ng.appserver.http.NGRequests;
+import ng.appserver.http.NGStandardRequest;
 
 public class TestNGMultipartRequest {
 
@@ -39,26 +47,20 @@ public class TestNGMultipartRequest {
 	}
 
 	/**
-	 * A request with the given query string and parts, counting how often the parts are read (collected or incoming)
+	 * A request with the given query string and parts, counting how often its body is parsed (to collect the parts, or hand them over as they arrive)
 	 */
 	private static NGMultipartRequest request( final String queryString, final AtomicInteger reads, final Part... parts ) {
+		return request( queryString, reads, Limits.DEFAULT, parts );
+	}
+
+	private static NGMultipartRequest request( final String queryString, final AtomicInteger reads, final Limits limits, final Part... parts ) {
 		final Map<String, List<String>> headers = Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) );
-		final NGMultipartReader reader = new NGMultipartReader() {
-
-			@Override
-			public List<Part> readAll() {
-				reads.incrementAndGet();
-				return List.of( parts );
-			}
-
-			@Override
-			public Iterator<Part> iterate() {
-				reads.incrementAndGet();
-				return List.of( parts ).iterator();
-			}
+		final NGMultipartParser parser = ( body, boundary ) -> {
+			reads.incrementAndGet();
+			return List.of( parts ).iterator();
 		};
 
-		return new NGMultipartRequest( "POST", "/", queryString, "HTTP/1.1", headers, Map.of(), reader, null );
+		return new NGMultipartRequest( "POST", "/", queryString, "HTTP/1.1", headers, Map.of(), InputStream.nullInputStream(), "x", parser, limits, null );
 	}
 
 	private static NGMultipartRequest request( final Part... parts ) {
@@ -213,5 +215,107 @@ public class TestNGMultipartRequest {
 		final NGMultipartRequest request = request( field( "a", "1" ) );
 		request.formValues();
 		assertThrows( IllegalStateException.class, request::incomingParts );
+	}
+
+	private static Part bytes( final String name, final String filename, final int length ) {
+		return new Part( name, filename, Map.of(), new ByteArrayInputStream( new byte[length] ), -1 );
+	}
+
+	@Test
+	public void collectedPartsHaveTheirLength() {
+		final NGMultipartRequest request = request( bytes( "f", "a.bin", 1234 ) );
+		assertEquals( 1234, request.uploadedFileForKey( "f" ).length() );
+	}
+
+	@Test
+	public void largePartsAreKeptInTemporaryFilesUntilTheRequestIsClosed( @TempDir final Path directory ) throws IOException {
+		final Limits limits = new Limits( 1000, -1, 100, directory );
+		final byte[] content = "x".repeat( 1000 ).getBytes( StandardCharsets.UTF_8 );
+		final Part large = new Part( "f", "large.txt", Map.of(), new ByteArrayInputStream( content ), -1 );
+		final NGMultipartRequest request = request( null, new AtomicInteger(), limits, large, bytes( "small", "small.bin", 50 ) );
+
+		final Part kept = request.uploadedFileForKey( "f" );
+
+		try( var files = Files.list( directory ) ) {
+			assertEquals( 1, files.count(), "Only the part longer than maxMemoryPartLength should be in a temporary file" );
+		}
+
+		assertEquals( 1000, kept.length() );
+		assertArrayEquals( content, kept.stream().readAllBytes() );
+
+		request._close();
+
+		try( var files = Files.list( directory ) ) {
+			assertEquals( 0, files.count() );
+		}
+	}
+
+	@Test
+	public void partLimit() {
+		final Limits limits = new Limits( 2, -1, 1000, Limits.DEFAULT.temporaryDirectory() );
+		assertEquals( 2, request( null, new AtomicInteger(), limits, field( "a", "1" ), field( "b", "2" ) ).formValues().size() );
+		assertThrows( IllegalArgumentException.class, () -> request( null, new AtomicInteger(), limits, field( "a", "1" ), field( "b", "2" ), field( "c", "3" ) ).formValues() );
+	}
+
+	@Test
+	public void contentLengthLimitCountsEveryPart( @TempDir final Path directory ) throws IOException {
+		final Limits limits = new Limits( 1000, 100, 10, directory );
+		final NGMultipartRequest withinLimit = request( null, new AtomicInteger(), limits, bytes( "a", "a", 60 ), bytes( "b", "b", 40 ) );
+		assertEquals( 100, withinLimit.uploadedFiles().values().stream().flatMap( List::stream ).mapToLong( Part::length ).sum() );
+		withinLimit._close();
+
+		final NGMultipartRequest tooLong = request( null, new AtomicInteger(), limits, bytes( "a", "a", 60 ), bytes( "b", "b", 41 ) );
+		assertThrows( IllegalArgumentException.class, tooLong::uploadedFiles );
+
+		// What was kept before the limit was hit is still cleaned up
+		tooLong._close();
+
+		try( var files = Files.list( directory ) ) {
+			assertEquals( 0, files.count() );
+		}
+	}
+
+	@Test
+	public void incomingPartsArentLimitedOrKept( @TempDir final Path directory ) throws IOException {
+		final Limits limits = new Limits( 1, 10, 10, directory );
+		int count = 0;
+
+		for( final Part part : request( null, new AtomicInteger(), limits, bytes( "a", "a", 100 ), bytes( "b", "b", 100 ) ).incomingParts() ) {
+			assertEquals( 100, part.stream().readAllBytes().length );
+			count++;
+		}
+
+		assertEquals( 2, count );
+
+		try( var files = Files.list( directory ) ) {
+			assertEquals( 0, files.count() );
+		}
+	}
+
+	@Test
+	public void requestsOfMultipartContentAreMultipartRequests() {
+		final NGMultipartParser parser = ( body, boundary ) -> List.<Part> of().iterator();
+		final Map<String, List<String>> multipart = Map.of( "content-type", List.of( "multipart/form-data; boundary=\"abc=def\"" ) );
+		assertTrue( NGRequests.of( "POST", "/", null, "HTTP/1.1", multipart, Map.of(), InputStream.nullInputStream(), null, parser ) instanceof NGMultipartRequest );
+
+		// No parser, no boundary, or another content type: the body is left as it is
+		assertFalse( NGRequests.of( "POST", "/", null, "HTTP/1.1", multipart, Map.of(), InputStream.nullInputStream(), null, null ) instanceof NGMultipartRequest );
+		assertFalse( NGRequests.of( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "multipart/form-data" ) ), Map.of(), InputStream.nullInputStream(), null, parser ) instanceof NGMultipartRequest );
+		assertFalse( NGRequests.of( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "text/plain" ) ), Map.of(), InputStream.nullInputStream(), null, parser ) instanceof NGMultipartRequest );
+		assertTrue( NGRequests.of( "GET", "/", null, "HTTP/1.1", Map.of(), Map.of(), InputStream.nullInputStream(), null, parser ) instanceof NGStandardRequest );
+	}
+
+	@Test
+	public void theBoundaryComesFromTheContentType() {
+		final AtomicInteger boundaries = new AtomicInteger();
+		final NGMultipartParser parser = ( body, boundary ) -> {
+			assertEquals( "abc=def", boundary );
+			boundaries.incrementAndGet();
+			return List.<Part> of().iterator();
+		};
+
+		final NGStandardRequest request = NGRequests.of( "POST", "/", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "Multipart/Form-Data; charset=utf-8; boundary=\"abc=def\"" ) ), Map.of(), InputStream.nullInputStream(), null, parser );
+		request.formValues();
+		assertEquals( 1, boundaries.get() );
 	}
 }

@@ -19,6 +19,11 @@
 			<version>0.1.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>is.rebbi.ng</groupId>
+			<artifactId>ng-adaptor-jetty</artifactId>
+			<version>0.1.7-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>12.1.14</version>

@@ -139,21 +139,34 @@ public class NGStandardRequest implements NGRequest {
 	}
 
 	/**
+	 * @return The value of the given content type's named parameter, without quotes. null if it doesn't have it.
+	 */
+	static String parameter( final String contentType, final String name ) {
+		final String[] parts = contentType.split( ";" );
+
+		for( int i = 1; i < parts.length; i++ ) {
+			final int equals = parts[i].indexOf( '=' );
+
+			if( equals != -1 && name.equalsIgnoreCase( parts[i].substring( 0, equals ).trim() ) ) {
+				return parts[i].substring( equals + 1 ).trim().replace( "\"", "" );
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * @return The charset named by the given content type's charset parameter, UTF-8 if it names none (or one we don't know)
 	 */
 	static Charset charset( final String contentType ) {
-		for( final String parameter : contentType.split( ";" ) ) {
-			final int equals = parameter.indexOf( '=' );
+		final String name = parameter( contentType, "charset" );
 
-			if( equals != -1 && "charset".equalsIgnoreCase( parameter.substring( 0, equals ).trim() ) ) {
-				final String name = parameter.substring( equals + 1 ).trim().replace( "\"", "" );
-
-				try {
-					return Charset.forName( name );
-				}
-				catch( IllegalCharsetNameException | UnsupportedCharsetException e ) {
-					return StandardCharsets.UTF_8;
-				}
+		if( name != null ) {
+			try {
+				return Charset.forName( name );
+			}
+			catch( IllegalCharsetNameException | UnsupportedCharsetException e ) {
+				return StandardCharsets.UTF_8;
 			}
 		}
 
@@ -285,6 +298,11 @@ public class NGStandardRequest implements NGRequest {
 	public void _setContext( NGContext context ) {
 		_context = context;
 	}
+
+	/**
+	 * Invoked by the adaptor once the request has been handled and its response sent, to release whatever the request holds on to
+	 */
+	public void _close() {}
 
 	@Override
 	public String toString() {

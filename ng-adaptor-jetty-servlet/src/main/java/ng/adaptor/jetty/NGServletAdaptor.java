@@ -7,7 +7,6 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,12 +17,10 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
 import ng.appserver.NGApplication;
 import ng.appserver.http.NGCookie;
-import ng.appserver.http.NGMultipartReader;
-import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardRequest;
 import ng.appserver.http.NGStandardResponse;
@@ -50,9 +47,20 @@ public class NGServletAdaptor extends HttpServlet {
 
 	private void doRequest( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse ) throws ServletException, IOException {
 
-		// This is where the application logic will perform it's actual work
-		final NGRequest woRequest = servletRequestToNGRequest( servletRequest );
-		final NGResponse ngResponse = _application.dispatchRequest( woRequest );
+		final NGStandardRequest ngRequest = servletRequestToNGRequest( servletRequest );
+
+		try {
+			// This is where the application logic will perform it's actual work
+			final NGResponse ngResponse = _application.dispatchRequest( ngRequest );
+			writeResponse( ngResponse, servletResponse );
+		}
+		finally {
+			// Lets the request release what it holds, such as the temporary files of an upload
+			ngRequest._close();
+		}
+	}
+
+	private static void writeResponse( final NGResponse ngResponse, final HttpServletResponse servletResponse ) throws IOException {
 
 		servletResponse.setStatus( ngResponse.status() );
 
@@ -117,84 +125,13 @@ public class NGServletAdaptor extends HttpServlet {
 	/**
 	 * @return the given HttpServletRequest converted to an NGRequest
 	 */
-	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
-
-		if( sr.getContentType() != null && sr.getContentType().toLowerCase().startsWith( "multipart/form-data" ) ) {
-			// The servlet API only reads multipart requests in full, so incoming parts are the collected ones, one at a time
-			final NGMultipartReader partsReader = new NGMultipartReader() {
-
-				@Override
-				public List<NGMultipartRequest.Part> readAll() {
-					try {
-						final List<NGMultipartRequest.Part> parts = new ArrayList<>();
-
-						for( final Part part : sr.getParts() ) {
-							final Map<String, List<String>> headers = new HashMap<>();
-
-							for( final String headerName : part.getHeaderNames() ) {
-								headers.put( headerName, new ArrayList<>( part.getHeaders( headerName ) ) );
-							}
-
-							parts.add( new NGMultipartRequest.Part( part.getName(), part.getSubmittedFileName(), headers, part.getInputStream(), part.getSize() ) );
-						}
-
-						return parts;
-					}
-					catch( IOException | ServletException e ) {
-						throw new RuntimeException( e );
-					}
-				}
-
-				@Override
-				public Iterator<NGMultipartRequest.Part> iterate() {
-					return readAll().iterator();
-				}
-			};
-
-			return new NGMultipartRequest( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), cookieValues( sr.getCookies() ), partsReader, sr.getRemoteAddr() );
-		}
-
+	private static NGStandardRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 		try {
-			return new NGStandardRequest( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), cookieValues( sr.getCookies() ), sr.getInputStream(), sr.getRemoteAddr() );
+			return NGRequests.of( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), cookieValues( sr.getCookies() ), sr.getInputStream(), sr.getRemoteAddr(), NGIncomingParts::new );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
 		}
-	}
-
-	private static void logMultipartRequest( HttpServletRequest sr ) {
-		// FIXME: Starting work on multipart request handling. Very much experimental/work in progress // Hugi 2023-04-16
-		if( sr.getContentType() != null && sr.getContentType().startsWith( "multipart/form-data" ) ) {
-			System.out.println( ">>>>>>>>>> Multipart request detected" );
-
-			try {
-				// final String string = Files.createTempFile( UUID.randomUUID().toString(), ".fileupload" ).toString();
-				// System.out.println( "Multipart temp dir: " + string );
-
-				for( Part part : sr.getParts() ) {
-					//					MultiPart mp = (MultiPart)part;
-					System.out.println( "============= START PART =============" );
-					System.out.println( "class: " + part.getClass() );
-					System.out.println( "name: " + part.getName() );
-					System.out.println( "contentType: " + part.getContentType() );
-					System.out.println( "submittedFilename: " + part.getSubmittedFileName() );
-					System.out.println( "size: " + part.getSize() );
-					System.out.println( "value: " + new String( part.getInputStream().readAllBytes() ) );
-
-					System.out.println( "- Headers:" );
-					for( String headerName : part.getHeaderNames() ) {
-						System.out.println( "-- %s : %s".formatted( headerName, part.getHeaders( headerName ) ) );
-
-					}
-
-					System.out.println( "============= END PART =============" );
-				}
-			}
-			catch( IOException | ServletException e ) {
-				throw new RuntimeException( e );
-			}
-		}
-
 	}
 
 	/**

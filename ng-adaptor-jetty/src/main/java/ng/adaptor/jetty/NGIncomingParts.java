@@ -21,11 +21,12 @@ import ng.appserver.http.NGMultipartRequest.Part;
 
 /**
  * A multipart body's parts, read from the body as they're asked for. Jetty's parser does the parsing; this hands its parts over one at a time.
+ * Its constructor is the adaptors' NGMultipartParser.
  *
  * A part's content is readable until the next part is asked for. Moving on skips whatever of it wasn't read.
  */
 
-class NGIncomingParts implements Iterator<Part> {
+public class NGIncomingParts implements Iterator<Part> {
 
 	private final InputStream _body;
 	private final MultiPart.Parser _parser;
@@ -60,7 +61,7 @@ class NGIncomingParts implements Iterator<Part> {
 	 */
 	private PartContent _handedOver;
 
-	NGIncomingParts( final InputStream body, final String boundary ) {
+	public NGIncomingParts( final InputStream body, final String boundary ) {
 		_body = body;
 		_parser = new MultiPart.Parser( boundary, new Listener() );
 	}

@@ -1,10 +1,14 @@
 package ng.appserver.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -13,17 +17,53 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ng.appserver.properties.NGProperties;
+
 /**
  * A multipart/form-data request. Its content is a list of parts: a form's fields, and the files uploaded with it.
  *
  * The parts can be read in one of two ways, whichever is asked for first:
  *
- * - Collected: formValues() and uploadedFiles() read every part before returning, keeping files' content (in memory or temporary files) until the request has been handled.
+ * - Collected: formValues() and uploadedFiles() read every part before returning, keeping their content until the request has been handled: small parts in memory, larger ones in temporary files. Bounded by the request's Limits.
  * - Incoming: incomingParts() hands over the parts as they arrive, for reading in one pass. For files too large to collect, or to handle while they're still arriving.
  *   The form's fields then arrive as parts too, and formValues() holds only the query string's.
  */
 
 public class NGMultipartRequest extends NGStandardRequest {
+
+	private static final Logger logger = LoggerFactory.getLogger( NGMultipartRequest.class );
+
+	/**
+	 * Bounds on collecting a request's parts. Parts read as they arrive (incomingParts()) are the handler's to bound.
+	 *
+	 * @param maxParts The most parts a request may have
+	 * @param maxContentLength The most bytes all the parts' content may add up to. -1 for no limit.
+	 * @param maxMemoryPartLength The largest part kept in memory, in bytes. Larger parts are kept in temporary files.
+	 * @param temporaryDirectory Where the temporary files are kept
+	 */
+	public record Limits( int maxParts, long maxContentLength, int maxMemoryPartLength, Path temporaryDirectory ) {
+
+		public static final Limits DEFAULT = new Limits( 1000, 1024L * 1024 * 1024, 64 * 1024, Path.of( System.getProperty( "java.io.tmpdir" ) ) );
+
+		/**
+		 * @return The limits set by the properties ng.multipart.maxParts, ng.multipart.maxContentLength, ng.multipart.maxMemoryPartLength and ng.multipart.temporaryDirectory, DEFAULT's where they're not set
+		 */
+		public static Limits from( final NGProperties properties ) {
+			final String maxParts = properties.get( "ng.multipart.maxParts" );
+			final String maxContentLength = properties.get( "ng.multipart.maxContentLength" );
+			final String maxMemoryPartLength = properties.get( "ng.multipart.maxMemoryPartLength" );
+			final String temporaryDirectory = properties.get( "ng.multipart.temporaryDirectory" );
+
+			return new Limits(
+					maxParts == null ? DEFAULT.maxParts() : Integer.parseInt( maxParts ),
+					maxContentLength == null ? DEFAULT.maxContentLength() : Long.parseLong( maxContentLength ),
+					maxMemoryPartLength == null ? DEFAULT.maxMemoryPartLength() : Integer.parseInt( maxMemoryPartLength ),
+					temporaryDirectory == null ? DEFAULT.temporaryDirectory() : Path.of( temporaryDirectory ) );
+		}
+	}
 
 	/**
 	 * One part of a multipart request
@@ -61,7 +101,19 @@ public class NGMultipartRequest extends NGStandardRequest {
 		}
 	}
 
-	private final NGMultipartReader _reader;
+	/**
+	 * The request's body, split into parts by the parser
+	 */
+	private final InputStream _body;
+	private final String _boundary;
+	private final NGMultipartParser _parser;
+	private final Limits _limits;
+
+	/**
+	 * Temporary files holding collected parts, and the streams reading them, deleted and closed by _close()
+	 */
+	private final List<Path> _temporaryFiles = new ArrayList<>();
+	private final List<InputStream> _temporaryFileStreams = new ArrayList<>();
 
 	/**
 	 * The request's parts, once collected. null until then.
@@ -79,12 +131,20 @@ public class NGMultipartRequest extends NGStandardRequest {
 	private Map<String, List<Part>> _uploadedFiles;
 
 	/**
-	 * @param reader Reads the request's parts, the first time they're asked for
+	 * @param body The request's body. Readable only while the adaptor is handling the request.
+	 * @param boundary The boundary between the parts, from the request's content type
+	 * @param parser Splits the body into its parts, the first time they're asked for
 	 */
-	public NGMultipartRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> cookieValues, final NGMultipartReader reader, final String remoteAddress ) {
+	public NGMultipartRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> cookieValues, final InputStream body, final String boundary, final NGMultipartParser parser, final Limits limits, final String remoteAddress ) {
 		super( method, uri, queryString, httpVersion, headers, cookieValues, InputStream.nullInputStream(), remoteAddress );
-		Objects.requireNonNull( reader );
-		_reader = reader;
+		Objects.requireNonNull( body );
+		Objects.requireNonNull( boundary );
+		Objects.requireNonNull( parser );
+		Objects.requireNonNull( limits );
+		_body = body;
+		_boundary = boundary;
+		_parser = parser;
+		_limits = limits;
 	}
 
 	/**
@@ -97,10 +157,125 @@ public class NGMultipartRequest extends NGStandardRequest {
 		}
 
 		if( _parts == null ) {
-			_parts = _reader.readAll();
+			_parts = collect();
 		}
 
 		return _parts;
+	}
+
+	/**
+	 * @return Every part of the request, read in full and kept: in memory up to the limits' maxMemoryPartLength, in a temporary file beyond it
+	 * @throws IllegalArgumentException If the parts exceed the limits
+	 */
+	private List<Part> collect() {
+		final List<Part> parts = new ArrayList<>();
+		final Iterator<Part> incoming = _parser.parse( _body, _boundary );
+		long contentLength = 0;
+
+		while( incoming.hasNext() ) {
+			if( parts.size() == _limits.maxParts() ) {
+				throw new IllegalArgumentException( "Multipart request has more than %s parts".formatted( _limits.maxParts() ) );
+			}
+
+			final Part part = keep( incoming.next(), contentLength );
+			contentLength += part.length();
+			parts.add( part );
+		}
+
+		return parts;
+	}
+
+	/**
+	 * @param contentLength The length of the parts kept before this one
+	 * @return A copy of the given part whose content is kept, readable until the request is closed
+	 */
+	private Part keep( final Part part, final long contentLength ) {
+		final ByteArrayOutputStream memory = new ByteArrayOutputStream();
+		OutputStream out = memory;
+		Path file = null;
+		long length = 0;
+
+		try( final InputStream in = part.stream()) {
+			final byte[] buffer = new byte[8192];
+			int read;
+
+			while( (read = in.read( buffer )) != -1 ) {
+				length += read;
+
+				if( _limits.maxContentLength() != -1 && contentLength + length > _limits.maxContentLength() ) {
+					throw new IllegalArgumentException( "Multipart request content is longer than %s bytes".formatted( _limits.maxContentLength() ) );
+				}
+
+				// The part outgrew memory, so it moves to a temporary file
+				if( file == null && length > _limits.maxMemoryPartLength() ) {
+					file = temporaryFile();
+					out = Files.newOutputStream( file );
+					memory.writeTo( out );
+				}
+
+				out.write( buffer, 0, read );
+			}
+		}
+		catch( IOException e ) {
+			throw new UncheckedIOException( e );
+		}
+		finally {
+			if( file != null ) {
+				try {
+					out.close();
+				}
+				catch( IOException e ) {
+					logger.warn( "Couldn't close temporary file {}", file, e );
+				}
+			}
+		}
+
+		final InputStream content = file == null ? new ByteArrayInputStream( memory.toByteArray() ) : temporaryFileStream( file );
+		return new Part( part.name(), part.filename(), part.headers(), content, length );
+	}
+
+	private synchronized Path temporaryFile() throws IOException {
+		final Path file = Files.createTempFile( _limits.temporaryDirectory(), "ng-multipart-", ".tmp" );
+		_temporaryFiles.add( file );
+		return file;
+	}
+
+	private synchronized InputStream temporaryFileStream( final Path file ) {
+		try {
+			final InputStream stream = Files.newInputStream( file );
+			_temporaryFileStreams.add( stream );
+			return stream;
+		}
+		catch( IOException e ) {
+			throw new UncheckedIOException( e );
+		}
+	}
+
+	/**
+	 * Deletes the temporary files holding collected parts
+	 */
+	@Override
+	public synchronized void _close() {
+		for( final InputStream stream : _temporaryFileStreams ) {
+			try {
+				stream.close();
+			}
+			catch( IOException e ) {
+				logger.warn( "Couldn't close a stream of a temporary file", e );
+			}
+		}
+
+		for( final Path file : _temporaryFiles ) {
+			try {
+				Files.deleteIfExists( file );
+			}
+			catch( IOException e ) {
+				logger.warn( "Couldn't delete temporary file {}", file, e );
+			}
+		}
+
+		_temporaryFileStreams.clear();
+		_temporaryFiles.clear();
 	}
 
 	/**
@@ -120,7 +295,7 @@ public class NGMultipartRequest extends NGStandardRequest {
 		}
 
 		_incoming = true;
-		final Iterator<Part> iterator = _reader.iterate();
+		final Iterator<Part> iterator = _parser.parse( _body, _boundary );
 
 		return new Iterable<>() {
 			private boolean _iterated;

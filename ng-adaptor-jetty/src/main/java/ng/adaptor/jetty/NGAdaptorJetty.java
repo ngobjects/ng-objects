@@ -4,10 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.BindException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,9 +14,7 @@ import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.http.HttpCookie.SameSite;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
-import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.MultiPart;
-import org.eclipse.jetty.http.MultiPartConfig;
 import org.eclipse.jetty.http.MultiPartFormData;
 import org.eclipse.jetty.http.MultiPartFormData.ContentSource;
 import org.eclipse.jetty.io.Content;
@@ -41,10 +37,8 @@ import ng.appserver.NGResponseMultipart;
 import ng.appserver.NGResponseMultipart.ContentPart;
 import ng.appserver.dev.NGDevelopmentInstanceStopper;
 import ng.appserver.http.NGCookie;
-import ng.appserver.http.NGMessage;
-import ng.appserver.http.NGMultipartReader;
-import ng.appserver.http.NGMultipartRequest;
 import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardRequest;
 import ng.appserver.http.NGStandardResponse;
@@ -122,22 +116,10 @@ public class NGAdaptorJetty extends NGAdaptor {
 
 		private boolean doRequest( final Request jettyRequest, final Response jettyResponse, Callback callback ) throws IOException {
 
-			final String contentType = jettyRequest.getHeaders().get( HttpHeader.CONTENT_TYPE );
+			final NGStandardRequest ngRequest = requestToNGRequest( jettyRequest );
 
-			final NGRequest ngRequest;
-
-			// Completes the exchange once the response has been written
-			final Callback completion;
-
-			if( contentType != null && contentType.contains( "multipart/form-data" ) ) {
-				final MultipartPartsReader partsReader = new MultipartPartsReader( jettyRequest, contentType );
-				ngRequest = multipartRequestToNGRequest( jettyRequest, partsReader );
-				completion = Callback.from( partsReader::close, callback ); // Deletes the parts' temporary files once we're done with the request
-			}
-			else {
-				ngRequest = requestToNGRequest( jettyRequest );
-				completion = callback;
-			}
+			// Completes the exchange once the response has been written, then lets the request release what it holds (such as the temporary files of an upload)
+			final Callback completion = Callback.from( ngRequest::_close, callback );
 
 			// This is where the application logic will perform it's actual work
 			final NGResponse ngResponse = _application.dispatchRequest( ngRequest );
@@ -227,90 +209,19 @@ public class NGAdaptorJetty extends NGAdaptor {
 		}
 
 		/**
-		 * @return Jetty's configuration for handling of multipart request parsing
-		 *
-		 * FIXME: MultiPart configuration needs to be configurable on ng's side. Or we need to expose the Jetty configuration (which I'd prefer not to, since that makes configuration implementation dependent) // Hugi 2025-06-17
+		 * @return the given Request converted to an NGRequest. Its body is read, and a multipart body split into parts, when the request asks for it.
 		 */
-		private static MultiPartConfig multiPartConfig() {
-			return new MultiPartConfig.Builder()
-					.location( Path.of( "/tmp/ngmultijet" ) ) // Path to a directory used by Jetty to store cached data during processing of multipart requests
-					.build();
-		}
-
-		/**
-		 * Reads a multipart request's parts when the request first asks for them, and closes collected parts (deleting any temporary files Jetty kept them in) once the request is done
-		 */
-		private static class MultipartPartsReader implements NGMultipartReader {
-
-			private final Request _jettyRequest;
-			private final String _contentType;
-			private MultiPartFormData.Parts _parts;
-
-			MultipartPartsReader( final Request jettyRequest, final String contentType ) {
-				_jettyRequest = jettyRequest;
-				_contentType = contentType;
-			}
-
-			@Override
-			public synchronized List<NGMultipartRequest.Part> readAll() {
-				_parts = MultiPartFormData.getParts( _jettyRequest, _jettyRequest, _contentType, multiPartConfig() );
-
-				final List<NGMultipartRequest.Part> parts = new ArrayList<>();
-
-				for( final MultiPart.Part part : _parts ) {
-					final Map<String, List<String>> headers = NGMessage.createEmptyHeadersMap();
-
-					for( final HttpField header : part.getHeaders() ) {
-						headers.computeIfAbsent( header.getName(), _unused -> new ArrayList<>() ).add( header.getValue() );
-					}
-
-					parts.add( new NGMultipartRequest.Part( part.getName(), part.getFileName(), headers, Content.Source.asInputStream( part.getContentSource() ), part.getLength() ) );
-				}
-
-				return parts;
-			}
-
-			@Override
-			public Iterator<NGMultipartRequest.Part> iterate() {
-				return new NGIncomingParts( Request.asInputStream( _jettyRequest ), MultiPart.extractBoundary( _contentType ) );
-			}
-
-			synchronized void close() {
-				if( _parts != null ) {
-					_parts.close();
-				}
-			}
-		}
-
-		/**
-		 * @return the given multipart Request converted to an NGRequest, reading its parts with the given reader
-		 */
-		private static NGRequest multipartRequestToNGRequest( final Request jettyRequest, final MultipartPartsReader partsReader ) {
+		private static NGStandardRequest requestToNGRequest( final Request jettyRequest ) {
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
 			final String queryString = jettyRequest.getHttpURI().getQuery();
 			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
+			final InputStream body = Request.asInputStream( jettyRequest );
 			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
 
-			return new NGMultipartRequest( method, uri, queryString, httpVersion, headers, cookieValues, partsReader, remoteAddress );
-		}
-
-		/**
-		 * @return the given Request converted to an NGRequest
-		 */
-		private static NGRequest requestToNGRequest( final Request jettyRequest ) {
-			final String method = jettyRequest.getMethod();
-			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
-			final String queryString = jettyRequest.getHttpURI().getQuery();
-			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
-			final Map<String, List<String>> headers = headerMap( jettyRequest );
-			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
-			final InputStream contentStream = Request.asInputStream( jettyRequest );
-			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
-
-			return new NGStandardRequest( method, uri, queryString, httpVersion, headers, cookieValues, contentStream, remoteAddress );
+			return NGRequests.of( method, uri, queryString, httpVersion, headers, cookieValues, body, remoteAddress, NGIncomingParts::new );
 		}
 
 		/**

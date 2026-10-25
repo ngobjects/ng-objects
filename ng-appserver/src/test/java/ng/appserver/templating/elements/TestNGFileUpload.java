@@ -10,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +21,9 @@ import ng.appserver.NGComponentRequestTestHarness.TestPage;
 import ng.appserver.NGComponentRequestTestHarness.TestRequest;
 import ng.appserver.NGContext;
 import ng.appserver.NGSession;
-import ng.appserver.http.NGMultipartReader;
+import ng.appserver.http.NGMultipartParser;
 import ng.appserver.http.NGMultipartRequest;
+import ng.appserver.http.NGMultipartRequest.Limits;
 import ng.appserver.http.NGMultipartRequest.Part;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponses;
@@ -80,20 +80,8 @@ public class TestNGFileUpload {
 	}
 
 	private static NGMultipartRequest multipartRequest( final Part... parts ) {
-		final NGMultipartReader reader = new NGMultipartReader() {
-
-			@Override
-			public List<Part> readAll() {
-				return List.of( parts );
-			}
-
-			@Override
-			public Iterator<Part> iterate() {
-				return List.of( parts ).iterator();
-			}
-		};
-
-		return new NGMultipartRequest( "POST", "/no/1.0", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) ), Map.of(), reader, null );
+		final NGMultipartParser parser = ( body, boundary ) -> List.of( parts ).iterator();
+		return new NGMultipartRequest( "POST", "/no/1.0", null, "HTTP/1.1", Map.of( "Content-Type", List.of( "multipart/form-data; boundary=x" ) ), Map.of(), InputStream.nullInputStream(), "x", parser, Limits.DEFAULT, null );
 	}
 
 	private static Part file( final String name, final String filename, final String content ) {
