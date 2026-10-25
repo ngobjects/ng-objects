@@ -1,0 +1,33 @@
+<wo:TALook>
+	<h5>File upload: several files in one field</h5>
+	<p>
+		An input with the <code>multiple</code> attribute lets the user choose several files at once, and the browser sends them all under the field's name.
+		<code>&lt;wo:fileUpload&gt;</code> handles one file per field, so this page uses a plain input and reads the files from the request in its action:
+	</p>
+	<pre><code>if( context().request() instanceof NGMultipartRequest request ) {
+	for( Part file : request.uploadedFilesForKey( "files" ) ) { ... }
+}</code></pre>
+	<p>Choose several files at once and upload them.</p>
+
+	<hr style="margin: 50px"/>
+
+	<wo:form enctype="multipart/form-data">
+		<input type="file" name="files" multiple>
+		<wo:submit action="$receive" class="btn btn-primary" value="Upload files" />
+	</wo:form>
+
+	<hr style="margin: 50px"/>
+
+	<table class="table">
+		<thead><tr><th>File</th><th>Content type</th><th>Bytes</th></tr></thead>
+		<tbody>
+			<wo:repetition list="$receivedFiles" item="$currentFile">
+				<tr>
+					<td><wo:str value="$currentFile.filename" /></td>
+					<td><wo:str value="$currentFile.contentType" /></td>
+					<td><wo:str value="$currentFile.length" /></td>
+				</tr>
+			</wo:repetition>
+		</tbody>
+	</table>
+</wo:TALook>

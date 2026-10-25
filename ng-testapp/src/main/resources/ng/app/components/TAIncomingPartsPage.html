@@ -1,0 +1,48 @@
+<wo:TALook>
+	<h5>File upload: incoming parts</h5>
+	<p>
+		A form is uploaded as a multipart request: its fields and files arrive as a sequence of <em>parts</em>.
+		Usually the framework collects the whole request before your code runs, as the other upload pages do. For very large uploads, a direct action or route can instead read the parts <em>as they arrive</em>, never keeping more than a small buffer of the upload in memory or on disk:
+	</p>
+	<pre><code>if( request() instanceof NGMultipartRequest request ) {
+	for( Part part : request.incomingParts() ) {
+		part.stream().transferTo( storage );
+	}
+}</code></pre>
+	<p>
+		A part's stream is readable until the next part is asked for, and the parts can be read once.
+		Collecting (<code>formValues()</code>, <code>uploadedFiles()</code>) and reading as they arrive exclude each other, so a handler reading incoming parts gets the form's fields as parts too.
+		The query string's values are still in <code>formValues()</code>, like the <code>folder</code> this form posts with.
+		Component actions always collect, since a form's elements need all its values, which is why this form posts to a direct action, <code>DirectAction.incomingPartsAction()</code>.
+	</p>
+	<p>Choose a large file and upload it. The table shows each part in the order it arrived, and how long reading it took.</p>
+
+	<hr style="margin: 50px"/>
+
+	<form method="post" enctype="multipart/form-data" action="/na/DirectAction/incomingParts?folder=demo">
+		<input type="text" name="description" placeholder="Description" class="form-control mb-2">
+		<input type="file" name="file">
+		<input type="submit" class="btn btn-primary" value="Upload">
+	</form>
+
+	<wo:if condition="$receivedParts">
+		<hr style="margin: 50px"/>
+
+		<p>Received with <code>folder</code> = <wo:str value="$folder" /></p>
+
+		<table class="table">
+			<thead><tr><th>Part</th><th>File</th><th>Content type</th><th>Bytes</th><th>Read in (ms)</th></tr></thead>
+			<tbody>
+				<wo:repetition list="$receivedParts" item="$currentPart">
+					<tr>
+						<td><wo:str value="$currentPart.name" /></td>
+						<td><wo:str value="$currentPart.filename" /></td>
+						<td><wo:str value="$currentPart.contentType" /></td>
+						<td><wo:str value="$currentPart.length" /></td>
+						<td><wo:str value="$currentPart.millis" /></td>
+					</tr>
+				</wo:repetition>
+			</tbody>
+		</table>
+	</wo:if>
+</wo:TALook>

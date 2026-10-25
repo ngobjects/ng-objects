@@ -1,11 +1,21 @@
 package ng.testapp;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import ng.appserver.NGActionResults;
 import ng.appserver.NGApplication;
 import ng.appserver.directactions.NGDirectAction;
+import ng.appserver.http.NGMultipartRequest;
+import ng.appserver.http.NGMultipartRequest.Part;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
+import ng.testapp.components.TAIncomingPartsPage;
+import ng.testapp.components.TAIncomingPartsPage.ReceivedPart;
 import ng.testapp.components.TAMain;
 import ng.testapp.components.TAProgrammaticDynamicComponent;
 
@@ -42,5 +52,35 @@ public class DirectAction extends NGDirectAction {
 		final NGResponse response = NGResponses.ok( imageBytes );
 		response.setHeader( "content-type", "image/jpeg" );
 		return response;
+	}
+
+	/**
+	 * Reads an uploaded form's parts as they arrive (see TAIncomingPartsPage). Each part is read to its end before the next is asked for; here we only count its bytes, but this is where you'd store it.
+	 */
+	public NGActionResults incomingPartsAction() {
+		final TAIncomingPartsPage page = pageWithName( TAIncomingPartsPage.class );
+
+		if( request() instanceof NGMultipartRequest multipartRequest ) {
+			final List<ReceivedPart> receivedParts = new ArrayList<>();
+
+			for( final Part part : multipartRequest.incomingParts() ) {
+				final long started = System.currentTimeMillis();
+
+				try {
+					final long length = part.stream().transferTo( OutputStream.nullOutputStream() );
+					receivedParts.add( new ReceivedPart( part.name(), part.filename(), part.contentType(), length, System.currentTimeMillis() - started ) );
+				}
+				catch( IOException e ) {
+					throw new UncheckedIOException( e );
+				}
+			}
+
+			page.receivedParts = receivedParts;
+
+			// The query string's form values are available, even when the parts have been read as they arrived
+			page.folder = multipartRequest.formValueForKey( "folder" );
+		}
+
+		return page;
 	}
 }

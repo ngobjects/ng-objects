@@ -1,11 +1,18 @@
 <wo:TALook>
-	<h5>File upload example</h5>
-	<p>Demonstrates a basic file upload. Upload some images and it will be displayed in a list below. We've hardcoded the mimetype to image/jpeg, but it shouldn't really matter</p>
+	<h5>File upload: the whole file</h5>
+	<p>
+		The simplest way of receiving a file: <code>&lt;wo:fileUpload&gt;</code> sets its <code>data</code> binding to the file's content, as a <code>byte[]</code>, and its <code>filename</code> binding to the file's name.
+		Fine for files that comfortably fit in memory, like these images. For large files, see <wo:link pageName="TAFileUploadStreamPage">receiving the file as a stream</wo:link>.
+	</p>
+	<p>
+		Note the form's <code>enctype="multipart/form-data"</code>. Without it, the browser sends only the file's name, not the file, and the upload field tells you so.
+	</p>
+	<p>Choose an image and upload it. It's shown in the list below.</p>
 
 	<hr style="margin: 50px"/>
 
-	<wo:form enctype="multipart/form-data">	
-		<wo:fileUpload data="$uploadedData" filename="$uploadedFilename" />
+	<wo:form enctype="multipart/form-data">
+		<wo:fileUpload data="$uploadedData" filename="$uploadedFilename" accept="image/*" />
 		<wo:submit action="$upload" class="btn btn-primary" value="Upload image" />
 	</wo:form>
 

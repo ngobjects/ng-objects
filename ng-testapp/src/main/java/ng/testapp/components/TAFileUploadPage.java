@@ -7,6 +7,10 @@ import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
 import ng.appserver.templating.NGComponent;
 
+/**
+ * Receiving an uploaded file in full, as a byte[], through NGFileUpload's [data] binding
+ */
+
 public class TAFileUploadPage extends NGComponent {
 
 	public record UploadedImage( String filename, byte[] data ) {}
@@ -14,6 +18,9 @@ public class TAFileUploadPage extends NGComponent {
 	public List<UploadedImage> images = new ArrayList<>();
 	public UploadedImage currentImage;
 
+	/**
+	 * Set by the upload field when the form is submitted, before the upload() action is invoked
+	 */
 	public byte[] uploadedData;
 	public String uploadedFilename;
 

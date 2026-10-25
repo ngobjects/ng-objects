@@ -1,0 +1,34 @@
+<wo:TALook>
+	<h5>File upload: as a stream</h5>
+	<p>
+		For files too large to hold in memory, bind <code>&lt;wo:fileUpload&gt;</code>'s <code>inputStream</code> instead of <code>data</code>.
+		The action then reads the file a buffer at a time. Here it measures the file and computes its SHA-256; a real application would store it.
+	</p>
+	<p>
+		The stream stays readable until the request has been handled. While the request is collected, the framework keeps a large file in a temporary file, which it deletes once the response has been sent.
+		To handle a file while it's still arriving, see <wo:link pageName="TAIncomingPartsPage">incoming parts</wo:link>.
+	</p>
+	<p>Choose a file and upload it.</p>
+
+	<hr style="margin: 50px"/>
+
+	<wo:form enctype="multipart/form-data">
+		<wo:fileUpload inputStream="$uploadedStream" filename="$uploadedFilename" />
+		<wo:submit action="$receive" class="btn btn-primary" value="Upload file" />
+	</wo:form>
+
+	<hr style="margin: 50px"/>
+
+	<table class="table">
+		<thead><tr><th>File</th><th>Bytes</th><th>SHA-256</th></tr></thead>
+		<tbody>
+			<wo:repetition list="$receivedFiles" item="$currentFile">
+				<tr>
+					<td><wo:str value="$currentFile.filename" /></td>
+					<td><wo:str value="$currentFile.length" /></td>
+					<td><code><wo:str value="$currentFile.sha256" /></code></td>
+				</tr>
+			</wo:repetition>
+		</tbody>
+	</table>
+</wo:TALook>
