@@ -286,19 +286,16 @@ public class NGAdaptorJetty extends NGAdaptor {
 		 * @return the given Request converted to an NGRequest
 		 */
 		private static NGRequest requestToNGRequest( final Request jettyRequest ) {
-
-			// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
-			final Map<String, List<String>> formValues = parametersFromRequest( jettyRequest );
-
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
+			final String queryString = jettyRequest.getHttpURI().getQuery();
 			final String httpVersion = jettyRequest.getConnectionMetaData().getHttpVersion().asString();
 			final Map<String, List<String>> headers = headerMap( jettyRequest );
 			final Map<String, List<String>> cookieValues = cookieValues( Request.getCookies( jettyRequest ) );
 			final InputStream contentStream = Request.asInputStream( jettyRequest );
 			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
 
-			return new NGStandardRequest( method, uri, httpVersion, headers, formValues, cookieValues, contentStream, remoteAddress );
+			return new NGStandardRequest( method, uri, queryString, httpVersion, headers, cookieValues, contentStream, remoteAddress );
 		}
 
 		/**

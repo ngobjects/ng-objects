@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -117,11 +116,8 @@ public class NGServletAdaptor extends HttpServlet {
 	 */
 	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 
-		// We read the formValues map before reading the requests content stream, since consuming the content stream will remove POST parameters
-		final Map<String, List<String>> formValuesFromServletRequest = formValues( sr.getParameterMap() );
-
 		try {
-			return new NGStandardRequest( sr.getMethod(), sr.getRequestURI(), sr.getProtocol(), headerMap( sr ), formValuesFromServletRequest, cookieValues( sr.getCookies() ), sr.getInputStream(), sr.getRemoteAddr() );
+			return new NGStandardRequest( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), sr.getProtocol(), headerMap( sr ), cookieValues( sr.getCookies() ), sr.getInputStream(), sr.getRemoteAddr() );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
@@ -161,20 +157,6 @@ public class NGServletAdaptor extends HttpServlet {
 			}
 		}
 
-	}
-
-	/**
-	 * @return The queryParameters as a formValue Map (our format)
-	 */
-	private static Map<String, List<String>> formValues( Map<String, String[]> queryParameters ) {
-
-		Map<String, List<String>> map = new HashMap<>();
-
-		for( Entry<String, String[]> entry : queryParameters.entrySet() ) {
-			map.put( entry.getKey(), Arrays.asList( entry.getValue() ) );
-		}
-
-		return map;
 	}
 
 	/**

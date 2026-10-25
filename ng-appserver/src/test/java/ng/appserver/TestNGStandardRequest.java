@@ -2,6 +2,7 @@ package ng.appserver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -55,8 +57,15 @@ public class TestNGStandardRequest {
 	}
 
 	private static NGStandardRequest request( final InputStream contentStream ) {
-		return new NGStandardRequest( "POST", "/", "HTTP/1.1", Map.of(), Map.of(), Map.of(), contentStream, null );
+		return request( null, null, contentStream );
 	}
+
+	private static NGStandardRequest request( final String queryString, final String contentType, final InputStream contentStream ) {
+		final Map<String, List<String>> headers = contentType == null ? Map.of() : Map.of( "Content-Type", List.of( contentType ) );
+		return new NGStandardRequest( "POST", "/", queryString, "HTTP/1.1", headers, Map.of(), contentStream, null );
+	}
+
+	private static final String FORM = "application/x-www-form-urlencoded";
 
 	@Test
 	public void contentIsNotReadAtConstruction() {
@@ -79,5 +88,102 @@ public class TestNGStandardRequest {
 	@Test
 	public void emptyContent() {
 		assertEquals( "", request( InputStream.nullInputStream() ).contentString() );
+	}
+
+	@Test
+	public void formValuesFromTheQueryString() {
+		final NGStandardRequest request = request( "a=1&b=x+y", null, InputStream.nullInputStream() );
+		assertEquals( Map.of( "a", List.of( "1" ), "b", List.of( "x y" ) ), request.formValues() );
+		assertEquals( "1", request.formValueForKey( "a" ) );
+	}
+
+	@Test
+	public void noQueryStringAndNoFormBodyMeansNoFormValues() {
+		assertEquals( Map.of(), request( InputStream.nullInputStream() ).formValues() );
+	}
+
+	@Test
+	public void formValuesFromAFormEncodedBody() {
+		final NGStandardRequest request = request( null, FORM, new RecordingStream( "a=1&b=2" ) );
+		assertEquals( Map.of( "a", List.of( "1" ), "b", List.of( "2" ) ), request.formValues() );
+	}
+
+	@Test
+	public void queryStringValuesComeBeforeTheBodys() {
+		final NGStandardRequest request = request( "a=query&q=1", FORM, new RecordingStream( "a=body&b=2" ) );
+		assertEquals( List.of( "query", "body" ), request.formValuesForKey( "a" ) );
+		assertEquals( List.of( "a", "q", "b" ), List.copyOf( request.formValues().keySet() ) );
+	}
+
+	@Test
+	public void formContentTypeIsMatchedWithoutItsParametersOrCase() {
+		assertEquals( "1", request( null, "Application/X-WWW-Form-URLEncoded ; charset=UTF-8", new RecordingStream( "a=1" ) ).formValueForKey( "a" ) );
+	}
+
+	@Test
+	public void bodyCharset() {
+		final InputStream body = new ByteArrayInputStream( "nafn=%DE%F3r%F0ur".getBytes( StandardCharsets.US_ASCII ) );
+		assertEquals( "Þórður", request( null, FORM + "; charset=ISO-8859-1", body ).formValueForKey( "nafn" ) );
+	}
+
+	@Test
+	public void unknownCharsetIsUTF8() {
+		final InputStream body = new ByteArrayInputStream( "nafn=%C3%9E".getBytes( StandardCharsets.US_ASCII ) );
+		assertEquals( "Þ", request( null, FORM + "; charset=no-such-charset", body ).formValueForKey( "nafn" ) );
+	}
+
+	@Test
+	public void theRawBodySurvivesFormParsing() {
+		final NGStandardRequest request = request( null, FORM, new RecordingStream( "a=1+1&b=%26" ) );
+		assertEquals( "1 1", request.formValueForKey( "a" ) );
+		assertEquals( "a=1+1&b=%26", request.contentString() );
+	}
+
+	@Test
+	public void formValuesCanBeParsedAfterTheRawBodyIsRead() {
+		final NGStandardRequest request = request( null, FORM, new RecordingStream( "a=1" ) );
+		assertEquals( "a=1", request.contentString() );
+		assertEquals( "1", request.formValueForKey( "a" ) );
+	}
+
+	@Test
+	public void formValuesDontReadABodyThatIsntAForm() {
+		final RecordingStream stream = new RecordingStream( "a=1" );
+		final NGStandardRequest request = request( "q=1", "text/plain", stream );
+		assertEquals( Map.of( "q", List.of( "1" ) ), request.formValues() );
+		assertFalse( stream.read );
+	}
+
+	@Test
+	public void toStringDoesntReadTheBody() {
+		final RecordingStream stream = new RecordingStream( "a=1" );
+		request( "q=1", FORM, stream ).toString();
+		assertFalse( stream.read );
+	}
+
+	@Test
+	public void formBodyLengthLimit() {
+		final String body = "a=" + "x".repeat( NGStandardRequest.MAX_FORM_CONTENT_LENGTH );
+		assertThrows( IllegalArgumentException.class, () -> request( null, FORM, new RecordingStream( body ) ).formValues() );
+	}
+
+	@Test
+	public void theRawBodyHasNoFormLengthLimit() {
+		final String body = "x".repeat( NGStandardRequest.MAX_FORM_CONTENT_LENGTH + 1 );
+		assertEquals( body.length(), request( null, "text/plain", new RecordingStream( body ) ).contentBytes().length );
+	}
+
+	@Test
+	public void formFieldLimit() {
+		final String body = "a=1&".repeat( NGStandardRequest.MAX_FORM_FIELDS + 1 );
+		assertThrows( IllegalArgumentException.class, () -> request( null, FORM, new RecordingStream( body ) ).formValues() );
+	}
+
+	@Test
+	public void givenFormValuesAreAllTheFormValues() {
+		final RecordingStream stream = new RecordingStream( "a=1" );
+		final NGStandardRequest request = new NGStandardRequest( "POST", "/", "HTTP/1.1", Map.of( "Content-Type", List.of( FORM ) ), Map.of( "given", List.of( "1" ) ), Map.of(), stream, null );
+		assertEquals( Map.of( "given", List.of( "1" ) ), request.formValues() );
+		assertFalse( stream.read );
 	}
 }

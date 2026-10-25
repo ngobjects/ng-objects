@@ -4,8 +4,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +21,16 @@ import ng.appserver.NGApplication;
 import ng.appserver.NGContext;
 
 public class NGStandardRequest implements NGRequest {
+
+	/**
+	 * The most fields read from the query string, and from a form-encoded body
+	 */
+	public static final int MAX_FORM_FIELDS = 1000;
+
+	/**
+	 * The largest form-encoded body read for form values, in bytes
+	 */
+	public static final int MAX_FORM_CONTENT_LENGTH = 200_000;
 
 	/**
 	 * The request's context
@@ -32,9 +48,14 @@ public class NGStandardRequest implements NGRequest {
 	private String _uri;
 
 	/**
-	 * The request's form values (a.k.a. query parameters)
+	 * The URI's query string, still percent-encoded. null if the URI has none.
 	 */
-	private final Map<String, List<String>> _formValues;
+	private final String _queryString;
+
+	/**
+	 * The request's form values, from the query string and a form-encoded body. null until something asks for them.
+	 */
+	private Map<String, List<String>> _formValues;
 
 	/**
 	 * Values of cookies
@@ -48,9 +69,24 @@ public class NGStandardRequest implements NGRequest {
 	private final String _remoteAddress;
 
 	/**
+	 * Creates a request whose form values are parsed from the query string and, when the body is form-encoded, the body, the first time they're asked for.
+	 *
 	 * FIXME: The httpVersion parameter is currently not used. I'm keeping it around to keep the constructor's shape, since I _think_ we might eventually want to use it. But today, It's just added weight 	// Hugi 2026-05-12
 	 */
+	public NGStandardRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> cookieValues, final InputStream contentStream, String remoteAddress ) {
+		this( method, uri, queryString, httpVersion, headers, null, cookieValues, contentStream, remoteAddress );
+	}
+
+	/**
+	 * Creates a request with the given form values, which are then all the form values it has.
+	 *
+	 * FIXME: Only remains for multipart requests, whose form values the adaptor still assembles from the parts, until they get a request class of their own (see #66) // Hugi/Claude 2026-10-25
+	 */
 	public NGStandardRequest( final String method, final String uri, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final InputStream contentStream, String remoteAddress ) {
+		this( method, uri, null, httpVersion, headers, Objects.requireNonNull( formValues ), cookieValues, contentStream, remoteAddress );
+	}
+
+	private NGStandardRequest( final String method, final String uri, final String queryString, final String httpVersion, final Map<String, List<String>> headers, final Map<String, List<String>> formValues, final Map<String, List<String>> cookieValues, final InputStream contentStream, String remoteAddress ) {
 		Objects.requireNonNull( method );
 		Objects.requireNonNull( uri );
 		Objects.requireNonNull( httpVersion );
@@ -61,7 +97,8 @@ public class NGStandardRequest implements NGRequest {
 		setURI( uri );
 		//		setHttpVersion( httpVersion );
 		setHeaders( headers );
-		_formValues = formValues; // FIXME: Should be populated by the request object, not the adaptor // Hugi 2021-12-31
+		_queryString = queryString;
+		_formValues = formValues;
 		_cookieValues = cookieValues; // FIXME: Cookie header deserialization should happen in NGRequest instead of in the adaptor // Hugi 2021-12-30
 		_remoteAddress = remoteAddress;
 		_contentStream = contentStream;
@@ -73,11 +110,66 @@ public class NGStandardRequest implements NGRequest {
 	}
 
 	/**
-	 * @return The requests form values (query parameters)
+	 * @return The request's form values: the query string's, followed by the body's if it's form-encoded (application/x-www-form-urlencoded). Parsed on first invocation.
+	 * @throws IllegalArgumentException If the query string or the body has more than MAX_FORM_FIELDS fields, or the body is longer than MAX_FORM_CONTENT_LENGTH
 	 */
 	@Override
-	public Map<String, List<String>> formValues() {
+	public synchronized Map<String, List<String>> formValues() {
+		if( _formValues == null ) {
+			_formValues = parseFormValues();
+		}
+
 		return _formValues;
+	}
+
+	private Map<String, List<String>> parseFormValues() {
+		final Map<String, List<String>> formValues = new LinkedHashMap<>();
+
+		if( _queryString != null ) {
+			formValues.putAll( NGFormValues.parse( _queryString.getBytes( StandardCharsets.UTF_8 ), StandardCharsets.UTF_8, MAX_FORM_FIELDS ) );
+		}
+
+		final String contentType = headerForKey( "content-type" );
+
+		if( contentType != null && "application/x-www-form-urlencoded".equalsIgnoreCase( mediaType( contentType ) ) ) {
+			final Map<String, List<String>> bodyValues = NGFormValues.parse( readContent( MAX_FORM_CONTENT_LENGTH ).toByteArray(), charset( contentType ), MAX_FORM_FIELDS );
+
+			for( final Entry<String, List<String>> entry : bodyValues.entrySet() ) {
+				formValues.computeIfAbsent( entry.getKey(), _unused -> new ArrayList<>() ).addAll( entry.getValue() );
+			}
+		}
+
+		return formValues;
+	}
+
+	/**
+	 * @return The given content type without its parameters
+	 */
+	private static String mediaType( final String contentType ) {
+		final int semicolon = contentType.indexOf( ';' );
+		return (semicolon == -1 ? contentType : contentType.substring( 0, semicolon )).trim();
+	}
+
+	/**
+	 * @return The charset named by the given content type's charset parameter, UTF-8 if it names none (or one we don't know)
+	 */
+	private static Charset charset( final String contentType ) {
+		for( final String parameter : contentType.split( ";" ) ) {
+			final int equals = parameter.indexOf( '=' );
+
+			if( equals != -1 && "charset".equalsIgnoreCase( parameter.substring( 0, equals ).trim() ) ) {
+				final String name = parameter.substring( equals + 1 ).trim().replace( "\"", "" );
+
+				try {
+					return Charset.forName( name );
+				}
+				catch( IllegalCharsetNameException | UnsupportedCharsetException e ) {
+					return StandardCharsets.UTF_8;
+				}
+			}
+		}
+
+		return StandardCharsets.UTF_8;
 	}
 
 	/**
@@ -220,7 +312,7 @@ public class NGStandardRequest implements NGRequest {
 
 	@Override
 	public String toString() {
-		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _headers=" + headers() + ", _formValues=" + _formValues + ", _cookieValues=" + _cookieValues + "]";
+		return "NGRequest [_method=" + _method + ", _uri=" + _uri + ", _queryString=" + _queryString + ", _headers=" + headers() + ", _cookieValues=" + _cookieValues + "]";
 	}
 
 	/* ------ FIXME: below is logic from NGMessage, awaiting to be nicely factored into the class // Hugi 2026-05-12 ------  */
@@ -265,11 +357,31 @@ public class NGStandardRequest implements NGRequest {
 	 */
 	@Override
 	public synchronized ByteArrayOutputStream contentByteStream() {
+		return readContent( Long.MAX_VALUE );
+	}
+
+	/**
+	 * @return The request's content, read from the adaptor's stream if it hasn't been yet
+	 * @throws IllegalArgumentException If the content has to be read and turns out longer than maxLength bytes
+	 */
+	private synchronized ByteArrayOutputStream readContent( final long maxLength ) {
 		if( _contentByteStream == null ) {
 			final ByteArrayOutputStream contentByteStream = new ByteArrayOutputStream();
 
 			try( _contentStream ) {
-				_contentStream.transferTo( contentByteStream );
+				final byte[] buffer = new byte[8192];
+				long length = 0;
+				int read;
+
+				while( (read = _contentStream.read( buffer )) != -1 ) {
+					length += read;
+
+					if( length > maxLength ) {
+						throw new IllegalArgumentException( "Content is longer than %s bytes".formatted( maxLength ) );
+					}
+
+					contentByteStream.write( buffer, 0, read );
+				}
 			}
 			catch( IOException e ) {
 				throw new UncheckedIOException( e );
