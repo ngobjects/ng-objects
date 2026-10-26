@@ -2,6 +2,8 @@ package ng.appserver.resources;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.JarURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -134,6 +136,11 @@ public class NGResourceLoader {
 				while( resources.hasMoreElements() ) {
 					final URL currentURL = resources.nextElement();
 
+					// A directory isn't a resource, even if the class loader finds one by the name
+					if( isDirectory( currentURL ) ) {
+						continue;
+					}
+
 					if( resourceURL == null ) {
 						resourceURL = currentURL;
 					}
@@ -158,6 +165,22 @@ public class NGResourceLoader {
 		 */
 		private String pathWithPrefix( String resourcePath ) {
 			return "/" + _basePath + "/" + resourcePath;
+		}
+
+		/**
+		 * @return true if the given URL, as the class loader found it, points to a directory: in the file system, or in a jar
+		 */
+		static boolean isDirectory( final URL url ) {
+			try {
+				return switch( url.getProtocol() ) {
+					case "file" -> Files.isDirectory( Path.of( url.toURI() ) );
+					case "jar" -> url.openConnection() instanceof JarURLConnection connection && connection.getJarEntry() != null && connection.getJarEntry().isDirectory();
+					default -> url.getPath().endsWith( "/" );
+				};
+			}
+			catch( IOException | URISyntaxException e ) {
+				throw new IllegalStateException( "Couldn't tell whether %s is a directory".formatted( url ), e );
+			}
 		}
 	}
 
