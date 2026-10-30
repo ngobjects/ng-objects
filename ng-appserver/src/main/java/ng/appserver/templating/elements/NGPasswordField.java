@@ -23,7 +23,7 @@ public class NGPasswordField extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGPasswordField( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 		_additionalAssociations = new HashMap<>( associations );
 		_nameAssociation = _additionalAssociations.remove( "name" );
 		_valueAssociation = _additionalAssociations.remove( "value" );

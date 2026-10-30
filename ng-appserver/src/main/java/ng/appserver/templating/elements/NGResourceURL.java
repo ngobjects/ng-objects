@@ -18,7 +18,7 @@ public class NGResourceURL extends NGDynamicElement {
 	private final NGAssociation _filenameAssociation;
 
 	public NGResourceURL( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( associations, true );
 		_filenameAssociation = associations.get( "filename" );
 	}

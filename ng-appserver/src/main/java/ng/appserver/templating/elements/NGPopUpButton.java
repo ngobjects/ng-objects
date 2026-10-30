@@ -44,7 +44,7 @@ public class NGPopUpButton extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGPopUpButton( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 		_additionalAssociations = new HashMap<>( associations );
 		_listAss = _additionalAssociations.remove( "list" );
 		_itemAss = _additionalAssociations.remove( "item" );

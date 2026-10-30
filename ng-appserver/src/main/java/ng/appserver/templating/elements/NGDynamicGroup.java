@@ -27,7 +27,8 @@ public class NGDynamicGroup extends NGDynamicElement implements NGStructuralElem
 	 * Construct a new group from a content template
 	 */
 	public NGDynamicGroup( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		this( childrenFromTemplate( contentTemplate ) );
+		super( name, associations, contentTemplate );
+		_children = childrenFromTemplate( contentTemplate );
 	}
 
 	/**

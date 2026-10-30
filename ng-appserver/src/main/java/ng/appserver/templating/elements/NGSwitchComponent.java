@@ -59,7 +59,7 @@ public class NGSwitchComponent extends NGDynamicElement implements NGStructuralE
 	private final AtomicInteger _nextElementID = new AtomicInteger();
 
 	public NGSwitchComponent( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		super( null, null, null );
+		super( name, associations, contentTemplate );
 
 		_componentNameAssociation = associations.remove( "componentName" );
 

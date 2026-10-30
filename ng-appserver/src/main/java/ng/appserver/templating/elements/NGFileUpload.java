@@ -27,7 +27,7 @@ public class NGFileUpload extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGFileUpload( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		super( null, null, null );
+		super( name, associations, contentTemplate );
 		_additionalAssociations = new LinkedHashMap<>( associations );
 		_filenameAssociation = _additionalAssociations.remove( "filename" );
 		_dataAssociation = _additionalAssociations.remove( "data" );

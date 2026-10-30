@@ -13,7 +13,11 @@ import ng.appserver.templating.associations.NGAssociation;
 public abstract class NGDynamicElement implements NGElement {
 
 	/**
-	 * The constructor all dynamic elements must use. In the case of this class, it's a no-op so for sanity, we ensure we're always passing in null for all arguments
+	 * The constructor all dynamic elements must use, passing on the arguments they were constructed with
+	 *
+	 * @param name The element's name, as used in the template
+	 * @param associations The element's bindings
+	 * @param contentTemplate The template the element wraps. null if it has no content.
 	 */
 	public NGDynamicElement( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {}
 }

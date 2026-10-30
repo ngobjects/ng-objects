@@ -30,7 +30,7 @@ public class NGStylesheet extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGStylesheet( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 		_additionalAssociations = new LinkedHashMap<>( associations );
 		_filenameAssociation = _additionalAssociations.remove( "filename" );
 		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( _additionalAssociations, true );

@@ -47,7 +47,7 @@ public class NGString extends NGDynamicElement {
 	private final NGAssociation _escapeHTMLAssociation;
 
 	public NGString( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 		_valueAssociation = associations.get( "value" );
 		_valueWhenEmptyAssociation = associations.get( "valueWhenEmpty" );
 		_escapeHTMLAssociation = associations.get( "escapeHTML" );

@@ -68,7 +68,7 @@ public class NGImage extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGImage( final String name, final Map<String, NGAssociation> associations, final NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 		_additionalAssociations = new HashMap<>( associations );
 		_filenameAssociation = _additionalAssociations.remove( "filename" );
 		_namespaceAssociation = NGHTMLUtilities.namespaceAssociation( _additionalAssociations, true );
