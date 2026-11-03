@@ -1,6 +1,9 @@
 package ng.appserver.templating;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -274,6 +277,7 @@ public class NGComponent implements NGElement, NGActionResults {
 		//
 		// So we have to start out clean and reset the elementID before entering appendToResponse().
 		context()._resetElementID();
+		context()._resetResourceDependencies();
 
 		// Now let's create a new response and append ourselves to it
 		final NGResponse response;
@@ -290,6 +294,11 @@ public class NGComponent implements NGElement, NGActionResults {
 
 		appendOrTraverse( response, context() );
 
+		// The page has rendered, so we know every resource its elements declared. Partial page responses have no head to add them to.
+		if( context().targetedUpdateContainerIDsStringValue() == null ) {
+			addResourceDependenciesToHead( response, context()._missingResourceDependencies() );
+		}
+
 		// So, we've generated the page, and it's ready to return. Now we let the context tell us whether it should be stored in the page cache for future reference.
 		// CHECKME: This *still* feels a little like the wrong place to stash the page in the cache. Not yet sure where it *should* be but my gut *still* has a feeling // Hugi 2024-09-28
 		// FIXME: We might be targeting multiple update containers, this isn't properly handled at the moment // Hugi 2025-05-09
@@ -298,6 +307,49 @@ public class NGComponent implements NGElement, NGActionResults {
 		}
 
 		return response;
+	}
+
+	/**
+	 * Adds a tag for each of the given resources to the end of the page's head. A page without a head gets none.
+	 *
+	 * FIXME: Rewriting the rendered page is a stopgap, until the render pipeline gets a way to defer the head's rendering // Hugi 2026-11-03
+	 */
+	private static void addResourceDependenciesToHead( final NGResponse response, final List<NGResourceDependency> resourceDependencies ) {
+		if( resourceDependencies.isEmpty() ) {
+			return;
+		}
+
+		final StringBuilder tags = new StringBuilder();
+
+		for( final NGResourceDependency dependency : resourceDependencies ) {
+			tags.append( dependency.tag() );
+			tags.append( '\n' );
+		}
+
+		final String html = response.contentByteStream().toString( StandardCharsets.UTF_8 );
+		final String withTags = insertBeforeHeadEnd( html, tags.toString() );
+
+		if( withTags != null ) {
+			response.setContentString( withTags );
+		}
+	}
+
+	/**
+	 * @return The html, with the given string inserted before the head's end tag. null if the html has no head end tag.
+	 */
+	static String insertBeforeHeadEnd( final String html, final String string ) {
+		int headEnd = html.toLowerCase( Locale.ROOT ).indexOf( "</head>" );
+
+		if( headEnd == -1 ) {
+			return null;
+		}
+
+		// Insert at the start of the end tag's line, so the end tag keeps its indentation
+		while( headEnd > 0 && (html.charAt( headEnd - 1 ) == '\t' || html.charAt( headEnd - 1 ) == ' ') ) {
+			headEnd--;
+		}
+
+		return html.substring( 0, headEnd ) + string + html.substring( headEnd );
 	}
 
 	@Override
@@ -312,6 +364,10 @@ public class NGComponent implements NGElement, NGActionResults {
 
 	@Override
 	public void appendOrTraverse( NGResponse response, NGContext context ) {
+		if( context.shouldAppendToResponse() ) {
+			context._addResourceDependencies( resourceDependencies() );
+		}
+
 		template().appendOrTraverse( response, context );
 	}
 

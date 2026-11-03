@@ -12,6 +12,7 @@ import ng.appserver.privates.NGHTMLUtilities;
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGDynamicElement;
 import ng.appserver.templating.NGElement;
+import ng.appserver.templating.NGResourceDependency;
 import ng.appserver.templating.associations.NGAssociation;
 
 /**
@@ -47,6 +48,8 @@ public class NGJavaScript extends NGDynamicElement {
 		final NGComponent component = context.component();
 		final String filename = (String)_filenameAssociation.valueInComponent( component );
 		final String namespace = NGHTMLUtilities.namespaceInContext( context, _namespaceAssociation );
+
+		context._addIncludedResource( NGResourceDependency.script( namespace, filename ) );
 
 		final Optional<String> relativeURL = NGResourceRequestHandler.urlForWebserverResourceNamed( namespace, filename );
 		String urlString;
