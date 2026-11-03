@@ -42,7 +42,7 @@ public class NGComponentReference extends NGDynamicElement implements NGStructur
 	 * <wo:SomeComponent>[contentTemplate]</wo:SomeComponent>
 	 */
 	public NGComponentReference( final String name, final Map<String, NGAssociation> associations, final NGElement contentTemplate ) {
-		super( null, null, null );
+		super( name, associations, contentTemplate );
 		_associations = associations;
 		_contentTemplate = contentTemplate;
 	}

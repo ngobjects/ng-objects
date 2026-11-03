@@ -29,7 +29,7 @@ public class NGSubmitButton extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGSubmitButton( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 		_additionalAssociations = new HashMap<>( associations );
 
 		_actionAssociation = _additionalAssociations.remove( "action" );

@@ -35,7 +35,7 @@ public class NGText extends NGDynamicElement {
 	private final Map<String, NGAssociation> _additionalAssociations;
 
 	public NGText( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 		_additionalAssociations = new HashMap<>( associations );
 		_nameAssociation = _additionalAssociations.remove( "name" );
 		_valueAssociation = _additionalAssociations.remove( "value" );

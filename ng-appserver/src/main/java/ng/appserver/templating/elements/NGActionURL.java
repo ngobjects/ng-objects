@@ -16,7 +16,7 @@ public class NGActionURL extends NGDynamicElement {
 	private final NGAssociation _actionAssociation;
 
 	public NGActionURL( String name, Map<String, NGAssociation> associations, NGElement contentTemplate ) {
-		super( null, null, null );
+		super( name, associations, contentTemplate );
 		_actionAssociation = associations.get( "action" );
 
 		if( _actionAssociation == null ) {

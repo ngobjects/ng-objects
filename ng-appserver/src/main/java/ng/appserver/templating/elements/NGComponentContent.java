@@ -15,7 +15,7 @@ import ng.appserver.templating.associations.NGAssociation;
 public class NGComponentContent extends NGDynamicElement implements NGStructuralElement {
 
 	public NGComponentContent( String name, Map<String, NGAssociation> associations, NGElement template ) {
-		super( null, null, null );
+		super( name, associations, template );
 	}
 
 	@Override

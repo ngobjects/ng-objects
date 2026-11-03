@@ -63,7 +63,7 @@ public class NGElementNotFoundElement implements NGElement {
 					public class %s extends NGDynamicElement {
 
 						public %s( String name, Map<String, NGAssociation> associations, NGElement contentTemplate ) {
-							super( null, null, null );
+							super( name, associations, contentTemplate );
 						}
 
 						@Override
