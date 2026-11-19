@@ -1,5 +1,7 @@
 package ng.appserver.templating;
 
+import java.util.List;
+
 import ng.appserver.NGActionResults;
 import ng.appserver.NGContext;
 import ng.appserver.http.NGRequest;
@@ -17,8 +19,17 @@ public interface NGElement {
 
 	public default void appendToResponse( NGResponse response, NGContext context ) {}
 
+	/**
+	 * @return The webserver resources this element needs on the page it's rendered in. See NGResourceDependency.
+	 */
+	public default List<NGResourceDependency> resourceDependencies() {
+		return List.of();
+	}
+
 	public default void appendOrTraverse( NGResponse response, NGContext context ) {
 		if( context.shouldAppendToResponse() ) {
+			context._addResourceDependencies( resourceDependencies() );
+
 			try {
 				appendToResponse( response, context );
 			}

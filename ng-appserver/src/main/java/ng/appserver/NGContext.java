@@ -1,12 +1,17 @@
 package ng.appserver;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.SequencedSet;
+import java.util.Set;
 
 import ng.appserver.http.NGRequest;
 import ng.appserver.templating.NGComponent;
 import ng.appserver.templating.NGElementID;
+import ng.appserver.templating.NGResourceDependency;
 
 public class NGContext {
 
@@ -82,6 +87,16 @@ public class NGContext {
 	 * That should usually only happen during the generation of a stateful action URL.
 	 */
 	private boolean _shouldSaveInPageCache;
+
+	/**
+	 * Resources declared by the elements rendered into the current page, in the order they were first rendered
+	 */
+	private SequencedSet<NGResourceDependency> _resourceDependencies = new LinkedHashSet<>();
+
+	/**
+	 * Resources the current page already includes through its own <wo:script> and <wo:stylesheet> tags
+	 */
+	private Set<NGResourceDependency> _includedResources = new HashSet<>();
 
 	public NGContext( final NGRequest request ) {
 		Objects.requireNonNull( request );
@@ -217,6 +232,38 @@ public class NGContext {
 	 */
 	public void _resetElementID() {
 		_elementID = new NGElementID();
+	}
+
+	/**
+	 * Registers resources declared by an element being rendered
+	 */
+	public void _addResourceDependencies( final List<NGResourceDependency> resourceDependencies ) {
+		_resourceDependencies.addAll( resourceDependencies );
+	}
+
+	/**
+	 * Registers a resource the page includes itself, so it doesn't get added to the page a second time
+	 */
+	public void _addIncludedResource( final NGResourceDependency resource ) {
+		_includedResources.add( resource );
+	}
+
+	/**
+	 * @return The resources declared by the page's elements that the page doesn't already include, in the order they were first rendered
+	 */
+	public List<NGResourceDependency> _missingResourceDependencies() {
+		return _resourceDependencies
+				.stream()
+				.filter( dependency -> !_includedResources.contains( dependency ) )
+				.toList();
+	}
+
+	/**
+	 * Forgets the resources registered so far, for starting the render of a new page
+	 */
+	public void _resetResourceDependencies() {
+		_resourceDependencies = new LinkedHashSet<>();
+		_includedResources = new HashSet<>();
 	}
 
 	/**

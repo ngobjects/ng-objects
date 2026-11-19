@@ -1,5 +1,6 @@
 package ng.appserver.templating.elements.ajax;
 
+import java.util.List;
 import java.util.Map;
 
 import ng.appserver.NGActionResults;
@@ -7,6 +8,7 @@ import ng.appserver.NGContext;
 import ng.appserver.http.NGRequest;
 import ng.appserver.http.NGResponse;
 import ng.appserver.templating.NGElement;
+import ng.appserver.templating.NGResourceDependency;
 import ng.appserver.templating.associations.NGAssociation;
 import ng.appserver.templating.elements.NGDynamicGroup;
 
@@ -60,6 +62,11 @@ public class AjaxObserveField extends NGDynamicGroup {
 		_idAssociation = associations.get( "id" );
 		_classAssociation = associations.get( "class" );
 		_styleAssociation = associations.get( "style" );
+	}
+
+	@Override
+	public List<NGResourceDependency> resourceDependencies() {
+		return List.of( NGResourceDependency.script( "ng", "ng-js.js" ) );
 	}
 
 	@Override
