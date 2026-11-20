@@ -237,11 +237,5 @@ public interface NGRequest {
 	 * FIXME: Delete. NGRequest really wants to be an immutable interface, awaiting changes in the request/response data model as a whole // Hugi 2026-08-23
 	 */
 	@Deprecated
-	public void setURI( final String uri );
-
-	/**
-	 * FIXME: Delete. NGRequest really wants to be an immutable interface, awaiting changes in the request/response data model as a whole // Hugi 2026-08-23
-	 */
-	@Deprecated
 	public void _setContext( NGContext context );
 }

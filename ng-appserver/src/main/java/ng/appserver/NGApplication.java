@@ -3,6 +3,7 @@ package ng.appserver;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
@@ -11,6 +12,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
@@ -23,7 +25,9 @@ import org.slf4j.LoggerFactory;
 
 import ng.appserver.dev.NGDevServerRegistration;
 import ng.appserver.http.NGCookie;
+import ng.appserver.http.NGMultipartParser;
 import ng.appserver.http.NGRequest;
+import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGResponses;
 import ng.appserver.http.NGResponse;
 import ng.appserver.properties.DeploymentMode;
@@ -481,8 +485,6 @@ public class NGApplication implements NGPlugin {
 	public NGResponse dispatchRequest( final NGRequest request ) {
 
 		try {
-			rewriteURL( request );
-
 			final NGRequestHandler requestHandler = routeManager().handlerForURL( request.uri() );
 
 			if( requestHandler == null ) {
@@ -661,27 +663,38 @@ public class NGApplication implements NGPlugin {
 	}
 
 	/**
-	 * Invoked by dispatchRequest before the request is handled to apply all url-rewriting patterns.
+	 * Adaptors create their requests here. Takes the same parameters as NGRequests.of(), and applies the URL rewrite patterns to the URI before the request is created.
+	 *
+	 * CHECKME: Final while transforming requests before they're handled is still being designed // Hugi 2026-11-20
+	 * CHECKME: The request only knows its rewritten URI. If something comes to need the URI the adaptor received (such as the WO adaptor's path to the app, for generating URLs that route back through it), we'll have to keep it // Hugi 2026-11-20
+	 */
+	public final NGRequest createRequest( final String method, final String uri, final String queryString, final Map<String, List<String>> headers, final InputStream body, final String remoteAddress, final NGMultipartParser multipartParser ) {
+		return NGRequests.of( method, rewrittenURI( uri, _urlRewritePatterns ), queryString, headers, body, remoteAddress, multipartParser );
+	}
+
+	/**
+	 * @return The URI with each of the given patterns applied in turn, a match being removed from the URI's start
 	 *
 	 * CHECKME: Not really a fan of including this functionality, but it helps out with WO adaptor compatibility.
 	 */
-	private void rewriteURL( final NGRequest request ) {
+	static String rewrittenURI( String uri, final List<Pattern> patterns ) {
 
-		for( Pattern pattern : _urlRewritePatterns ) {
-			final String originalURI = request.uri();
-
-			final Matcher matcher = pattern.matcher( originalURI );
+		for( Pattern pattern : patterns ) {
+			final Matcher matcher = pattern.matcher( uri );
 
 			if( matcher.find() ) {
-				request.setURI( originalURI.substring( matcher.group().length() ) );
-				logger.debug( "Rewrote URI '{}' -> '{}'", originalURI, request.uri() );
+				final String originalURI = uri;
+				uri = uri.substring( matcher.group().length() );
+				logger.debug( "Rewrote URI '{}' -> '{}'", originalURI, uri );
 			}
 		}
 
 		// FIXME: Currently required to handle a little fun with how WO adaptor URLs are structured and how we rewrite them. Investigate if we can fix this at a more sane level // Hugi 2024-06-17
-		if( request.uri().isEmpty() ) {
-			request.setURI( "/" );
+		if( uri.isEmpty() ) {
+			uri = "/";
 		}
+
+		return uri;
 	}
 
 	/**

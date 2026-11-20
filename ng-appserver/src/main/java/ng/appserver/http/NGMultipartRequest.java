@@ -213,11 +213,6 @@ public class NGMultipartRequest implements NGRequest {
 	}
 
 	@Override
-	public void setURI( final String uri ) {
-		_head.setURI( uri );
-	}
-
-	@Override
 	public Map<String, List<String>> headers() {
 		return _head.headers();
 	}

@@ -25,7 +25,6 @@ import ng.appserver.NGResponseMultipart.ContentPart;
 import ng.appserver.dev.NGDevelopmentInstanceStopper;
 import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardResponse;
 import ng.appserver.http.NGStreamingResponse;
@@ -99,11 +98,11 @@ public class NGAdaptorJava extends NGAdaptor {
 	/**
 	 * @return The request the given exchange received. Its body is read, and a multipart body split into parts, when the request asks for it.
 	 */
-	private static NGRequest request( final HttpExchange exchange ) {
+	private NGRequest request( final HttpExchange exchange ) {
 		final URI requestURI = exchange.getRequestURI();
 		final String path = requestURI.normalize().getPath();
 
-		return NGRequests.of(
+		return _application.createRequest(
 				exchange.getRequestMethod(),
 				path == null || path.isEmpty() ? "/" : path,
 				requestURI.getRawQuery(),

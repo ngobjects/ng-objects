@@ -75,7 +75,7 @@ public class NGComponentRequestTestHarness {
 	 */
 	public static class TestRequest implements NGRequest {
 
-		private String _uri;
+		private final String _uri;
 		private final Map<String, List<String>> _formValues;
 		private final Map<String, List<String>> _headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 		private NGContext _context;
@@ -93,11 +93,6 @@ public class NGComponentRequestTestHarness {
 		@Override
 		public String uri() {
 			return _uri;
-		}
-
-		@Override
-		public void setURI( final String uri ) {
-			_uri = uri;
 		}
 
 		@Override

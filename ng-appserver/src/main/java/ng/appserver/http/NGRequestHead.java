@@ -24,9 +24,9 @@ final class NGRequestHead {
 	private final String _method;
 
 	/**
-	 * FIXME: This should really not be settable, NGRequest wants to be immutable // Hugi 2024-08-10
+	 * The URI's path, without the query string. For a request an adaptor created through NGApplication.createRequest(), with the application's URL rewrite patterns applied.
 	 */
-	private String _uri;
+	private final String _uri;
 
 	/**
 	 * The URI's query string, still percent-encoded. null if the URI has none.
@@ -64,10 +64,6 @@ final class NGRequestHead {
 
 	String uri() {
 		return _uri;
-	}
-
-	void setURI( final String uri ) {
-		_uri = uri;
 	}
 
 	String queryString() {

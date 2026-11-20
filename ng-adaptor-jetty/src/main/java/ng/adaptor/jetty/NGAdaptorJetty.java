@@ -37,7 +37,6 @@ import ng.appserver.NGResponseMultipart.ContentPart;
 import ng.appserver.dev.NGDevelopmentInstanceStopper;
 import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardResponse;
 import ng.appserver.http.NGStreamingResponse;
@@ -209,7 +208,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 		/**
 		 * @return the given Request converted to an NGRequest. Its body is read, and a multipart body split into parts, when the request asks for it.
 		 */
-		private static NGRequest requestToNGRequest( final Request jettyRequest ) {
+		private NGRequest requestToNGRequest( final Request jettyRequest ) {
 			final String method = jettyRequest.getMethod();
 			final String uri = jettyRequest.getHttpURI().getCanonicalPath();
 			final String queryString = jettyRequest.getHttpURI().getQuery();
@@ -217,7 +216,7 @@ public class NGAdaptorJetty extends NGAdaptor {
 			final InputStream body = Request.asInputStream( jettyRequest );
 			final String remoteAddress = Request.getRemoteAddr( jettyRequest );
 
-			return NGRequests.of( method, uri, queryString, headers, body, remoteAddress, NGIncomingParts::new );
+			return _application.createRequest( method, uri, queryString, headers, body, remoteAddress, NGIncomingParts::new );
 		}
 
 		/**

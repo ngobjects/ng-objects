@@ -20,7 +20,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import ng.appserver.NGApplication;
 import ng.appserver.http.NGCookie;
 import ng.appserver.http.NGRequest;
-import ng.appserver.http.NGRequests;
 import ng.appserver.http.NGResponse;
 import ng.appserver.http.NGStandardResponse;
 import ng.appserver.http.NGStreamingResponse;
@@ -124,9 +123,9 @@ public class NGServletAdaptor extends HttpServlet {
 	/**
 	 * @return the given HttpServletRequest converted to an NGRequest
 	 */
-	private static NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
+	private NGRequest servletRequestToNGRequest( final HttpServletRequest sr ) {
 		try {
-			return NGRequests.of( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), headerMap( sr ), sr.getInputStream(), sr.getRemoteAddr(), NGIncomingParts::new );
+			return _application.createRequest( sr.getMethod(), sr.getRequestURI(), sr.getQueryString(), headerMap( sr ), sr.getInputStream(), sr.getRemoteAddr(), NGIncomingParts::new );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
